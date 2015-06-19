@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -14,15 +15,23 @@ namespace UIconEdit
         /// Creates a new instance with the specified image.
         /// </summary>
         /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
+        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public IconFrame(Image baseImage)
+        public IconFrame(Image baseImage, BitDepth bitDepth, byte alphaThreshold)
         {
             _setImage(baseImage, "image");
+            _setDepth(bitDepth, "bitDepth");
+            _alphaThreshold = alphaThreshold;
         }
 
         /// <summary>
@@ -72,58 +81,64 @@ namespace UIconEdit
             set { _setImage(value, null); }
         }
 
-        private bool _alpha;
-        /// <summary>
-        /// Gets a 
-        /// </summary>
-        public bool Alpha1BPP
+        private void _setDepth(BitDepth depth, string paramName)
         {
-            get { return _alpha; }
-            set { _alpha = value; }
+            switch (depth)
+            {
+                case BitDepth.Bit24:
+                case BitDepth.Bit32:
+                case BitDepth.Color2:
+                case BitDepth.Color16:
+                case BitDepth.Color256:
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException(null, (int)depth, typeof(BitDepth));
+            }
+            _depth = depth;
         }
 
+        private BitDepth _depth;
         /// <summary>
-        /// Gets the bit depth of the current instance.
+        /// Gets and sets the bit depth of the current instance. This property is ignored if the width or height of the image is greater than 255.
         /// </summary>
-        public BitDepth Depth
+        /// <exception cref="InvalidEnumArgumentException">
+        /// In a set operation, the specified value is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        public BitDepth BitDepth
+        {
+            get { return _depth; }
+            set { _setDepth(value, null); }
+        }
+
+        internal BitDepth ActualBitDepth
         {
             get
             {
-                switch (_image.PixelFormat)
-                {
-                    case PixelFormat.Format1bppIndexed:
-                        return BitDepth.Color2;
-                    case PixelFormat.Format4bppIndexed:
-                        return BitDepth.Color16;
-                    case PixelFormat.Format8bppIndexed:
-                        return BitDepth.Color256;
-                    case PixelFormat.Format24bppRgb:
-                        return BitDepth.Bit24;
-                    default:
-                        return BitDepth.Bit32;
-                }
+                if (_image.Width > byte.MaxValue || _image.Height > byte.MaxValue)
+                    return BitDepth.Bit32;
+                return _depth;
             }
         }
 
         /// <summary>
-        /// Returns the number of bits per pixel of the current instance.
+        /// Gets the pixel format of the resulting image file.
         /// </summary>
-        public int BitsPerPixel
+        public PixelFormat PixelFormat
         {
             get
             {
-                switch (Depth)
+                switch (ActualBitDepth)
                 {
                     case BitDepth.Color2:
-                        return 1;
+                        return PixelFormat.Format1bppIndexed;
                     case BitDepth.Color16:
-                        return 4;
+                        return PixelFormat.Format4bppIndexed;
                     case BitDepth.Color256:
-                        return 8;
+                        return PixelFormat.Format8bppIndexed;
                     case BitDepth.Bit24:
-                        return 24;
+                        return PixelFormat.Format24bppRgb;
                     default:
-                        return 32;
+                        return PixelFormat.Format32bppArgb;
                 }
             }
         }
@@ -135,7 +150,7 @@ namespace UIconEdit
         {
             get
             {
-                switch (Depth)
+                switch (ActualBitDepth)
                 {
                     case BitDepth.Color2:
                         return 1;
@@ -148,13 +163,96 @@ namespace UIconEdit
                 }
             }
         }
+
+        private byte _alphaThreshold;
+        /// <summary>
+        /// Gets and sets a value indicating the threshold of alpha values when <see cref="BitDepth"/> is any value other than
+        /// <see cref="UIconEdit.BitDepth.Bit32"/>. Alpha values less than this value will be fully transparent; alpha values greater than or equal to this
+        /// value will be fully opaque.
+        /// </summary>
+        public byte AlphaThreshold
+        {
+            get { return _alphaThreshold; }
+            set { _alphaThreshold = value; }
+        }
+
+        internal Bitmap GetQuantized(out Bitmap alphaMask)
+        {
+            const PixelFormat fullFormat = PixelFormat.Format32bppArgb, alphaFormat = PixelFormat.Format1bppIndexed;
+
+            BitDepth depth = ActualBitDepth;
+            if (_image is Bitmap && _image.PixelFormat == PixelFormat.Format32bppArgb && depth == BitDepth.Bit32)
+            {
+                alphaMask = null;
+                return (Bitmap)_image;
+            }
+
+            Bitmap fullColor = new Bitmap(_image.Width, _image.Height, fullFormat);
+
+            using (Graphics g = Graphics.FromImage(fullColor))
+                g.DrawImage(_image, 0, 0, fullColor.Width, fullColor.Height);
+
+
+            if (depth == BitDepth.Bit32)
+            {
+                alphaMask = null;
+                return fullColor;
+            }
+            Rectangle fullRect = new Rectangle(0, 0, fullColor.Width, fullColor.Height);
+
+            alphaMask = new Bitmap(fullColor.Width, fullColor.Height, alphaFormat);
+
+            unsafe
+            {
+                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadOnly, fullFormat);
+                BitmapData alphaData = alphaMask.LockBits(fullRect, ImageLockMode.WriteOnly, alphaFormat);
+                int offWidth = fullRect.Width / 8;
+
+                byte* pAlpha = (byte*)alphaData.Scan0;
+                uint* pFull = (uint*)alphaData.Scan0;
+
+                for (int y = 0; y < fullColor.Height; y++)
+                {
+                    for (int xAlpha = 0; xAlpha < offWidth; xAlpha++)
+                    {
+                        int offsetAlpha = (y * alphaData.Stride) + xAlpha;
+                        int offsetFull = (y * fullData.Stride) + (xAlpha * 8);
+
+                        byte curValue = 0;
+
+                        for (int xFull = 0; xFull < 8; xFull++)
+                        {
+                            uint alpha = (pFull[offsetFull + xFull] >> 24) & 0xFF;
+                            if (alpha >= _alphaThreshold)
+                                curValue |= (byte)(1 << 7 - xFull);
+                        }
+                    }
+                }
+            }
+
+            Bitmap quantized = new Bitmap(fullColor.Width, fullColor.Height, PixelFormat);
+            if (depth == BitDepth.Bit24)
+            {
+                using (Graphics g = Graphics.FromImage(quantized))
+                {
+                    g.FillRectangle(Brushes.Black, 0, 0, fullColor.Width, fullColor.Height);
+                    g.DrawImage(fullColor, 0, 0, fullColor.Width, fullColor.Height);
+                }
+            }
+            else
+            {
+                //TODO: Quantize
+            }
+            fullColor.Dispose();
+            return quantized;
+        }
     }
 
     internal struct IconFrameComparer : IEqualityComparer<IconFrame>, IComparer<IconFrame>
     {
         public int Compare(IconFrame x, IconFrame y)
         {
-            int compare = x.Depth.CompareTo(y.Depth);
+            int compare = x.BitDepth.CompareTo(y.BitDepth);
             if (compare != 0) return compare;
 
             compare = x.BaseImage.Width.CompareTo(y.BaseImage.Width);
@@ -166,13 +264,13 @@ namespace UIconEdit
         public bool Equals(IconFrame x, IconFrame y)
         {
             if (ReferenceEquals(x, y)) return true;
-            return x.Depth == y.Depth && x.BaseImage.Width == y.BaseImage.Width && x.BaseImage.Height == y.BaseImage.Height;
+            return x.BitDepth == y.BitDepth && x.BaseImage.Width == y.BaseImage.Width && x.BaseImage.Height == y.BaseImage.Height;
         }
 
         public int GetHashCode(IconFrame obj)
         {
             if (obj == null) return 0;
-            return (obj.BaseImage.Width) | (obj.BaseImage.Height << 16) | ((int)obj.Depth << 12);
+            return (obj.BaseImage.Width) | (obj.BaseImage.Height << 16) | ((int)obj.BitDepth << 12);
         }
     }
 

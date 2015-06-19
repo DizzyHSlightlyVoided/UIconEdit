@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace UIconEdit
@@ -18,7 +17,7 @@ namespace UIconEdit
             _leaveOpen = leaveOpen;
             try
             {
-                _length = _remainingLength = (int)Math.Min(length, stream.Length - _offset);
+                _length = _remainingLength = (int)Math.Min(length, stream.Length - (_offset + stream.Position));
             }
             catch
             {

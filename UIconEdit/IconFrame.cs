@@ -110,16 +110,6 @@ namespace UIconEdit
             set { _setDepth(value, null); }
         }
 
-        internal BitDepth ActualBitDepth
-        {
-            get
-            {
-                if (_image.Width > byte.MaxValue || _image.Height > byte.MaxValue)
-                    return BitDepth.Bit32;
-                return _depth;
-            }
-        }
-
         /// <summary>
         /// Gets the pixel format of the resulting image file.
         /// </summary>
@@ -127,7 +117,7 @@ namespace UIconEdit
         {
             get
             {
-                switch (ActualBitDepth)
+                switch (_depth)
                 {
                     case BitDepth.Color2:
                         return PixelFormat.Format1bppIndexed;
@@ -150,7 +140,7 @@ namespace UIconEdit
         {
             get
             {
-                switch (ActualBitDepth)
+                switch (_depth)
                 {
                     case BitDepth.Color2:
                         return 1;
@@ -160,6 +150,26 @@ namespace UIconEdit
                         return 255;
                     default:
                         return 0;
+                }
+            }
+        }
+
+        internal short BitsPerPixel
+        {
+            get
+            {
+                switch (_depth)
+                {
+                    default:
+                        return 32;
+                    case BitDepth.Bit24:
+                        return 24;
+                    case BitDepth.Color2:
+                        return 1;
+                    case BitDepth.Color16:
+                        return 4;
+                    case BitDepth.Color256:
+                        return 8;
                 }
             }
         }
@@ -180,8 +190,7 @@ namespace UIconEdit
         {
             const PixelFormat fullFormat = PixelFormat.Format32bppArgb, alphaFormat = PixelFormat.Format1bppIndexed;
 
-            BitDepth depth = ActualBitDepth;
-            if (_image is Bitmap && _image.PixelFormat == PixelFormat.Format32bppArgb && depth == BitDepth.Bit32)
+            if (_image is Bitmap && _image.PixelFormat == PixelFormat.Format32bppArgb && _depth == BitDepth.Bit32)
             {
                 alphaMask = null;
                 return (Bitmap)_image;
@@ -193,7 +202,7 @@ namespace UIconEdit
                 g.DrawImage(_image, 0, 0, fullColor.Width, fullColor.Height);
 
 
-            if (depth == BitDepth.Bit32)
+            if (_depth == BitDepth.Bit32)
             {
                 alphaMask = null;
                 return fullColor;
@@ -231,7 +240,7 @@ namespace UIconEdit
             }
 
             Bitmap quantized = new Bitmap(fullColor.Width, fullColor.Height, PixelFormat);
-            if (depth == BitDepth.Bit24)
+            if (_depth == BitDepth.Bit24)
             {
                 using (Graphics g = Graphics.FromImage(quantized))
                 {

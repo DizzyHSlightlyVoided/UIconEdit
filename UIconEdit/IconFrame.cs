@@ -33,6 +33,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace UIconEdit
 {
@@ -201,27 +203,6 @@ namespace UIconEdit
             }
         }
 
-        /// <summary>
-        /// Gets the maximum index of the palette.
-        /// </summary>
-        public byte PaletteCount
-        {
-            get
-            {
-                switch (_depth)
-                {
-                    case BitDepth.Color2:
-                        return 1;
-                    case BitDepth.Color16:
-                        return 15;
-                    case BitDepth.Color256:
-                        return 255;
-                    default:
-                        return 0;
-                }
-            }
-        }
-
         internal short BitsPerPixel
         {
             get
@@ -254,13 +235,14 @@ namespace UIconEdit
             set { _alphaThreshold = value; }
         }
 
-        internal Bitmap GetQuantized(out Bitmap alphaMask)
+        internal Bitmap GetQuantized(out Bitmap alphaMask, out int paletteCount)
         {
             const PixelFormat fullFormat = PixelFormat.Format32bppArgb, alphaFormat = PixelFormat.Format1bppIndexed;
 
             if (_image is Bitmap && _image.PixelFormat == PixelFormat.Format32bppArgb && _depth == BitDepth.Bit32 && _image.Width == _width && _image.Height == _height)
             {
                 alphaMask = null;
+                paletteCount = 0;
                 return (Bitmap)_image;
             }
 
@@ -272,6 +254,7 @@ namespace UIconEdit
             if (_depth == BitDepth.Bit32)
             {
                 alphaMask = null;
+                paletteCount = 0;
                 return fullColor;
             }
 
@@ -285,43 +268,118 @@ namespace UIconEdit
                 BitmapData alphaData = alphaMask.LockBits(fullRect, ImageLockMode.WriteOnly, alphaFormat);
                 int offWidth = fullRect.Width / 8;
 
-                byte* pAlpha = (byte*)alphaData.Scan0;
-                uint* pFull = (uint*)alphaData.Scan0;
+                for (int y = 0; y < _height; y++)
+                {
+                    List<byte> byteList = new List<byte>(Pack2(BelowThreshold(fullData.Stride, _alphaThreshold, fullData.Scan0 + (y * fullData.Stride))));
+
+                    byte[] buffer = byteList.ToArray();
+
+                    Marshal.Copy(buffer, 0, alphaData.Scan0 + (y * alphaData.Stride), buffer.Length);
+                }
+            }
+
+            unsafe
+            {
+                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadWrite, fullFormat);
 
                 for (int y = 0; y < _height; y++)
                 {
-                    for (int xAlpha = 0; xAlpha < offWidth; xAlpha++)
-                    {
-                        int offsetAlpha = (y * alphaData.Stride) + xAlpha;
-                        int offsetFull = (y * fullData.Stride) + (xAlpha * 8);
+                    int* pRow = (int*)(fullData.Scan0 + (y * fullData.Stride));
 
-                        byte curValue = 0;
+                    const int upperMask = -16777216; //0xFF000000 - opaque alpha
 
-                        for (int xFull = 0; xFull < 8; xFull++)
-                        {
-                            uint alpha = (pFull[offsetFull + xFull] >> 24) & 0xFF;
-                            if (alpha >= _alphaThreshold)
-                                curValue |= (byte)(1 << 7 - xFull);
-                        }
-                    }
+                    for (int x = 0; x < _width; x++)
+                        pRow[x] |= upperMask;
                 }
+                fullColor.UnlockBits(fullData);
+            }
+
+            if (_depth == BitDepth.Bit24)
+            {
+                paletteCount = 0;
+                return fullColor;
             }
 
             Bitmap quantized = new Bitmap(_width, _height, PixelFormat);
-            if (_depth == BitDepth.Bit24)
+            switch (_depth)
             {
-                using (Graphics g = Graphics.FromImage(quantized))
-                {
-                    g.FillRectangle(Brushes.Black, fullRect);
-                    g.DrawImage(fullColor, fullRect);
-                }
+                case BitDepth.Color2:
+                    paletteCount = 2;
+                    break;
+                case BitDepth.Color16:
+                    paletteCount = 16;
+                    break;
+                default:
+                    paletteCount = 256;
+                    break;
             }
-            else
-            {
-                //TODO: Quantize
-            }
+            //TODO: Quantize
             fullColor.Dispose();
             return quantized;
+        }
+
+        internal static byte[] Pack16(byte[] indices)
+        {
+            int returnLength = indices.Length / 2 + (indices.Length % 2);
+
+            byte[] returner = new byte[returnLength];
+
+            for (int i = 0; i < returner.Length; i++)
+            {
+                int dex2 = i * 2;
+                byte result = (byte)(indices[dex2] << 4);
+
+                dex2++;
+                if (dex2 < indices.Length)
+                    result |= indices[dex2];
+
+                returner[i] = result;
+            }
+            return returner;
+        }
+
+        internal static IEnumerable<byte> Pack2(IEnumerable<bool> indices)
+        {
+            int offset = 7;
+            byte curVal = 0;
+            foreach (bool value in indices)
+            {
+                if (value) curVal |= (byte)(1 << offset);
+                offset = (offset - 1) & 7;
+                if (offset == 7)
+                {
+                    yield return curVal;
+                    curVal = 0;
+                }
+            }
+            if (offset != 7)
+                yield return curVal;
+        }
+
+        internal static byte[] Pack2(byte[] indices)
+        {
+            int returnLength = indices.Length / 8;
+            if (indices.Length % 8 > 0) returnLength++;
+            byte[] returner = new byte[returnLength];
+
+            int curCount = 0;
+            foreach (byte b in Pack2(indices.Select(i => (i & 1) == 1)))
+                returner[curCount++] = b;
+
+            return returner;
+        }
+
+        internal static unsafe bool[] BelowThreshold(int stride, byte alphaThreshold, IntPtr scan)
+        {
+            bool[] returner = new bool[stride / 4];
+            uint* pColor = (uint*)scan;
+
+            for (int i = 0; i < returner.Length; i++)
+            {
+                uint value = pColor[i * 4] >> 24;
+                returner[i] = value >= alphaThreshold;
+            }
+            return returner;
         }
     }
 

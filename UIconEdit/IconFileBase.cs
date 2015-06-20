@@ -118,7 +118,8 @@ namespace UIconEdit
             if (frame.Height > byte.MaxValue) writer.Write(byte.MinValue);
             else writer.Write((byte)frame.Height); //2
 
-            Bitmap alphaMask, quantized = frame.GetQuantized(out alphaMask);
+            int paletteCount;
+            Bitmap alphaMask, quantized = frame.GetQuantized(out alphaMask, out paletteCount);
 
             if (alphaMask == null || quantized.Palette == null)
                 writer.Write(byte.MinValue);
@@ -154,10 +155,7 @@ namespace UIconEdit
                     msWriter.Write((alphaData.Stride * fullRect.Height) + (imageData.Stride * fullRect.Height));
 
                     msWriter.Write(0L); //Skip resolution
-                    if (quantized.Palette == null)
-                        msWriter.Write(0);
-                    else
-                        msWriter.Write(quantized.Palette.Entries.Length);
+                    msWriter.Write(paletteCount);
                     msWriter.Write(0); //Skip "important colors" which nobody uses anyway
 
                     if (quantized.Palette != null)
@@ -189,6 +187,7 @@ namespace UIconEdit
                         Marshal.Copy(imageData.Scan0 + (y * imageData.Stride), buffer, 0, buffer.Length);
                         msWriter.Write(buffer);
                     }
+
                     quantized.UnlockBits(imageData);
                     if (!ReferenceEquals(quantized, image)) //Hey, it could happen.
                         quantized.Dispose();

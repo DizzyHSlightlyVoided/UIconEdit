@@ -371,6 +371,18 @@ namespace UIconEdit
                 return new Enumerator(this);
             }
 
+            /// <summary>
+            /// Returns an array containing all elements in the current set.
+            /// </summary>
+            /// <returns>An array containing elements copied from the current set.</returns>
+            public IconFrame[] ToArray()
+            {
+                IconFrame[] result = new IconFrame[_set.Count];
+                _set.CopyTo(result);
+                Array.Sort(result, new IconFrameComparer());
+                return result;
+            }
+
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();

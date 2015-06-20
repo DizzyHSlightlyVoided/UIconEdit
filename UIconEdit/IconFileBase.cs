@@ -501,5 +501,11 @@ namespace UIconEdit
         /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> or an icon frame like it
         /// already exists in the collection.</returns>
         new bool Add(IconFrame item);
+
+        /// <summary>
+        /// Returns an array containing elements copied from the current set.
+        /// </summary>
+        /// <returns>An array containing elements copied from the current set.</returns>
+        IconFrame[] ToArray();
     }
 }

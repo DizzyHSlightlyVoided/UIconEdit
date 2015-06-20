@@ -337,36 +337,35 @@ namespace UIconEdit
             }
 
             Rectangle fullRect = new Rectangle(0, 0, _width, _height);
-
-            alphaMask = new Bitmap(_width, _height, fullFormat);
-
             const uint opaqueAlpha = 0xFF000000u;
-            unsafe
+
+            using (Bitmap alphaTemp = new Bitmap(_width, _height, fullFormat))
             {
-                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadOnly, fullFormat);
-                BitmapData alphaData = alphaMask.LockBits(fullRect, ImageLockMode.WriteOnly, fullFormat);
-                int offWidth = fullRect.Width / 8;
-
-                for (int y = 0; y < _height; y++)
+                unsafe
                 {
-                    uint* pFull = (uint*)(fullData.Scan0 + (y * fullData.Stride));
-                    uint* pAlpha = (uint*)(alphaData.Scan0 + (y * alphaData.Stride));
+                    BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadOnly, fullFormat);
+                    BitmapData alphaData = alphaTemp.LockBits(fullRect, ImageLockMode.WriteOnly, fullFormat);
+                    int offWidth = fullRect.Width / 8;
 
-                    for (int x = 0; x < _width; x++)
+                    for (int y = 0; y < _height; y++)
                     {
-                        uint value = pFull[x] >> 24;
-                        if (value < _alphaThreshold)
-                            pAlpha[x] = opaqueAlpha;
-                        else
-                            pAlpha[x] = uint.MaxValue;
-                    }
-                }
-                fullColor.UnlockBits(fullData);
-                alphaMask.UnlockBits(alphaData);
+                        uint* pFull = (uint*)(fullData.Scan0 + (y * fullData.Stride));
+                        uint* pAlpha = (uint*)(alphaData.Scan0 + (y * alphaData.Stride));
 
-                Bitmap oldAlpha = alphaMask;
-                alphaMask = oldAlpha.Clone(fullRect, alphaFormat);
-                oldAlpha.Dispose();
+                        for (int x = 0; x < _width; x++)
+                        {
+                            uint value = pFull[x] >> 24;
+                            if (value < _alphaThreshold)
+                                pAlpha[x] = opaqueAlpha;
+                            else
+                                pAlpha[x] = uint.MaxValue;
+                        }
+                    }
+                    fullColor.UnlockBits(fullData);
+                    alphaTemp.UnlockBits(alphaData);
+
+                    alphaMask = alphaTemp.Clone(fullRect, alphaFormat);
+                }
             }
 
             unsafe

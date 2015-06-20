@@ -31,6 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 
 namespace UIconEdit
 {
@@ -60,6 +62,28 @@ namespace UIconEdit
         /// Gets a collection containing all frames in the icon file.
         /// </summary>
         public FrameSet Frames { get { return _set; } }
+
+        /// <summary>
+        /// Gets an <see cref="Icon"/> from a single frame.
+        /// </summary>
+        /// <param name="frame">The icon frame from which to get an <see cref="Icon"/>.</param>
+        /// <returns>An <see cref="Icon"/> created from <paramref name="frame"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="frame"/> is <c>null</c>.
+        /// </exception>
+        public static Icon GetIcon(IconFrame frame)
+        {
+            if (frame == null) throw new ArgumentNullException("frame");
+
+            IconFile file = new IconFile();
+            file.Frames.Add(frame);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                file.Save(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                return new Icon(ms);
+            }
+        }
 
         /// <summary>
         /// Returns the color panes.

@@ -83,12 +83,14 @@ namespace UIconEdit
         private void WriteImage(BinaryWriter writer, IconFrame frame, ref int offset, out MemoryStream writeStream)
         {
             var image = frame.BaseImage;
-            if (image.Width > byte.MaxValue) writer.Write(byte.MinValue);
-            else writer.Write((byte)image.Width); //1
-            if (image.Height > byte.MaxValue) writer.Write(byte.MinValue);
-            else writer.Write((byte)image.Height); //2
+            if (frame.Width > byte.MaxValue) writer.Write(byte.MinValue);
+            else writer.Write((byte)frame.Width); //1
+            if (frame.Height > byte.MaxValue) writer.Write(byte.MinValue);
+            else writer.Write((byte)frame.Height); //2
 
-            if (image.Palette == null)
+            Bitmap alphaMask, quantized = frame.GetQuantized(out alphaMask);
+
+            if (alphaMask == null || quantized.Palette == null)
                 writer.Write(byte.MinValue);
             else
                 writer.Write((byte)(image.Palette.Entries.Length - 1)); //3
@@ -100,75 +102,66 @@ namespace UIconEdit
 
             int length;
             writeStream = new MemoryStream();
-            if (frame.BitDepth == BitDepth.Bit32)
+            if (alphaMask == null)
             {
                 image.Save(writeStream, ImageFormat.Png);
             }
             else
             {
-                Bitmap alphaMask;
-                Bitmap quantized = frame.GetQuantized(out alphaMask);
-                if (alphaMask == null)
+                using (BinaryWriter msWriter = new BinaryWriter(writeStream, new UTF8Encoding(), true))
                 {
-                    quantized.Save(writeStream, ImageFormat.Png);
-                }
-                else
-                {
-                    using (BinaryWriter msWriter = new BinaryWriter(writeStream, new UTF8Encoding(), true))
+                    msWriter.Write(dibSize);
+                    msWriter.Write(quantized.Width);
+                    msWriter.Write(quantized.Height + alphaMask.Height);
+                    msWriter.Write((short)1);
+                    msWriter.Write(frame.BitsPerPixel); //1, 4, 8, or 24
+                    msWriter.Write(0); //Compression method = 0
+
+                    Rectangle fullRect = new Rectangle(0, 0, quantized.Width, quantized.Height);
+                    BitmapData alphaData = alphaMask.LockBits(fullRect, ImageLockMode.ReadOnly, alphaMask.PixelFormat);
+                    BitmapData imageData = quantized.LockBits(fullRect, ImageLockMode.ReadOnly, quantized.PixelFormat);
+
+                    msWriter.Write((alphaData.Stride * fullRect.Height) + (imageData.Stride * fullRect.Height));
+
+                    msWriter.Write(0L); //Skip resolution
+                    if (quantized.Palette == null)
+                        msWriter.Write(0);
+                    else
+                        msWriter.Write(quantized.Palette.Entries.Length);
+                    msWriter.Write(0); //Skip "important colors" which nobody uses anyway
+
+                    if (quantized.Palette != null)
                     {
-                        msWriter.Write(dibSize);
-                        msWriter.Write(quantized.Width);
-                        msWriter.Write(quantized.Height + alphaMask.Height);
-                        msWriter.Write((short)1);
-                        msWriter.Write(frame.BitsPerPixel); //1, 4, 8, or 24
-                        msWriter.Write(0); //Compression method = 0
-
-                        Rectangle fullRect = new Rectangle(0, 0, quantized.Width, quantized.Height);
-                        BitmapData alphaData = alphaMask.LockBits(fullRect, ImageLockMode.ReadOnly, alphaMask.PixelFormat);
-                        BitmapData imageData = quantized.LockBits(fullRect, ImageLockMode.ReadOnly, quantized.PixelFormat);
-
-                        msWriter.Write((alphaData.Stride * fullRect.Height) + (imageData.Stride * fullRect.Height));
-
-                        msWriter.Write(0L); //Skip resolution
-                        if (quantized.Palette == null)
-                            msWriter.Write(0);
-                        else
-                            msWriter.Write(quantized.Palette.Entries.Length);
-                        msWriter.Write(0); //Skip "important colors" which nobody uses anyway
-
-                        if (quantized.Palette != null)
+                        foreach (Color c in quantized.Palette.Entries)
                         {
-                            foreach (Color c in quantized.Palette.Entries)
-                            {
-                                msWriter.Write(c.R);
-                                msWriter.Write(c.G);
-                                msWriter.Write(c.B);
-                                msWriter.Write(byte.MaxValue);
-                            }
+                            msWriter.Write(c.R);
+                            msWriter.Write(c.G);
+                            msWriter.Write(c.B);
+                            msWriter.Write(byte.MaxValue);
                         }
-
-                        for (int y = fullRect.Height - 1; y >= 0; y--)
-                        {
-                            byte[] buffer = new byte[alphaData.Stride];
-
-                            Marshal.Copy(alphaData.Scan0 + (y * alphaData.Stride), buffer, 0, buffer.Length);
-                            msWriter.Write(buffer);
-                        }
-
-                        alphaMask.UnlockBits(alphaData);
-                        alphaMask.Dispose();
-
-                        for (int y = fullRect.Height - 1; y >= 0; y--)
-                        {
-                            byte[] buffer = new byte[imageData.Stride];
-
-                            Marshal.Copy(imageData.Scan0 + (y * imageData.Stride), buffer, 0, buffer.Length);
-                            msWriter.Write(buffer);
-                        }
-                        quantized.UnlockBits(imageData);
-                        if (!ReferenceEquals(quantized, image)) //Hey, it could happen.
-                            quantized.Dispose();
                     }
+
+                    for (int y = fullRect.Height - 1; y >= 0; y--)
+                    {
+                        byte[] buffer = new byte[alphaData.Stride];
+
+                        Marshal.Copy(alphaData.Scan0 + (y * alphaData.Stride), buffer, 0, buffer.Length);
+                        msWriter.Write(buffer);
+                    }
+
+                    alphaMask.UnlockBits(alphaData);
+                    alphaMask.Dispose();
+
+                    for (int y = fullRect.Height - 1; y >= 0; y--)
+                    {
+                        byte[] buffer = new byte[imageData.Stride];
+
+                        Marshal.Copy(imageData.Scan0 + (y * imageData.Stride), buffer, 0, buffer.Length);
+                        msWriter.Write(buffer);
+                    }
+                    quantized.UnlockBits(imageData);
+                    if (!ReferenceEquals(quantized, image)) //Hey, it could happen.
+                        quantized.Dispose();
                 }
             }
 

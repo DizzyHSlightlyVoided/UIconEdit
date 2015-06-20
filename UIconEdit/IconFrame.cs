@@ -18,19 +18,26 @@ namespace UIconEdit
         /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
         /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
         /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
+        /// <param name="width">The width of the new image.</param>
+        /// <param name="height">The height of the new image.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
         /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public IconFrame(Image baseImage, BitDepth bitDepth, byte alphaThreshold)
+        public IconFrame(Image baseImage, BitDepth bitDepth, short width, short height, byte alphaThreshold)
         {
             _setImage(baseImage, "image");
             _setDepth(bitDepth, "bitDepth");
+            _setSize(ref _width, width, "width");
+            _setSize(ref _height, height, "height");
             _alphaThreshold = alphaThreshold;
         }
 
@@ -60,8 +67,6 @@ namespace UIconEdit
             {
                 throw new ObjectDisposedException(paramName);
             }
-            if (width < MinDimension || width > MaxDimension || height < MinDimension || height > MaxDimension)
-                throw new ArgumentException("Width or height is out of bounds.", paramName);
             _image = image;
         }
 
@@ -79,6 +84,39 @@ namespace UIconEdit
         {
             get { return _image; }
             set { _setImage(value, null); }
+        }
+
+        private void _setSize(ref short dim, short value, string paramName)
+        {
+            if (value < MinDimension || value > MaxDimension)
+                throw new ArgumentOutOfRangeException(paramName, value, "The specified value is out of bounds.");
+            dim = value;
+        }
+
+        private short _width;
+        /// <summary>
+        /// Gets and sets the resampled width of the icon.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// In a set operation, the specified value is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        public short Width
+        {
+            get { return _width; }
+            set { _setSize(ref _width, value, null); }
+        }
+
+        private short _height;
+        /// <summary>
+        /// Gets and sets the resampled height of the icon.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// In a set operation, the specified value is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        public short Height
+        {
+            get { return _height; }
+            set { _setSize(ref _height, value, null); }
         }
 
         private void _setDepth(BitDepth depth, string paramName)
@@ -125,8 +163,8 @@ namespace UIconEdit
                         return PixelFormat.Format4bppIndexed;
                     case BitDepth.Color256:
                         return PixelFormat.Format8bppIndexed;
-                    case BitDepth.Bit24:
-                        return PixelFormat.Format24bppRgb;
+                    //case BitDepth.Bit24:
+                    //    return PixelFormat.Format24bppRgb;
                     default:
                         return PixelFormat.Format32bppArgb;
                 }
@@ -190,26 +228,26 @@ namespace UIconEdit
         {
             const PixelFormat fullFormat = PixelFormat.Format32bppArgb, alphaFormat = PixelFormat.Format1bppIndexed;
 
-            if (_image is Bitmap && _image.PixelFormat == PixelFormat.Format32bppArgb && _depth == BitDepth.Bit32)
+            if (_image is Bitmap && _image.PixelFormat == PixelFormat.Format32bppArgb && _depth == BitDepth.Bit32 && _image.Width == _width && _image.Height == _height)
             {
                 alphaMask = null;
                 return (Bitmap)_image;
             }
 
-            Bitmap fullColor = new Bitmap(_image.Width, _image.Height, fullFormat);
+            Bitmap fullColor = new Bitmap(_width, _height, fullFormat);
 
             using (Graphics g = Graphics.FromImage(fullColor))
-                g.DrawImage(_image, 0, 0, fullColor.Width, fullColor.Height);
-
+                g.DrawImage(_image, 0, 0, _width, _height);
 
             if (_depth == BitDepth.Bit32)
             {
                 alphaMask = null;
                 return fullColor;
             }
-            Rectangle fullRect = new Rectangle(0, 0, fullColor.Width, fullColor.Height);
 
-            alphaMask = new Bitmap(fullColor.Width, fullColor.Height, alphaFormat);
+            Rectangle fullRect = new Rectangle(0, 0, _width, _height);
+
+            alphaMask = new Bitmap(_width, _height, alphaFormat);
 
             unsafe
             {
@@ -220,7 +258,7 @@ namespace UIconEdit
                 byte* pAlpha = (byte*)alphaData.Scan0;
                 uint* pFull = (uint*)alphaData.Scan0;
 
-                for (int y = 0; y < fullColor.Height; y++)
+                for (int y = 0; y < _height; y++)
                 {
                     for (int xAlpha = 0; xAlpha < offWidth; xAlpha++)
                     {
@@ -239,13 +277,13 @@ namespace UIconEdit
                 }
             }
 
-            Bitmap quantized = new Bitmap(fullColor.Width, fullColor.Height, PixelFormat);
+            Bitmap quantized = new Bitmap(_width, _height, PixelFormat);
             if (_depth == BitDepth.Bit24)
             {
                 using (Graphics g = Graphics.FromImage(quantized))
                 {
-                    g.FillRectangle(Brushes.Black, 0, 0, fullColor.Width, fullColor.Height);
-                    g.DrawImage(fullColor, 0, 0, fullColor.Width, fullColor.Height);
+                    g.FillRectangle(Brushes.Black, fullRect);
+                    g.DrawImage(fullColor, fullRect);
                 }
             }
             else
@@ -264,22 +302,22 @@ namespace UIconEdit
             int compare = x.BitDepth.CompareTo(y.BitDepth);
             if (compare != 0) return compare;
 
-            compare = x.BaseImage.Width.CompareTo(y.BaseImage.Width);
+            compare = x.Width.CompareTo(y.Width);
             if (compare != 0) return compare;
 
-            return x.BaseImage.Height.CompareTo(y.BaseImage.Height);
+            return x.Height.CompareTo(y.Height);
         }
 
         public bool Equals(IconFrame x, IconFrame y)
         {
             if (ReferenceEquals(x, y)) return true;
-            return x.BitDepth == y.BitDepth && x.BaseImage.Width == y.BaseImage.Width && x.BaseImage.Height == y.BaseImage.Height;
+            return x.BitDepth == y.BitDepth && x.Width == y.Width && x.Height == y.Height;
         }
 
         public int GetHashCode(IconFrame obj)
         {
             if (obj == null) return 0;
-            return (obj.BaseImage.Width) | (obj.BaseImage.Height << 16) | ((int)obj.BitDepth << 12);
+            return (int)obj.Width | (obj.Height << 16) | ((int)obj.BitDepth << 12);
         }
     }
 

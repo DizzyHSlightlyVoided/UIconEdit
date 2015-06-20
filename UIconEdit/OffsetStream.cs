@@ -96,16 +96,18 @@ namespace UIconEdit
                 int msRead = _ms.Read(buffer, offset, count);
                 count -= msRead;
                 offset += msRead;
-                if (_ms.Position >= _ms.Length)
+                if (_ms.Position >= _ms.Length || msRead == 0)
                 {
                     _ms.Dispose();
                     _ms = null;
                 }
+                if (count == 0) return msRead;
             }
             if (count == 0 || _remainingLength <= 0) return 0;
 
             int read = _stream.Read(buffer, offset, (int)Math.Min(count, _remainingLength));
-            _remainingLength -= read;
+            if (read == 0) _remainingLength = 0;
+            else _remainingLength -= read;
             return read;
         }
 
@@ -130,8 +132,21 @@ namespace UIconEdit
                 _ms.Dispose();
             try
             {
-                if (_stream != null && disposing && !_leaveOpen)
-                    _stream.Dispose();
+                if (_stream != null)
+                {
+                    int read = 0;
+                    const int bufferCount = 8192;
+                    byte[] endBuffer = new byte[bufferCount];
+                    while (_remainingLength != 0 && read != 0)
+                    {
+                        read = _stream.Read(endBuffer, 0, (int)Math.Min(_remainingLength, bufferCount));
+                        if (read == 0) _remainingLength = 0;
+                        else _remainingLength -= read;
+                    }
+
+                    if (disposing && !_leaveOpen)
+                        _stream.Dispose();
+                }
             }
             finally
             {
@@ -140,16 +155,6 @@ namespace UIconEdit
                 _ms = null;
                 base.Dispose(disposing);
             }
-        }
-
-        public void ReadToEnd()
-        {
-            if (_remainingLength <= 0) return;
-
-            const int bufferSize = 8192;
-            byte[] buffer = new byte[bufferSize];
-            while (_remainingLength > 0)
-                Read(buffer, 0, bufferSize);
         }
     }
 }

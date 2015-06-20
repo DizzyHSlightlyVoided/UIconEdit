@@ -81,7 +81,8 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Represents a set of frames.
+        /// Represents a hash set of frames. This collection treats <see cref="IconFrame"/> objects with the same
+        /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> as though they were equal.
         /// </summary>
         public class FrameSet : IReadOnlyCollection<IconFrame>, ISet<IconFrame>, ICollection
         {
@@ -129,11 +130,11 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes the specified icon frame from the set.
+            /// Removes an icon frame similar to the specified value from the set.
             /// </summary>
             /// <param name="item">The icon frame to remove.</param>
-            /// <returns><c>true</c> if an icon frame with the specified <paramref name="item"/> was successfully found and removed; <c>false</c> if <paramref name="item"/>
-            /// was not found in the set.</returns>
+            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the set.</returns>
             public bool Remove(IconFrame item)
             {
                 return _set.Remove(item);
@@ -151,7 +152,8 @@ namespace UIconEdit
             /// Determines if an element similar to the specified icon frame exists in the set.
             /// </summary>
             /// <param name="item">The icon frame to search for in the set.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> exists in the set; <c>false</c> otherwise.</returns>
+            /// <returns><c>true</c> if an icon frame with the same with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="item"/> exists in the set; <c>false</c> otherwise.</returns>
             public bool Contains(IconFrame item)
             {
                 return item != null && _set.Contains(item);

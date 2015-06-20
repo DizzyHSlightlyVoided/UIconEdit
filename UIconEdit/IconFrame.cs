@@ -33,8 +33,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Runtime.InteropServices;
 
 using nQuant;
 
@@ -262,22 +260,32 @@ namespace UIconEdit
 
             Rectangle fullRect = new Rectangle(0, 0, _width, _height);
 
-            alphaMask = new Bitmap(_width, _height, alphaFormat);
+            alphaMask = new Bitmap(_width, _height, fullFormat);
 
+            const uint opaqueAlpha = 0xFF000000u;
             unsafe
             {
                 BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadOnly, fullFormat);
-                BitmapData alphaData = alphaMask.LockBits(fullRect, ImageLockMode.WriteOnly, alphaFormat);
+                BitmapData alphaData = alphaMask.LockBits(fullRect, ImageLockMode.WriteOnly, fullFormat);
                 int offWidth = fullRect.Width / 8;
 
                 for (int y = 0; y < _height; y++)
                 {
-                    List<byte> byteList = new List<byte>(Pack2(BelowThreshold(fullData.Stride, _alphaThreshold, fullData.Scan0 + (y * fullData.Stride))));
+                    uint* pFull = (uint*)(fullData.Scan0 + (y * fullData.Stride));
+                    uint* pAlpha = (uint*)(alphaData.Scan0 + (y * alphaData.Stride));
 
-                    byte[] buffer = byteList.ToArray();
-
-                    Marshal.Copy(buffer, 0, alphaData.Scan0 + (y * alphaData.Stride), buffer.Length);
+                    for (int x = 0; x < _width; x++)
+                    {
+                        uint value = pFull[x] >> 24;
+                        if (value < _alphaThreshold)
+                            pAlpha[x] = opaqueAlpha;
+                        else
+                            pAlpha[x] = uint.MaxValue;
+                    }
                 }
+                Bitmap oldAlpha = alphaMask;
+                alphaMask = oldAlpha.Clone(fullRect, alphaFormat);
+                oldAlpha.Dispose();
             }
 
             unsafe
@@ -286,12 +294,10 @@ namespace UIconEdit
 
                 for (int y = 0; y < _height; y++)
                 {
-                    int* pRow = (int*)(fullData.Scan0 + (y * fullData.Stride));
-
-                    const int upperMask = -16777216; //0xFF000000 - opaque alpha
+                    uint* pRow = (uint*)(fullData.Scan0 + (y * fullData.Stride));
 
                     for (int x = 0; x < _width; x++)
-                        pRow[x] |= upperMask;
+                        pRow[x] |= opaqueAlpha;
                 }
                 fullColor.UnlockBits(fullData);
             }
@@ -327,70 +333,6 @@ namespace UIconEdit
             Bitmap tmp = quantized.Clone(fullRect, pixelFormat);
             quantized.Dispose();
             return tmp;
-        }
-
-        internal static byte[] Pack16(byte[] indices)
-        {
-            int returnLength = indices.Length / 2 + (indices.Length % 2);
-
-            byte[] returner = new byte[returnLength];
-
-            for (int i = 0; i < returner.Length; i++)
-            {
-                int dex2 = i * 2;
-                byte result = (byte)(indices[dex2] << 4);
-
-                dex2++;
-                if (dex2 < indices.Length)
-                    result |= indices[dex2];
-
-                returner[i] = result;
-            }
-            return returner;
-        }
-
-        internal static IEnumerable<byte> Pack2(IEnumerable<bool> indices)
-        {
-            int offset = 7;
-            byte curVal = 0;
-            foreach (bool value in indices)
-            {
-                if (value) curVal |= (byte)(1 << offset);
-                offset = (offset - 1) & 7;
-                if (offset == 7)
-                {
-                    yield return curVal;
-                    curVal = 0;
-                }
-            }
-            if (offset != 7)
-                yield return curVal;
-        }
-
-        internal static byte[] Pack2(byte[] indices)
-        {
-            int returnLength = indices.Length / 8;
-            if (indices.Length % 8 > 0) returnLength++;
-            byte[] returner = new byte[returnLength];
-
-            int curCount = 0;
-            foreach (byte b in Pack2(indices.Select(i => (i & 1) == 1)))
-                returner[curCount++] = b;
-
-            return returner;
-        }
-
-        internal static unsafe bool[] BelowThreshold(int stride, byte alphaThreshold, IntPtr scan)
-        {
-            bool[] returner = new bool[stride / 4];
-            uint* pColor = (uint*)scan;
-
-            for (int i = 0; i < returner.Length; i++)
-            {
-                uint value = pColor[i * 4] >> 24;
-                returner[i] = value >= alphaThreshold;
-            }
-            return returner;
         }
     }
 

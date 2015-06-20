@@ -49,17 +49,17 @@ namespace UIconEdit
         public abstract IconTypeCode ID { get; }
 
         /// <summary>
+        /// When overridden in a derived class,
+        /// gets a collection containing all frames in the icon file.
+        /// </summary>
+        protected abstract ICollection<IconFrame> FrameCollection { get; }
+
+        /// <summary>
         /// When overridden in a derived class, computes the 16-bit X component.
         /// </summary>
         /// <param name="frame">The image frame to calculate.</param>
         /// <returns>In icon files, the color panes. In cursor files, the horizontal offset of the hotspot from the left in pixels.</returns>
         protected abstract short GetImgX(IconFrame frame);
-
-        /// <summary>
-        /// When overridden in a derived class,
-        /// gets a set containing all frames in the icon file.
-        /// </summary>
-        protected abstract ISet<IconFrame> FrameSet { get; }
 
         /// <summary>
         /// When overridden in a derived class, computes the 16-bit Y component.
@@ -68,22 +68,11 @@ namespace UIconEdit
         /// <returns>In icon files, the number of bits per pixel. In cursor files, the vertical offset of the hotspot from the top, in pixels.</returns>
         protected abstract short GetImgY(IconFrame frame);
 
-        /// <summary>
-        /// Saves the icon file to the specified stream.
-        /// </summary>
-        /// <param name="output">The stream to which icon file will be written.</param>
-        /// <exception cref="InvalidOperationException">
-        /// The image contains zero frames.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="output"/> is <c>null</c>.
-        /// </exception>
-        public void Save(Stream output)
+        internal void Save(Stream output, ICollection<IconFrame> frameCollection)
         {
-            if (FrameSet.Count == 0) throw new InvalidOperationException("No images set.");
             using (BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding(), true))
             {
-                SortedSet<IconFrame> frames = new SortedSet<IconFrame>(FrameSet, new IconFrameComparer());
+                SortedSet<IconFrame> frames = new SortedSet<IconFrame>(frameCollection, new IconFrameComparer());
 
                 writer.Write(ushort.MinValue);
                 writer.Write((short)ID);
@@ -106,6 +95,22 @@ namespace UIconEdit
                     ms.Dispose();
                 }
             }
+        }
+
+        /// <summary>
+        /// Saves the icon file to the specified stream.
+        /// </summary>
+        /// <param name="output">The stream to which icon file will be written.</param>
+        /// <exception cref="InvalidOperationException">
+        /// The image contains zero frames.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="output"/> is <c>null</c>.
+        /// </exception>
+        public void Save(Stream output)
+        {
+            if (FrameCollection.Count == 0) throw new InvalidOperationException("No images set.");
+            Save(output, FrameCollection);
         }
 
         const int dibSize = 40;

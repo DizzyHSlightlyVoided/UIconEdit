@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 
 using nQuant;
 
@@ -43,7 +44,7 @@ namespace UIconEdit
     /// </summary>
     public class IconFrame
     {
-        const byte defaultAlphaThreshold = 96;
+        internal const byte DefaultAlphaThreshold = 96;
 
         /// <summary>
         /// Creates a new instance with the specified image.
@@ -66,7 +67,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public IconFrame(Image baseImage, BitDepth bitDepth, short width, short height, byte alphaThreshold)
+        public IconFrame(Image baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
         {
             _setImage(baseImage, "baseImage");
             _setDepth(bitDepth, "bitDepth");
@@ -94,8 +95,8 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public IconFrame(Image baseImage, BitDepth bitDepth, short width, short height)
-            : this(baseImage, bitDepth, width, height, defaultAlphaThreshold)
+        public IconFrame(Image baseImage, short width, short height, BitDepth bitDepth)
+            : this(baseImage, width, height, bitDepth, DefaultAlphaThreshold)
         {
         }
 
@@ -147,7 +148,7 @@ namespace UIconEdit
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
         public IconFrame(Image baseImage, BitDepth bitDepth)
-            : this(baseImage, bitDepth, defaultAlphaThreshold)
+            : this(baseImage, bitDepth, DefaultAlphaThreshold)
         {
         }
 
@@ -414,8 +415,251 @@ namespace UIconEdit
         }
     }
 
-    internal struct IconFrameComparer : IEqualityComparer<IconFrame>, IComparer<IconFrame>
+    /// <summary>
+    /// Represents a single frame of a cursor.
+    /// </summary>
+    public class CursorFrame : IconFrame
     {
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
+        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
+        /// <param name="width">The width of the new image.</param>
+        /// <param name="height">The height of the new image.</param>
+        /// <param name="hotspotX">The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.</param>
+        /// <param name="hotspotY">The vertical offset of the cursor's hotspot from the top of the cursor in pixels.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="baseImage"/> is disposed.
+        /// </exception>
+        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth, short hotspotX, short hotspotY, byte alphaThreshold)
+            : base(baseImage, width, height, bitDepth, alphaThreshold)
+        {
+            _x = hotspotX;
+            _y = hotspotY;
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="width">The width of the new image.</param>
+        /// <param name="height">The height of the new image.</param>
+        /// <param name="hotspotX">The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.</param>
+        /// <param name="hotspotY">The vertical offset of the cursor's hotspot from the top of the cursor in pixels.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="baseImage"/> is disposed.
+        /// </exception>
+        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth, short hotspotX, short hotspotY)
+            : this(baseImage, width, height, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
+        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
+        /// <param name="width">The width of the new image.</param>
+        /// <param name="height">The height of the new image.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="baseImage"/> is disposed.
+        /// </exception>
+        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
+            : base(baseImage, width, height, bitDepth, alphaThreshold)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="width">The width of the new image.</param>
+        /// <param name="height">The height of the new image.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="baseImage"/> is disposed.
+        /// </exception>
+        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth)
+            : base(baseImage, width, height, bitDepth)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
+        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
+        /// <param name="hotspotX">The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.</param>
+        /// <param name="hotspotY">The vertical offset of the cursor's hotspot from the top of the cursor in pixels.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="baseImage"/> is disposed.
+        /// </exception>
+        public CursorFrame(Image baseImage, BitDepth bitDepth, short hotspotX, short hotspotY, byte alphaThreshold)
+            : base(baseImage, bitDepth, alphaThreshold)
+        {
+            _x = hotspotX;
+            _y = hotspotY;
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="hotspotX">The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.</param>
+        /// <param name="hotspotY">The vertical offset of the cursor's hotspot from the top of the cursor in pixels.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="baseImage"/> is disposed.
+        /// </exception>
+        public CursorFrame(Image baseImage, BitDepth bitDepth, short hotspotX, short hotspotY)
+            : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
+        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="baseImage"/> is disposed.
+        /// </exception>
+        public CursorFrame(Image baseImage, BitDepth bitDepth, byte alphaThreshold)
+            : base(baseImage, bitDepth, alphaThreshold)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="baseImage"/> is disposed.
+        /// </exception>
+        public CursorFrame(Image baseImage, BitDepth bitDepth)
+            : base(baseImage, bitDepth)
+        {
+        }
+
+        private short _x;
+        /// <summary>
+        /// Gets and sets the horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
+        /// </summary>
+        public short HotspotX
+        {
+            get { return _x; }
+            set { _x = value; }
+        }
+
+        private short _y;
+        /// <summary>
+        /// Gets and sets the vertical offset of the cursor's hotspot from the top of the cursor in pixels.
+        /// </summary>
+        public short HotspotY
+        {
+            get { return _y; }
+            set { _y = value; }
+        }
+
+        /// <summary>
+        /// Gets the offset of the cursor's hotspot from the upper-left corner of the cursor in pixels.
+        /// </summary>
+        public Point Hotspot
+        {
+            get { return new Point(_x, _y); }
+        }
+    }
+
+    internal struct IconFrameComparer : IEqualityComparer<IconFrame>, IComparer<IconFrame>, IEqualityComparer<CursorFrame>, IComparer<CursorFrame>
+    {
+        public int Compare(CursorFrame x, CursorFrame y)
+        {
+            return Compare((IconFrame)x, y);
+        }
+
         public int Compare(IconFrame x, IconFrame y)
         {
             int compare = x.BitDepth.CompareTo(y.BitDepth);
@@ -427,10 +671,20 @@ namespace UIconEdit
             return x.Height.CompareTo(y.Height);
         }
 
+        public bool Equals(CursorFrame x, CursorFrame y)
+        {
+            return Equals((IconFrame)x, y);
+        }
+
         public bool Equals(IconFrame x, IconFrame y)
         {
             if (ReferenceEquals(x, y)) return true;
             return x.BitDepth == y.BitDepth && x.Width == y.Width && x.Height == y.Height;
+        }
+
+        public int GetHashCode(CursorFrame obj)
+        {
+            return GetHashCode((IconFrame)obj);
         }
 
         public int GetHashCode(IconFrame obj)

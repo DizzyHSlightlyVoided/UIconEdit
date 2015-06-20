@@ -57,6 +57,11 @@ namespace UIconEdit
         }
 
         /// <summary>
+        /// Gets a collection containing all frames in the icon file.
+        /// </summary>
+        public FrameSet Frames { get { return _set; } }
+
+        /// <summary>
         /// Returns the color panes.
         /// </summary>
         /// <param name="frame">This parameter is ignored.</param>

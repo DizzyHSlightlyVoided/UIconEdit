@@ -36,6 +36,8 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 
+using nQuant;
+
 namespace UIconEdit
 {
     /// <summary>
@@ -300,7 +302,6 @@ namespace UIconEdit
                 return fullColor;
             }
 
-            Bitmap quantized = new Bitmap(_width, _height, PixelFormat);
             switch (_depth)
             {
                 case BitDepth.Color2:
@@ -313,9 +314,19 @@ namespace UIconEdit
                     paletteCount = 256;
                     break;
             }
-            //TODO: Quantize
+
+            PixelFormat pixelFormat = PixelFormat;
+
+            WuQuantizer quant = new WuQuantizer();
+            Bitmap quantized = (Bitmap)quant.QuantizeImage(fullColor, 0, 1, ref paletteCount);
             fullColor.Dispose();
-            return quantized;
+
+            if (quantized.PixelFormat == pixelFormat)
+                return quantized;
+
+            Bitmap tmp = quantized.Clone(fullRect, pixelFormat);
+            quantized.Dispose();
+            return tmp;
         }
 
         internal static byte[] Pack16(byte[] indices)

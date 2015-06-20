@@ -1,0 +1,3 @@
+[submodule "nQuant"]
+	path = nQuant
+	url = https://github.com/KimikoMuffin/nQuant.git

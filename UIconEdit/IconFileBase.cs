@@ -142,10 +142,17 @@ namespace UIconEdit
                         {
                             bitDepth = BitDepth.Bit32;
                             #region Load Png
-                            using (OffsetStream ms = new OffsetStream(input, new byte[] { 0x89, 0x50, 0x4e, 0x47 }, entry.ResourceLength - 4, true))
+                            using (OffsetStream os = new OffsetStream(input, new byte[] { 0x89, 0x50, 0x4e, 0x47 }, entry.ResourceLength - 4, true))
+                            using (MemoryStream ms = new MemoryStream())
                             {
-                                loadedImage = Image.FromStream(ms);
-                                ms.ReadToEnd();
+                                os.CopyTo(ms);
+                                Image img = Image.FromStream(ms);
+                                if (img.Width > IconFrame.MaxDimension || img.Height > IconFrame.MaxDimension) throw new InvalidDataException();
+
+                                loadedImage = new Bitmap(img.Width, img.Height, PixelFormat.Format32bppArgb);
+                                using (Graphics g = Graphics.FromImage(loadedImage))
+                                    g.DrawImage(img, 0, 0, img.Width, img.Height);
+                                img.Dispose();
                             }
                             #endregion
                         }

@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 
 using nQuant;
 
@@ -362,6 +361,9 @@ namespace UIconEdit
                             pAlpha[x] = uint.MaxValue;
                     }
                 }
+                fullColor.UnlockBits(fullData);
+                alphaMask.UnlockBits(alphaData);
+
                 Bitmap oldAlpha = alphaMask;
                 alphaMask = oldAlpha.Clone(fullRect, alphaFormat);
                 oldAlpha.Dispose();

@@ -137,6 +137,7 @@ namespace UIconEdit
             {
                 _stream = null;
                 _leaveOpen = true;
+                _ms = null;
                 base.Dispose(disposing);
             }
         }

@@ -140,19 +140,44 @@ namespace UIconEdit
                         BitDepth bitDepth;
                         if (dibSize == pngLittleEndian)
                         {
-                            bitDepth = BitDepth.Bit32;
                             #region Load Png
+                            if (loadedId == IconTypeCode.Cursor)
+                            {
+                                bitDepth = BitDepth.Bit32;
+                            }
+                            else
+                            {
+                                switch (entry.YBitsPerpixel)
+                                {
+                                    case 1:
+                                        bitDepth = BitDepth.Color2;
+                                        break;
+                                    case 4:
+                                        bitDepth = BitDepth.Color16;
+                                        break;
+                                    case 8:
+                                        bitDepth = BitDepth.Color256;
+                                        break;
+                                    case 24:
+                                        bitDepth = BitDepth.Bit24;
+                                        break;
+                                    default: //32
+                                        bitDepth = BitDepth.Bit32;
+                                        break;
+                                }
+                            }
                             using (OffsetStream os = new OffsetStream(input, new byte[] { 0x89, 0x50, 0x4e, 0x47 }, entry.ResourceLength - 4, true))
                             using (MemoryStream ms = new MemoryStream())
                             {
                                 os.CopyTo(ms);
-                                Image img = Image.FromStream(ms);
-                                if (img.Width > IconFrame.MaxDimension || img.Height > IconFrame.MaxDimension) throw new InvalidDataException();
+                                using (Image img = Image.FromStream(ms))
+                                {
+                                    if (img.Width > IconFrame.MaxDimension || img.Height > IconFrame.MaxDimension) throw new InvalidDataException();
 
-                                loadedImage = new Bitmap(img.Width, img.Height, PixelFormat.Format32bppArgb);
-                                using (Graphics g = Graphics.FromImage(loadedImage))
-                                    g.DrawImage(img, 0, 0, img.Width, img.Height);
-                                img.Dispose();
+                                    loadedImage = new Bitmap(img.Width, img.Height, PixelFormat.Format32bppArgb);
+                                    using (Graphics g = Graphics.FromImage(loadedImage))
+                                        g.DrawImage(img, 0, 0, img.Width, img.Height);
+                                }
                             }
                             #endregion
                         }
@@ -162,85 +187,64 @@ namespace UIconEdit
                             using (OffsetStream ms = new OffsetStream(input, entry.ResourceLength - 4, true))
                             using (BinaryReader curReader = new BinaryReader(ms))
                             {
-                                int width = curReader.ReadInt32();
-                                int height = curReader.ReadInt32() / 2;
-                                if (curReader.ReadInt16() != 1) throw new InvalidDataException();
-                                short bitsPerPixel = curReader.ReadInt16();
-                                if (loadedId == IconTypeCode.Icon && bitsPerPixel != entry.YBitsPerpixel)
-                                    throw new InvalidDataException();
-                                PixelFormat format;
-                                int maxPalette;
+                                int width = curReader.ReadInt32(); //8
+                                int height = curReader.ReadInt32(); //12
+                                if ((height & 1) == 1) throw new InvalidDataException();
+                                short colorPanes = curReader.ReadInt16(); //14
+                                short bitsPerPixel = curReader.ReadInt16(); //16
+
                                 switch (bitsPerPixel)
                                 {
                                     case 1:
-                                        format = PixelFormat.Format1bppIndexed;
-                                        maxPalette = 2;
                                         bitDepth = BitDepth.Color2;
                                         break;
                                     case 4:
-                                        format = PixelFormat.Format4bppIndexed;
-                                        maxPalette = 16;
                                         bitDepth = BitDepth.Color16;
                                         break;
                                     case 8:
-                                        format = PixelFormat.Format8bppIndexed;
-                                        maxPalette = 256;
                                         bitDepth = BitDepth.Color256;
                                         break;
                                     case 24:
-                                        format = PixelFormat.Format24bppRgb;
-                                        maxPalette = 0;
                                         bitDepth = BitDepth.Bit24;
                                         break;
                                     case 32:
-                                        format = PixelFormat.Format32bppArgb;
-                                        maxPalette = 0;
                                         bitDepth = BitDepth.Bit32;
                                         break;
                                     default:
                                         throw new InvalidDataException();
                                 }
-                                if (curReader.ReadInt32() != 0) throw new InvalidDataException();
-                                int imageSize = curReader.ReadInt32();
-                                curReader.ReadInt64(); curReader.ReadInt64(); //Skip ahead 16 bytes
-                                Bitmap loadedBmp = new Bitmap(width, height, format), alphaBmp = new Bitmap(width, height, PixelFormat.Format1bppIndexed);
-                                Rectangle fullRect = new Rectangle(0, 0, width, height);
+                                if (loadedId != IconTypeCode.Cursor && bitsPerPixel != entry.YBitsPerpixel)
+                                    throw new InvalidDataException();
 
-                                for (int i = 0; i < maxPalette; i++)
+                                MemoryStream bufferStream = new MemoryStream();
+                                using (BinaryWriter bufferWriter = new BinaryWriter(bufferStream, new UTF8Encoding(), true))
                                 {
-                                    byte r = curReader.ReadByte(), g = curReader.ReadByte(), b = curReader.ReadByte(), a = curReader.ReadByte();
-                                    loadedBmp.Palette.Entries[i] = Color.FromArgb(a, r, g, b);
+                                    bufferWriter.Write(ushort.MinValue); //2
+                                    bufferWriter.Write((ushort)IconTypeCode.Icon); //4
+                                    bufferWriter.Write((short)1); //6
+                                    bufferWriter.Write(entry.BWidth); //7
+                                    bufferWriter.Write(entry.BHeight); //8
+                                    bufferWriter.Write(entry.ColorCount); //9
+                                    bufferWriter.Write(byte.MinValue); //10
+                                    bufferWriter.Write((short)1); //12
+                                    bufferWriter.Write(bitsPerPixel); //14
+                                    bufferWriter.Write(entry.ResourceLength); //18
+                                    bufferWriter.Write(22); //22
+
+                                    bufferWriter.Write(dibSize); //26
+                                    bufferWriter.Write(width); //30
+                                    bufferWriter.Write(height); //34
+                                    height /= 2;
+                                    bufferWriter.Write(colorPanes); //36
+                                    bufferWriter.Write(bitsPerPixel); //38
                                 }
 
-                                CopyData(curReader, ref alphaBmp, fullRect);
-                                CopyData(curReader, ref loadedBmp, fullRect);
-
-                                unsafe
-                                {
-                                    BitmapData loadedData = loadedBmp.LockBits(fullRect, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-                                    BitmapData alphaData = alphaBmp.LockBits(fullRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-                                    long length = (long)width * height;
-
-                                    uint* pLoaded = (uint*)loadedData.Scan0, pAlpha = (uint*)alphaData.Scan0;
-
-                                    for (int i = 0; i < length; i++)
-                                    {
-                                        const uint noAlpha = 0xFFFFFF, alpha = ~noAlpha;
-
-                                        if (pAlpha[i] == uint.MaxValue)
-                                            pLoaded[i] |= alpha;
-                                        else
-                                            pLoaded[i] &= noAlpha;
-                                    }
-                                    loadedBmp.UnlockBits(loadedData);
-                                    alphaBmp.UnlockBits(alphaData);
-                                }
-
-                                alphaBmp.Dispose();
-                                loadedImage = loadedBmp;
-
-                                ms.ReadToEnd();
+                                ms.CopyTo(bufferStream);
+                                bufferStream.Seek(0, SeekOrigin.Begin);
+                                Icon icon = new Icon(bufferStream);
+                                loadedImage = new Bitmap(icon.Width, icon.Height, PixelFormat.Format32bppArgb);
+                                using (Graphics g = Graphics.FromImage(loadedImage))
+                                    g.DrawIcon(icon, new Rectangle(0, 0, width, height));
                             }
                             #endregion
                         }
@@ -264,26 +268,6 @@ namespace UIconEdit
                 catch { throw new InvalidDataException(); }
 
                 return returner;
-            }
-        }
-
-        internal static unsafe void CopyData(BinaryReader reader, ref Bitmap bitmap, Rectangle fullRect)
-        {
-            BitmapData bmpData = bitmap.LockBits(fullRect, ImageLockMode.WriteOnly, bitmap.PixelFormat);
-
-            for (int y = bitmap.Height - 1; y >= 0; y--)
-            {
-                byte[] buffer = reader.ReadBytes(bmpData.Stride);
-                if (buffer.Length < bmpData.Stride) throw new EndOfStreamException();
-                Marshal.Copy(buffer, 0, bmpData.Scan0 + (y * bmpData.Stride), buffer.Length);
-            }
-            bitmap.UnlockBits(bmpData);
-
-            if (bitmap.PixelFormat != PixelFormat.Format32bppArgb)
-            {
-                Bitmap newBmp = bitmap.Clone(fullRect, PixelFormat.Format32bppArgb);
-                bitmap.Dispose();
-                bitmap = newBmp;
             }
         }
 

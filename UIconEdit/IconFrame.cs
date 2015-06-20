@@ -43,6 +43,8 @@ namespace UIconEdit
     /// </summary>
     public class IconFrame
     {
+        const byte defaultAlphaThreshold = 96;
+
         /// <summary>
         /// Creates a new instance with the specified image.
         /// </summary>
@@ -66,11 +68,87 @@ namespace UIconEdit
         /// </exception>
         public IconFrame(Image baseImage, BitDepth bitDepth, short width, short height, byte alphaThreshold)
         {
-            _setImage(baseImage, "image");
+            _setImage(baseImage, "baseImage");
             _setDepth(bitDepth, "bitDepth");
             _setSize(ref _width, width, "width");
             _setSize(ref _height, height, "height");
             _alphaThreshold = alphaThreshold;
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="width">The width of the new image.</param>
+        /// <param name="height">The height of the new image.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="baseImage"/> is disposed.
+        /// </exception>
+        public IconFrame(Image baseImage, BitDepth bitDepth, short width, short height)
+            : this(baseImage, bitDepth, width, height, defaultAlphaThreshold)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
+        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="baseImage"/> is disposed.
+        /// </exception>
+        public IconFrame(Image baseImage, BitDepth bitDepth, byte alphaThreshold)
+        {
+            _setImage(baseImage, "baseImage");
+            if (baseImage.Width < MinDimension || baseImage.Width > MaxDimension || baseImage.Height < MinDimension || baseImage.Height > MaxDimension)
+                throw new ArgumentException("The image size is out of the supported range.", "baseImage");
+            _width = (short)baseImage.Width;
+            _height = (short)baseImage.Height;
+            _setDepth(bitDepth, "bitDepth");
+            _alphaThreshold = alphaThreshold;
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="baseImage"/> is disposed.
+        /// </exception>
+        public IconFrame(Image baseImage, BitDepth bitDepth)
+            : this(baseImage, bitDepth, defaultAlphaThreshold)
+        {
         }
 
         /// <summary>

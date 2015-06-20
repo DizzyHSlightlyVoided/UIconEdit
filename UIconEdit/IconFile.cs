@@ -42,6 +42,31 @@ namespace UIconEdit
     public class IconFile : IconFileBase
     {
         /// <summary>
+        /// Loads an <see cref="IconFile"/> from the specified stream.
+        /// </summary>
+        /// <param name="input">A stream containing an icon or cursor file.</param>
+        /// <returns>An <see cref="IconFile"/> loaded from <paramref name="input"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="input"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="input"/> is closed or does not support reading.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="input"/> is closed.
+        /// </exception>
+        /// <exception cref="InvalidDataException">
+        /// <paramref name="input"/> does not contain a valid icon or cursor file.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static new IconFile Load(Stream input)
+        {
+            return (IconFile)Load(input, IconTypeCode.Icon);
+        }
+
+        /// <summary>
         /// Gets the 16-bit type code for the current instance.
         /// </summary>
         public override IconTypeCode ID
@@ -53,7 +78,7 @@ namespace UIconEdit
         /// <summary>
         /// Gets a collection containing all frames in the icon file.
         /// </summary>
-        protected override ICollection<IconFrame> FrameCollection
+        protected override IFrameCollection FrameCollection
         {
             get { return _set; }
         }
@@ -89,7 +114,7 @@ namespace UIconEdit
         /// Returns the color panes.
         /// </summary>
         /// <param name="frame">This parameter is ignored.</param>
-        protected override short GetImgX(IconFrame frame)
+        protected override ushort GetImgX(IconFrame frame)
         {
             return 1;
         }
@@ -99,7 +124,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="frame">The frame for which to get the bits-per-pixel.</param>
         /// <returns>The number of bits per pixel in <paramref name="frame"/>.</returns>
-        protected override short GetImgY(IconFrame frame)
+        protected override ushort GetImgY(IconFrame frame)
         {
             return frame.BitsPerPixel;
         }
@@ -108,7 +133,7 @@ namespace UIconEdit
         /// Represents a hash set of frames. This collection treats <see cref="IconFrame"/> objects with the same
         /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> as though they were equal.
         /// </summary>
-        public class FrameSet : IReadOnlyCollection<IconFrame>, ISet<IconFrame>, ICollection
+        public class FrameSet : IReadOnlyCollection<IconFrame>, ISet<IconFrame>, ICollection, IFrameCollection
         {
             private HashSet<IconFrame> _set;
 

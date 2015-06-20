@@ -44,6 +44,269 @@ namespace UIconEdit
     public abstract class IconFileBase
     {
         /// <summary>
+        /// Loads an <see cref="IconFileBase"/> implementation from the specified stream.
+        /// </summary>
+        /// <param name="input">A stream containing an icon or cursor file.</param>
+        /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="input"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="input"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="input"/> is closed or does not support reading.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="input"/> is closed.
+        /// </exception>
+        /// <exception cref="InvalidDataException">
+        /// <paramref name="input"/> does not contain a valid icon or cursor file.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static IconFileBase Load(Stream input)
+        {
+            return Load(input, null);
+        }
+
+        internal static IconFileBase Load(Stream input, IconTypeCode? id)
+        {
+            using (BinaryReader reader = new BinaryReader(input, new UTF8Encoding(), true))
+            {
+                if (reader.ReadInt16() != 0) throw new InvalidDataException();
+
+                IconTypeCode loadedId = (IconTypeCode)reader.ReadInt16();
+                if (id.HasValue && loadedId != id.Value) throw new InvalidDataException();
+
+                IconFileBase returner;
+
+                switch (loadedId)
+                {
+                    case IconTypeCode.Cursor:
+                        throw new NotImplementedException();
+                    case IconTypeCode.Icon:
+                        returner = new IconFile();
+                        break;
+                    default:
+                        throw new InvalidDataException();
+                }
+
+                ushort frameCount = reader.ReadUInt16();
+
+                if (frameCount == 0) throw new InvalidDataException();
+
+                IconDirEntry[] frameList = new IconDirEntry[frameCount];
+                long offset = (16 * frameCount) + 6;
+
+                for (int i = 0; i < frameCount; i++)
+                {
+                    IconDirEntry entry = new IconDirEntry();
+                    entry.BWidth = reader.ReadByte();
+                    entry.BHeight = reader.ReadByte();
+                    entry.ColorCount = reader.ReadByte();
+                    reader.ReadByte();
+                    entry.XPlanes = reader.ReadUInt16();
+                    entry.YBitsPerpixel = reader.ReadUInt16();
+                    entry.ResourceLength = reader.ReadInt32();
+                    if (entry.ResourceLength <= sizeof(uint)) throw new InvalidDataException();
+                    entry.ImageOffset = reader.ReadInt32();
+                    if (entry.ImageOffset < offset) throw new InvalidDataException();
+                    frameList[i] = entry;
+                }
+
+                try
+                {
+                    Array.Sort(frameList);
+                }
+                catch (InvalidDataException) { throw; }
+                catch { throw new InvalidDataException(); }
+
+                const int bufferSize = 8192;
+                try
+                {
+                    foreach (IconDirEntry entry in frameList)
+                    {
+                        long gapLength = entry.ImageOffset - offset;
+                        byte[] curBuffer = new byte[bufferSize];
+                        while (gapLength > 0)
+                            gapLength -= input.Read(curBuffer, 0, (int)Math.Min(gapLength, bufferSize));
+
+                        Image loadedImage;
+
+                        int dibSize = reader.ReadInt32();
+                        if (dibSize < MinDibSize) throw new InvalidDataException();
+
+                        const int pngLittleEndian = 0x474e5089; //"\u0089PNG"  in little-endian order.
+                        BitDepth bitDepth;
+                        if (dibSize == pngLittleEndian)
+                        {
+                            bitDepth = BitDepth.Bit32;
+                            #region Load Png
+                            using (MemoryStream ms = new MemoryStream(entry.ResourceLength))
+                            using (BinaryWriter writer = new BinaryWriter(ms))
+                            {
+                                writer.Write(pngLittleEndian);
+                                int curLength = entry.ResourceLength - sizeof(uint);
+
+                                while (curLength > 0)
+                                {
+                                    int read = input.Read(curBuffer, 0, Math.Min(curLength, bufferSize));
+                                    ms.Write(curBuffer, 0, read);
+                                    curLength -= read;
+                                }
+                                ms.Seek(0, SeekOrigin.Begin);
+
+                                loadedImage = Image.FromStream(ms);
+                            }
+                            #endregion
+                        }
+                        else
+                        {
+                            #region Load Bmp
+                            int width = reader.ReadInt32();
+                            int height = reader.ReadInt32();
+                            if (reader.ReadInt16() != 1) throw new InvalidDataException();
+                            short bitsPerPixel = reader.ReadInt16();
+                            if (loadedId == IconTypeCode.Icon && bitsPerPixel != entry.YBitsPerpixel)
+                                throw new InvalidDataException();
+                            PixelFormat format;
+                            int maxPalette;
+                            switch (bitsPerPixel)
+                            {
+                                case 1:
+                                    format = PixelFormat.Format1bppIndexed;
+                                    maxPalette = 2;
+                                    bitDepth = BitDepth.Color2;
+                                    break;
+                                case 4:
+                                    format = PixelFormat.Format4bppIndexed;
+                                    maxPalette = 16;
+                                    bitDepth = BitDepth.Color16;
+                                    break;
+                                case 8:
+                                    format = PixelFormat.Format8bppIndexed;
+                                    maxPalette = 256;
+                                    bitDepth = BitDepth.Color256;
+                                    break;
+                                case 24:
+                                    format = PixelFormat.Format24bppRgb;
+                                    maxPalette = 0;
+                                    bitDepth = BitDepth.Bit24;
+                                    break;
+                                case 32:
+                                    format = PixelFormat.Format32bppArgb;
+                                    maxPalette = 0;
+                                    bitDepth = BitDepth.Bit32;
+                                    break;
+                                default:
+                                    throw new InvalidDataException();
+                            }
+                            if (reader.ReadInt32() != 0) throw new InvalidDataException();
+                            int imageSize = reader.ReadInt32();
+                            reader.ReadInt64(); reader.ReadInt64(); //Skip ahead 16 bytes
+                            Bitmap loadedBmp = new Bitmap(width, height, format), alphaBmp = new Bitmap(width, height, PixelFormat.Format1bppIndexed);
+                            Rectangle fullRect = new Rectangle(0, 0, width, height);
+
+                            for (int i = 0; i < maxPalette; i++)
+                            {
+                                byte r = reader.ReadByte(), g = reader.ReadByte(), b = reader.ReadByte(), a = reader.ReadByte();
+                                loadedBmp.Palette.Entries[i] = Color.FromArgb(a, r, g, b);
+                            }
+
+                            CopyData(reader, ref alphaBmp, fullRect);
+                            CopyData(reader, ref loadedBmp, fullRect);
+
+                            unsafe
+                            {
+                                BitmapData loadedData = loadedBmp.LockBits(fullRect, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+                                BitmapData alphaData = alphaBmp.LockBits(fullRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+                                long length = (long)width * height;
+
+                                uint* pLoaded = (uint*)loadedData.Scan0, pAlpha = (uint*)alphaData.Scan0;
+
+                                for (int i = 0; i < length; i++)
+                                {
+                                    const uint noAlpha = 0xFFFFFF, alpha = ~noAlpha;
+
+                                    if (pAlpha[i] == uint.MaxValue)
+                                        pLoaded[i] |= alpha;
+                                    else
+                                        pLoaded[i] &= noAlpha;
+                                }
+                                loadedBmp.UnlockBits(loadedData);
+                                alphaBmp.UnlockBits(alphaData);
+                            }
+
+                            alphaBmp.Dispose();
+                            loadedImage = loadedBmp;
+                            #endregion
+                        }
+
+                        IconFrame frame;
+                        if (id == IconTypeCode.Cursor)
+                            frame = new CursorFrame(loadedImage, bitDepth, entry.XPlanes, entry.YBitsPerpixel);
+                        else
+                            frame = new IconFrame(loadedImage, bitDepth);
+                        if (!returner.FrameCollection.Add(frame))
+                        {
+                            returner.FrameCollection.Remove(frame);
+                            returner.FrameCollection.Add(frame);
+                        }
+                    }
+                }
+                catch (InvalidDataException) { throw; }
+                catch (ObjectDisposedException) { throw; }
+                catch (IOException) { throw; }
+                catch { throw new InvalidDataException(); }
+
+                return returner;
+            }
+        }
+
+        internal static unsafe void CopyData(BinaryReader reader, ref Bitmap bitmap, Rectangle fullRect)
+        {
+            BitmapData bmpData = bitmap.LockBits(fullRect, ImageLockMode.WriteOnly, bitmap.PixelFormat);
+
+            for (int y = bitmap.Height - 1; y >= 0; y--)
+            {
+                byte[] buffer = reader.ReadBytes(bmpData.Stride);
+                if (buffer.Length < bmpData.Stride) throw new EndOfStreamException();
+                Marshal.Copy(buffer, 0, bmpData.Scan0 + (y * bmpData.Stride), buffer.Length);
+            }
+            bitmap.UnlockBits(bmpData);
+
+            if (bitmap.PixelFormat != PixelFormat.Format32bppArgb)
+            {
+                Bitmap newBmp = bitmap.Clone(fullRect, PixelFormat.Format32bppArgb);
+                bitmap.Dispose();
+                bitmap = newBmp;
+            }
+        }
+
+        private class IconDirEntry : IComparable<IconDirEntry>
+        {
+            public byte BWidth;
+            public byte BHeight;
+            public byte ColorCount;
+            public ushort XPlanes;
+            public ushort YBitsPerpixel;
+            public int ResourceLength;
+            public int ImageOffset;
+            public long End { get { return (long)ResourceLength + ImageOffset; } }
+
+            public int CompareTo(IconDirEntry other)
+            {
+                if (ReferenceEquals(this, other)) return 0;
+                if (ReferenceEquals(other, null)) return 1;
+
+                if (End <= other.ImageOffset) return -1; //If this end is comes before the other's offset
+                if (other.End <= ImageOffset) return 1; //If the other's end comes before this offset
+
+                throw new InvalidDataException(); //If there's any kind of overlap, someone's wrong.
+            }
+        }
+
+        /// <summary>
         /// When overridden in a derived class, gets the 16-bit identifier for the file type.
         /// </summary>
         public abstract IconTypeCode ID { get; }
@@ -52,21 +315,21 @@ namespace UIconEdit
         /// When overridden in a derived class,
         /// gets a collection containing all frames in the icon file.
         /// </summary>
-        protected abstract ICollection<IconFrame> FrameCollection { get; }
+        protected abstract IFrameCollection FrameCollection { get; }
 
         /// <summary>
         /// When overridden in a derived class, computes the 16-bit X component.
         /// </summary>
         /// <param name="frame">The image frame to calculate.</param>
         /// <returns>In icon files, the color panes. In cursor files, the horizontal offset of the hotspot from the left in pixels.</returns>
-        protected abstract short GetImgX(IconFrame frame);
+        protected abstract ushort GetImgX(IconFrame frame);
 
         /// <summary>
         /// When overridden in a derived class, computes the 16-bit Y component.
         /// </summary>
         /// <param name="frame">The image frame to calculate.</param>
         /// <returns>In icon files, the number of bits per pixel. In cursor files, the vertical offset of the hotspot from the top, in pixels.</returns>
-        protected abstract short GetImgY(IconFrame frame);
+        protected abstract ushort GetImgY(IconFrame frame);
 
         internal void Save(Stream output, ICollection<IconFrame> frameCollection)
         {
@@ -78,7 +341,7 @@ namespace UIconEdit
                 writer.Write((short)ID);
                 writer.Write(frames.Count);
 
-                int offset = 6;
+                uint offset = 6;
 
                 List<MemoryStream> streamList = new List<MemoryStream>();
 
@@ -107,15 +370,24 @@ namespace UIconEdit
         /// <exception cref="ArgumentNullException">
         /// <paramref name="output"/> is <c>null</c>.
         /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="output"/> is closed or does not support writing.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="output"/> is closed.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
         public void Save(Stream output)
         {
             if (FrameCollection.Count == 0) throw new InvalidOperationException("No images set.");
             Save(output, FrameCollection);
         }
 
-        const int dibSize = 40;
+        const int MinDibSize = 40;
 
-        private void WriteImage(BinaryWriter writer, IconFrame frame, ref int offset, out MemoryStream writeStream)
+        private void WriteImage(BinaryWriter writer, IconFrame frame, ref uint offset, out MemoryStream writeStream)
         {
             var image = frame.BaseImage;
             if (frame.Width > byte.MaxValue) writer.Write(byte.MinValue);
@@ -136,7 +408,7 @@ namespace UIconEdit
             writer.Write(GetImgX(frame)); //6
             writer.Write(GetImgY(frame)); //8
 
-            int length;
+            uint length;
             writeStream = new MemoryStream();
             if (alphaMask == null)
             {
@@ -146,7 +418,7 @@ namespace UIconEdit
             {
                 using (BinaryWriter msWriter = new BinaryWriter(writeStream, new UTF8Encoding(), true))
                 {
-                    msWriter.Write(dibSize);
+                    msWriter.Write(MinDibSize);
                     msWriter.Write(quantized.Width);
                     msWriter.Write(quantized.Height + alphaMask.Height);
                     msWriter.Write((short)1);
@@ -159,9 +431,7 @@ namespace UIconEdit
 
                     msWriter.Write((alphaData.Stride * fullRect.Height) + (imageData.Stride * fullRect.Height));
 
-                    msWriter.Write(0L); //Skip resolution
-                    msWriter.Write(paletteCount);
-                    msWriter.Write(0); //Skip "important colors" which nobody uses anyway
+                    msWriter.Write(new byte[16]); //Skip resolution (8 bytes), palette count (4 bytes), and "important colors" (4 bytes)
 
                     if (quantized.Palette != null)
                     {
@@ -199,7 +469,7 @@ namespace UIconEdit
                 }
             }
 
-            length = (int)writeStream.Length;
+            length = (uint)writeStream.Length;
             writer.Write(length); //12
             writer.Write(offset); //16
             offset += length;
@@ -219,5 +489,19 @@ namespace UIconEdit
         /// Indicates a cursor (.CUR) file.
         /// </summary>
         Cursor = 2,
+    }
+
+    /// <summary>
+    /// Interface for <see cref="IconFrame"/> collections.
+    /// </summary>
+    public interface IFrameCollection : ICollection<IconFrame>
+    {
+        /// <summary>
+        /// Adds the specified item to the collection.
+        /// </summary>
+        /// <param name="item">The item to add to the collection.</param>
+        /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> or an icon frame like it
+        /// already exists in the collection.</returns>
+        new bool Add(IconFrame item);
     }
 }

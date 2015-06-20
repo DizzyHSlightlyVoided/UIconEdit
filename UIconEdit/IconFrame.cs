@@ -282,7 +282,7 @@ namespace UIconEdit
             }
         }
 
-        internal short BitsPerPixel
+        internal ushort BitsPerPixel
         {
             get
             {
@@ -443,7 +443,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth, short hotspotX, short hotspotY, byte alphaThreshold)
+        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
             : base(baseImage, width, height, bitDepth, alphaThreshold)
         {
             _x = hotspotX;
@@ -471,7 +471,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth, short hotspotX, short hotspotY)
+        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
             : this(baseImage, width, height, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
         }
@@ -547,7 +547,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, BitDepth bitDepth, short hotspotX, short hotspotY, byte alphaThreshold)
+        public CursorFrame(Image baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
             : base(baseImage, bitDepth, alphaThreshold)
         {
             _x = hotspotX;
@@ -573,7 +573,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, BitDepth bitDepth, short hotspotX, short hotspotY)
+        public CursorFrame(Image baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
             : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
         }
@@ -624,21 +624,21 @@ namespace UIconEdit
         {
         }
 
-        private short _x;
+        private ushort _x;
         /// <summary>
         /// Gets and sets the horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
         /// </summary>
-        public short HotspotX
+        public ushort HotspotX
         {
             get { return _x; }
             set { _x = value; }
         }
 
-        private short _y;
+        private ushort _y;
         /// <summary>
         /// Gets and sets the vertical offset of the cursor's hotspot from the top of the cursor in pixels.
         /// </summary>
-        public short HotspotY
+        public ushort HotspotY
         {
             get { return _y; }
             set { _y = value; }

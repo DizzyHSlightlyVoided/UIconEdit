@@ -37,16 +37,21 @@ namespace UIconEdit
     {
         private bool _leaveOpen;
         private Stream _stream;
+
+        private long _length, _remainingLength;
         private MemoryStream _ms;
 
-        private int _offset, _length, _remainingLength;
-
-        internal OffsetStream(Stream stream, int offset, int length, bool leaveOpen)
+        internal OffsetStream(Stream stream, long length, bool leaveOpen)
         {
             _stream = stream;
-            _offset = offset;
             _leaveOpen = leaveOpen;
             _length = _remainingLength = length;
+        }
+
+        internal OffsetStream(Stream stream, byte[] buffer, long length, bool leaveOpen)
+            : this(stream, length, leaveOpen)
+        {
+            _ms = new MemoryStream(buffer);
         }
 
         public override bool CanRead
@@ -79,31 +84,29 @@ namespace UIconEdit
         {
         }
 
-        public override int Read(byte[] array, int offset, int count)
+        public override int Read(byte[] buffer, int offset, int count)
         {
             if (_stream == null) throw new ObjectDisposedException(null);
-            if (array == null) throw new ArgumentNullException("buffer");
-            if (_ms == null)
+            if (buffer == null) throw new ArgumentNullException("buffer");
+
+            new ArraySegment<byte>(buffer, offset, count);
+
+            if (_ms != null)
             {
-                _ms = new MemoryStream(_length);
-                const int bufferSize = 8192;
-                byte[] buffer = new byte[bufferSize];
-                while (_offset > 0)
-                    _offset -= _stream.Read(buffer, 0, Math.Min(bufferSize, _offset));
-
-                int length = _length;
-
-                int read = _stream.Read(buffer, 0, Math.Min(length, bufferSize));
-                while (read > 0 && length > 0)
+                int msRead = _ms.Read(buffer, offset, count);
+                count -= msRead;
+                offset += msRead;
+                if (_ms.Position >= _ms.Length)
                 {
-                    length -= read;
-                    _ms.Write(buffer, 0, read);
-                    read = _stream.Read(buffer, 0, Math.Min(length, bufferSize));
+                    _ms.Dispose();
+                    _ms = null;
                 }
-                _ms.Seek(0, SeekOrigin.Begin);
             }
+            if (count == 0 || _remainingLength <= 0) return 0;
 
-            return _ms.Read(array, offset, count);
+            int read = _stream.Read(buffer, offset, (int)Math.Min(count, _remainingLength));
+            _remainingLength -= read;
+            return read;
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -123,38 +126,29 @@ namespace UIconEdit
 
         protected override void Dispose(bool disposing)
         {
+            if (_ms != null)
+                _ms.Dispose();
             try
             {
-                if (_ms != null)
-                    _ms.Dispose();
                 if (_stream != null && disposing && !_leaveOpen)
                     _stream.Dispose();
             }
             finally
             {
-                _ms = null;
                 _stream = null;
                 _leaveOpen = true;
                 base.Dispose(disposing);
             }
         }
 
-        public void CopyTo(BinaryWriter writer, int bufferSize)
+        public void ReadToEnd()
         {
+            if (_remainingLength <= 0) return;
+
+            const int bufferSize = 8192;
             byte[] buffer = new byte[bufferSize];
-
-            int read = Read(buffer, 0, bufferSize);
-
-            while (read != 0)
-            {
-                writer.Write(buffer, 0, read);
-                read = Read(buffer, 0, bufferSize);
-            }
-        }
-
-        public void CopyTo(BinaryWriter writer)
-        {
-            CopyTo(writer, 8192);
+            while (_remainingLength > 0)
+                Read(buffer, 0, bufferSize);
         }
     }
 }

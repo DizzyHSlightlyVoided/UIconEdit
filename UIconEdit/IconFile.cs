@@ -96,7 +96,7 @@ namespace UIconEdit
         /// <summary>
         /// Gets a collection containing all frames in the icon file.
         /// </summary>
-        public FrameList Frames { get { return _set; } }
+        public new FrameList Frames { get { return _set; } }
 
         /// <summary>
         /// Gets an <see cref="Icon"/> from a single frame.
@@ -400,6 +400,21 @@ namespace UIconEdit
             /// Copies all elements in the list to the specified array.
             /// </summary>
             /// <param name="array">The array to which all elements in the list will be copied.</param>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="array"/> is <c>null</c>.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// The length of <paramref name="array"/> is less than <see cref="Count"/>.
+            /// </exception>
+            public void CopyTo(IconFrame[] array)
+            {
+                _items.CopyTo(array);
+            }
+
+            /// <summary>
+            /// Copies all elements in the list to the specified array, starting at the specified index.
+            /// </summary>
+            /// <param name="array">The array to which all elements in the list will be copied.</param>
             /// <param name="arrayIndex">The index in <paramref name="array"/> at which copying begins.</param>
             /// <exception cref="ArgumentNullException">
             /// <paramref name="array"/> is <c>null</c>.
@@ -413,6 +428,29 @@ namespace UIconEdit
             public void CopyTo(IconFrame[] array, int arrayIndex)
             {
                 _items.CopyTo(array, arrayIndex);
+            }
+
+            /// <summary>
+            /// Copies a range of elements in the list to the specified array.
+            /// </summary>
+            /// <param name="index">The index of the first item to copy.</param>
+            /// <param name="array">The array to which all elements in the list will be copied.</param>
+            /// <param name="arrayIndex">The index in <paramref name="array"/> at which copying begins.</param>
+            /// <param name="count">The number of elements to copy.</param>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="array"/> is <c>null</c>.
+            /// </exception>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/>, <paramref name="arrayIndex"/>, or <paramref name="count"/> is less than 0.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// <para><paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the current instance.</para>
+            /// <para>-OR-</para>
+            /// <para><paramref name="arrayIndex"/> and <paramref name="count"/> do not indicate a valid range of elements in <paramref name="array"/>.</para>
+            /// </exception>
+            public void CopyTo(int index, IconFrame[] array, int arrayIndex, int count)
+            {
+                _items.CopyTo(index, array, arrayIndex, count);
             }
 
             /// <summary>

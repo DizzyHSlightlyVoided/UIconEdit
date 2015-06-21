@@ -327,6 +327,11 @@ namespace UIconEdit
         protected abstract IFrameCollection FrameCollection { get; }
 
         /// <summary>
+        /// Gets a collection containing all frames in the icon file. 
+        /// </summary>
+        public IFrameCollection Frames { get { return FrameCollection; } }
+
+        /// <summary>
         /// When overridden in a derived class, computes the 16-bit X component.
         /// </summary>
         /// <param name="frame">The image frame to calculate.</param>

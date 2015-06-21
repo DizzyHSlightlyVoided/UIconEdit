@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 
@@ -133,6 +134,8 @@ namespace UIconEdit
         /// Represents a hash set of frames. This collection treats <see cref="IconFrame"/> objects with the same
         /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> as though they were equal.
         /// </summary>
+        [DebuggerDisplay("Count = {Count}")]
+        [DebuggerTypeProxy(typeof(DebugView))]
         public class FrameSet : IReadOnlyCollection<IconFrame>, ISet<IconFrame>, ICollection, IFrameCollection
         {
             private HashSet<IconFrame> _set;
@@ -383,6 +386,19 @@ namespace UIconEdit
                 return result;
             }
 
+            /// <summary>
+            /// Removes all elements matching the specified predicate.
+            /// </summary>
+            /// <param name="match">A predicate used to define the elements to remove.</param>
+            /// <returns>The number of elements which were removed.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public int RemoveWhere(Predicate<IconFrame> match)
+            {
+                return _set.RemoveWhere(match);
+            }
+
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
@@ -400,12 +416,18 @@ namespace UIconEdit
 
             bool ICollection.IsSynchronized
             {
-                get { return ((ICollection)_set).IsSynchronized; }
+                get { return false; }
             }
 
+            private object _syncRoot;
             object ICollection.SyncRoot
             {
-                get { return ((ICollection)_set).SyncRoot; }
+                get
+                {
+                    if (_syncRoot == null)
+                        _syncRoot = System.Threading.Interlocked.CompareExchange(ref _syncRoot, new object(), null);
+                    return _syncRoot;
+                }
             }
 
             void ICollection.CopyTo(Array array, int index)
@@ -470,6 +492,27 @@ namespace UIconEdit
                 void IEnumerator.Reset()
                 {
                     _enum.Reset();
+                }
+            }
+
+            private class DebugView
+            {
+                private FrameSet _set;
+
+                public DebugView(FrameSet set)
+                {
+                    _set = set;
+                }
+
+                [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+                public IconFrame[] Items
+                {
+                    get
+                    {
+                        IconFrame[] items = new IconFrame[_set.Count];
+                        _set.CopyTo(items, 0);
+                        return items;
+                    }
                 }
             }
         }

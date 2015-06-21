@@ -196,9 +196,12 @@ namespace UIconEdit
                             {
                                 int width = curReader.ReadInt32(); //8
                                 int height = curReader.ReadInt32(); //12
-                                if ((height & 1) == 1) throw new InvalidDataException();
-                                short colorPanes = curReader.ReadInt16(); //14
-                                short bitsPerPixel = curReader.ReadInt16(); //16
+                                if (width > IconFrame.MaxDimension || width < IconFrame.MinDimension ||
+                                    height > (IconFrame.MaxDimension << 1) || height < (IconFrame.MinDimension << 1))
+                                    throw new InvalidDataException();
+
+                                ushort colorPanes = curReader.ReadUInt16(); //14
+                                ushort bitsPerPixel = curReader.ReadUInt16(); //16
 
                                 switch (bitsPerPixel)
                                 {
@@ -220,6 +223,9 @@ namespace UIconEdit
                                     default:
                                         throw new InvalidDataException();
                                 }
+                                if (bitDepth != BitDepth.Bit32 && (height & 1) != 1)
+                                    throw new InvalidDataException();
+
                                 if (loadedId != IconTypeCode.Cursor && bitsPerPixel != entry.YBitsPerpixel)
                                     throw new InvalidDataException();
 

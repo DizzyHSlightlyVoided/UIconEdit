@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -251,14 +252,21 @@ namespace UIconEdit
                             #endregion
                         }
 
-                        System.Diagnostics.Debug.WriteLine("Reading type {0}, width:{1}, height:{2}, bit depth:{3}",
+                        Debug.WriteLine("Reading type {0}, width:{1}, height:{2}, bit depth:{3}",
                             isPng ? "PNG" : "BMP", loadedImage.Width, loadedImage.Height, bitDepth);
 
-                        IconFrame frame;
-                        if (id == IconTypeCode.Cursor)
-                            frame = new CursorFrame(loadedImage, bitDepth, entry.XPlanes, entry.YBitsPerpixel);
-                        else
-                            frame = new IconFrame(loadedImage, bitDepth);
+                        IconFrame frame; try
+                        {
+                            if (id == IconTypeCode.Cursor)
+                                frame = new CursorFrame(loadedImage, bitDepth, entry.XPlanes, entry.YBitsPerpixel);
+                            else
+                                frame = new IconFrame(loadedImage, bitDepth);
+                        }
+                        catch (InvalidDataException) { throw; }
+                        catch (ObjectDisposedException) { throw; }
+                        catch (IOException) { throw; }
+                        catch { throw new InvalidDataException(); }
+
                         if (!returner.FrameCollection.Add(frame))
                         {
                             returner.FrameCollection.Remove(frame);
@@ -267,16 +275,13 @@ namespace UIconEdit
                         offset += entry.ResourceLength;
                     }
                 }
-                catch (InvalidDataException) { throw; }
-                catch (ObjectDisposedException) { throw; }
-                catch (IOException) { throw; }
-                catch { throw new InvalidDataException(); }
+                finally { }
 
                 return returner;
             }
         }
 
-        [System.Diagnostics.DebuggerDisplay("ImageOffset = {ImageOffset}, ResourceLength = {ResourceLength}, End = {End}")]
+        [DebuggerDisplay("ImageOffset = {ImageOffset}, ResourceLength = {ResourceLength}, End = {End}")]
         private class IconDirEntry : IComparable<IconDirEntry>
         {
             public byte BWidth;
@@ -333,9 +338,9 @@ namespace UIconEdit
 
                 writer.Write(ushort.MinValue);
                 writer.Write((short)ID);
-                writer.Write(frames.Count);
+                writer.Write((short)frames.Count);
 
-                uint offset = 6;
+                uint offset = (uint)(6 + (frames.Count * 16));
 
                 List<MemoryStream> streamList = new List<MemoryStream>();
 
@@ -360,7 +365,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="output">The stream to which icon file will be written.</param>
         /// <exception cref="InvalidOperationException">
-        /// The current instance contains zero frames.
+        /// The current instance contains zero frames, or more than <see cref="ushort.MaxValue"/> frames.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="output"/> is <c>null</c>.
@@ -376,8 +381,10 @@ namespace UIconEdit
         /// </exception>
         public void Save(Stream output)
         {
-            if (FrameCollection.Count == 0) throw new InvalidOperationException("No images set.");
-            Save(output, FrameCollection);
+            var frameCollection = FrameCollection;
+            if (frameCollection.Count == 0) throw new InvalidOperationException("No images set.");
+            if (frameCollection.Count > ushort.MaxValue) throw new InvalidOleVariantTypeException("Too many images!");
+            Save(output, frameCollection);
         }
 
         const int MinDibSize = 40;
@@ -385,18 +392,27 @@ namespace UIconEdit
         private void WriteImage(BinaryWriter writer, IconFrame frame, ref uint offset, out MemoryStream writeStream)
         {
             var image = frame.BaseImage;
-            if (frame.Width > byte.MaxValue) writer.Write(byte.MinValue);
-            else writer.Write((byte)frame.Width); //1
-            if (frame.Height > byte.MaxValue) writer.Write(byte.MinValue);
-            else writer.Write((byte)frame.Height); //2
+
+            bool isPng = (frame.Width > byte.MaxValue || frame.Height > byte.MaxValue);
+
+            Debug.WriteLine("Writing type {0} - width:{1}, height:{2}, bit depth:{3} computed bits per pixel:{4}",
+                isPng ? "PNG" : "BMP", frame.Width, frame.Height, frame.BitDepth, GetImgY(frame));
+
+            if (isPng)
+                writer.Write(ushort.MinValue); //2
+            else
+            {
+                writer.Write((byte)frame.Width);
+                writer.Write((byte)frame.Height);
+            }
 
             int paletteCount;
             Bitmap alphaMask, quantized = frame.GetQuantized(out alphaMask, out paletteCount);
 
-            if (alphaMask == null || quantized.Palette == null)
+            if (alphaMask == null || quantized.Palette == null || quantized.Palette.Entries.Length > byte.MaxValue)
                 writer.Write(byte.MinValue);
             else
-                writer.Write((byte)(image.Palette.Entries.Length - 1)); //3
+                writer.Write((byte)(quantized.Palette.Entries.Length - 1)); //3
 
             writer.Write(byte.MinValue); //4
 
@@ -405,70 +421,66 @@ namespace UIconEdit
 
             uint length;
             writeStream = new MemoryStream();
-            if (quantized.Width > byte.MaxValue || quantized.Height > byte.MaxValue)
+            if (isPng)
             {
-                image.Save(writeStream, ImageFormat.Png);
+                quantized.Save(writeStream, ImageFormat.Png);
             }
             else
             {
                 using (BinaryWriter msWriter = new BinaryWriter(writeStream, new UTF8Encoding(), true))
                 {
+                    ushort bitsPerPixel = frame.BitsPerPixel;
                     int height = quantized.Height;
                     if (alphaMask != null) height += alphaMask.Height; //Only if bit depth != 32
                     msWriter.Write(MinDibSize);
                     msWriter.Write(quantized.Width);
                     msWriter.Write(height);
                     msWriter.Write((short)1);
-                    msWriter.Write(frame.BitsPerPixel); //1, 4, 8, or 24
+                    msWriter.Write(bitsPerPixel); //1, 4, 8, 24, or 32
                     msWriter.Write(0); //Compression method = 0
 
                     msWriter.Write(0);
 
                     msWriter.Write(new byte[16]); //Skip resolution (8 bytes), palette count (4 bytes), and "important colors" (4 bytes)
 
-                    if (quantized.Palette != null)
+                    using (MemoryStream bmpStream = new MemoryStream())
+                    using (BinaryReader bmpReader = new BinaryReader(bmpStream))
                     {
-                        foreach (Color c in quantized.Palette.Entries)
+                        quantized.Save(bmpStream, ImageFormat.Bmp);
+                        bmpStream.Seek(10, SeekOrigin.Begin);
+                        uint streamOffset = bmpReader.ReadUInt32();
+                        bmpStream.Seek(54, SeekOrigin.Begin);
+
+                        for (int i = 0; i < quantized.Palette.Entries.Length; i++)
                         {
-                            msWriter.Write(c.R);
-                            msWriter.Write(c.G);
-                            msWriter.Write(c.B);
-                            msWriter.Write(byte.MaxValue);
+                            uint color = bmpReader.ReadUInt32();
+                            msWriter.Write(color);
                         }
+
+                        int dataLength = quantized.Height * 4 * (((bitsPerPixel * quantized.Width) + 31) / 32);
+
+                        byte[] buffer = bmpReader.ReadBytes(dataLength);
+
+                        msWriter.Write(buffer);
                     }
 
                     if (alphaMask != null)
                     {
-                        BitmapData alphaData = alphaMask.LockBits(new Rectangle(0, 0, alphaMask.Width, alphaMask.Height),
-                            ImageLockMode.ReadOnly, alphaMask.PixelFormat);
-
-                        for (int y = alphaData.Height - 1; y >= 0; y--)
+                        using (MemoryStream alphaStream = new MemoryStream())
+                        using (BinaryReader alphaReader = new BinaryReader(alphaStream))
                         {
-                            byte[] buffer = new byte[alphaData.Stride];
-
-                            Marshal.Copy(alphaData.Scan0 + (y * alphaData.Stride), buffer, 0, buffer.Length);
-                            msWriter.Write(buffer);
+                            alphaMask.Save(alphaStream, ImageFormat.Bmp);
+                            alphaStream.Seek(10, SeekOrigin.Begin);
+                            uint streamOffset = alphaReader.ReadUInt32();
+                            alphaStream.Seek(streamOffset, SeekOrigin.Begin);
+                            alphaStream.CopyTo(writeStream);
                         }
-                        alphaMask.UnlockBits(alphaData);
-                        alphaMask.Dispose();
                     }
-
-                    BitmapData imageData = quantized.LockBits(new Rectangle(0, 0, quantized.Width, quantized.Height),
-                        ImageLockMode.ReadOnly, quantized.PixelFormat);
-
-                    for (int y = quantized.Height - 1; y >= 0; y--)
-                    {
-                        byte[] buffer = new byte[imageData.Stride];
-
-                        Marshal.Copy(imageData.Scan0 + (y * imageData.Stride), buffer, 0, buffer.Length);
-                        msWriter.Write(buffer);
-                    }
-
-                    quantized.UnlockBits(imageData);
-                    if (!ReferenceEquals(quantized, image)) //Hey, it could happen.
-                        quantized.Dispose();
                 }
             }
+
+            if (quantized != image) quantized.Dispose();
+            if (alphaMask != null) alphaMask.Dispose();
 
             length = (uint)writeStream.Length;
             writer.Write(length); //12

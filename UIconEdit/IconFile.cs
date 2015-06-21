@@ -127,7 +127,19 @@ namespace UIconEdit
         /// <returns>The number of bits per pixel in <paramref name="frame"/>.</returns>
         protected override ushort GetImgY(IconFrame frame)
         {
-            return frame.BitsPerPixel;
+            switch (frame.BitDepth)
+            {
+                case BitDepth.Color2:
+                    return 1;
+                case BitDepth.Color16:
+                    return 4;
+                case BitDepth.Color256:
+                    return 8;
+                case BitDepth.Bit24:
+                    return 24;
+                default:
+                    return 32;
+            }
         }
 
         /// <summary>

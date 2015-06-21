@@ -1,4 +1,4 @@
-﻿#region BSD license
+﻿#region
 /*
 Copyright © 2015, KimikoMuffin.
 All rights reserved.
@@ -152,9 +152,9 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// The minimum dimensions of an icon. 16 as of Windows 10.
+        /// The minimum dimensions of an icon. 1 pixel in size.
         /// </summary>
-        public const int MinDimension = 16;
+        public const int MinDimension = 1;
         /// <summary>
         /// The maximum dimensions of an icon. 768 as of Windows 10.
         /// </summary>
@@ -289,8 +289,8 @@ namespace UIconEdit
                 {
                     default:
                         return 32;
-                    //case BitDepth.Bit24:
-                    //    return 24;
+                    case BitDepth.Bit24:
+                        return 24;
                     case BitDepth.Color2:
                         return 1;
                     case BitDepth.Color16:
@@ -313,38 +313,32 @@ namespace UIconEdit
             set { _alphaThreshold = value; }
         }
 
-        internal Bitmap GetQuantized(out Bitmap alphaMask, out int paletteCount)
+        internal unsafe Bitmap GetQuantized(out Bitmap alphaMask, out int paletteCount)
         {
-            const PixelFormat fullFormat = PixelFormat.Format32bppArgb, alphaFormat = PixelFormat.Format1bppIndexed;
+            const PixelFormat formatFull = PixelFormat.Format32bppArgb, formatAlpha = PixelFormat.Format1bppIndexed;
 
-            if (_image is Bitmap && _image.PixelFormat == PixelFormat.Format32bppArgb && _depth == BitDepth.Bit32 && _image.Width == _width && _image.Height == _height)
+            bool isPng = _width > byte.MaxValue || _height > byte.MaxValue;
+
+            if (_image is Bitmap && isPng && _depth == BitDepth.Bit32 && _image.PixelFormat == PixelFormat.Format32bppArgb
+                && _image.Width == _width && _image.Height == _height)
             {
-                alphaMask = null;
                 paletteCount = 0;
+                alphaMask = null;
                 return (Bitmap)_image;
             }
 
-            Bitmap fullColor = new Bitmap(_width, _height, fullFormat);
+            Bitmap fullColor = new Bitmap(_width, _height, formatFull);
 
             using (Graphics g = Graphics.FromImage(fullColor))
                 g.DrawImage(_image, 0, 0, _width, _height);
 
-            if (_depth == BitDepth.Bit32)
-            {
-                alphaMask = null;
-                paletteCount = 0;
-                return fullColor;
-            }
-
             Rectangle fullRect = new Rectangle(0, 0, _width, _height);
             const uint opaqueAlpha = 0xFF000000u;
 
-            unsafe
+            using (Bitmap alphaTemp = new Bitmap(_width, _height, formatFull))
             {
-                alphaMask = new Bitmap(_width, _height, fullFormat);
-
-                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadOnly, fullFormat);
-                BitmapData alphaData = alphaMask.LockBits(fullRect, ImageLockMode.WriteOnly, fullFormat);
+                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadOnly, formatFull);
+                BitmapData alphaData = alphaTemp.LockBits(fullRect, ImageLockMode.WriteOnly, formatFull);
                 int offWidth = fullRect.Width / 8;
 
                 for (int y = 0; y < _height; y++)
@@ -356,61 +350,54 @@ namespace UIconEdit
                     {
                         uint value = pFull[x] >> 24;
                         if (value < _alphaThreshold)
-                            pAlpha[x] = opaqueAlpha;
-                        else
                             pAlpha[x] = uint.MaxValue;
+                        else
+                            pAlpha[x] = opaqueAlpha;
                     }
                 }
                 fullColor.UnlockBits(fullData);
-                alphaMask.UnlockBits(alphaData);
+                alphaTemp.UnlockBits(alphaData);
+
+                alphaMask = alphaTemp.Clone(fullRect, formatAlpha);
             }
 
-            unsafe
+            if (_depth == BitDepth.Bit32)
             {
-                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadWrite, fullFormat);
-
-                if (_width > byte.MaxValue || _height > byte.MaxValue)
-                {
-                    BitmapData alphaData = alphaMask.LockBits(fullRect, ImageLockMode.ReadOnly, fullFormat);
-
-                    for (int y = 0; y < _height; y++)
-                    {
-                        uint* pFull = (uint*)(fullData.Scan0 + (y * fullData.Stride));
-                        uint* pAlpha = (uint*)(alphaData.Scan0 + (y * alphaData.Stride));
-
-                        for (int x = 0; x < _width; x++)
-                        {
-                            if (pAlpha[x] == uint.MaxValue)
-                                pFull[x] |= opaqueAlpha;
-                            else
-                                pFull[x] = 0;
-                        }
-                    }
-
-                    alphaMask.UnlockBits(alphaData);
-                    alphaMask.Dispose();
-                }
-                else
-                {
-                    Bitmap oldAlpha = alphaMask;
-                    alphaMask = oldAlpha.Clone(fullRect, alphaFormat);
-                    oldAlpha.Dispose();
-
-                    for (int y = 0; y < _height; y++)
-                    {
-                        uint* pRow = (uint*)(fullData.Scan0 + (y * fullData.Stride));
-
-                        for (int x = 0; x < _width; x++)
-                            pRow[x] |= opaqueAlpha;
-                    }
-                }
-                fullColor.UnlockBits(fullData);
+                paletteCount = 0;
+                return fullColor;
             }
+
+            BitmapData bmpData = fullColor.LockBits(fullRect, ImageLockMode.ReadWrite, formatFull);
+
+            for (int y = 0; y < _height; y++)
+            {
+                uint* pFull = (uint*)(bmpData.Scan0 + (y * bmpData.Stride));
+
+                for (int x = 0; x < _width; x++)
+                {
+                    uint value = pFull[x] >> 24;
+                    if (value < _alphaThreshold)
+                        pFull[x] = isPng ? (pFull[x] & ~opaqueAlpha) : opaqueAlpha;
+                    else
+                        pFull[x] |= opaqueAlpha;
+                }
+            }
+
+            fullColor.UnlockBits(bmpData);
 
             if (_depth == BitDepth.Bit24)
             {
                 paletteCount = 0;
-                return fullColor;
+
+                if (isPng)
+                    return fullColor;
+
+                Bitmap full24 = new Bitmap(_width, _height, PixelFormat.Format24bppRgb);
+                using (Graphics g = Graphics.FromImage(full24))
+                    g.DrawImage(fullColor, 0, 0, _width, _height);
+
+                fullColor.Dispose();
+                return full24;
             }
 
             switch (_depth)
@@ -426,18 +413,67 @@ namespace UIconEdit
                     break;
             }
 
-            PixelFormat pixelFormat = PixelFormat;
-
             WuQuantizer quant = new WuQuantizer();
-            Bitmap quantized = (Bitmap)quant.QuantizeImage(fullColor, 0, 1, ref paletteCount);
+
+            Bitmap quantized = (Bitmap)quant.QuantizeImage(fullColor, 10, 70, ref paletteCount);
+            const PixelFormat format8 = PixelFormat.Format8bppIndexed;
+
+            if (isPng)
+            {
+                BitmapData quantData = quantized.LockBits(fullRect, ImageLockMode.ReadOnly, format8);
+                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadWrite, formatFull);
+
+                for (int y = 0; y < _height; y++)
+                {
+                    byte* pQuant = (byte*)(quantData.Scan0 + (y * quantData.Stride));
+                    uint* pData = (uint*)(fullData.Scan0 + (y * fullData.Stride));
+
+                    for (int x = 0; x < _width; x++)
+                        pData[x] = (pData[x] & opaqueAlpha) | (unchecked((uint)quantized.Palette.Entries[pQuant[x]].ToArgb()) & ~opaqueAlpha);
+                }
+                quantized.UnlockBits(quantData);
+                fullColor.UnlockBits(fullData);
+                return fullColor;
+            }
+
             fullColor.Dispose();
 
-            if (quantized.PixelFormat == pixelFormat)
+            if (_depth == BitDepth.Color256)
                 return quantized;
 
-            Bitmap tmp = quantized.Clone(fullRect, pixelFormat);
+            Bitmap quant2;
+
+            BitmapData quant256data = quantized.LockBits(fullRect, ImageLockMode.ReadOnly, format8);
+
+            if (_depth == BitDepth.Color2)
+            {
+                quant2 = quantized.Clone(fullRect, PixelFormat.Format1bppIndexed);
+            }
+            else
+            {
+                const PixelFormat format4 = PixelFormat.Format4bppIndexed;
+                quant2 = new Bitmap(_width, _height, format4);
+                var palette = quant2.Palette;
+                for (int i = 0; i < paletteCount; i++)
+                    palette.Entries[i] = quantized.Palette.Entries[i];
+                quant2.Palette = palette;
+
+                BitmapData quant16data = quant2.LockBits(fullRect, ImageLockMode.ReadOnly, format4);
+
+                for (int y = 0; y < _height; y++)
+                {
+                    byte* p256 = (byte*)(quant256data.Scan0 + (quant256data.Stride * y));
+                    byte* p16 = (byte*)(quant16data.Scan0 + (quant16data.Stride * y));
+
+                    for (int x = 0; x < quant16data.Stride; x++)
+                    {
+                        int x2 = x * 2;
+                        p16[x] = (byte)((p256[x2] << 4) | p256[x2 + 1]);
+                    }
+                }
+            }
             quantized.Dispose();
-            return tmp;
+            return quant2;
         }
     }
 

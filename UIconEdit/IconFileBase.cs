@@ -188,7 +188,7 @@ namespace UIconEdit
                             #endregion
                             isPng = true;
                         }
-                        else
+                        else if (dibSize == MinDibSize)
                         {
                             #region Load Bmp
                             using (OffsetStream ms = new OffsetStream(input, entry.ResourceLength - 4, true))
@@ -261,21 +261,17 @@ namespace UIconEdit
                             }
                             #endregion
                         }
+                        else throw new InvalidDataException();
 
                         Debug.WriteLine("Reading type {0}, width:{1}, height:{2}, bit depth:{3}",
                             isPng ? "PNG" : "BMP", loadedImage.Width, loadedImage.Height, bitDepth);
 
-                        IconFrame frame; try
-                        {
-                            if (id == IconTypeCode.Cursor)
-                                frame = new CursorFrame(bitDepth, loadedImage, entry.XPlanes, entry.YBitsPerpixel);
-                            else
-                                frame = new IconFrame(bitDepth, loadedImage);
-                        }
-                        catch (InvalidDataException) { throw; }
-                        catch (ObjectDisposedException) { throw; }
-                        catch (IOException) { throw; }
-                        catch { throw new InvalidDataException(); }
+                        IconFrame frame;
+
+                        if (id == IconTypeCode.Cursor)
+                            frame = new CursorFrame(bitDepth, loadedImage, entry.XPlanes, entry.YBitsPerpixel);
+                        else
+                            frame = new IconFrame(bitDepth, loadedImage);
 
                         if (!returner.FrameCollection.Add(frame))
                         {
@@ -285,7 +281,10 @@ namespace UIconEdit
                         offset += entry.ResourceLength;
                     }
                 }
-                finally { }
+                catch (InvalidDataException) { throw; }
+                catch (ObjectDisposedException) { throw; }
+                catch (IOException) { throw; }
+                catch { throw new InvalidDataException(); }
 
                 return returner;
             }

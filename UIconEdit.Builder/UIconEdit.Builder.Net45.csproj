@@ -4,52 +4,61 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{40CE58B0-4600-42C0-92A7-5314279B916E}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{902D4D9C-4500-418F-9890-5AAD7D82EEC9}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UIconEdit</RootNamespace>
-    <AssemblyName>UIconEdit</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <RootNamespace>UIconEdit.Builder</RootNamespace>
+    <AssemblyName>UIconBuilder</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Net 4.6\Debug\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.6\Debug\</IntermediateOutputPath>
-    <DefineConstants>TRACE;DEBUG;NET_4_6;IREADONLY;LEAVEOPEN</DefineConstants>
+    <OutputPath>bin\Net 4.5\Debug\</OutputPath>
+    <IntermediateOutputPath>obj\Net 4.5\Debug\</IntermediateOutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_4_5;IREADONLY;LEAVEOPEN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Net 4.6\Debug\UIconEdit.XML</DocumentationFile>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Net 4.6\Release\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.6\Release\</IntermediateOutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>bin\Net 4.5\Release\</OutputPath>
+    <IntermediateOutputPath>obj\Net 4.5\Release\</IntermediateOutputPath>
+    <DefineConstants>TRACE;NET_4_5;IREADONLY;LEAVEOPEN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Net 4.6\Release\UIconEdit.XML</DocumentationFile>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Gradient.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IconFile.cs" />
-    <Compile Include="IconFrame.cs" />
-    <Compile Include="IconFileBase.cs" />
-    <Compile Include="OffsetStream.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Gradient.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\nQuant\nQuant.Core\nQuant.Core.csproj">
       <Project>{a59307ea-fcb0-4110-bc42-0417871c24c4}</Project>
       <Name>nQuant.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UIconEdit\UIconEdit.Net45.csproj">
+      <Project>{40ce58b0-4500-42c0-92a7-5314279b916e}</Project>
+      <Name>UIconEdit.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

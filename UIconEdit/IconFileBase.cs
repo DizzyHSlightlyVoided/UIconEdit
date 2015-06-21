@@ -71,7 +71,11 @@ namespace UIconEdit
 
         internal static IconFileBase Load(Stream input, IconTypeCode? id)
         {
+#if LEAVEOPEN
             using (BinaryReader reader = new BinaryReader(input, new UTF8Encoding(), true))
+#else
+            BinaryReader reader = new BinaryReader(input, new UTF8Encoding());
+#endif
             {
                 if (reader.ReadInt16() != 0) throw new InvalidDataException();
 
@@ -220,7 +224,11 @@ namespace UIconEdit
                                     throw new InvalidDataException();
 
                                 MemoryStream bufferStream = new MemoryStream();
+#if LEAVEOPEN
                                 using (BinaryWriter bufferWriter = new BinaryWriter(bufferStream, new UTF8Encoding(), true))
+#else
+                                BinaryWriter bufferWriter = new BinaryWriter(bufferStream, new UTF8Encoding());
+#endif
                                 {
                                     bufferWriter.Write(ushort.MinValue); //2
                                     bufferWriter.Write((ushort)IconTypeCode.Icon); //4
@@ -241,7 +249,9 @@ namespace UIconEdit
                                     bufferWriter.Write(colorPanes); //36
                                     bufferWriter.Write(bitsPerPixel); //38
                                 }
-
+#if !LEAVEOPEN
+                                bufferWriter.Flush();
+#endif
                                 ms.CopyTo(bufferStream);
                                 bufferStream.Seek(0, SeekOrigin.Begin);
                                 Icon icon = new Icon(bufferStream);
@@ -332,7 +342,11 @@ namespace UIconEdit
 
         internal void Save(Stream output, ICollection<IconFrame> frameCollection)
         {
+#if LEAVEOPEN
             using (BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding(), true))
+#else
+            BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding());
+#endif
             {
                 SortedSet<IconFrame> frames = new SortedSet<IconFrame>(frameCollection, new IconFrameComparer());
 
@@ -358,6 +372,9 @@ namespace UIconEdit
                     ms.Dispose();
                 }
             }
+#if !LEAVEOPEN
+            writer.Flush();
+#endif
         }
 
         /// <summary>
@@ -427,7 +444,11 @@ namespace UIconEdit
             }
             else
             {
+#if LEAVEOPEN
                 using (BinaryWriter msWriter = new BinaryWriter(writeStream, new UTF8Encoding(), true))
+#else
+                BinaryWriter msWriter = new BinaryWriter(writeStream, new UTF8Encoding());
+#endif
                 {
                     ushort bitsPerPixel = frame.BitsPerPixel;
                     int height = quantized.Height;
@@ -477,6 +498,9 @@ namespace UIconEdit
                         }
                     }
                 }
+#if !LEAVEOPEN
+                writer.Flush();
+#endif
             }
 
             if (quantized != image) quantized.Dispose();

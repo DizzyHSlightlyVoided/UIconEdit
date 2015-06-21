@@ -148,7 +148,10 @@ namespace UIconEdit
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(DebugView))]
-        public class FrameSet : IReadOnlyCollection<IconFrame>, ISet<IconFrame>, ICollection, IFrameCollection
+        public class FrameSet : IFrameCollection, ISet<IconFrame>, ICollection
+#if IREADONLY
+            , IReadOnlyCollection<IconFrame>
+#endif
         {
             private HashSet<IconFrame> _set;
 

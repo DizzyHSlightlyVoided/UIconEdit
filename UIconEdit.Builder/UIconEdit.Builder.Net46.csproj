@@ -20,7 +20,7 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Net 4.6\Debug\</OutputPath>
     <IntermediateOutputPath>obj\Net 4.6\Debug\</IntermediateOutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET_4_6;IREADONLY;LEAVEOPEN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

@@ -4,35 +4,35 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{40CE58B0-4600-42C0-92A7-5314279B916E}</ProjectGuid>
+    <ProjectGuid>{40CE58B0-4500-42C0-92A7-5314279B916E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UIconEdit</RootNamespace>
     <AssemblyName>UIconEdit</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Net 4.6\Debug\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.6\Debug\</IntermediateOutputPath>
-    <DefineConstants>TRACE;DEBUG;NET_4_6;IREADONLY;LEAVEOPEN</DefineConstants>
+    <OutputPath>bin\Net 4.5\Debug\</OutputPath>
+    <IntermediateOutputPath>obj\Net 4.5\Debug\</IntermediateOutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_4_5;IREADONLY;LEAVEOPEN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Net 4.6\Debug\UIconEdit.XML</DocumentationFile>
+    <DocumentationFile>bin\Net 4.5\Debug\UIconEdit.XML</DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Net 4.6\Release\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.6\Release\</IntermediateOutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>bin\Net 4.5\Release\</OutputPath>
+    <IntermediateOutputPath>obj\Net 4.5\Release\</IntermediateOutputPath>
+    <DefineConstants>TRACE;NET_4_5;IREADONLY;LEAVEOPEN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Net 4.6\Release\UIconEdit.XML</DocumentationFile>
+    <DocumentationFile>bin\Net 4.5\Release\UIconEdit.XML</DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>

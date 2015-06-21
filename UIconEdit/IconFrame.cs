@@ -42,7 +42,7 @@ namespace UIconEdit
     /// <summary>
     /// Represents a single frame in an icon.
     /// </summary>
-    public class IconFrame
+    public class IconFrame : IDisposable
     {
         internal const byte DefaultAlphaThreshold = 96;
 
@@ -152,6 +152,12 @@ namespace UIconEdit
         {
         }
 
+        internal IconFrame(BitDepth bitDepth, Bitmap baseImage)
+            : this(baseImage, bitDepth, DefaultAlphaThreshold)
+        {
+            _ownedImage = true;
+        }
+
         /// <summary>
         /// The minimum dimensions of an icon. 1 pixel in size.
         /// </summary>
@@ -179,8 +185,10 @@ namespace UIconEdit
                 throw new ObjectDisposedException(paramName);
             }
             _image = image;
+            _ownedImage = false;
         }
 
+        private bool _ownedImage;
         private Image _image;
         /// <summary>
         /// Gets and sets the image associated with the current instance.
@@ -200,7 +208,7 @@ namespace UIconEdit
         private void _setSize(ref short dim, short value, string paramName)
         {
             if (value < MinDimension || value > MaxDimension)
-                throw new ArgumentOutOfRangeException(paramName, value, "The specified value is out of bounds.");
+                throw new ArgumentOutOfRangeException(paramName);
             dim = value;
         }
 
@@ -216,6 +224,8 @@ namespace UIconEdit
             get { return _width; }
             set { _setSize(ref _width, value, null); }
         }
+
+        internal IconFileBase File;
 
         private short _height;
         /// <summary>
@@ -377,7 +387,7 @@ namespace UIconEdit
             g.PixelOffsetMode = _offMode;
             return g;
         }
-        
+
         internal unsafe Bitmap GetQuantized(out Bitmap alphaMask, out int paletteCount)
         {
             const PixelFormat formatFull = PixelFormat.Format32bppArgb, formatAlpha = PixelFormat.Format1bppIndexed;
@@ -539,6 +549,36 @@ namespace UIconEdit
             }
             quantized.Dispose();
             return quant2;
+        }
+
+        private bool isDisposed;
+        /// <summary>
+        /// Releases all resources used by the current instance.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases all unmanaged resources used by the current instance, and optionally releases all managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+            if (_ownedImage)
+                _image.Dispose();
+            GC.SuppressFinalize(this);
+            isDisposed = true;
+        }
+
+        /// <summary>
+        /// Disposes of the current instance.
+        /// </summary>
+        ~IconFrame()
+        {
+            Dispose(false);
         }
     }
 
@@ -749,6 +789,13 @@ namespace UIconEdit
         public CursorFrame(Image baseImage, BitDepth bitDepth)
             : base(baseImage, bitDepth)
         {
+        }
+
+        internal CursorFrame(BitDepth bitDepth, Bitmap baseImage, ushort hotspotX, ushort hotspotY)
+            : base(baseImage, bitDepth)
+        {
+            _x = hotspotX;
+            _y = hotspotY;
         }
 
         private ushort _x;

@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace UIconEdit
 {
@@ -42,6 +43,14 @@ namespace UIconEdit
     /// </summary>
     public class IconFile : IconFileBase
     {
+        /// <summary>
+        /// Creates a new <see cref="IconFile"/> instance.
+        /// </summary>
+        public IconFile()
+        {
+            _set = new FrameList(this);
+        }
+
         /// <summary>
         /// Loads an <see cref="IconFile"/> from the specified stream.
         /// </summary>
@@ -75,7 +84,7 @@ namespace UIconEdit
             get { return IconTypeCode.Icon; }
         }
 
-        private FrameSet _set = new FrameSet();
+        private FrameList _set;
         /// <summary>
         /// Gets a collection containing all frames in the icon file.
         /// </summary>
@@ -87,7 +96,7 @@ namespace UIconEdit
         /// <summary>
         /// Gets a collection containing all frames in the icon file.
         /// </summary>
-        public FrameSet Frames { get { return _set; } }
+        public FrameList Frames { get { return _set; } }
 
         /// <summary>
         /// Gets an <see cref="Icon"/> from a single frame.
@@ -143,52 +152,66 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Represents a hash set of frames. This collection treats <see cref="IconFrame"/> objects with the same
+        /// Represents a hash list of frames. This collection treats <see cref="IconFrame"/> objects with the same
         /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> as though they were equal.
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(DebugView))]
-        public class FrameSet : IFrameCollection, ISet<IconFrame>, ICollection
+        public class FrameList : IFrameCollection, ICollection
 #if IREADONLY
-            , IReadOnlyCollection<IconFrame>
+            , IReadOnlyList<IconFrame>
 #endif
         {
             private HashSet<IconFrame> _set;
+            private List<IconFrame> _items;
+            private IconFile _file;
 
-            /// <summary>
-            /// Creates a new empty set.
-            /// </summary>
-            public FrameSet()
+            internal FrameList(IconFile file)
             {
+                _file = file;
                 _set = new HashSet<IconFrame>(new IconFrameComparer());
+                _items = new List<IconFrame>();
             }
 
             /// <summary>
-            /// Creates a new set containing elements copied from the specified collection.
+            /// Gets and sets the element at the specified index.
             /// </summary>
-            /// <param name="collection">A collection containing elements to add.</param>
-            public FrameSet(IEnumerable<IconFrame> collection)
+            /// <param name="index">The index of the element to get or set.</param>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <para><paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.</para>
+            /// <para>-OR-</para>
+            /// <para>In a set operation, the specified value is <c>null</c>.</para>
+            /// </exception>
+            /// <exception cref="NotSupportedException">
+            /// In a set operation, an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// already exists in the list at a different index, or the specified value is already associated with a different icon file.
+            /// </exception>
+            public IconFrame this[int index]
             {
-                _set = new HashSet<IconFrame>(collection, new IconFrameComparer());
-                _set.Remove(null);
+                get { return _items[index]; }
+                set
+                {
+                    if (value == null) throw new ArgumentOutOfRangeException(null, new ArgumentNullException(null).Message);
+                    if (!_setValue(index, value, true))
+                        throw new NotSupportedException();
+                }
             }
 
             /// <summary>
-            /// Gets the number of elements in the set.
+            /// Gets the number of elements in the list.
             /// </summary>
-            public int Count { get { return _set.Count; } }
+            public int Count { get { return _items.Count; } }
 
             /// <summary>
-            /// Adds the specified icon frame to the set.
+            /// Adds the specified icon frame to the list.
             /// </summary>
-            /// <param name="item">The icon frame to add to the set.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>
-            /// or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// already exists in the set.</returns>
+            /// <param name="item">The icon frame to add to the list.</param>
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+            /// is already associated with a different icon file, or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>,
+            /// and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
             public bool Add(IconFrame item)
             {
-                if (item == null) return false;
-                return _set.Add(item);
+                return Insert(_items.Count, item);
             }
 
             void ICollection<IconFrame>.Add(IconFrame item)
@@ -197,39 +220,186 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes an icon frame similar to the specified value from the set.
+            /// Adds the specified icon frame to the list at the specified index.
             /// </summary>
-            /// <param name="item">The icon frame to remove.</param>
-            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the set.</returns>
-            public bool Remove(IconFrame item)
+            /// <param name="index">The index at which to insert the icon frame.</param>
+            /// <param name="item">The icon frame to add to the list.</param>
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+            /// is already associated with a different icon file, or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>,
+            /// and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> is less than 0 or is greater than <see cref="Count"/>.
+            /// </exception>
+            public bool Insert(int index, IconFrame item)
             {
-                return _set.Remove(item);
+                if (index < 0 || index > _items.Count) throw new ArgumentOutOfRangeException("index");
+                if (item == null || item.File != null || !_set.Add(item)) return false;
+                _items.Insert(index, item);
+                item.File = _file;
+                return true;
+            }
+
+            void IList<IconFrame>.Insert(int index, IconFrame item)
+            {
+                Insert(index, item);
+            }
+
+            private bool _setValue(int index, IconFrame value, bool setter)
+            {
+                if (setter && index == _items.Count)
+                    return Add(value);
+                var oldItem = _items[index];
+                if (value == null || value.File != null || (_set.Contains(value) && !_set.Comparer.Equals(oldItem, value)))
+                    return false;
+                _set.Remove(oldItem);
+                _set.Add(value);
+                _items[index] = value;
+                oldItem.File = null;
+                value.File = _file;
+                return true;
             }
 
             /// <summary>
-            /// Removes all elements from the set.
+            /// Sets the value at the specified index.
+            /// </summary>
+            /// <param name="index">The index of the value to set.</param>
+            /// <param name="item">The item to set at the specified index.</param>
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+            /// is already associated with a different icon file, or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>,
+            /// and <see cref="IconFrame.BitDepth"/> already exists at a different index.</returns>
+            public bool SetValue(int index, IconFrame item)
+            {
+                return _setValue(index, item, false);
+            }
+
+            private void _removeAt(int index, bool disposing)
+            {
+                IconFrame item = _items[index];
+                _items.RemoveAt(index);
+                _set.Remove(item);
+                item.File = null;
+                if (disposing)
+                    item.Dispose();
+            }
+
+            /// <summary>
+            /// Removes the element at the specified index.
+            /// </summary>
+            /// <param name="index">The element at the specified index.</param>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.
+            /// </exception>
+            public void RemoveAt(int index)
+            {
+                _removeAt(index, false);
+            }
+
+
+            /// <summary>
+            /// Removes the element at the specified index and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// </summary>
+            /// <param name="index">The element at the specified index.</param>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.
+            /// </exception>
+            public void RemoveAndDisposeAt(int index)
+            {
+                _removeAt(index, true);
+            }
+
+            private bool _remove(IconFrame item, bool disposing)
+            {
+                for (int i = 0; i < _items.Count; i++)
+                {
+                    if (_set.Comparer.Equals(item, _items[i]))
+                    {
+                        _removeAt(i, disposing);
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            /// <summary>
+            /// Removes an icon frame similar to the specified value from the list.
+            /// </summary>
+            /// <param name="item">The icon frame to search for.</param>
+            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
+            public bool Remove(IconFrame item)
+            {
+                return _remove(item, false);
+            }
+
+            /// <summary>
+            /// Removes an icon frame similar to the specified value from the list
+            /// and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// </summary>
+            /// <param name="item">The icon frame to search for.</param>
+            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
+            public bool RemoveAndDispose(IconFrame item)
+            {
+                return _remove(item, true);
+            }
+
+            private void _clear(bool disposing)
+            {
+                foreach (IconFrame item in _items)
+                {
+                    item.File = null;
+                    if (disposing)
+                        item.Dispose();
+                }
+                _set.Clear();
+                _items.Clear();
+            }
+
+            /// <summary>
+            /// Removes all elements from the list.
             /// </summary>
             public void Clear()
             {
-                _set.Clear();
+                _clear(false);
             }
 
             /// <summary>
-            /// Determines if an element similar to the specified icon frame exists in the set.
+            /// Removes all elements from the list and immediately calls <see cref="IconFrame.Dispose()"/> on each one.
             /// </summary>
-            /// <param name="item">The icon frame to search for in the set.</param>
+            public void ClearAndDispose()
+            {
+                _clear(true);
+            }
+
+            /// <summary>
+            /// Determines if an element similar to the specified icon frame exists in the list.
+            /// </summary>
+            /// <param name="item">The icon frame to search for in the list.</param>
             /// <returns><c>true</c> if an icon frame with the same with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="item"/> exists in the set; <c>false</c> otherwise.</returns>
+            /// as <paramref name="item"/> exists in the list; <c>false</c> otherwise.</returns>
             public bool Contains(IconFrame item)
             {
-                return item != null && _set.Contains(item);
+                return _set.Contains(item);
             }
 
             /// <summary>
-            /// Copies all elements in the set to the specified array.
+            /// Gets the index of an element similar to the specified item.
             /// </summary>
-            /// <param name="array">The array to which all elements in the set will be copied.</param>
+            /// <param name="item">The icon frame to search for in the list.</param>
+            /// <returns>The index of an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="item"/>, if found; otherwise, -1.</returns>
+            public int IndexOf(IconFrame item)
+            {
+                if (item == null) return -1;
+                for (int i = 0; i < _items.Count; i++)
+                    if (_set.Comparer.Equals(item, _items[i])) return i;
+                return -1;
+            }
+
+            /// <summary>
+            /// Copies all elements in the list to the specified array.
+            /// </summary>
+            /// <param name="array">The array to which all elements in the list will be copied.</param>
             /// <param name="arrayIndex">The index in <paramref name="array"/> at which copying begins.</param>
             /// <exception cref="ArgumentNullException">
             /// <paramref name="array"/> is <c>null</c>.
@@ -242,163 +412,25 @@ namespace UIconEdit
             /// </exception>
             public void CopyTo(IconFrame[] array, int arrayIndex)
             {
-                _set.CopyTo(array, arrayIndex);
+                _items.CopyTo(array, arrayIndex);
             }
 
             /// <summary>
-            /// Adds all elements in the specified collection to the current instance.
+            /// Returns an enumerator which iterates through the list.
             /// </summary>
-            /// <param name="other">The other collection to compare.</param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="other"/> is <c>null</c>.
-            /// </exception>
-            public void UnionWith(IEnumerable<IconFrame> other)
-            {
-                if (other is FrameSet) other = ((FrameSet)other)._set;
-                _set.UnionWith(other);
-            }
-
-            /// <summary>
-            /// Removes all elements in the current set which do not exist in the specified collection.
-            /// </summary>
-            /// <param name="other">The other collection to compare.</param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="other"/> is <c>null</c>.
-            /// </exception>
-            public void IntersectWith(IEnumerable<IconFrame> other)
-            {
-                if (other is FrameSet) other = ((FrameSet)other)._set;
-                _set.IntersectWith(other);
-            }
-
-            /// <summary>
-            /// Removes all elements in the specified collection from the current set.
-            /// </summary>
-            /// <param name="other">The other collection to compare.</param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="other"/> is <c>null</c>.
-            /// </exception>
-            public void ExceptWith(IEnumerable<IconFrame> other)
-            {
-                if (other is FrameSet) other = ((FrameSet)other)._set;
-                _set.ExceptWith(other);
-            }
-
-            /// <summary>
-            /// Modifies the current set so that it contains elements which are either in the original set or the specified collection, but not both.
-            /// </summary>
-            /// <param name="other">The other collection to compare.</param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="other"/> is <c>null</c>.
-            /// </exception>
-            public void SymmetricExceptWith(IEnumerable<IconFrame> other)
-            {
-                if (other is FrameSet) other = ((FrameSet)other)._set;
-                _set.SymmetricExceptWith(other);
-            }
-
-            /// <summary>
-            /// Determines if the current set is a subset of the specified collection.
-            /// </summary>
-            /// <param name="other">The other collection to compare.</param>
-            /// <returns><c>true</c> if all elements in the current set are contained in <paramref name="other"/>; <c>false</c> otherwise.</returns>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="other"/> is <c>null</c>.
-            /// </exception>
-            public bool IsSubsetOf(IEnumerable<IconFrame> other)
-            {
-                if (other is FrameSet) other = ((FrameSet)other)._set;
-                return _set.IsSubsetOf(other);
-            }
-
-            /// <summary>
-            /// Determines if the current set is a superset of the specified collection.
-            /// </summary>
-            /// <param name="other">The other collection to compare.</param>
-            /// <returns><c>true</c> if all elements in <paramref name="other"/> are contained in the current set; <c>false</c> otherwise.</returns>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="other"/> is <c>null</c>.
-            /// </exception>
-            public bool IsSupersetOf(IEnumerable<IconFrame> other)
-            {
-                if (other is FrameSet) other = ((FrameSet)other)._set;
-                return _set.IsSupersetOf(other);
-            }
-
-            /// <summary>
-            /// Determines if the current set is a proper subset of the specified collection.
-            /// </summary>
-            /// <param name="other">The other collection to compare.</param>
-            /// <returns><c>true</c> if all elements in the current set are contained in <paramref name="other"/>, and
-            /// <paramref name="other"/> contains at least one element which the current set does not have; <c>false</c> otherwise.</returns>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="other"/> is <c>null</c>.
-            /// </exception>
-            public bool IsProperSubsetOf(IEnumerable<IconFrame> other)
-            {
-                if (other is FrameSet) other = ((FrameSet)other)._set;
-                return _set.IsProperSubsetOf(other);
-            }
-
-            /// <summary>
-            /// Determines if the current set is a proper superset of the specified collection.
-            /// </summary>
-            /// <param name="other">The other collection to compare.</param>
-            /// <returns><c>true</c> if all elements in <paramref name="other"/> are contained in the current set, and
-            /// the current set contains at least one element which <paramref name="other"/> does not have; <c>false</c> otherwise.</returns>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="other"/> is <c>null</c>.
-            /// </exception>
-            public bool IsProperSupersetOf(IEnumerable<IconFrame> other)
-            {
-                if (other is FrameSet) other = ((FrameSet)other)._set;
-                return _set.IsProperSupersetOf(other);
-            }
-
-            /// <summary>
-            /// Determines if the specified collection overlaps with the current set.
-            /// </summary>
-            /// <param name="other">The other collection to compare.</param>
-            /// <returns><c>true</c> if <paramref name="other"/> contains at least one element in the current set; <c>false</c> otherwise.</returns>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="other"/> is <c>null</c>.
-            /// </exception>
-            public bool Overlaps(IEnumerable<IconFrame> other)
-            {
-                if (other is FrameSet) other = ((FrameSet)other)._set;
-                return _set.Overlaps(other);
-            }
-
-            /// <summary>
-            /// Determines if the current set and the specified collection are equivalent.
-            /// </summary>
-            /// <param name="other">The other collection to compare.</param>
-            /// <returns><c>true</c> if every element in the current set exists in <paramref name="other"/> and vice versa; <c>false</c> otherwise.</returns>
-            public bool SetEquals(IEnumerable<IconFrame> other)
-            {
-                if (other is FrameSet) other = ((FrameSet)other)._set;
-                return _set.SetEquals(other);
-            }
-
-            /// <summary>
-            /// Returns an enumerator which iterates through the set.
-            /// </summary>
-            /// <returns>An enumerator which iterates through the set.</returns>
+            /// <returns>An enumerator which iterates through the list.</returns>
             public Enumerator GetEnumerator()
             {
                 return new Enumerator(this);
             }
 
             /// <summary>
-            /// Returns an array containing all elements in the current set.
+            /// Returns an array containing all elements in the current list.
             /// </summary>
-            /// <returns>An array containing elements copied from the current set.</returns>
+            /// <returns>An array containing elements copied from the current list.</returns>
             public IconFrame[] ToArray()
             {
-                IconFrame[] result = new IconFrame[_set.Count];
-                _set.CopyTo(result);
-                Array.Sort(result, new IconFrameComparer());
-                return result;
+                return _items.ToArray();
             }
 
             /// <summary>
@@ -411,7 +443,18 @@ namespace UIconEdit
             /// </exception>
             public int RemoveWhere(Predicate<IconFrame> match)
             {
-                return _set.RemoveWhere(match);
+                if (match == null) throw new ArgumentNullException("match");
+                int removed = 0;
+                for (int i = 0; i < _items.Count; i++)
+                {
+                    while (i < _items.Count && match(_items[i]))
+                    {
+                        removed++;
+                        _set.Remove(_items[i]);
+                        _items.RemoveAt(i);
+                    }
+                }
+                return removed;
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -434,34 +477,29 @@ namespace UIconEdit
                 get { return false; }
             }
 
-            private object _syncRoot;
             object ICollection.SyncRoot
             {
-                get
-                {
-                    if (_syncRoot == null)
-                        _syncRoot = System.Threading.Interlocked.CompareExchange(ref _syncRoot, new object(), null);
-                    return _syncRoot;
-                }
+                get { return ((ICollection)_items).SyncRoot; }
             }
 
             void ICollection.CopyTo(Array array, int index)
             {
-                ((ICollection)_set).CopyTo(array, index);
+                ((ICollection)_items).CopyTo(array, index);
             }
 
+
             /// <summary>
-            /// An enumerator which iterates through the set.
+            /// An enumerator which iterates through the list.
             /// </summary>
             public struct Enumerator : IEnumerator<IconFrame>
             {
                 private IconFrame _current;
                 private IEnumerator<IconFrame> _enum;
 
-                internal Enumerator(FrameSet set)
+                internal Enumerator(FrameList set)
                 {
                     _current = null;
-                    _enum = set._set.GetEnumerator();
+                    _enum = set._items.GetEnumerator();
                 }
 
                 /// <summary>
@@ -489,9 +527,9 @@ namespace UIconEdit
                 }
 
                 /// <summary>
-                /// Advances the enumerator to the next position in the set.
+                /// Advances the enumerator to the next position in the list.
                 /// </summary>
-                /// <returns><c>true</c> if the enumerator successfully advanced; <c>false</c> if the enumerator has passed the end of the set.</returns>
+                /// <returns><c>true</c> if the enumerator successfully advanced; <c>false</c> if the enumerator has passed the end of the list.</returns>
                 public bool MoveNext()
                 {
                     if (_enum == null) return false;
@@ -512,22 +550,17 @@ namespace UIconEdit
 
             private class DebugView
             {
-                private FrameSet _set;
+                private FrameList _list;
 
-                public DebugView(FrameSet set)
+                public DebugView(FrameList list)
                 {
-                    _set = set;
+                    _list = list;
                 }
 
                 [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
                 public IconFrame[] Items
                 {
-                    get
-                    {
-                        IconFrame[] items = new IconFrame[_set.Count];
-                        _set.CopyTo(items, 0);
-                        return items;
-                    }
+                    get { return _list._items.ToArray(); }
                 }
             }
         }

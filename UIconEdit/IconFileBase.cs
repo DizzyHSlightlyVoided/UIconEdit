@@ -42,7 +42,7 @@ namespace UIconEdit
     /// <summary>
     /// Base class for icon and cursor files.
     /// </summary>
-    public abstract class IconFileBase
+    public abstract class IconFileBase : IDisposable
     {
         /// <summary>
         /// Loads an <see cref="IconFileBase"/> implementation from the specified stream.
@@ -136,7 +136,7 @@ namespace UIconEdit
                         while (gapLength > 0)
                             gapLength -= input.Read(curBuffer, 0, (int)Math.Min(gapLength, bufferSize));
 
-                        Image loadedImage;
+                        Bitmap loadedImage;
 
                         int dibSize = reader.ReadInt32();
                         if (dibSize < MinDibSize) throw new InvalidDataException();
@@ -268,9 +268,9 @@ namespace UIconEdit
                         IconFrame frame; try
                         {
                             if (id == IconTypeCode.Cursor)
-                                frame = new CursorFrame(loadedImage, bitDepth, entry.XPlanes, entry.YBitsPerpixel);
+                                frame = new CursorFrame(bitDepth, loadedImage, entry.XPlanes, entry.YBitsPerpixel);
                             else
-                                frame = new IconFrame(loadedImage, bitDepth);
+                                frame = new IconFrame(bitDepth, loadedImage);
                         }
                         catch (InvalidDataException) { throw; }
                         catch (ObjectDisposedException) { throw; }
@@ -279,7 +279,7 @@ namespace UIconEdit
 
                         if (!returner.FrameCollection.Add(frame))
                         {
-                            returner.FrameCollection.Remove(frame);
+                            returner.FrameCollection.RemoveAndDispose(frame);
                             returner.FrameCollection.Add(frame);
                         }
                         offset += entry.ResourceLength;
@@ -399,8 +399,7 @@ namespace UIconEdit
         public void Save(Stream output)
         {
             var frameCollection = FrameCollection;
-            if (frameCollection.Count == 0) throw new InvalidOperationException("No images set.");
-            if (frameCollection.Count > ushort.MaxValue) throw new InvalidOleVariantTypeException("Too many images!");
+            if (frameCollection.Count == 0 || frameCollection.Count > ushort.MaxValue) throw new InvalidOleVariantTypeException();
             Save(output, frameCollection);
         }
 
@@ -511,6 +510,42 @@ namespace UIconEdit
             writer.Write(offset); //16
             offset += length;
         }
+
+        private bool isDisposed = false;
+        /// <summary>
+        /// Immediately releases all resources used by the current instance.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases all unmanaged resources used by the current instance, and optionally releases all managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed)
+                return;
+
+            if (disposing)
+            {
+                foreach (IconFrame item in FrameCollection)
+                    item.Dispose();
+            }
+
+            isDisposed = true;
+        }
+
+        /// <summary>
+        /// Destructor.
+        /// </summary>
+        ~IconFileBase()
+        {
+            Dispose(false);
+        }
     }
 
     /// <summary>
@@ -531,20 +566,57 @@ namespace UIconEdit
     /// <summary>
     /// Interface for <see cref="IconFrame"/> collections.
     /// </summary>
-    public interface IFrameCollection : ICollection<IconFrame>
+    public interface IFrameCollection : IList<IconFrame>
     {
         /// <summary>
-        /// Adds the specified item to the collection.
+        /// Adds the specified item to the list.
         /// </summary>
         /// <param name="item">The item to add to the collection.</param>
-        /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> or an icon frame like it
-        /// already exists in the collection.</returns>
+        /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if an <see cref="IconFrame"/> matching the specified criteria
+        /// already exists in the list.</returns>
         new bool Add(IconFrame item);
 
         /// <summary>
-        /// Returns an array containing elements copied from the current set.
+        /// Inserts the specified item into the list at the specified index.
         /// </summary>
-        /// <returns>An array containing elements copied from the current set.</returns>
+        /// <param name="index">The index at which to insert the item.</param>
+        /// <param name="item">The item to insert into the list.</param>
+        /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if an <see cref="IconFrame"/> matching the specified criteria
+        /// already exists in the list.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or is greater than the number of elements in the list.
+        /// </exception>
+        new bool Insert(int index, IconFrame item);
+
+        /// <summary>
+        /// Sets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the value to set.</param>
+        /// <param name="item">The value to set.</param>
+        /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if an <see cref="IconFrame"/> matching the specified criteria
+        /// already exists in the list.</returns>
+        bool SetValue(int index, IconFrame item);
+
+        /// <summary>
+        /// Removes the specified item from the collection and immediately calls <see cref="IconFrame.Dispose()"/>.
+        /// </summary>
+        /// <param name="item">The item to search for in the collection.</param>
+        /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
+        bool RemoveAndDispose(IconFrame item);
+
+        /// <summary>
+        /// Removes the item at the specified index and immediately calls <see cref="IconFrame.Dispose()"/>.
+        /// </summary>
+        /// <param name="index">The index of the item to remove.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or is greater than 
+        /// </exception>
+        void RemoveAndDisposeAt(int index);
+
+        /// <summary>
+        /// Returns an array containing elements copied from the current list.
+        /// </summary>
+        /// <returns>An array containing elements copied from the current list.</returns>
         IconFrame[] ToArray();
     }
 }

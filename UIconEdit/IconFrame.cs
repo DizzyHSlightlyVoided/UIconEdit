@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
 using nQuant;
@@ -303,9 +304,8 @@ namespace UIconEdit
 
         private byte _alphaThreshold;
         /// <summary>
-        /// Gets and sets a value indicating the threshold of alpha values when <see cref="BitDepth"/> is any value other than
-        /// <see cref="UIconEdit.BitDepth.Bit32"/>. Alpha values less than this value will be fully transparent; alpha values greater than or equal to this
-        /// value will be fully opaque.
+        /// Gets and sets a value indicating the threshold of alpha values at <see cref="BitDepth"/>s below <see cref="UIconEdit.BitDepth.Bit32"/>.
+        /// Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
         /// </summary>
         public byte AlphaThreshold
         {
@@ -313,6 +313,71 @@ namespace UIconEdit
             set { _alphaThreshold = value; }
         }
 
+        private InterpolationMode _lerpMode;
+        /// <summary>
+        /// Gets and sets the interpolation mode used by graphics objects when scaling.
+        /// </summary>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// In a set operation, the specified value is not a valid <see cref="InterpolationMode"/> value.
+        /// </exception>
+        public InterpolationMode DrawInterpolationMode
+        {
+            get { return _lerpMode; }
+            set
+            {
+                switch (value)
+                {
+                    case InterpolationMode.Bicubic:
+                    case InterpolationMode.Bilinear:
+                    case InterpolationMode.Default:
+                    case InterpolationMode.High:
+                    case InterpolationMode.HighQualityBicubic:
+                    case InterpolationMode.HighQualityBilinear:
+                    case InterpolationMode.Low:
+                    case InterpolationMode.NearestNeighbor:
+                        break;
+                    default:
+                        throw new InvalidEnumArgumentException(null, (int)value, typeof(InterpolationMode));
+                }
+                _lerpMode = value;
+            }
+        }
+
+        private PixelOffsetMode _offMode;
+        /// <summary>
+        /// Gets and sets the pixel offset mode used by graphics objects when rescaling the image.
+        /// </summary>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// In a set operation, the specified value is not a valid <see cref="PixelOffsetMode"/> value.
+        /// </exception>
+        public PixelOffsetMode DrawPixelOffsetMode
+        {
+            get { return _offMode; }
+            set
+            {
+                switch (value)
+                {
+                    case PixelOffsetMode.Default:
+                    case PixelOffsetMode.Half:
+                    case PixelOffsetMode.HighQuality:
+                    case PixelOffsetMode.HighSpeed:
+                    case PixelOffsetMode.None:
+                        break;
+                    default:
+                        throw new InvalidEnumArgumentException(null, (int)value, typeof(PixelOffsetMode));
+                }
+                _offMode = value;
+            }
+        }
+
+        private Graphics GraphicsFromImage(Image image)
+        {
+            Graphics g = Graphics.FromImage(image);
+            g.InterpolationMode = _lerpMode;
+            g.PixelOffsetMode = _offMode;
+            return g;
+        }
+        
         internal unsafe Bitmap GetQuantized(out Bitmap alphaMask, out int paletteCount)
         {
             const PixelFormat formatFull = PixelFormat.Format32bppArgb, formatAlpha = PixelFormat.Format1bppIndexed;
@@ -329,7 +394,7 @@ namespace UIconEdit
 
             Bitmap fullColor = new Bitmap(_width, _height, formatFull);
 
-            using (Graphics g = Graphics.FromImage(fullColor))
+            using (Graphics g = GraphicsFromImage(fullColor))
                 g.DrawImage(_image, 0, 0, _width, _height);
 
             Rectangle fullRect = new Rectangle(0, 0, _width, _height);
@@ -393,7 +458,7 @@ namespace UIconEdit
                     return fullColor;
 
                 Bitmap full24 = new Bitmap(_width, _height, PixelFormat.Format24bppRgb);
-                using (Graphics g = Graphics.FromImage(full24))
+                using (Graphics g = GraphicsFromImage(full24))
                     g.DrawImage(fullColor, 0, 0, _width, _height);
 
                 fullColor.Dispose();

@@ -289,8 +289,8 @@ namespace UIconEdit
                 {
                     default:
                         return 32;
-                    case BitDepth.Bit24:
-                        return 24;
+                    //case BitDepth.Bit24:
+                    //    return 24;
                     case BitDepth.Color2:
                         return 1;
                     case BitDepth.Color16:
@@ -339,13 +339,39 @@ namespace UIconEdit
             Rectangle fullRect = new Rectangle(0, 0, _width, _height);
             const uint opaqueAlpha = 0xFF000000u;
 
-            using (Bitmap alphaTemp = new Bitmap(_width, _height, fullFormat))
+            unsafe
             {
-                unsafe
+                alphaMask = new Bitmap(_width, _height, fullFormat);
+
+                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadOnly, fullFormat);
+                BitmapData alphaData = alphaMask.LockBits(fullRect, ImageLockMode.WriteOnly, fullFormat);
+                int offWidth = fullRect.Width / 8;
+
+                for (int y = 0; y < _height; y++)
                 {
-                    BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadOnly, fullFormat);
-                    BitmapData alphaData = alphaTemp.LockBits(fullRect, ImageLockMode.WriteOnly, fullFormat);
-                    int offWidth = fullRect.Width / 8;
+                    uint* pFull = (uint*)(fullData.Scan0 + (y * fullData.Stride));
+                    uint* pAlpha = (uint*)(alphaData.Scan0 + (y * alphaData.Stride));
+
+                    for (int x = 0; x < _width; x++)
+                    {
+                        uint value = pFull[x] >> 24;
+                        if (value < _alphaThreshold)
+                            pAlpha[x] = opaqueAlpha;
+                        else
+                            pAlpha[x] = uint.MaxValue;
+                    }
+                }
+                fullColor.UnlockBits(fullData);
+                alphaMask.UnlockBits(alphaData);
+            }
+
+            unsafe
+            {
+                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadWrite, fullFormat);
+
+                if (_width > byte.MaxValue || _height > byte.MaxValue)
+                {
+                    BitmapData alphaData = alphaMask.LockBits(fullRect, ImageLockMode.ReadOnly, fullFormat);
 
                     for (int y = 0; y < _height; y++)
                     {
@@ -354,30 +380,29 @@ namespace UIconEdit
 
                         for (int x = 0; x < _width; x++)
                         {
-                            uint value = pFull[x] >> 24;
-                            if (value < _alphaThreshold)
-                                pAlpha[x] = opaqueAlpha;
+                            if (pAlpha[x] == uint.MaxValue)
+                                pFull[x] |= opaqueAlpha;
                             else
-                                pAlpha[x] = uint.MaxValue;
+                                pFull[x] = 0;
                         }
                     }
-                    fullColor.UnlockBits(fullData);
-                    alphaTemp.UnlockBits(alphaData);
 
-                    alphaMask = alphaTemp.Clone(fullRect, alphaFormat);
+                    alphaMask.UnlockBits(alphaData);
+                    alphaMask.Dispose();
                 }
-            }
-
-            unsafe
-            {
-                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadWrite, fullFormat);
-
-                for (int y = 0; y < _height; y++)
+                else
                 {
-                    uint* pRow = (uint*)(fullData.Scan0 + (y * fullData.Stride));
+                    Bitmap oldAlpha = alphaMask;
+                    alphaMask = oldAlpha.Clone(fullRect, alphaFormat);
+                    oldAlpha.Dispose();
 
-                    for (int x = 0; x < _width; x++)
-                        pRow[x] |= opaqueAlpha;
+                    for (int y = 0; y < _height; y++)
+                    {
+                        uint* pRow = (uint*)(fullData.Scan0 + (y * fullData.Stride));
+
+                        for (int x = 0; x < _width; x++)
+                            pRow[x] |= opaqueAlpha;
+                    }
                 }
                 fullColor.UnlockBits(fullData);
             }

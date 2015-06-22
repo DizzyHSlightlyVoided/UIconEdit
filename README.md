@@ -1,3 +1,3 @@
 ﻿UIconEdit
 =========
-A class for adding and removing images in Windows icons.
+A .Net library for reading and editing Windows cursor and animation files.

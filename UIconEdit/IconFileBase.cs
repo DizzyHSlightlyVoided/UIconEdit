@@ -87,8 +87,8 @@ namespace UIconEdit
                 switch (loadedId)
                 {
                     case IconTypeCode.Cursor:
-                        //TODO: Cursor implementation
-                        throw new NotImplementedException();
+                        returner = new CursorFile();
+                        break;
                     case IconTypeCode.Icon:
                         returner = new IconFile();
                         break;
@@ -574,7 +574,8 @@ namespace UIconEdit
     }
 
     /// <summary>
-    /// Interface for <see cref="IconFrame"/> collections.
+    /// Interface for <see cref="IconFrame"/> collections. Functions as both a list, and as a set of <see cref="IconFrame"/> objects based on their
+    /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>.
     /// </summary>
     public interface IFrameCollection : IList<IconFrame>
     {
@@ -582,8 +583,9 @@ namespace UIconEdit
         /// Adds the specified item to the list.
         /// </summary>
         /// <param name="item">The item to add to the collection.</param>
-        /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if an <see cref="IconFrame"/> matching the specified criteria
-        /// already exists in the list.</returns>
+        /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+        /// is already associated with a different icon file, or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>,
+        /// and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
         new bool Add(IconFrame item);
 
         /// <summary>
@@ -591,8 +593,9 @@ namespace UIconEdit
         /// </summary>
         /// <param name="index">The index at which to insert the item.</param>
         /// <param name="item">The item to insert into the list.</param>
-        /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if an <see cref="IconFrame"/> matching the specified criteria
-        /// already exists in the list.</returns>
+        /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+        /// is already associated with a different icon file, or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>,
+        /// and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or is greater than the number of elements in the list.
         /// </exception>
@@ -603,8 +606,9 @@ namespace UIconEdit
         /// </summary>
         /// <param name="index">The index of the value to set.</param>
         /// <param name="item">The value to set.</param>
-        /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if an <see cref="IconFrame"/> matching the specified criteria
-        /// already exists in the list.</returns>
+        /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+        /// is already associated with a different icon file, or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>,
+        /// and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
         bool SetValue(int index, IconFrame item);
 
         /// <summary>
@@ -624,7 +628,7 @@ namespace UIconEdit
         void RemoveAndDisposeAt(int index);
 
         /// <summary>
-        /// Returns an array containing elements copied from the current list.
+        /// Returns an array containing all elements in the current list.
         /// </summary>
         /// <returns>An array containing elements copied from the current list.</returns>
         IconFrame[] ToArray();

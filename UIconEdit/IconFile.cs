@@ -191,7 +191,7 @@ namespace UIconEdit
                 get { return _items[index]; }
                 set
                 {
-                    if (value == null) throw new ArgumentOutOfRangeException(null, new ArgumentNullException(null).Message);
+                    if (value == null) throw new ArgumentOutOfRangeException(null, new ArgumentNullException().Message);
                     if (!_setValue(index, value, true))
                         throw new NotSupportedException();
                 }
@@ -471,6 +471,16 @@ namespace UIconEdit
                 return _items.ToArray();
             }
 
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+
+            IEnumerator<IconFrame> IEnumerable<IconFrame>.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+
             /// <summary>
             /// Removes all elements matching the specified predicate.
             /// </summary>
@@ -493,16 +503,6 @@ namespace UIconEdit
                     }
                 }
                 return removed;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-
-            IEnumerator<IconFrame> IEnumerable<IconFrame>.GetEnumerator()
-            {
-                return GetEnumerator();
             }
 
             bool ICollection<IconFrame>.IsReadOnly

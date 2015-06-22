@@ -39,6 +39,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CursorFile.cs" />
     <Compile Include="IconFile.cs" />
     <Compile Include="IconFrame.cs" />
     <Compile Include="IconFileBase.cs" />

@@ -223,7 +223,7 @@ namespace UIconEdit
                                     default:
                                         throw new InvalidDataException();
                                 }
-                                if (bitDepth != BitDepth.Bit32 && (height & 1) != 1)
+                                if (bitDepth != BitDepth.Bit32 && (height & 1) == 1)
                                     throw new InvalidDataException();
 
                                 if (loadedId != IconTypeCode.Cursor && bitsPerPixel != entry.YBitsPerpixel)

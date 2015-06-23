@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -56,14 +57,17 @@ namespace UIconEdit
         /// <summary>
         /// Gets a collection containing all frames in the cursor file.
         /// </summary>
-        protected override IFrameCollection FrameCollection
-        {
-            get { return _frames; }
-        }
-        /// <summary>
-        /// Gets a collection containing all frames in the cursor file.
-        /// </summary>
         public new CursorFrameList Frames { get { return _frames; } }
+
+        /// <summary>
+        /// Gets a valid indicating whether the specified instance is a valid <see cref="CursorFrame"/> object.
+        /// </summary>
+        /// <param name="frame">The icon frame to test.</param>
+        /// <returns><c>true</c> if <paramref name="frame"/> is a <see cref="CursorFrame"/> instance; <c>false</c> otherwise.</returns>
+        protected override bool IsValid(IconFrame frame)
+        {
+            return frame is CursorFrame;
+        }
 
         /// <summary>
         /// Gets the horizontal offset of the hotspot in the specified frame from the left of the specified cursor frame.
@@ -88,26 +92,24 @@ namespace UIconEdit
         /// <summary>
         /// Represents a list of cursor frames.
         /// </summary>
-        public class CursorFrameList : IList<CursorFrame>, IFrameCollection, ICollection
+        [DebuggerDisplay("Count = {Count}")]
+        [DebuggerTypeProxy(typeof(DebugView))]
+        public class CursorFrameList : IList<CursorFrame>, IList
 #if IREADONLY
-            , IReadOnlyList<CursorFrame>, IReadOnlyList<IconFrame>
+            , IReadOnlyList<CursorFrame>
 #endif
         {
             internal CursorFrameList(CursorFile file)
             {
                 _file = file;
-                _items = new List<CursorFrame>();
-                _set = new HashSet<CursorFrame>(new IconFrameComparer());
             }
 
-            private CursorFile _file;
-            private List<CursorFrame> _items;
-            private HashSet<CursorFrame> _set;
+            private IconFileBase _file;
 
             /// <summary>
             /// Gets the number of frames contained in the list.
             /// </summary>
-            public int Count { get { return _items.Count; } }
+            public int Count { get { return _file.Frames.Count; } }
 
             /// <summary>
             /// Gets and sets the cursor frame at the specified index.
@@ -123,39 +125,14 @@ namespace UIconEdit
             /// </exception>
             public CursorFrame this[int index]
             {
-                get { return _items[index]; }
-                set
-                {
-                    if (value == null) throw new ArgumentOutOfRangeException(null, new ArgumentNullException().Message);
-                    if (!_setValue(index, value, true))
-                        throw new NotSupportedException();
-                }
+                get { return (CursorFrame)_file.Frames[index]; }
+                set { _file.Frames[index] = value; }
             }
 
-            IconFrame IList<IconFrame>.this[int index]
+            object IList.this[int index]
             {
-                get { return _items[index]; }
-                set { this[index] = value as CursorFrame; }
-            }
-#if IREADONLY
-            IconFrame IReadOnlyList<IconFrame>.this[int index]
-            {
-                get { return _items[index]; }
-            }
-#endif
-            private bool _setValue(int index, CursorFrame value, bool setter)
-            {
-                if (setter && index == _items.Count)
-                    return Add(value);
-                var oldItem = _items[index];
-                if (value == null || value.File != null || (_set.Contains(value) && !_set.Comparer.Equals(oldItem, value)))
-                    return false;
-                _set.Remove(oldItem);
-                _set.Add(value);
-                _items[index] = value;
-                oldItem.File = null;
-                value.File = _file;
-                return true;
+                get { return _file.Frames[index]; }
+                set { ((IList)_file.Frames)[index] = value; }
             }
 
             /// <summary>
@@ -171,12 +148,7 @@ namespace UIconEdit
             /// </exception>
             public bool SetValue(int index, CursorFrame item)
             {
-                return _setValue(index, item, false);
-            }
-
-            bool IFrameCollection.SetValue(int index, IconFrame item)
-            {
-                return SetValue(index, item as CursorFrame);
+                return _file.Frames.SetValue(index, item);
             }
 
             /// <summary>
@@ -188,22 +160,17 @@ namespace UIconEdit
             /// and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
             public bool Add(CursorFrame item)
             {
-                return Insert(_items.Count, item);
-            }
-
-            bool IFrameCollection.Add(IconFrame item)
-            {
-                return Add(item as CursorFrame);
-            }
-
-            void ICollection<IconFrame>.Add(IconFrame item)
-            {
-                Add(item as CursorFrame);
+                return _file.Frames.Add(item);
             }
 
             void ICollection<CursorFrame>.Add(CursorFrame item)
             {
                 Add(item);
+            }
+
+            int IList.Add(object value)
+            {
+                return ((IList)_file.Frames).Add(value);
             }
 
             /// <summary>
@@ -216,11 +183,7 @@ namespace UIconEdit
             /// and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
             public bool Insert(int index, CursorFrame item)
             {
-                if (index < 0 || index > _items.Count) throw new ArgumentOutOfRangeException("index");
-                if (item == null || item.File != null || !_set.Add(item)) return false;
-                _items.Insert(index, item);
-                item.File = _file;
-                return true;
+                return _file.Frames.Insert(index, item);
             }
 
             void IList<CursorFrame>.Insert(int index, CursorFrame item)
@@ -228,24 +191,9 @@ namespace UIconEdit
                 Insert(index, item);
             }
 
-            bool IFrameCollection.Insert(int index, IconFrame item)
+            void IList.Insert(int index, object value)
             {
-                return Insert(index, item as CursorFrame);
-            }
-
-            void IList<IconFrame>.Insert(int index, IconFrame item)
-            {
-                Insert(index, item as CursorFrame);
-            }
-
-            private void _removeAt(int index, bool disposing)
-            {
-                CursorFrame item = _items[index];
-                _items.RemoveAt(index);
-                _set.Remove(item);
-                item.File = null;
-                if (disposing)
-                    item.Dispose();
+                ((IList)_file.Frames).Insert(index, value);
             }
 
             /// <summary>
@@ -257,7 +205,7 @@ namespace UIconEdit
             /// </exception>
             public void RemoveAt(int index)
             {
-                _removeAt(index, false);
+                _file.Frames.RemoveAt(index);
             }
 
             /// <summary>
@@ -266,52 +214,54 @@ namespace UIconEdit
             /// <param name="index">The index of the icon frame to remove.</param>
             public void RemoveAndDisposeAt(int index)
             {
-                _removeAt(index, true);
-            }
-
-            private bool _remove(CursorFrame item, bool disposing)
-            {
-                for (int i = 0; i < _items.Count; i++)
-                {
-                    if (_set.Comparer.Equals(item, _items[i]))
-                    {
-                        _removeAt(i, disposing);
-                        return true;
-                    }
-                }
-                return false;
+                _file.Frames.RemoveAndDisposeAt(index);
             }
 
             /// <summary>
             /// Removes the specified cursor frame from the list.
             /// </summary>
-            /// <param name="item">The cursor frame to remove from the list.</param>
-            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
+            /// <param name="item">The cursor frame to to remove from the list.</param>
+            /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
             public bool Remove(CursorFrame item)
             {
-                return _remove(item, false);
+                return _file.Frames.Remove(item);
             }
 
-            bool ICollection<IconFrame>.Remove(IconFrame item)
+            void IList.Remove(object value)
             {
-                return _remove(item as CursorFrame, false);
+                ((IList)_file.Frames).Remove(value);
+            }
+
+            /// <summary>
+            /// Removes the specified cursor frame from the list and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// </summary>
+            /// <param name="item">The cursor frame to to remove from the list.</param>
+            /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
+            public bool RemoveAndDispose(CursorFrame item)
+            {
+                return _file.Frames.RemoveAndDispose(item);
+            }
+
+            /// <summary>
+            /// Removes an element similar to the specified cursor frame from the list.
+            /// </summary>
+            /// <param name="item">The cursor frame to to compare.</param>
+            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
+            public bool RemoveSimilar(CursorFrame item)
+            {
+                return _file.Frames.RemoveSimilar(item);
             }
 
             /// <summary>
             /// Removes the specified cursor frame from the list, immediately calls <see cref="IconFrame.Dispose()"/>.
             /// </summary>
-            /// <param name="item">The cursor frame to remove from the list.</param>
+            /// <param name="item">The cursor frame to compare.</param>
             /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
             /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
-            public bool RemoveAndDispose(CursorFrame item)
+            public bool RemoveAndDisposeSimilar(CursorFrame item)
             {
-                return _remove(item, true);
-            }
-
-            bool IFrameCollection.RemoveAndDispose(IconFrame item)
-            {
-                return _remove(item as CursorFrame, true);
+                return _file.Frames.RemoveAndDisposeSimilar(item);
             }
 
             /// <summary>
@@ -326,7 +276,7 @@ namespace UIconEdit
             /// </exception>
             public void CopyTo(CursorFrame[] array)
             {
-                _items.CopyTo(array);
+                _file.Frames.CopyTo(array);
             }
 
             /// <summary>
@@ -345,7 +295,7 @@ namespace UIconEdit
             /// </exception>
             public void CopyTo(CursorFrame[] array, int arrayIndex)
             {
-                _items.CopyTo(array, arrayIndex);
+                _file.Frames.CopyTo(array, arrayIndex);
             }
 
             /// <summary>
@@ -368,30 +318,12 @@ namespace UIconEdit
             /// </exception>
             public void CopyTo(int index, CursorFrame[] array, int arrayIndex, int count)
             {
-                _items.CopyTo(index, array, arrayIndex, count);
-            }
-
-            void ICollection<IconFrame>.CopyTo(IconFrame[] array, int arrayIndex)
-            {
-                ((IList)_items).CopyTo(array, arrayIndex);
+                _file.Frames.CopyTo(index, array, arrayIndex, count);
             }
 
             void ICollection.CopyTo(Array array, int index)
             {
-                ((IList)_items).CopyTo(array, index);
-            }
-
-
-            private void _clear(bool disposing)
-            {
-                foreach (IconFrame item in _items)
-                {
-                    item.File = null;
-                    if (disposing)
-                        item.Dispose();
-                }
-                _set.Clear();
-                _items.Clear();
+                ((IList)_file.Frames).CopyTo(array, index);
             }
 
             /// <summary>
@@ -399,7 +331,7 @@ namespace UIconEdit
             /// </summary>
             public void Clear()
             {
-                _clear(false);
+                _file.Frames.Clear();
             }
 
             /// <summary>
@@ -407,42 +339,59 @@ namespace UIconEdit
             /// </summary>
             public void ClearAndDispose()
             {
-                _clear(true);
+                _file.Frames.Clear();
             }
 
             /// <summary>
-            /// Determines if an element similar to the specified icon frame exists in the list.
+            /// Determines if the specified cursor frame exists in the list.
             /// </summary>
             /// <param name="item">The cursor frame to search for in the list.</param>
-            /// <returns><c>true</c> if a cursor frame with the same with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="item"/> exists in the list; <c>false</c> otherwise.</returns>
+            /// <returns><c>true</c> if <paramref name="item"/> was found; <c>false</c> otherwise.</returns>
             public bool Contains(CursorFrame item)
             {
-                return item != null && _set.Contains(item);
+                return _file.Frames.Contains(item);
             }
 
-            bool ICollection<IconFrame>.Contains(IconFrame item)
+            bool IList.Contains(object item)
             {
                 return Contains(item as CursorFrame);
             }
 
             /// <summary>
-            /// Gets the index of an element similar to the specified item.
+            /// Determines if an element similar to the specified cursor frame exists in the list.
             /// </summary>
-            /// <param name="item">The cursor frame to search for in the list.</param>
-            /// <returns>The index of a cursor frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="item"/>, if found; otherwise, -1.</returns>
-            public int IndexOf(CursorFrame item)
+            /// <param name="item">The cursor frame to compare.</param>
+            /// <returns><c>true</c> if a cursor frame with the same with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="item"/> exists in the list; <c>false</c> otherwise.</returns>
+            public bool ContainsSimilar(CursorFrame item)
             {
-                if (item == null) return -1;
-                for (int i = 0; i < _items.Count; i++)
-                    if (_set.Comparer.Equals(item, _items[i])) return i;
-                return -1;
+                return _file.Frames.ContainsSimilar(item);
             }
 
-            int IList<IconFrame>.IndexOf(IconFrame item)
+            /// <summary>
+            /// Gets the index of the specified cursor frame.
+            /// </summary>
+            /// <param name="item">The cursor frame to search for in the list.</param>
+            /// <returns><c>true</c> if <paramref name="item"/> was found; <c>false</c> otherwise.</returns>
+            public int IndexOf(CursorFrame item)
+            {
+                return _file.Frames.IndexOf(item);
+            }
+
+            int IList.IndexOf(object item)
             {
                 return IndexOf(item as CursorFrame);
+            }
+
+            /// <summary>
+            /// Gets the index of an element similar to the specified cursor frame.
+            /// </summary>
+            /// <param name="item">The cursor frame to compare.</param>
+            /// <returns>The index of a cursor frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="item"/>, if found; otherwise, -1.</returns>
+            public int IndexOfSimilar(CursorFrame item)
+            {
+                return _file.Frames.IndexOfSimilar(item);
             }
 
             /// <summary>
@@ -459,11 +408,6 @@ namespace UIconEdit
                 return GetEnumerator();
             }
 
-            IEnumerator<IconFrame> IEnumerable<IconFrame>.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
@@ -475,12 +419,7 @@ namespace UIconEdit
             /// <returns>An array containing elements copied from the current list.</returns>
             public CursorFrame[] ToArray()
             {
-                return _items.ToArray();
-            }
-
-            IconFrame[] IFrameCollection.ToArray()
-            {
-                return this.ToArray<IconFrame>();
+                return this.ToArray<CursorFrame>();
             }
 
             bool ICollection<CursorFrame>.IsReadOnly
@@ -488,7 +427,12 @@ namespace UIconEdit
                 get { return false; }
             }
 
-            bool ICollection<IconFrame>.IsReadOnly
+            bool IList.IsReadOnly
+            {
+                get { return false; }
+            }
+
+            bool IList.IsFixedSize
             {
                 get { return false; }
             }
@@ -500,20 +444,20 @@ namespace UIconEdit
 
             object ICollection.SyncRoot
             {
-                get { return ((ICollection)_items).SyncRoot; }
+                get { return ((ICollection)_file.Frames).SyncRoot; }
             }
 
             /// <summary>
             /// An enumerator which iterates through the list.
             /// </summary>
-            public struct Enumerator : IEnumerator<CursorFrame>, IEnumerator<IconFrame>
+            public struct Enumerator : IEnumerator<CursorFrame>
             {
-                private IEnumerator<CursorFrame> _enum;
+                private IEnumerator<IconFrame> _enum;
                 private CursorFrame _current;
 
                 internal Enumerator(CursorFrameList list)
                 {
-                    _enum = list._items.GetEnumerator();
+                    _enum = list._file.Frames.GetEnumerator();
                     _current = null;
                 }
 
@@ -535,11 +479,6 @@ namespace UIconEdit
                     get { return _current; }
                 }
 
-                IconFrame IEnumerator<IconFrame>.Current
-                {
-                    get { return _current; }
-                }
-
                 object IEnumerator.Current
                 {
                     get { return _current; }
@@ -554,7 +493,7 @@ namespace UIconEdit
                     if (_enum == null) return false;
                     if (_enum.MoveNext())
                     {
-                        _current = _enum.Current;
+                        _current = (CursorFrame)_enum.Current;
                         return true;
                     }
                     Dispose();
@@ -564,6 +503,22 @@ namespace UIconEdit
                 void IEnumerator.Reset()
                 {
                     _enum.Reset();
+                }
+            }
+
+            private class DebugView
+            {
+                private CursorFrameList _list;
+
+                public DebugView(CursorFrameList list)
+                {
+                    _list = list;
+                }
+
+                [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+                public IconFrame[] Items
+                {
+                    get { return _list.ToArray(); }
                 }
             }
         }

@@ -35,7 +35,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace UIconEdit
@@ -442,7 +441,7 @@ namespace UIconEdit
         public void Save(Stream output)
         {
             var frames = Frames;
-            if (frames.Count == 0 || frames.Count > ushort.MaxValue) throw new InvalidOleVariantTypeException();
+            if (frames.Count == 0 || frames.Count > ushort.MaxValue) throw new InvalidOperationException();
             Save(output, frames);
         }
 

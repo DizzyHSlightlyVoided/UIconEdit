@@ -388,6 +388,19 @@ namespace UIconEdit
             return g;
         }
 
+        /// <summary>
+        /// Returns a duplicate of the current instance.
+        /// </summary>
+        /// <returns>A duplicate of the current instance, with its own clone of <see cref="BaseImage"/>.</returns>
+        public virtual IconFrame Clone()
+        {
+            IconFrame copy = (IconFrame)MemberwiseClone();
+            copy._image = (Image)this._image.Clone();
+            copy._ownedImage = true;
+            copy.File = null;
+            return copy;
+        }
+
         internal unsafe Bitmap GetQuantized(out Bitmap alphaMask, out int paletteCount)
         {
             const PixelFormat formatFull = PixelFormat.Format32bppArgb, formatAlpha = PixelFormat.Format1bppIndexed;

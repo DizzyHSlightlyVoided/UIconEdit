@@ -100,6 +100,18 @@ namespace UIconEdit
         }
 
         /// <summary>
+        /// Returns a duplicate of the current instance.
+        /// </summary>
+        /// <returns>A duplicate of the current instance, with copies of every icon frame and clones of each
+        /// frame's <see cref="IconFrame.BaseImage"/> in <see cref="Frames"/>.</returns>
+        public override IconFileBase Clone()
+        {
+            CursorFile copy = (CursorFile)base.Clone();
+            copy._frames = new CursorFrameList(copy);
+            return copy;
+        }
+
+        /// <summary>
         /// Gets the horizontal offset of the hotspot in the specified frame from the left of the specified cursor frame.
         /// </summary>
         /// <param name="frame">The frame from which to get the horizontal offset.</param>
@@ -442,7 +454,7 @@ namespace UIconEdit
             {
                 return GetEnumerator();
             }
-            
+
             /// <summary>
             /// Removes all elements matching the specified predicate.
             /// </summary>

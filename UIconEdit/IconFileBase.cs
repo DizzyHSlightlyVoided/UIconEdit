@@ -43,7 +43,7 @@ namespace UIconEdit
     /// <summary>
     /// Base class for icon and cursor files.
     /// </summary>
-    public abstract class IconFileBase : IDisposable
+    public abstract class IconFileBase : IDisposable, ICloneable
     {
         /// <summary>
         /// Initializes a new instance.
@@ -303,6 +303,25 @@ namespace UIconEdit
 
                 return returner;
             }
+        }
+
+        /// <summary>
+        /// Returns a duplicate of the current instance.
+        /// </summary>
+        /// <returns>A duplicate of the current instance, with copies of every icon frame and clones of each
+        /// frame's <see cref="IconFrame.BaseImage"/> in <see cref="Frames"/>.</returns>
+        public virtual IconFileBase Clone()
+        {
+            IconFileBase copy = (IconFileBase)MemberwiseClone();
+            copy._frames = new FrameList(copy);
+            foreach (IconFrame curFrame in _frames)
+                copy._frames.Add(curFrame.Clone());
+            return copy;
+        }
+
+        object ICloneable.Clone()
+        {
+            return Clone();
         }
 
         [DebuggerDisplay("ImageOffset = {ImageOffset}, ResourceLength = {ResourceLength}, End = {End}")]

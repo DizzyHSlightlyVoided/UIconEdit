@@ -46,9 +46,24 @@ namespace UIconEdit.Builder
             IconFrame[] frames = iconFile.Frames.ToArray();
             for (int i = 0; i < frames.Length; i++)
                 frames[i].BaseImage.Save(string.Format("Gradient{0}.png", i), ImageFormat.Png);
-            
+
             using (FileStream fs = File.OpenWrite("GradientOut.ico"))
                 iconFile.Save(fs);
+
+            iconFile.Dispose();
+
+            CursorFile cursorFile;
+            using (FileStream fs = File.OpenRead("Crosshair.cur"))
+                cursorFile = CursorFile.Load(fs);
+
+            CursorFrame[] cursorFrames = cursorFile.Frames.ToArray();
+            for (int i = 0; i < cursorFrames.Length; i++)
+                cursorFrames[i].BaseImage.Save(string.Format("Crosshair{0}.png", i), ImageFormat.Png);
+
+            using (FileStream fs = File.OpenWrite("CrosshairOut.cur"))
+                cursorFile.Save(fs);
+
+            cursorFile.Dispose();
         }
     }
 }

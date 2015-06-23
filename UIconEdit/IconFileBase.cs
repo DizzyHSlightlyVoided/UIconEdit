@@ -274,7 +274,7 @@ namespace UIconEdit
                                 if (bitDepth != BitDepth.Bit32 && (height & 1) == 1)
                                     throw new InvalidDataException();
 
-                                if (loadedId != IconTypeCode.Cursor && bitsPerPixel != entry.YBitsPerpixel)
+                                if (loadedId != IconTypeCode.Cursor && entry.YBitsPerpixel != 0 && bitsPerPixel != entry.YBitsPerpixel)
                                     throw new InvalidDataException();
 
                                 MemoryStream bufferStream = new MemoryStream();

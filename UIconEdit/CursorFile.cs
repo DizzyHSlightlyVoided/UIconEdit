@@ -412,6 +412,34 @@ namespace UIconEdit
             {
                 return GetEnumerator();
             }
+            
+            /// <summary>
+            /// Removes all elements matching the specified predicate.
+            /// </summary>
+            /// <param name="match">A predicate used to define the elements to remove.</param>
+            /// <returns>The number of elements which were removed.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public int RemoveWhere(Predicate<CursorFrame> match)
+            {
+                if (match == null) throw new ArgumentNullException("match");
+                return _file.Frames.RemoveWhere(i => match((CursorFrame)i));
+            }
+
+            /// <summary>
+            /// Removes all elements matching the specified predicate and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// </summary>
+            /// <param name="match">A predicate used to define the elements to remove.</param>
+            /// <returns>The number of elements which were removed.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public int RemoveAndDisposeWhere(Predicate<CursorFrame> match)
+            {
+                if (match == null) throw new ArgumentNullException("match");
+                return _file.Frames.RemoveAndDisposeWhere(i => match((CursorFrame)i));
+            }
 
             /// <summary>
             /// Returns an array containing all elements in the current list.

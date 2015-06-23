@@ -988,6 +988,25 @@ namespace UIconEdit
                 return GetEnumerator();
             }
 
+            private int _removeWhere(Predicate<IconFrame> match, bool disposing)
+            {
+                if (match == null) throw new ArgumentNullException("match");
+                int removed = 0;
+                for (int i = 0; i < _items.Count; i++)
+                {
+                    while (i < _items.Count && match(_items[i]))
+                    {
+                        removed++;
+                        IconFrame oldItem = _items[i];
+                        _set.Remove(oldItem);
+                        _items.RemoveAt(i);
+                        if (disposing)
+                            oldItem.Dispose();
+                    }
+                }
+                return removed;
+            }
+
             /// <summary>
             /// Removes all elements matching the specified predicate.
             /// </summary>
@@ -998,18 +1017,20 @@ namespace UIconEdit
             /// </exception>
             public int RemoveWhere(Predicate<IconFrame> match)
             {
-                if (match == null) throw new ArgumentNullException("match");
-                int removed = 0;
-                for (int i = 0; i < _items.Count; i++)
-                {
-                    while (i < _items.Count && match(_items[i]))
-                    {
-                        removed++;
-                        _set.Remove(_items[i]);
-                        _items.RemoveAt(i);
-                    }
-                }
-                return removed;
+                return _removeWhere(match, false);
+            }
+
+            /// <summary>
+            /// Removes all elements matching the specified predicate and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// </summary>
+            /// <param name="match">A predicate used to define the elements to remove.</param>
+            /// <returns>The number of elements which were removed.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public int RemoveAndDisposeWhere(Predicate<IconFrame> match)
+            {
+                return _removeWhere(match, true);
             }
 
             bool ICollection<IconFrame>.IsReadOnly

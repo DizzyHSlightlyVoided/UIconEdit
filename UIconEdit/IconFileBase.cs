@@ -77,6 +77,46 @@ namespace UIconEdit
             return Load(input, null);
         }
 
+        /// <summary>
+        /// Loads an <see cref="IconFileBase"/> implementation from the specified path.
+        /// </summary>
+        /// <param name="path">The path to a cursor or icon file.</param>
+        /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in <see cref="Path.GetInvalidPathChars()"/>.
+        /// </exception>
+        /// <exception cref="PathTooLongException">
+        /// The specified path, filename, or both contain the system-defined maximum length.
+        /// </exception>
+        /// <exception cref="FileNotFoundException">
+        /// The specified path was not found.
+        /// </exception>
+        /// <exception cref="DirectoryNotFoundException">
+        /// The specified path was invalid.
+        /// </exception>
+        /// <exception cref="UnauthorizedAccessException">
+        /// <para><paramref name="path"/> specified a directory.</para>
+        /// <para>-OR-</para>
+        /// <para>The caller does not have the required permission.</para>
+        /// </exception>
+        /// <exception cref="NotSupportedException">
+        /// <paramref name="path"/> is in an invalid format.
+        /// </exception>
+        /// <exception cref="InvalidDataException">
+        /// <paramref name="path"/> does not contain a valid icon or cursor file.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static IconFileBase Load(string path)
+        {
+            using (FileStream fs = File.OpenRead(path))
+                return Load(fs);
+        }
+
         internal static IconFileBase Load(Stream input, IconTypeCode? id)
         {
 #if LEAVEOPEN
@@ -420,9 +460,9 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Saves the icon file to the specified stream.
+        /// Saves the file to the specified stream.
         /// </summary>
-        /// <param name="output">The stream to which icon file will be written.</param>
+        /// <param name="output">The stream to which the file will be written.</param>
         /// <exception cref="InvalidOperationException">
         /// The current instance contains zero frames, or more than <see cref="ushort.MaxValue"/> frames.
         /// </exception>
@@ -442,7 +482,67 @@ namespace UIconEdit
         {
             var frames = Frames;
             if (frames.Count == 0 || frames.Count > ushort.MaxValue) throw new InvalidOperationException();
-            Save(output, frames);
+            try
+            {
+                Save(output, frames);
+            }
+            catch (ObjectDisposedException)
+            {
+                throw;
+            }
+            catch (IOException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new IOException(e.Message, e);
+            }
+        }
+
+        /// <summary>
+        /// Saves the file to the specified file.
+        /// </summary>
+        /// <param name="path">The file to which the file will be written.</param>
+        /// <exception cref="InvalidOperationException">
+        /// The current instance contains zero frames, or more than <see cref="ushort.MaxValue"/> frames.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in <see cref="Path.GetInvalidPathChars()"/>.
+        /// </exception>
+        /// <exception cref="PathTooLongException">
+        /// The specified path, filename, or both contain the system-defined maximum length.
+        /// </exception>
+        /// <exception cref="DirectoryNotFoundException">
+        /// The specified path is invalid.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public void Save(string path)
+        {
+            var frames = Frames;
+            if (frames.Count == 0 || frames.Count > ushort.MaxValue) throw new InvalidOperationException();
+            using (FileStream fs = File.OpenWrite(path))
+                try
+                {
+                    Save(fs, frames);
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
+                }
+                catch (IOException)
+                {
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    throw new IOException(e.Message, e);
+                }
         }
 
         const int MinDibSize = 40;

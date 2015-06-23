@@ -76,6 +76,46 @@ namespace UIconEdit
         }
 
         /// <summary>
+        /// Loads an <see cref="IconFileBase"/> implementation from the specified path.
+        /// </summary>
+        /// <param name="path">The path to a cursor file.</param>
+        /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in <see cref="Path.GetInvalidPathChars()"/>.
+        /// </exception>
+        /// <exception cref="PathTooLongException">
+        /// The specified path, filename, or both contain the system-defined maximum length.
+        /// </exception>
+        /// <exception cref="FileNotFoundException">
+        /// The specified path was not found.
+        /// </exception>
+        /// <exception cref="DirectoryNotFoundException">
+        /// The specified path was invalid.
+        /// </exception>
+        /// <exception cref="UnauthorizedAccessException">
+        /// <para><paramref name="path"/> specified a directory.</para>
+        /// <para>-OR-</para>
+        /// <para>The caller does not have the required permission.</para>
+        /// </exception>
+        /// <exception cref="NotSupportedException">
+        /// <paramref name="path"/> is in an invalid format.
+        /// </exception>
+        /// <exception cref="InvalidDataException">
+        /// <paramref name="path"/> does not contain a valid cursor file.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static new CursorFile Load(string path)
+        {
+            using (FileStream fs = File.OpenRead(path))
+                return Load(fs);
+        }
+
+        /// <summary>
         /// Gets the 16-bit type code for the current instance.
         /// </summary>
         public override IconTypeCode ID

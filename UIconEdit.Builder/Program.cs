@@ -39,31 +39,22 @@ namespace UIconEdit.Builder
         [STAThread]
         static void Main(string[] args)
         {
-            IconFile iconFile;
-            using (FileStream fs = File.OpenRead("Gradient.ico"))
-                iconFile = IconFile.Load(fs);
+            using (IconFile iconFile = IconFile.Load("Gradient.ico"))
+            {
+                IconFrame[] frames = iconFile.Frames.ToArray();
+                for (int i = 0; i < frames.Length; i++)
+                    frames[i].BaseImage.Save(string.Format("Gradient{0}.png", i), ImageFormat.Png);
 
-            IconFrame[] frames = iconFile.Frames.ToArray();
-            for (int i = 0; i < frames.Length; i++)
-                frames[i].BaseImage.Save(string.Format("Gradient{0}.png", i), ImageFormat.Png);
+                iconFile.Save("GradientOut.ico");
+            }
+            using (CursorFile cursorFile = CursorFile.Load("Crosshair.cur"))
+            {
+                CursorFrame[] cursorFrames = cursorFile.Frames.ToArray();
+                for (int i = 0; i < cursorFrames.Length; i++)
+                    cursorFrames[i].BaseImage.Save(string.Format("Crosshair{0}.png", i), ImageFormat.Png);
 
-            using (FileStream fs = File.OpenWrite("GradientOut.ico"))
-                iconFile.Save(fs);
-
-            iconFile.Dispose();
-
-            CursorFile cursorFile;
-            using (FileStream fs = File.OpenRead("Crosshair.cur"))
-                cursorFile = CursorFile.Load(fs);
-
-            CursorFrame[] cursorFrames = cursorFile.Frames.ToArray();
-            for (int i = 0; i < cursorFrames.Length; i++)
-                cursorFrames[i].BaseImage.Save(string.Format("Crosshair{0}.png", i), ImageFormat.Png);
-
-            using (FileStream fs = File.OpenWrite("CrosshairOut.cur"))
-                cursorFile.Save(fs);
-
-            cursorFile.Dispose();
+                cursorFile.Save("CrosshairOut.cur");
+            }
         }
     }
 }

@@ -238,8 +238,8 @@ namespace UIconEdit
             /// </summary>
             /// <param name="item">The cursor frame to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
-            /// is already associated with a different icon file, or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>,
-            /// and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
+            /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
+            /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
             public bool Add(CursorFrame item)
             {
                 return _file.Frames.Add(item);
@@ -261,8 +261,8 @@ namespace UIconEdit
             /// <param name="index">The index at which the cursor frame will be inserted.</param>
             /// <param name="item">The cursor frame to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
-            /// is already associated with a different icon file, or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>,
-            /// and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
+            /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
+            /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
             public bool Insert(int index, CursorFrame item)
             {
                 return _file.Frames.Insert(index, item);

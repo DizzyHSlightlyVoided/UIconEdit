@@ -496,7 +496,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="path">The file to which the file will be written.</param>
         /// <exception cref="InvalidOperationException">
-        /// The current instance contains zero frames, or more than <see cref="ushort.MaxValue"/> frames.
+        /// <see cref="Frames"/> instance contains zero elements.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is <c>null</c>.
@@ -517,7 +517,6 @@ namespace UIconEdit
         {
             var frames = Frames;
             if (frames.Count == 0) throw new InvalidOperationException("At least one frame is needed.");
-            if (frames.Count > ushort.MaxValue) throw new InvalidOperationException("Two many frames!");
             using (FileStream fs = File.OpenWrite(path))
                 try
                 {
@@ -719,7 +718,7 @@ namespace UIconEdit
                     if (_file.isDisposed) throw new ObjectDisposedException(null);
                     if (value == null) throw new ArgumentOutOfRangeException(null, new ArgumentNullException().Message);
                     if (!_setValue(index, value, true))
-                        throw new NotSupportedException();
+                        throw new NotSupportedException("Could not set the specified value in the list.");
                 }
             }
 
@@ -739,8 +738,8 @@ namespace UIconEdit
             /// </summary>
             /// <param name="item">The icon frame to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
-            /// is already associated with a different icon file, or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>,
-            /// and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
+            /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
+            /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
             public bool Add(IconFrame item)
             {
                 return Insert(_items.Count, item);
@@ -763,15 +762,15 @@ namespace UIconEdit
             /// <param name="index">The index at which to insert the icon frame.</param>
             /// <param name="item">The icon frame to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
-            /// is already associated with a different icon file, or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>,
-            /// and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
+            /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
+            /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
             /// <exception cref="ArgumentOutOfRangeException">
             /// <paramref name="index"/> is less than 0 or is greater than <see cref="Count"/>.
             /// </exception>
             public bool Insert(int index, IconFrame item)
             {
                 if (index < 0 || index > _items.Count) throw new ArgumentOutOfRangeException("index");
-                if (item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item)) return false;
+                if (_items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item)) return false;
                 _items.Insert(index, item);
                 item.File = _file;
                 return true;
@@ -849,19 +848,6 @@ namespace UIconEdit
                 _removeAt(index, true);
             }
 
-            private bool _removeSimilar(IconFrame item, bool disposing)
-            {
-                for (int i = 0; i < _items.Count; i++)
-                {
-                    if (_set.Comparer.Equals(item, _items[i]))
-                    {
-                        _removeAt(i, disposing);
-                        return true;
-                    }
-                }
-                return false;
-            }
-
             private bool _remove(IconFrame item, bool disposing)
             {
                 if (!_items.Remove(item)) return false;
@@ -895,6 +881,19 @@ namespace UIconEdit
             public bool RemoveAndDispose(IconFrame item)
             {
                 return _remove(item, true);
+            }
+
+            private bool _removeSimilar(IconFrame item, bool disposing)
+            {
+                for (int i = 0; i < _items.Count; i++)
+                {
+                    if (_set.Comparer.Equals(item, _items[i]))
+                    {
+                        _removeAt(i, disposing);
+                        return true;
+                    }
+                }
+                return false;
             }
 
             /// <summary>

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit.Net46", "UIconEdi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nQuant.Core", "nQuant\nQuant.Core\nQuant.Core.csproj", "{A59307EA-FCB0-4110-BC42-0417871C24C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit.Builder.Net46", "UIconEdit.Builder\UIconEdit.Builder.Net46.csproj", "{902D4D9C-4600-418F-9890-5AAD7D82EEC9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit.Test.Net46", "UIconEdit.Test\UIconEdit.Test.Net46.csproj", "{902D4D9C-4600-418F-9890-5AAD7D82EEC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

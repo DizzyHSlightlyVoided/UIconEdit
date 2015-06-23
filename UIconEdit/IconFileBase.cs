@@ -172,7 +172,7 @@ namespace UIconEdit
                     Array.Sort(frameList);
                 }
                 catch (InvalidDataException) { throw; }
-                catch { throw new InvalidDataException(); }
+                catch (Exception e) { throw new InvalidDataException(e.Message, e); }
 
                 const int bufferSize = 8192;
                 try
@@ -338,29 +338,10 @@ namespace UIconEdit
                 catch (InvalidDataException) { throw; }
                 catch (ObjectDisposedException) { throw; }
                 catch (IOException) { throw; }
-                catch { throw new InvalidDataException(); }
+                catch (Exception e) { throw new InvalidDataException(e.Message, e); }
 
                 return returner;
             }
-        }
-
-        /// <summary>
-        /// Returns a duplicate of the current instance.
-        /// </summary>
-        /// <returns>A duplicate of the current instance, with copies of every icon frame and clones of each
-        /// frame's <see cref="IconFrame.BaseImage"/> in <see cref="Frames"/>.</returns>
-        public virtual IconFileBase Clone()
-        {
-            IconFileBase copy = (IconFileBase)MemberwiseClone();
-            copy._frames = new FrameList(copy);
-            foreach (IconFrame curFrame in _frames)
-                copy._frames.Add(curFrame.Clone());
-            return copy;
-        }
-
-        object ICloneable.Clone()
-        {
-            return Clone();
         }
 
         [DebuggerDisplay("ImageOffset = {ImageOffset}, ResourceLength = {ResourceLength}, End = {End}")]
@@ -385,6 +366,25 @@ namespace UIconEdit
 
                 throw new InvalidDataException(); //If there's any kind of overlap, someone's wrong.
             }
+        }
+
+        /// <summary>
+        /// Returns a duplicate of the current instance.
+        /// </summary>
+        /// <returns>A duplicate of the current instance, with copies of every icon frame and clones of each
+        /// frame's <see cref="IconFrame.BaseImage"/> in <see cref="Frames"/>.</returns>
+        public virtual IconFileBase Clone()
+        {
+            IconFileBase copy = (IconFileBase)MemberwiseClone();
+            copy._frames = new FrameList(copy);
+            foreach (IconFrame curFrame in _frames)
+                copy._frames.Add(curFrame.Clone());
+            return copy;
+        }
+
+        object ICloneable.Clone()
+        {
+            return Clone();
         }
 
         /// <summary>
@@ -486,18 +486,9 @@ namespace UIconEdit
             {
                 Save(output, frames);
             }
-            catch (ObjectDisposedException)
-            {
-                throw;
-            }
-            catch (IOException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                throw new IOException(e.Message, e);
-            }
+            catch (ObjectDisposedException) { throw; }
+            catch (IOException) { throw; }
+            catch (Exception e) { throw new IOException(e.Message, e); }
         }
 
         /// <summary>
@@ -525,24 +516,16 @@ namespace UIconEdit
         public void Save(string path)
         {
             var frames = Frames;
-            if (frames.Count == 0 || frames.Count > ushort.MaxValue) throw new InvalidOperationException();
+            if (frames.Count == 0) throw new InvalidOperationException("At least one frame is needed.");
+            if (frames.Count > ushort.MaxValue) throw new InvalidOperationException("Two many frames!");
             using (FileStream fs = File.OpenWrite(path))
                 try
                 {
                     Save(fs, frames);
                 }
-                catch (ObjectDisposedException)
-                {
-                    throw;
-                }
-                catch (IOException)
-                {
-                    throw;
-                }
-                catch (Exception e)
-                {
-                    throw new IOException(e.Message, e);
-                }
+                catch (ObjectDisposedException) { throw; }
+                catch (IOException) { throw; }
+                catch (Exception e) { throw new IOException(e.Message, e); }
         }
 
         const int MinDibSize = 40;
@@ -711,7 +694,7 @@ namespace UIconEdit
             {
                 if (value == null) throw new ArgumentNullException(paramName);
                 IconFrame frame = value as IconFrame;
-                if (frame == null) throw new ArgumentException(new InvalidCastException().Message, paramName);
+                if (frame == null) throw new ArgumentException("The specified value is the wrong type.", paramName);
                 return frame;
             }
 

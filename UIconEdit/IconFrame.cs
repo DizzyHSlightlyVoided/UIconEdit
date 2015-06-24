@@ -284,8 +284,8 @@ namespace UIconEdit
                         return PixelFormat.Format4bppIndexed;
                     case BitDepth.Color256:
                         return PixelFormat.Format8bppIndexed;
-                    //case BitDepth.Bit24:
-                    //    return PixelFormat.Format24bppRgb;
+                    case BitDepth.Bit24:
+                        return PixelFormat.Format24bppRgb;
                     default:
                         return PixelFormat.Format32bppArgb;
                 }
@@ -298,7 +298,7 @@ namespace UIconEdit
             {
                 switch (_depth)
                 {
-                    default:
+                    default: //Bit32
                         return 32;
                     case BitDepth.Bit24:
                         return 24;
@@ -464,8 +464,8 @@ namespace UIconEdit
                 for (int x = 0; x < _width; x++)
                 {
                     uint value = pFull[x] >> 24;
-                    if (value < _alphaThreshold)
-                        pFull[x] = isPng ? (pFull[x] & ~opaqueAlpha) : opaqueAlpha;
+                    if (isPng && value < _alphaThreshold)
+                        pFull[x] &= ~opaqueAlpha;
                     else
                         pFull[x] |= opaqueAlpha;
                 }

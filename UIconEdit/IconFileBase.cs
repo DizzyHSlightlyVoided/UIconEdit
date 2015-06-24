@@ -35,6 +35,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace UIconEdit
@@ -66,15 +67,84 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="input"/> is closed.
         /// </exception>
-        /// <exception cref="InvalidDataException">
-        /// <paramref name="input"/> does not contain a valid icon or cursor file.
+        /// <exception cref="IconLoadException">
+        /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
         public static IconFileBase Load(Stream input)
         {
-            return Load(input, null);
+            return Load(input, null, null);
+        }
+
+        /// <summary>
+        /// Loads an <see cref="IconFileBase"/> implementation from the specified stream.
+        /// </summary>
+        /// <param name="input">A stream containing an icon or cursor file.</param>
+        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon frames,
+        /// or <c>null</c> to throw an exception in those cases.</param>
+        /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="input"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="input"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="input"/> is closed or does not support reading.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="input"/> is closed.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when processing the icon file's format.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static IconFileBase Load(Stream input, Action<IconLoadException> handler)
+        {
+            return Load(input, null, handler);
+        }
+
+        /// <summary>
+        /// Loads an <see cref="IconFileBase"/> implementation from the specified path.
+        /// </summary>
+        /// <param name="path">The path to a cursor or icon file.</param>
+        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon frames,
+        /// or <c>null</c> to throw an exception in those cases.</param>
+        /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in <see cref="Path.GetInvalidPathChars()"/>.
+        /// </exception>
+        /// <exception cref="PathTooLongException">
+        /// The specified path, filename, or both contain the system-defined maximum length.
+        /// </exception>
+        /// <exception cref="FileNotFoundException">
+        /// The specified path was not found.
+        /// </exception>
+        /// <exception cref="DirectoryNotFoundException">
+        /// The specified path was invalid.
+        /// </exception>
+        /// <exception cref="UnauthorizedAccessException">
+        /// <para><paramref name="path"/> specified a directory.</para>
+        /// <para>-OR-</para>
+        /// <para>The caller does not have the required permission.</para>
+        /// </exception>
+        /// <exception cref="NotSupportedException">
+        /// <paramref name="path"/> is in an invalid format.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when processing the icon file's format.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static IconFileBase Load(string path, Action<IconLoadException> handler)
+        {
+            using (FileStream fs = File.OpenRead(path))
+                return Load(fs, handler);
         }
 
         /// <summary>
@@ -105,19 +175,18 @@ namespace UIconEdit
         /// <exception cref="NotSupportedException">
         /// <paramref name="path"/> is in an invalid format.
         /// </exception>
-        /// <exception cref="InvalidDataException">
-        /// <paramref name="path"/> does not contain a valid icon or cursor file.
+        /// <exception cref="IconLoadException">
+        /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
         public static IconFileBase Load(string path)
         {
-            using (FileStream fs = File.OpenRead(path))
-                return Load(fs);
+            return Load(path, null);
         }
 
-        internal static IconFileBase Load(Stream input, IconTypeCode? id)
+        internal static IconFileBase Load(Stream input, IconTypeCode? id, Action<IconLoadException> handler)
         {
 #if LEAVEOPEN
             using (BinaryReader reader = new BinaryReader(input, new UTF8Encoding(), true))
@@ -125,10 +194,10 @@ namespace UIconEdit
             BinaryReader reader = new BinaryReader(input, new UTF8Encoding());
 #endif
             {
-                if (reader.ReadInt16() != 0) throw new InvalidDataException();
+                if (reader.ReadInt16() != 0) throw new IconLoadException(IconErrorCode.InvalidFormat);
 
                 IconTypeCode loadedId = (IconTypeCode)reader.ReadInt16();
-                if (id.HasValue && loadedId != id.Value) throw new InvalidDataException();
+                if (id.HasValue && loadedId != id.Value) throw new IconLoadException(IconErrorCode.InvalidFormat);
 
                 IconFileBase returner;
 
@@ -141,12 +210,12 @@ namespace UIconEdit
                         returner = new IconFile();
                         break;
                     default:
-                        throw new InvalidDataException();
+                        throw new IconLoadException(IconErrorCode.InvalidFormat);
                 }
 
                 ushort frameCount = reader.ReadUInt16();
 
-                if (frameCount == 0) throw new InvalidDataException();
+                if (frameCount == 0) throw new IconLoadException(IconErrorCode.ZeroFrames);
 
                 IconDirEntry[] frameList = new IconDirEntry[frameCount];
                 long offset = (16 * frameCount) + 6;
@@ -161,23 +230,20 @@ namespace UIconEdit
                     entry.XPlanes = reader.ReadUInt16();
                     entry.YBitsPerpixel = reader.ReadUInt16();
                     entry.ResourceLength = reader.ReadUInt32();
-                    if (entry.ResourceLength <= sizeof(uint)) throw new InvalidDataException();
+                    if (entry.ResourceLength < MinDibSize) throw new IconLoadException(IconErrorCode.ResourceTooSmall, entry.ResourceLength, i);
                     entry.ImageOffset = reader.ReadUInt32();
-                    if (entry.ImageOffset < offset) throw new InvalidDataException();
+                    if (entry.ImageOffset < offset) throw new IconLoadException(IconErrorCode.ResourceTooEarly, entry.ImageOffset, i);
                     frameList[i] = entry;
                 }
 
-                try
-                {
-                    Array.Sort(frameList);
-                }
-                catch (InvalidDataException) { throw; }
-                catch (Exception e) { throw new InvalidDataException(e.Message, e); }
+                Array.Sort(frameList);
 
                 const int bufferSize = 8192;
-                try
+                for (int i = 0; i < frameList.Length; i++)
                 {
-                    foreach (IconDirEntry entry in frameList)
+                    IconDirEntry entry = frameList[i];
+
+                    try
                     {
                         long gapLength = entry.ImageOffset - offset;
                         byte[] curBuffer = new byte[bufferSize];
@@ -187,7 +253,23 @@ namespace UIconEdit
                         Bitmap loadedImage;
 
                         int dibSize = reader.ReadInt32();
-                        if (dibSize < MinDibSize) throw new InvalidDataException();
+                        if (dibSize < MinDibSize) throw new IconLoadException(IconErrorCode.InvalidFrameType, i);
+
+                        if (loadedId == IconTypeCode.Cursor)
+                        {
+                            switch (entry.YBitsPerpixel)
+                            {
+                                case 0:
+                                case 1:
+                                case 4:
+                                case 8:
+                                case 24:
+                                case 32:
+                                    break;
+                                default:
+                                    throw new IconLoadException(IconErrorCode.InvalidBitDepth, entry.YBitsPerpixel, i);
+                            }
+                        }
 
                         const int pngLittleEndian = 0x474e5089; //"\u0089PNG"  in little-endian order.
                         bool isPng = false;
@@ -224,13 +306,29 @@ namespace UIconEdit
                             using (MemoryStream ms = new MemoryStream())
                             {
                                 os.CopyTo(ms);
-                                using (Image img = Image.FromStream(ms))
+                                try
                                 {
-                                    if (img.Width > IconFrame.MaxDimension || img.Height > IconFrame.MaxDimension) throw new InvalidDataException();
+                                    using (Image img = Image.FromStream(ms, false))
+                                    {
+                                        if (img.Width > IconFrame.MaxDimension || img.Height > IconFrame.MaxDimension ||
+                                            img.Width < IconFrame.MinDimension || img.Height < IconFrame.MinDimension)
+                                            throw new IconLoadException(IconErrorCode.InvalidPngSize, img.Size, i);
 
-                                    loadedImage = new Bitmap(img.Width, img.Height, PixelFormat.Format32bppArgb);
-                                    using (Graphics g = Graphics.FromImage(loadedImage))
-                                        g.DrawImage(img, 0, 0, img.Width, img.Height);
+                                        if ((entry.BWidth != 0 && entry.BWidth != img.Width) ||
+                                            (entry.BHeight != 0 && entry.BHeight != img.Height))
+                                        {
+                                            throw new IconLoadException(IconErrorCode.PngSizeMismatch,
+                                                new Tuple<Size, Size>(new Size(entry.BWidth, entry.BHeight), img.Size), i);
+                                        }
+
+                                        loadedImage = new Bitmap(img.Width, img.Height, PixelFormat.Format32bppArgb);
+                                        using (Graphics g = Graphics.FromImage(loadedImage))
+                                            g.DrawImage(img, 0, 0, img.Width, img.Height);
+                                    }
+                                }
+                                catch (ArgumentException e)
+                                {
+                                    throw new IconLoadException(e.Message, IconErrorCode.InvalidPngFile, i, e);
                                 }
                             }
                             #endregion
@@ -244,9 +342,8 @@ namespace UIconEdit
                             {
                                 int width = curReader.ReadInt32(); //8
                                 int height = curReader.ReadInt32(); //12
-                                if (width > IconFrame.MaxDimension || width < IconFrame.MinDimension ||
-                                    height > (IconFrame.MaxDimension << 1) || height < (IconFrame.MinDimension << 1))
-                                    throw new InvalidDataException();
+                                if (width > IconFrame.MaxDimension || width < IconFrame.MinDimension)
+                                    throw new IconLoadException(IconErrorCode.InvalidBmpSize, new Size(width, height), i);
 
                                 ushort colorPanes = curReader.ReadUInt16(); //14
                                 ushort bitsPerPixel = curReader.ReadUInt16(); //16
@@ -269,13 +366,34 @@ namespace UIconEdit
                                         bitDepth = BitDepth.Bit32;
                                         break;
                                     default:
-                                        throw new InvalidDataException();
+                                        throw new IconLoadException(IconErrorCode.InvalidBmpBitDepth, bitsPerPixel, i);
                                 }
-                                if (bitDepth != BitDepth.Bit32 && (height & 1) == 1)
-                                    throw new InvalidDataException();
 
                                 if (loadedId != IconTypeCode.Cursor && entry.YBitsPerpixel != 0 && bitsPerPixel != entry.YBitsPerpixel)
-                                    throw new InvalidDataException();
+                                    throw new IconLoadException(IconErrorCode.InvalidBmpBitDepth, new Tuple<int, int>(entry.YBitsPerpixel, bitsPerPixel), i);
+
+                                int testHeight;
+
+                                if (bitDepth == BitDepth.Bit32)
+                                {
+                                    if (height > (IconFrame.MaxDimension << 1) || height < (IconFrame.MinDimension << 1))
+                                        throw new IconLoadException(IconErrorCode.InvalidBmpSize, new Size(width, height), i);
+                                    testHeight = height;
+                                }
+                                else
+                                {
+                                    if (height > IconFrame.MaxDimension || height < IconFrame.MinDimension)
+                                        throw new IconLoadException(IconErrorCode.InvalidBmpSize, new Size(width, height), i);
+                                    if ((height & 1) == 1)
+                                        throw new IconLoadException(IconErrorCode.InvalidBmpHeightOdd, height, i);
+                                    testHeight = height >> 1;
+                                }
+                                if ((entry.BWidth != 0 && entry.BWidth != width) ||
+                                    (entry.BHeight != 0 && entry.BHeight != testHeight))
+                                {
+                                    throw new IconLoadException(IconErrorCode.BmpHeightMismatch,
+                                        new Tuple<Size, Size>(new Size(entry.BWidth, entry.BHeight), new Size(width, testHeight)), i);
+                                }
 
                                 MemoryStream bufferStream = new MemoryStream();
 #if LEAVEOPEN
@@ -308,15 +426,23 @@ namespace UIconEdit
 #endif
                                 ms.CopyTo(bufferStream);
                                 bufferStream.Seek(0, SeekOrigin.Begin);
-                                Icon icon = new Icon(bufferStream);
-                                loadedImage = new Bitmap(icon.Width, icon.Height, PixelFormat.Format32bppArgb);
-                                using (Graphics g = Graphics.FromImage(loadedImage))
-                                    g.DrawIcon(icon, new Rectangle(0, 0, width, height));
+                                try
+                                {
+                                    using (Icon icon = new Icon(bufferStream))
+                                    {
+                                        loadedImage = new Bitmap(icon.Width, icon.Height, PixelFormat.Format32bppArgb);
+                                        using (Graphics g = Graphics.FromImage(loadedImage))
+                                            g.DrawIcon(icon, new Rectangle(0, 0, width, height));
+                                    }
+                                }
+                                catch (ArgumentException e)
+                                {
+                                    throw new IconLoadException(e.Message, IconErrorCode.InvalidBmpFile, i, e);
+                                }
                             }
                             #endregion
                         }
-                        else throw new InvalidDataException();
-
+                        else throw new IconLoadException(IconErrorCode.InvalidFrameType, i);
                         Debug.WriteLine("Reading type {0}, width:{1}, height:{2}, bit depth:{3}",
                             isPng ? "PNG" : "BMP", loadedImage.Width, loadedImage.Height, bitDepth);
 
@@ -334,11 +460,23 @@ namespace UIconEdit
                         }
                         offset += entry.ResourceLength;
                     }
+                    catch (IconLoadException e)
+                    {
+                        if (handler == null)
+#if DEBUG
+                            throw new IconLoadException(e);
+#else
+                            throw;
+#endif
+                        handler(e);
+                    }
                 }
-                catch (InvalidDataException) { throw; }
-                catch (ObjectDisposedException) { throw; }
-                catch (IOException) { throw; }
-                catch (Exception e) { throw new InvalidDataException(e.Message, e); }
+
+                if (returner.Frames.Count == 0)
+                {
+                    returner.Dispose();
+                    throw new IconLoadException(IconErrorCode.ZeroValidFrames);
+                }
 
                 return returner;
             }
@@ -364,7 +502,7 @@ namespace UIconEdit
                 if (End <= other.ImageOffset) return -1; //If this end is comes before the other's offset
                 if (other.End <= ImageOffset) return 1; //If the other's end comes before this offset
 
-                throw new InvalidDataException(); //If there's any kind of overlap, someone's wrong.
+                throw new IconLoadException(IconErrorCode.ResourceOverlap); //If there's any kind of overlap, someone's wrong.
             }
         }
 
@@ -1256,4 +1394,278 @@ namespace UIconEdit
         /// </summary>
         Cursor = 2,
     }
+
+    /// <summary>
+    /// The exception that is thrown when an icon file contains invalid data.
+    /// </summary>
+    public sealed class IconLoadException : Exception
+    {
+        private static string DefaultMessage { get { return new InvalidDataException().Message; } }
+
+        internal const int BeforeFrames = -1;
+
+        /// <summary>
+        /// Creates a new instance using a message which describes the error and the specified error code.
+        /// </summary>
+        /// <param name="message">A message describing the error.</param>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="value">The value which caused the error.</param>
+        /// <param name="index">The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.</param>
+        public IconLoadException(string message, IconErrorCode code, object value, int index)
+            : base(message)
+        {
+            _code = code;
+            _index = index;
+            _value = value;
+        }
+
+        /// <summary>
+        /// Creates a new instance using a message which describes the error and the specified error code.
+        /// </summary>
+        /// <param name="message">A message describing the error.</param>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="value">The value which caused the error.</param>
+        public IconLoadException(string message, IconErrorCode code, object value)
+            : this(message, code, value, BeforeFrames)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance using a message which describes the error and the specified error code.
+        /// </summary>
+        /// <param name="message">A message describing the error.</param>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="index">The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.</param>
+        public IconLoadException(string message, IconErrorCode code, int index)
+            : this(message, code, null, index)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the default message and the specified error code.
+        /// </summary>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="value">The value which caused the error.</param>
+        /// <param name="index">The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.</param>
+        public IconLoadException(IconErrorCode code, object value, int index)
+            : this(DefaultMessage, code, value, index)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the default message and the specified error code.
+        /// </summary>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="index">The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.</param>
+        public IconLoadException(IconErrorCode code, int index)
+            : this(DefaultMessage, code, null, index)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the default message and the specified error code.
+        /// </summary>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="value">The value which caused the error.</param>
+        public IconLoadException(IconErrorCode code, object value)
+            : this(DefaultMessage, code, value, BeforeFrames)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the default message and the specified error code.
+        /// </summary>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        public IconLoadException(IconErrorCode code)
+            : this(DefaultMessage, code, null, BeforeFrames)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified message and error code and a reference to the exception which caused this error.
+        /// </summary>
+        /// <param name="message">A message describing the error.</param>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="index">The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException"/> parameter
+        /// is not <c>null</c>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
+        public IconLoadException(string message, IconErrorCode code, int index, Exception innerException)
+            : base(message, innerException)
+        {
+            _code = code;
+            _index = index;
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified message and a reference to the exception which caused this error.
+        /// </summary>
+        /// <param name="message">A message describing the error.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException"/> parameter
+        /// is not <c>null</c>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
+        public IconLoadException(string message, Exception innerException)
+            : this(message, IconErrorCode.Unknown, BeforeFrames, innerException)
+        {
+        }
+
+#if DEBUG
+        internal IconLoadException(IconLoadException e)
+            : base(e.BaseMessage, e)
+        {
+            _code = e._code;
+            _index = e._index;
+            _value = e._value;
+        }
+
+        internal string BaseMessage { get { return base.Message; } }
+#endif
+
+        /// <summary>
+        /// Gets a message describing the error.
+        /// </summary>
+        public override string Message
+        {
+            get
+            {
+                List<string> messages = new List<string>();
+
+                if (!string.IsNullOrWhiteSpace(base.Message)) messages.Add(base.Message);
+                if (_code != IconErrorCode.Unknown)
+                    messages.Add(string.Format("Code: 0x{0:x}, {1}", (int)_code, _code));
+                if (_index >= 0)
+                    messages.Add("Frame index: " + _index);
+                if (_value != null)
+                    messages.Add("Value: " + _value);
+                switch (messages.Count)
+                {
+                    case 0: return base.Message;
+                    case 1: return messages[0];
+                    default: return string.Join(Environment.NewLine, messages);
+                }
+            }
+        }
+
+        private IconErrorCode _code;
+        /// <summary>
+        /// Gets an error code describing the icon error.
+        /// </summary>
+        public IconErrorCode Code { get { return _code; } }
+
+        private int _index;
+        /// <summary>
+        /// Gets the index in the icon file of the icon frame which caused this exception,
+        /// or -1 if it occurred before the icon frames were processed.
+        /// </summary>
+        public int Index { get { return _index; } }
+
+        private object _value;
+        /// <summary>
+        /// Gets an object whose value caused the error, or <c>null</c> if there was no such value.
+        /// </summary>
+        public object Value { get { return _value; } }
+    }
+
+    /// <summary>
+    /// Indicates the cause of an <see cref="IconLoadException"/>.
+    /// </summary>
+    public enum IconErrorCode : ushort
+    {
+        /// <summary>
+        /// Code 0: the cause of the error is unknown.
+        /// </summary>
+        Unknown = 0,
+        /// <summary>
+        /// Code 0x1: The file is not a valid cursor or icon format.
+        /// This is a fatal error, and the icon file cannot continue processing when it occurs.
+        /// </summary>
+        InvalidFormat = 1,
+        /// <summary>
+        /// Code 0x2: The icon contains zero frames.
+        /// This is a fatal error, and the icon file cannot continue processing when it occurs.
+        /// </summary>
+        ZeroFrames = 2,
+        /// <summary>
+        /// Code 0x3: One of the icon directory entries has a length less than or equal to 40 bytes, which is logically too small for either a BMP or a PNG file.
+        /// <see cref="IconLoadException.Value"/> contains the length.
+        /// This is a fatal error, and the icon file cannot continue processing when it occurs.
+        /// </summary>
+        ResourceTooSmall = 3,
+        /// <summary>
+        /// Code 0x4: One of the icon directory entries has a starting offset which would overlap with the list of entries.
+        /// <see cref="IconLoadException.Value"/> contains the offset.
+        /// This is a fatal error, and the icon file cannot continue processing when it occurs.
+        /// </summary>
+        ResourceTooEarly = 4,
+        /// <summary>
+        /// Code 0x5: One or more of the icon directory entries have overlapping offset/length combinations.
+        /// This is a fatal error, and the icon file cannot continue processing when it occurs.
+        /// </summary>
+        ResourceOverlap = 5,
+        /// <summary>
+        /// Code 0x1000: the file type of a frame is invalid.
+        /// </summary>
+        InvalidFrameType = 0x1000,
+        /// <summary>
+        /// Code 0x1001: the file is an icon, and an icon directory entry has a bit depth with any value other than 0, 1, 4, 8, 24, or 32.
+        /// <see cref="IconLoadException.Value"/> contains the bit depth.
+        /// </summary>
+        InvalidBitDepth = 0x1001,
+        /// <summary>
+        /// There are no remaining valid frames after processing.
+        /// This is a fatal error, and the icon file cannot continue processing when it occurs.
+        /// </summary>
+        ZeroValidFrames = 0x1002,
+        /// <summary>
+        /// Code 0x1100: an error occurred when attempting to load a PNG frame. The inner exception may contain more information.
+        /// </summary>
+        InvalidPngFile = 0x1100,
+        /// <summary>
+        /// Code 0x1102: the width or height of a PNG frame is less than <see cref="IconFrame.MinDimension"/> or greater than <see cref="IconFrame.MaxDimension"/>.
+        /// <see cref="IconLoadException.Value"/> contains the <see cref="Image.Size"/> of the image.
+        /// </summary>
+        InvalidPngSize = 0x1102,
+        /// <summary>
+        /// Code 0x1105: the width or height of a PNG frame does not match the width or height listed in the icon directory entry.
+        /// </summary>
+        PngSizeMismatch = 0x1103,
+        /// <summary>
+        /// Code 0x1204: an error occurred when attempting to process a BMP frame. The inner exception may contain more information.
+        /// <see cref="IconLoadException.Value"/> contains a <see cref="Tuple{T1, T2}"/> in which the <see cref="Tuple{T1, T2}.Item1"/> is the 
+        /// <see cref="Image.Size"/> listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the actual size.
+        /// </summary>
+        InvalidBmpFile = 0x1200,
+        /// <summary>
+        /// Code 0x1201 the bit depth of a BMP frame is not supported.
+        /// <see cref="IconLoadException.Value"/> contains the bit depth.
+        /// </summary>
+        InvalidBmpBitDepth = 0x1201,
+        /// <summary>
+        /// Code 0x1202: the width or height of a BMP frame is less than <see cref="IconFrame.MinDimension"/> or greater than <see cref="IconFrame.MaxDimension"/>.
+        /// The maximum height is doubled in images with a bit depth less than 32.
+        /// <see cref="IconLoadException.Value"/> contains the <see cref="Image.Size"/> of the image.
+        /// </summary>
+        InvalidBmpSize = 0x1202,
+        /// <summary>
+        /// Code 0x1203: the width or height of a BMP frame does not match the width or height listed in the icon directory entry.
+        /// <see cref="IconLoadException.Value"/> contains a <see cref="Tuple{T1, T2}"/> in which the <see cref="Tuple{T1, T2}.Item1"/> is the 
+        /// <see cref="Image.Size"/> listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the actual size.
+        /// </summary>
+        BmpHeightMismatch = 0x1203,
+        /// <summary>
+        /// Code 0x1204: the height of a BMP frame is an odd number, indicating that there is no AND (transparency) mask.
+        /// <see cref="IconLoadException.Value"/> contains the <see cref="Image.Height"/> of the image.
+        /// </summary>
+        InvalidBmpHeightOdd = 0x1204,
+        /// <summary>
+        /// Code 0x1205: there is a mismatch between the bit depth of a BMP frame and the expected bit depth of the file.
+        /// <see cref="IconLoadException.Value"/> contains a <see cref="Tuple{T1, T2}"/> in which the <see cref="Tuple{T1, T2}.Item1"/> is the bit depth
+        /// listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the bit depth listed in the BMP frame.
+        /// </summary>
+        BmpBitDepthMismatch = 0x1205,
+    }
+
+    /// <summary>
+    /// A delegate function for handling <see cref="IconLoadException"/> errors.
+    /// </summary>
+    /// <param name="e">An <see cref="IconLoadException"/> containing information about the error.</param>
+    public delegate void IconLoadExceptionHandler(IconLoadException e);
 }

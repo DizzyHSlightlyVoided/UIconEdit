@@ -47,10 +47,10 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Loads an <see cref="IconFile"/> from the specified stream.
+        /// Loads a <see cref="IconFile"/> from the specified stream.
         /// </summary>
-        /// <param name="input">A stream containing an icon or cursor file.</param>
-        /// <returns>An <see cref="IconFile"/> loaded from <paramref name="input"/>.</returns>
+        /// <param name="input">A stream containing an icon file.</param>
+        /// <returns>A <see cref="IconFile"/> loaded from <paramref name="input"/>.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="input"/> is <c>null</c>.
         /// </exception>
@@ -60,27 +60,57 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="input"/> is closed.
         /// </exception>
-        /// <exception cref="InvalidDataException">
-        /// <paramref name="input"/> does not contain a valid icon or cursor file.
+        /// <exception cref="IconLoadException">
+        /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
         public static new IconFile Load(Stream input)
         {
-            return (IconFile)Load(input, IconTypeCode.Icon);
+            return (IconFile)Load(input, IconTypeCode.Icon, null);
+        }
+
+        /// <summary>
+        /// Loads a <see cref="IconFile"/> from the specified stream.
+        /// </summary>
+        /// <param name="input">A stream containing an icon file.</param>
+        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon frames,
+        /// or <c>null</c> to throw an exception in those cases.</param>
+        /// <returns>A <see cref="IconFile"/> loaded from <paramref name="input"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="input"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="input"/> is closed or does not support reading.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="input"/> is closed.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when processing the icon file's format.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static new IconFile Load(Stream input, Action<IconLoadException> handler)
+        {
+            return (IconFile)Load(input, IconTypeCode.Icon, handler);
         }
 
         /// <summary>
         /// Loads an <see cref="IconFileBase"/> implementation from the specified path.
         /// </summary>
-        /// <param name="path">The path to an icon file.</param>
+        /// <param name="path">The path to a icon file.</param>
+        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon frames,
+        /// or <c>null</c> to throw an exception in those cases.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in <see cref="Path.GetInvalidPathChars()"/>.
+        /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in
+        ///  <see cref="Path.GetInvalidPathChars()"/>.
         /// </exception>
         /// <exception cref="PathTooLongException">
         /// The specified path, filename, or both contain the system-defined maximum length.
@@ -99,16 +129,55 @@ namespace UIconEdit
         /// <exception cref="NotSupportedException">
         /// <paramref name="path"/> is in an invalid format.
         /// </exception>
-        /// <exception cref="InvalidDataException">
-        /// <paramref name="path"/> does not contain a valid icon file.
+        /// <exception cref="IconLoadException">
+        /// An error occurred when processing the icon file's format.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static new IconFile Load(string path, Action<IconLoadException> handler)
+        {
+            return (IconFile)IconFileBase.Load(path, handler);
+        }
+
+        /// <summary>
+        /// Loads an <see cref="IconFileBase"/> implementation from the specified path.
+        /// </summary>
+        /// <param name="path">The path to a icon file.</param>
+        /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in
+        ///  <see cref="Path.GetInvalidPathChars()"/>.
+        /// </exception>
+        /// <exception cref="PathTooLongException">
+        /// The specified path, filename, or both contain the system-defined maximum length.
+        /// </exception>
+        /// <exception cref="FileNotFoundException">
+        /// The specified path was not found.
+        /// </exception>
+        /// <exception cref="DirectoryNotFoundException">
+        /// The specified path was invalid.
+        /// </exception>
+        /// <exception cref="UnauthorizedAccessException">
+        /// <para><paramref name="path"/> specified a directory.</para>
+        /// <para>-OR-</para>
+        /// <para>The caller does not have the required permission.</para>
+        /// </exception>
+        /// <exception cref="NotSupportedException">
+        /// <paramref name="path"/> is in an invalid format.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
         public static new IconFile Load(string path)
         {
-            using (FileStream fs = File.OpenRead(path))
-                return Load(fs);
+            return (IconFile)IconFileBase.Load(path);
         }
 
         /// <summary>

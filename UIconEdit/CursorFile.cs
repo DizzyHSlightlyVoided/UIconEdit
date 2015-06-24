@@ -141,7 +141,8 @@ namespace UIconEdit
         /// </exception>
         public static new CursorFile Load(string path, Action<IconLoadException> handler)
         {
-            return (CursorFile)IconFileBase.Load(path, handler);
+            using (FileStream fs = File.OpenRead(path))
+                return (CursorFile)Load(fs, IconTypeCode.Cursor, handler);
         }
 
         /// <summary>
@@ -181,7 +182,7 @@ namespace UIconEdit
         /// </exception>
         public static new CursorFile Load(string path)
         {
-            return (CursorFile)IconFileBase.Load(path);
+            return Load(path, null);
         }
 
         /// <summary>

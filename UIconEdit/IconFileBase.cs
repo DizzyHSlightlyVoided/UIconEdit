@@ -35,7 +35,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace UIconEdit
@@ -255,7 +254,7 @@ namespace UIconEdit
                         int dibSize = reader.ReadInt32();
                         if (dibSize < MinDibSize) throw new IconLoadException(IconErrorCode.InvalidFrameType, i);
 
-                        if (loadedId == IconTypeCode.Cursor)
+                        if (loadedId == IconTypeCode.Icon)
                         {
                             switch (entry.YBitsPerpixel)
                             {
@@ -374,22 +373,22 @@ namespace UIconEdit
 
                                 int testHeight;
 
-                                if (bitDepth == BitDepth.Bit32)
+                                if (bitDepth == BitDepth.Bit32 && entry.BHeight != 0 && entry.BHeight == height)
                                 {
-                                    if (height > (IconFrame.MaxDimension << 1) || height < (IconFrame.MinDimension << 1))
-                                        throw new IconLoadException(IconErrorCode.InvalidBmpSize, new Size(width, height), i);
                                     testHeight = height;
                                 }
                                 else
                                 {
-                                    if (height > IconFrame.MaxDimension || height < IconFrame.MinDimension)
-                                        throw new IconLoadException(IconErrorCode.InvalidBmpSize, new Size(width, height), i);
                                     if ((height & 1) == 1)
                                         throw new IconLoadException(IconErrorCode.InvalidBmpHeightOdd, height, i);
                                     testHeight = height >> 1;
                                 }
+
+                                if (height > (IconFrame.MaxDimension << 1) || height < (IconFrame.MinDimension << 1))
+                                    throw new IconLoadException(IconErrorCode.InvalidBmpSize, new Size(width, height), i);
+
                                 if ((entry.BWidth != 0 && entry.BWidth != width) ||
-                                    (entry.BHeight != 0 && entry.BHeight != testHeight))
+                                    (entry.BHeight != 0 && entry.BHeight != testHeight && entry.BHeight != height))
                                 {
                                     throw new IconLoadException(IconErrorCode.BmpHeightMismatch,
                                         new Tuple<Size, Size>(new Size(entry.BWidth, entry.BHeight), new Size(width, testHeight)), i);
@@ -432,7 +431,7 @@ namespace UIconEdit
                                     {
                                         loadedImage = new Bitmap(icon.Width, icon.Height, PixelFormat.Format32bppArgb);
                                         using (Graphics g = Graphics.FromImage(loadedImage))
-                                            g.DrawIcon(icon, new Rectangle(0, 0, width, height));
+                                            g.DrawIcon(icon, new Rectangle(0, 0, icon.Width, icon.Height));
                                     }
                                 }
                                 catch (ArgumentException e)
@@ -448,7 +447,7 @@ namespace UIconEdit
 
                         IconFrame frame;
 
-                        if (id == IconTypeCode.Cursor)
+                        if (loadedId == IconTypeCode.Cursor)
                             frame = new CursorFrame(bitDepth, loadedImage, entry.XPlanes, entry.YBitsPerpixel);
                         else
                             frame = new IconFrame(bitDepth, loadedImage);
@@ -458,7 +457,6 @@ namespace UIconEdit
                             returner.Frames.RemoveAndDisposeSimilar(frame);
                             returner.Frames.Add(frame);
                         }
-                        offset += entry.ResourceLength;
                     }
                     catch (IconLoadException e)
                     {
@@ -469,6 +467,10 @@ namespace UIconEdit
                             throw;
 #endif
                         handler(e);
+                    }
+                    finally
+                    {
+                        offset += entry.ResourceLength;
                     }
                 }
 

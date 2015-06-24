@@ -137,7 +137,8 @@ namespace UIconEdit
         /// </exception>
         public static new IconFile Load(string path, Action<IconLoadException> handler)
         {
-            return (IconFile)IconFileBase.Load(path, handler);
+            using (FileStream fs = File.OpenRead(path))
+                return (IconFile)Load(fs, IconTypeCode.Icon, handler);
         }
 
         /// <summary>
@@ -177,7 +178,7 @@ namespace UIconEdit
         /// </exception>
         public static new IconFile Load(string path)
         {
-            return (IconFile)IconFileBase.Load(path);
+            return Load(path, null);
         }
 
         /// <summary>

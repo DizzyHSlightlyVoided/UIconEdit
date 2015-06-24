@@ -852,10 +852,10 @@ namespace UIconEdit
             int compare = x.BitDepth.CompareTo(y.BitDepth);
             if (compare != 0) return compare;
 
-            compare = x.Width.CompareTo(y.Width);
+            compare = y.Height.CompareTo(x.Height);
             if (compare != 0) return compare;
 
-            return x.Height.CompareTo(y.Height);
+            return y.Width.CompareTo(x.Width);
         }
 
         public bool Equals(CursorFrame x, CursorFrame y)

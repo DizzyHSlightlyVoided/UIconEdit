@@ -602,6 +602,54 @@ namespace UIconEdit
                 return this.ToArray<CursorFrame>();
             }
 
+            /// <summary>
+            /// Sorts all elements in the list. Items are sorted by <see cref="IconFrame.BitDepth"/> (highest bit-depth to lowest),
+            /// <see cref="IconFrame.Height"/> (largest to smallest), and <see cref="IconFrame.Width"/> (largest to smallest).
+            /// </summary>
+            public void Sort()
+            {
+                _file.Frames.Sort();
+            }
+
+            /// <summary>
+            /// Sorts all elements in the list according to the specified comparer.
+            /// </summary>
+            /// <param name="comparer">The comparer used to compare each <see cref="CursorFrame"/>, or <c>null</c> to follow the rules of <see cref="Sort()"/>.</param>
+            /// <exception cref="ArgumentException">
+            /// The implementation of <paramref name="comparer"/> caused an error during the sort. For example, <paramref name="comparer"/> might not return 0
+            /// when comparing an item with itself.
+            /// </exception>
+            public void Sort(IComparer<CursorFrame> comparer)
+            {
+                _file.Frames.Sort(new FrameComparer(comparer));
+            }
+
+            /// <summary>
+            /// Sorts all elements in the list according to the specified delegate.
+            /// </summary>
+            /// <param name="comparison">The delegate used to compare each <see cref="IconFrame"/>.</param>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="comparison"/> is <c>null</c>.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// The implementation of <paramref name="comparison"/> caused an error during the sort. For example, <paramref name="comparison"/> might not return 0
+            /// when comparing an item with itself.
+            /// </exception>
+            public void Sort(Comparison<CursorFrame> comparison)
+            {
+                if (comparison == null) throw new ArgumentNullException("comparison");
+                _file.Frames.Sort((x, y) => comparison((CursorFrame)x, (CursorFrame)y));
+            }
+
+            private class FrameComparer : IComparer<IconFrame>
+            {
+                private IComparer<CursorFrame> _comparer;
+
+                public FrameComparer(IComparer<CursorFrame> comparer) { _comparer = comparer ?? new IconFrameComparer(); }
+
+                public int Compare(IconFrame x, IconFrame y) { return _comparer.Compare((CursorFrame)x, (CursorFrame)y); }
+            }
+
             bool ICollection<CursorFrame>.IsReadOnly
             {
                 get { return false; }

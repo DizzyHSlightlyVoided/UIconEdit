@@ -1273,6 +1273,36 @@ namespace UIconEdit
                 return _removeWhere(match, true);
             }
 
+            /// <summary>
+            /// Sorts all elements in the list. Items are sorted by <see cref="IconFrame.BitDepth"/> (highest bit-depth to lowest),
+            /// <see cref="IconFrame.Height"/> (largest to smallest), and <see cref="IconFrame.Width"/> (largest to smallest).
+            /// </summary>
+            public void Sort()
+            {
+                _items.Sort(new IconFrameComparer());
+            }
+
+            /// <summary>
+            /// Sorts all elements in the list according to the specified comparer.
+            /// </summary>
+            /// <param name="comparer">The comparer used to compare each <see cref="IconFrame"/>, or <c>null</c> to follow the rules of <see cref="Sort()"/>.</param>
+            public void Sort(IComparer<IconFrame> comparer)
+            {
+                _items.Sort(comparer ?? new IconFrameComparer());
+            }
+
+            /// <summary>
+            /// Sorts all elements in the list according to the specified delegate.
+            /// </summary>
+            /// <param name="comparison">The delegate used to compare each <see cref="IconFrame"/>.</param>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="comparison"/> is <c>null</c>.
+            /// </exception>
+            public void Sort(Comparison<IconFrame> comparison)
+            {
+                _items.Sort(comparison);
+            }
+
             bool ICollection<IconFrame>.IsReadOnly
             {
                 get { return true; }

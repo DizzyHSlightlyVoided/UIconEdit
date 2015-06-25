@@ -877,7 +877,7 @@ namespace UIconEdit
         public int GetHashCode(IconFrame obj)
         {
             if (obj == null) return 0;
-            return (int)obj.Width | (obj.Height << 16) | ((int)obj.BitDepth << 12);
+            return (ushort)obj.Width | ((ushort)obj.Height << 16) | ((int)obj.BitDepth << 12);
         }
     }
 

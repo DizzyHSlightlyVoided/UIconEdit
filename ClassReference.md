@@ -507,18 +507,16 @@ The caller does not have the required permission.
 --------------------------------------------------
 ## Method: `IconFileBase.FrameList.Sort()`
 
- Sorts all elements in the list. Items are sorted by [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- (highest bit-depth to lowest),[`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
- (largest to smallest), and [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
- (largest to smallest).
+ Sorts all elements in the list according to their [`UIconEdit.IconFrame.FrameKey`](#property-uiconediticonframeframekey)
+ value.
 
 --------------------------------------------------
 ## Method: `IconFileBase.FrameList.Sort(System.Collections.Generic.IComparer<UIconEdit.IconFrame>)`
 
  Sorts all elements in the list according to the specified comparer.
 * `comparer`: The comparer used to compare each [`UIconEdit.IconFrame`](#type-uiconediticonframe)
-, or `null` to follow the rules of [`UIconEdit.IconFileBase.FrameList.Sort`](#method-uiconediticonfilebaseframelistsort)
-.
+, or `null` to their [`UIconEdit.IconFrame.FrameKey`](#property-uiconediticonframeframekey)
+ value.
 
 --------------------------------------------------
 ## Method: `IconFileBase.FrameList.Sort(System.Comparison<UIconEdit.IconFrame>)`
@@ -955,6 +953,11 @@ In a set operation, the specified value is `null`.
 * [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) -  In a set operation, the specified value is disposed.
 
 --------------------------------------------------
+## Property: `IconFrame.FrameKey`
+
+ Gets a key for the icon frame.
+
+--------------------------------------------------
 ## Property: `IconFrame.Width`
 
  Gets and sets the resampled width of the icon.
@@ -1217,6 +1220,154 @@ s below [`UIconEdit.BitDepth.Bit32`](#field-uiconeditbitdepthbit32)
 ## Property: `CursorFrame.Hotspot`
 
  Gets the offset of the cursor's hotspot from the upper-left corner of the cursor in pixels.
+
+--------------------------------------------------
+# Type: `UIconEdit.FrameKey`
+
+ Represents a simplified key for an icon frame.
+
+--------------------------------------------------
+## Constructor: `FrameKey(System.Int16, System.Int16, UIconEdit.BitDepth)`
+
+ Creates a new instance.
+* `width`: The width of the icon frame.
+* `height`: The height of the icon frame.
+* `bitDepth`: The bit depth of the icon frame.
+
+--------------------------------------------------
+## Field: `FrameKey.Width`
+
+ Indicates the width of the icon frame.
+
+--------------------------------------------------
+## Field: `FrameKey.Height`
+
+ Indicates the height of the icon frame.
+
+--------------------------------------------------
+## Field: `FrameKey.BitDepth`
+
+ Indicates the bit depth of the icon frame.
+
+--------------------------------------------------
+## Method: `FrameKey.CompareTo(UIconEdit.FrameKey)`
+
+ Compares the current instance to the specified other [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ object. First[`UIconEdit.FrameKey.BitDepth`](#field-uiconeditframekeybitdepth)
+ is compared, then [`UIconEdit.FrameKey.Height`](#field-uiconeditframekeyheight)
+, then [`UIconEdit.FrameKey.Width`](#field-uiconeditframekeywidth)
+ (with  higher color-counts and larger elements first).
+* `other`: The other [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+
+**Returns:** A value less than 0 if the current value comes before `other`;   a value greater than 0 if the current value comes after `other`; or  0 if the current instance is equal to `other`.
+
+
+--------------------------------------------------
+## Operator: `FrameKey.op_LessThan(UIconEdit.FrameKey, UIconEdit.FrameKey)`
+
+ Compares two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ objects.
+* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+
+**Returns:** `true` if `f1` is less than `f2`; `false` otherwise.
+
+
+--------------------------------------------------
+## Operator: `FrameKey.op_GreaterThan(UIconEdit.FrameKey, UIconEdit.FrameKey)`
+
+ Compares two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ objects.
+* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+
+**Returns:** `true` if `f1` is greater than `f2`; `false` otherwise.
+
+
+--------------------------------------------------
+## Operator: `FrameKey.op_LessThanOrEqual(UIconEdit.FrameKey, UIconEdit.FrameKey)`
+
+ Compares two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ objects.
+* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+
+**Returns:** `true` if `f1` is less than or equal to `f2`; `false` otherwise.
+
+
+--------------------------------------------------
+## Operator: `FrameKey.op_GreaterThanOrEqual(UIconEdit.FrameKey, UIconEdit.FrameKey)`
+
+ Compares two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ objects.
+* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+
+**Returns:** `true` if `f1` is less than or equal to `f2`; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `FrameKey.Equals(UIconEdit.FrameKey)`
+
+ Determines if the current instance is equal to the specified other [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ value.
+* `other`: The other [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+
+**Returns:** `true` if the current instance is equal to `other`; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `FrameKey.Equals(System.Object)`
+
+ Determines if the current instance is equal to the specified other object.
+* `obj`: The other object to compare.
+
+**Returns:** `true` if the current instance is equal to `obj`; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `FrameKey.GetHashCode()`
+
+ Returns a hash code for the current value.
+
+**Returns:** A hash code for the current value.
+
+
+--------------------------------------------------
+## Operator: `FrameKey.op_Equality(UIconEdit.FrameKey, UIconEdit.FrameKey)`
+
+ Determines equality of two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ objects.
+* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+
+**Returns:** `true` if `f1` is equal to `f2`; `false` otherwise.
+
+
+--------------------------------------------------
+## Operator: `FrameKey.op_Inequality(UIconEdit.FrameKey, UIconEdit.FrameKey)`
+
+ Determines inequality of two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ objects.
+* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
+ to compare.
+
+**Returns:** `true` if `f1` is not equal to `f2`; `false` otherwise.
+
 
 --------------------------------------------------
 # Type: `UIconEdit.BitDepth`
@@ -1872,18 +2023,16 @@ The caller does not have the required permission.
 --------------------------------------------------
 ## Method: `CursorFile.CursorFrameList.Sort()`
 
- Sorts all elements in the list. Items are sorted by [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- (highest bit-depth to lowest),[`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
- (largest to smallest), and [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
- (largest to smallest).
+ Sorts all elements in the list according to their [`UIconEdit.IconFrame.FrameKey`](#property-uiconediticonframeframekey)
+ value.
 
 --------------------------------------------------
 ## Method: `CursorFile.CursorFrameList.Sort(System.Collections.Generic.IComparer<UIconEdit.CursorFrame>)`
 
  Sorts all elements in the list according to the specified comparer.
 * `comparer`: The comparer used to compare each [`UIconEdit.CursorFrame`](#type-uiconeditcursorframe)
-, or `null` to follow the rules of [`UIconEdit.CursorFile.CursorFrameList.Sort`](#method-uiconeditcursorfilecursorframelistsort)
-.
+, or `null` to use their [`UIconEdit.IconFrame.FrameKey`](#property-uiconediticonframeframekey)
+ value.
 
 ### Exceptions
 

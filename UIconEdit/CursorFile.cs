@@ -603,8 +603,7 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Sorts all elements in the list. Items are sorted by <see cref="IconFrame.BitDepth"/> (highest bit-depth to lowest),
-            /// <see cref="IconFrame.Height"/> (largest to smallest), and <see cref="IconFrame.Width"/> (largest to smallest).
+            /// Sorts all elements in the list according to their <see cref="IconFrame.FrameKey"/> value.
             /// </summary>
             public void Sort()
             {
@@ -614,7 +613,7 @@ namespace UIconEdit
             /// <summary>
             /// Sorts all elements in the list according to the specified comparer.
             /// </summary>
-            /// <param name="comparer">The comparer used to compare each <see cref="CursorFrame"/>, or <c>null</c> to follow the rules of <see cref="Sort()"/>.</param>
+            /// <param name="comparer">The comparer used to compare each <see cref="CursorFrame"/>, or <c>null</c> to use their <see cref="IconFrame.FrameKey"/> value.</param>
             /// <exception cref="ArgumentException">
             /// The implementation of <paramref name="comparer"/> caused an error during the sort. For example, <paramref name="comparer"/> might not return 0
             /// when comparing an item with itself.

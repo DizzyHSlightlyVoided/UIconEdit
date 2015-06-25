@@ -34,6 +34,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 using nQuant;
 
@@ -211,6 +212,11 @@ namespace UIconEdit
                 throw new ArgumentOutOfRangeException(paramName);
             dim = value;
         }
+
+        /// <summary>
+        /// Gets a key for the icon frame.
+        /// </summary>
+        public FrameKey FrameKey { get { return new FrameKey(_width, _height, _depth); } }
 
         private short _width;
         /// <summary>
@@ -840,6 +846,155 @@ namespace UIconEdit
         }
     }
 
+    /// <summary>
+    /// Represents a simplified key for an icon frame.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct FrameKey : IEquatable<FrameKey>, IComparable<FrameKey>
+    {
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        /// <param name="width">The width of the icon frame.</param>
+        /// <param name="height">The height of the icon frame.</param>
+        /// <param name="bitDepth">The bit depth of the icon frame.</param>
+        public FrameKey(short width, short height, BitDepth bitDepth)
+        {
+            Width = width;
+            Height = height;
+            BitDepth = bitDepth;
+        }
+
+        /// <summary>
+        /// Indicates the width of the icon frame.
+        /// </summary>
+        public short Width;
+        /// <summary>
+        /// Indicates the height of the icon frame.
+        /// </summary>
+        public short Height;
+        /// <summary>
+        /// Indicates the bit depth of the icon frame.
+        /// </summary>
+        public BitDepth BitDepth;
+
+        /// <summary>
+        /// Compares the current instance to the specified other <see cref="FrameKey"/> object. First
+        /// <see cref="BitDepth"/> is compared, then <see cref="Height"/>, then <see cref="Width"/> (with
+        /// higher color-counts and larger elements first).
+        /// </summary>
+        /// <param name="other">The other <see cref="FrameKey"/> to compare.</param>
+        /// <returns>A value less than 0 if the current value comes before <paramref name="other"/>; 
+        /// a value greater than 0 if the current value comes after <paramref name="other"/>; or
+        /// 0 if the current instance is equal to <paramref name="other"/>.</returns>
+        public int CompareTo(FrameKey other)
+        {
+            if (BitDepth != other.BitDepth)
+                return BitDepth.CompareTo(other.BitDepth);
+
+            if (Height != other.Height)
+                return other.Height.CompareTo(Height);
+
+            return other.Width.CompareTo(Width);
+        }
+
+        /// <summary>
+        /// Compares two <see cref="FrameKey"/> objects.
+        /// </summary>
+        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="f1"/> is less than <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        public static bool operator <(FrameKey f1, FrameKey f2)
+        {
+            return f1.CompareTo(f2) < 0;
+        }
+
+        /// <summary>
+        /// Compares two <see cref="FrameKey"/> objects.
+        /// </summary>
+        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="f1"/> is greater than <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        public static bool operator >(FrameKey f1, FrameKey f2)
+        {
+            return f1.CompareTo(f2) > 0;
+        }
+
+        /// <summary>
+        /// Compares two <see cref="FrameKey"/> objects.
+        /// </summary>
+        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="f1"/> is less than or equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        public static bool operator <=(FrameKey f1, FrameKey f2)
+        {
+            return f1.CompareTo(f2) <= 0;
+        }
+
+        /// <summary>
+        /// Compares two <see cref="FrameKey"/> objects.
+        /// </summary>
+        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="f1"/> is less than or equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        public static bool operator >=(FrameKey f1, FrameKey f2)
+        {
+            return f1.CompareTo(f2) >= 0;
+        }
+
+
+        /// <summary>
+        /// Determines if the current instance is equal to the specified other <see cref="FrameKey"/> value.
+        /// </summary>
+        /// <param name="other">The other <see cref="FrameKey"/> to compare.</param>
+        /// <returns><c>true</c> if the current instance is equal to <paramref name="other"/>; <c>false</c> otherwise.</returns>
+        public bool Equals(FrameKey other)
+        {
+            return Width == other.Width && Height == other.Height && BitDepth == other.BitDepth;
+        }
+
+        /// <summary>
+        /// Determines if the current instance is equal to the specified other object.
+        /// </summary>
+        /// <param name="obj">The other object to compare.</param>
+        /// <returns><c>true</c> if the current instance is equal to <paramref name="obj"/>; <c>false</c> otherwise.</returns>
+        public override bool Equals(object obj)
+        {
+            return obj is FrameKey && Equals((FrameKey)obj);
+        }
+
+        /// <summary>
+        /// Returns a hash code for the current value.
+        /// </summary>
+        /// <returns>A hash code for the current value.</returns>
+        public override int GetHashCode()
+        {
+            return ((ushort)Width | ((ushort)Height << 16)) ^ ((int)BitDepth << 12);
+        }
+
+        /// <summary>
+        /// Determines equality of two <see cref="FrameKey"/> objects.
+        /// </summary>
+        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="f1"/> is equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        public static bool operator ==(FrameKey f1, FrameKey f2)
+        {
+            return f1.Equals(f2);
+        }
+
+        /// <summary>
+        /// Determines inequality of two <see cref="FrameKey"/> objects.
+        /// </summary>
+        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <returns><c>true</c> if <paramref name="f1"/> is not equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        public static bool operator !=(FrameKey f1, FrameKey f2)
+        {
+            return !f1.Equals(f2);
+        }
+    }
+
     internal struct IconFrameComparer : IEqualityComparer<IconFrame>, IComparer<IconFrame>, IEqualityComparer<CursorFrame>, IComparer<CursorFrame>
     {
         public int Compare(CursorFrame x, CursorFrame y)
@@ -849,13 +1004,13 @@ namespace UIconEdit
 
         public int Compare(IconFrame x, IconFrame y)
         {
-            int compare = x.BitDepth.CompareTo(y.BitDepth);
-            if (compare != 0) return compare;
+            if (ReferenceEquals(x, y))
+                return 0;
 
-            compare = y.Height.CompareTo(x.Height);
-            if (compare != 0) return compare;
+            if (ReferenceEquals(x, null)) return -1;
+            else if (ReferenceEquals(y, null)) return 1;
 
-            return y.Width.CompareTo(x.Width);
+            return x.FrameKey.CompareTo(y.FrameKey);
         }
 
         public bool Equals(CursorFrame x, CursorFrame y)
@@ -866,7 +1021,8 @@ namespace UIconEdit
         public bool Equals(IconFrame x, IconFrame y)
         {
             if (ReferenceEquals(x, y)) return true;
-            return x.BitDepth == y.BitDepth && x.Width == y.Width && x.Height == y.Height;
+            if (ReferenceEquals(x, null) ^ ReferenceEquals(y, null)) return false;
+            return x.FrameKey == y.FrameKey;
         }
 
         public int GetHashCode(CursorFrame obj)
@@ -877,7 +1033,7 @@ namespace UIconEdit
         public int GetHashCode(IconFrame obj)
         {
             if (obj == null) return 0;
-            return (ushort)obj.Width | ((ushort)obj.Height << 16) | ((int)obj.BitDepth << 12);
+            return obj.FrameKey.GetHashCode();
         }
     }
 

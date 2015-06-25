@@ -1,87 +1,94 @@
-﻿# Type: `UIconEdit.IconFileBase`
+# Type: `public abstract class UIconEdit.IconFileBase`
 
- Base class for icon and cursor files.
-
---------------------------------------------------
-## Constructor: `IconFileBase()`
-
- Initializes a new instance.
+Base class for icon and cursor files.
 
 --------------------------------------------------
-## Method: `IconFileBase.Load(System.IO.Stream)`
+## Constructor: `public IconFileBase()`
 
- Loads an [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation from the specified stream.
+Initializes a new instance.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.IconFileBase Load(System.IO.Stream input)`
+
+Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified stream.
 * `input`: A stream containing an icon or cursor file.
 
-**Returns:** An [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation loaded from `input`.
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): An [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation loaded from `input`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `input` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`input` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `input` is closed or does not support reading.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`input` is closed or does not support reading.
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `input` is closed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`input` is closed.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the icon file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `IconFileBase.Load(System.IO.Stream, System.Action<UIconEdit.IconLoadException>)`
+## Method: `public static UIconEdit.IconFileBase Load(System.IO.Stream input, System.Action<UIconEdit.IconLoadException> handler)`
 
- Loads an [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation from the specified stream.
+Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified stream.
 * `input`: A stream containing an icon or cursor file.
-* `handler`: A delegate used to process [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception)
-s thrown when processing individual icon frames,  or `null` to throw an exception in those cases.
+* `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual icon frames, or `null` to throw an exception in those cases.
 
-**Returns:** An [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation loaded from `input`.
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): An [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation loaded from `input`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `input` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`input` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `input` is closed or does not support reading.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`input` is closed or does not support reading.
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `input` is closed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`input` is closed.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the icon file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `IconFileBase.Load(System.String, System.Action<UIconEdit.IconLoadException>)`
+## Method: `public static UIconEdit.IconFileBase Load(System.String path, System.Action<UIconEdit.IconLoadException> handler)`
 
- Loads an [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation from the specified path.
+Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
 * `path`: The path to a cursor or icon file.
-* `handler`: A delegate used to process [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception)
-s thrown when processing individual icon frames,  or `null` to throw an exception in those cases.
+* `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual icon frames, or `null` to throw an exception in those cases.
 
-**Returns:** An [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation loaded from `path`.
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): An [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation loaded from `path`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `path` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`System.IO.Path.GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
-* [`System.IO.PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx) -  The specified path, filename, or both contain the system-defined maximum length.
+##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
+The specified path, filename, or both contain the system-defined maximum length.
 
-* [`System.IO.FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx) -  The specified path was not found.
+##### [`FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx)
+The specified path was not found.
 
-* [`System.IO.DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx) -  The specified path was invalid.
+##### [`DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx)
+The specified path was invalid.
 
-* [`System.UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx) - 
+##### [`UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx)
+
 `path` specified a directory.
 
 -OR-
@@ -89,37 +96,43 @@ s thrown when processing individual icon frames,  or `null` to throw an exceptio
 The caller does not have the required permission.
 
 
-* [`System.NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx) - `path` is in an invalid format.
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+`path` is in an invalid format.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the icon file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `IconFileBase.Load(System.String)`
+## Method: `public static UIconEdit.IconFileBase Load(System.String path)`
 
- Loads an [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation from the specified path.
+Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
 * `path`: The path to a cursor or icon file.
 
-**Returns:** An [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation loaded from `path`.
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): An [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation loaded from `path`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `path` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`System.IO.Path.GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
-* [`System.IO.PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx) -  The specified path, filename, or both contain the system-defined maximum length.
+##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
+The specified path, filename, or both contain the system-defined maximum length.
 
-* [`System.IO.FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx) -  The specified path was not found.
+##### [`FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx)
+The specified path was not found.
 
-* [`System.IO.DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx) -  The specified path was invalid.
+##### [`DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx)
+The specified path was invalid.
 
-* [`System.UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx) - 
+##### [`UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx)
+
 `path` specified a directory.
 
 -OR-
@@ -127,321 +140,299 @@ The caller does not have the required permission.
 The caller does not have the required permission.
 
 
-* [`System.NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx) - `path` is in an invalid format.
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+`path` is in an invalid format.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the icon file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
-
---------------------------------------------------
-## Method: `IconFileBase.Clone()`
-
- Returns a duplicate of the current instance.
-
-**Returns:** A duplicate of the current instance, with copies of every icon frame and clones of each  frame's [`UIconEdit.IconFrame.BaseImage`](#property-uiconediticonframebaseimage)
- in [`UIconEdit.IconFileBase.Frames`](#property-uiconediticonfilebaseframes)
-.
-
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `IconFileBase.IsValid(UIconEdit.IconFrame)`
+## Method: `public virtual UIconEdit.IconFileBase Clone()`
 
- When overridden in a derived class, gets a value indicating whether the specified value may be added to [`UIconEdit.IconFileBase.Frames`](#property-uiconediticonfilebaseframes)
-.
+Returns a duplicate of the current instance.
+
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon frame and clones of each frame's [`BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-) in [`Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-).
+
+
+--------------------------------------------------
+## Method: `protected virtual System.Boolean IsValid(UIconEdit.IconFrame frame)`
+
+When overridden in a derived class, gets a value indicating whether the specified value may be added to [`Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-).
 * `frame`: The frame to check.
 
-**Returns:** `true` if `frame` is not `null`; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `frame` is not `null`; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.GetImgX(UIconEdit.IconFrame)`
+## Method: `protected virtual System.UInt16 GetImgX(UIconEdit.IconFrame frame)`
 
- When overridden in a derived class, computes the 16-bit X component.
+When overridden in a derived class, computes the 16-bit X component.
 * `frame`: The image frame to calculate.
 
-**Returns:** In icon files, the color panes. In cursor files, the horizontal offset of the hotspot from the left in pixels.
+**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): In icon files, the color panes. In cursor files, the horizontal offset of the hotspot from the left in pixels.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.GetImgY(UIconEdit.IconFrame)`
+## Method: `protected virtual System.UInt16 GetImgY(UIconEdit.IconFrame frame)`
 
- When overridden in a derived class, computes the 16-bit Y component.
+When overridden in a derived class, computes the 16-bit Y component.
 * `frame`: The image frame to calculate.
 
-**Returns:** In icon files, the number of bits per pixel. In cursor files, the vertical offset of the hotspot from the top, in pixels.
+**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): In icon files, the number of bits per pixel. In cursor files, the vertical offset of the hotspot from the top, in pixels.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.Save(System.IO.Stream)`
+## Method: `public void Save(System.IO.Stream output)`
 
- Saves the file to the specified stream.
+Saves the file to the specified stream.
 * `output`: The stream to which the file will be written.
 
 ### Exceptions
 
-* [`System.InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx) - [`UIconEdit.IconFileBase.Frames`](#property-uiconediticonfilebaseframes)
- contains zero elements.
+##### [`InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx)
+[`Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-) contains zero elements.
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `output` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`output` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `output` is closed or does not support writing.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`output` is closed or does not support writing.
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `output` is closed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`output` is closed.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `IconFileBase.Save(System.String)`
+## Method: `public void Save(System.String path)`
 
- Saves the file to the specified file.
+Saves the file to the specified file.
 * `path`: The file to which the file will be written.
 
 ### Exceptions
 
-* [`System.InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx) - [`UIconEdit.IconFileBase.Frames`](#property-uiconediticonfilebaseframes)
- contains zero elements.
+##### [`InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx)
+[`Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-) contains zero elements.
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `path` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`System.IO.Path.GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
-* [`System.IO.PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx) -  The specified path, filename, or both contain the system-defined maximum length.
+##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
+The specified path, filename, or both contain the system-defined maximum length.
 
-* [`System.IO.DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx) -  The specified path is invalid.
+##### [`DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx)
+The specified path is invalid.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `IconFileBase.Dispose()`
+## Method: `public virtual void Dispose()`
 
- Immediately releases all resources used by the current instance.
+Immediately releases all resources used by the current instance.
 
 --------------------------------------------------
-## Method: `IconFileBase.Dispose(System.Boolean)`
+## Method: `protected virtual void Dispose(System.Boolean disposing)`
 
- Releases all unmanaged resources used by the current instance, and optionally releases all managed resources.
+Releases all unmanaged resources used by the current instance, and optionally releases all managed resources.
 * `disposing`: `true` to release both managed and unmanaged resources; `false` to release only unmanaged resources.
 
 --------------------------------------------------
-## Property: `IconFileBase.ID`
+## Property: `public virtual UIconEdit.IconTypeCode ID { get; }`
 
- When overridden in a derived class, gets the 16-bit identifier for the file type.
-
---------------------------------------------------
-## Property: `IconFileBase.Frames`
-
- Gets a collection containing all frames in the icon file. 
+When overridden in a derived class, gets the 16-bit identifier for the file type.
 
 --------------------------------------------------
-# Type: `UIconEdit.IconFileBase.FrameList`
+## Property: `public UIconEdit.IconFileBase.FrameList Frames { get; }`
 
- Represents a hash list of frames. This collection treats [`UIconEdit.IconFrame`](#type-uiconediticonframe)
- objects with the same[`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- as though they were equal.
+Gets a collection containing all frames in the icon file.
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.Add(UIconEdit.IconFrame)`
+# Type: `class UIconEdit.IconFileBase.FrameList`
 
- Adds the specified icon frame to the list.
+Represents a hash list of frames. This collection treats [`IconFrame`](#type-public-class-uiconediticonframe) objects with the same[`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as though they were equal.
+
+--------------------------------------------------
+## Method: `public System.Boolean Add(UIconEdit.IconFrame item)`
+
+Adds the specified icon frame to the list.
 * `item`: The icon frame to add to the list.
 
-**Returns:** `true` if `item` was successfully added; `false` if `item` is `null`,  is already associated with a different icon file, [`UIconEdit.IconFileBase.FrameList.Count`](#property-uiconediticonfilebaseframelistcount)
- is equal to [`System.UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx)
-, or if an element with the same[`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`Count`](#property-public-virtual-systemint32-count--get-) is equal to [`MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same[`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.Insert(System.Int32, UIconEdit.IconFrame)`
+## Method: `public System.Boolean Insert(System.Int32 index, UIconEdit.IconFrame item)`
 
- Adds the specified icon frame to the list at the specified index.
+Adds the specified icon frame to the list at the specified index.
 * `index`: The index at which to insert the icon frame.
 * `item`: The icon frame to add to the list.
 
-**Returns:** `true` if `item` was successfully added; `false` if `item` is `null`,  is already associated with a different icon file, [`UIconEdit.IconFileBase.FrameList.Count`](#property-uiconediticonfilebaseframelistcount)
- is equal to [`System.UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx)
-, or if an element with the same[`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`Count`](#property-public-virtual-systemint32-count--get-) is equal to [`MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same[`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
 
 
 ### Exceptions
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `index` is less than 0 or is greater than [`UIconEdit.IconFileBase.FrameList.Count`](#property-uiconediticonfilebaseframelistcount)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than [`Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.SetValue(System.Int32, UIconEdit.IconFrame)`
+## Method: `public System.Boolean SetValue(System.Int32 index, UIconEdit.IconFrame item)`
 
- Sets the value at the specified index.
+Sets the value at the specified index.
 * `index`: The index of the value to set.
 * `item`: The item to set at the specified index.
 
-**Returns:** `true` if `item` was successfully set; `false` if `item` is `null`,  is already associated with a different icon file, or if an element with the same [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-,  and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- already exists at a different index.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists at a different index.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.RemoveAt(System.Int32)`
+## Method: `public virtual void RemoveAt(System.Int32 index)`
 
- Removes the element at the specified index.
+Removes the element at the specified index.
 * `index`: The element at the specified index.
 
 ### Exceptions
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `index` is less than 0 or is greater than or equal to [`UIconEdit.IconFileBase.FrameList.Count`](#property-uiconediticonfilebaseframelistcount)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.RemoveAndDisposeAt(System.Int32)`
+## Method: `public void RemoveAndDisposeAt(System.Int32 index)`
 
- Removes the element at the specified index and immediately calls [`UIconEdit.IconFrame.Dispose`](#method-uiconediticonframedispose)
-.
+Removes the element at the specified index and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
 * `index`: The element at the specified index.
 
 ### Exceptions
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `index` is less than 0 or is greater than or equal to [`UIconEdit.IconFileBase.FrameList.Count`](#property-uiconediticonfilebaseframelistcount)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.Remove(UIconEdit.IconFrame)`
+## Method: `public virtual System.Boolean Remove(UIconEdit.IconFrame item)`
 
- Removes the specified icon frame from the list.
+Removes the specified icon frame from the list.
 * `item`: The icon frame to remove from the list.
 
-**Returns:** `true` if `item` was found and successfully removed; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found and successfully removed; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.RemoveAndDispose(UIconEdit.IconFrame)`
+## Method: `public System.Boolean RemoveAndDispose(UIconEdit.IconFrame item)`
 
- Removes the specified icon frame from the list and immediately callse [`UIconEdit.IconFrame.Dispose`](#method-uiconediticonframedispose)
-.
+Removes the specified icon frame from the list and immediately callse [`Dispose`](#method-public-virtual-void-dispose-1).
 * `item`: The icon frame to remove from the list.
 
-**Returns:** `true` if `item` was found and successfully removed; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found and successfully removed; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.RemoveSimilar(UIconEdit.IconFrame)`
+## Method: `public System.Boolean RemoveSimilar(UIconEdit.IconFrame item)`
 
- Removes an icon frame similar to the specified value from the list.
+Removes an icon frame similar to the specified value from the list.
 * `item`: The icon frame compare.
 
-**Returns:** `true` if an icon frame with the same [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.RemoveAndDisposeSimilar(UIconEdit.IconFrame)`
+## Method: `public System.Boolean RemoveAndDisposeSimilar(UIconEdit.IconFrame item)`
 
- Removes an icon frame similar to the specified value from the list  and immediately calls [`UIconEdit.IconFrame.Dispose`](#method-uiconediticonframedispose)
-.
+Removes an icon frame similar to the specified value from the list and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
 * `item`: The icon frame to search for.
 
-**Returns:** `true` if an icon frame with the same [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.Clear()`
+## Method: `public virtual void Clear()`
 
- Removes all elements from the list.
-
---------------------------------------------------
-## Method: `IconFileBase.FrameList.ClearAndDispose()`
-
- Removes all elements from the list and immediately calls [`UIconEdit.IconFrame.Dispose`](#method-uiconediticonframedispose)
- on each one.
+Removes all elements from the list.
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.Contains(UIconEdit.IconFrame)`
+## Method: `public void ClearAndDispose()`
 
- Determines if the specified element exists in the list.
+Removes all elements from the list and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1) on each one.
+
+--------------------------------------------------
+## Method: `public virtual System.Boolean Contains(UIconEdit.IconFrame item)`
+
+Determines if the specified element exists in the list.
 * `item`: The icon frame to search for in the list.
 
-**Returns:** `true` if `item` was found; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.ContainsSimilar(UIconEdit.IconFrame)`
+## Method: `public System.Boolean ContainsSimilar(UIconEdit.IconFrame item)`
 
- Determines if an element similar to the specified icon frame exists in the list.
+Determines if an element similar to the specified icon frame exists in the list.
 * `item`: The icon frame to compare.
 
-**Returns:** `true` if an icon frame with the same with the same [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- as `item` exists in the list; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` exists in the list; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.IndexOf(UIconEdit.IconFrame)`
+## Method: `public virtual System.Int32 IndexOf(UIconEdit.IconFrame item)`
 
- Gets the index of the specified item.
+Gets the index of the specified item.
 * `item`: The icon frame to search for in the list.
 
-**Returns:** The index of `item`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of `item`, if found; otherwise, -1.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.IndexOfSimilar(UIconEdit.IconFrame)`
+## Method: `public System.Int32 IndexOfSimilar(UIconEdit.IconFrame item)`
 
- Gets the index of an element similar to the specified item.
+Gets the index of an element similar to the specified item.
 * `item`: The icon frame to compare.
 
-**Returns:** The index of an icon frame with the same [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- as `item`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item`, if found; otherwise, -1.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.CopyTo(UIconEdit.IconFrame[])`
+## Method: `public void CopyTo(UIconEdit.IconFrame[] array)`
 
- Copies all elements in the list to the specified array.
+Copies all elements in the list to the specified array.
 * `array`: The array to which all elements in the list will be copied.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `array` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`array` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The length of `array` is less than [`UIconEdit.IconFileBase.FrameList.Count`](#property-uiconediticonfilebaseframelistcount)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The length of `array` is less than [`Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.CopyTo(UIconEdit.IconFrame[], System.Int32)`
+## Method: `public virtual void CopyTo(UIconEdit.IconFrame[] array, System.Int32 arrayIndex)`
 
- Copies all elements in the list to the specified array, starting at the specified index.
+Copies all elements in the list to the specified array, starting at the specified index.
 * `array`: The array to which all elements in the list will be copied.
 * `arrayIndex`: The index in `array` at which copying begins.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `array` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`array` is `null`.
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `arrayIndex` is less than 0.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`arrayIndex` is less than 0.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The length of `array` minus `arrayIndex` is less than [`UIconEdit.IconFileBase.FrameList.Count`](#property-uiconediticonfilebaseframelistcount)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The length of `array` minus `arrayIndex` is less than [`Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.CopyTo(System.Int32, UIconEdit.IconFrame[], System.Int32, System.Int32)`
+## Method: `public void CopyTo(System.Int32 index, UIconEdit.IconFrame[] array, System.Int32 arrayIndex, System.Int32 count)`
 
- Copies a range of elements in the list to the specified array.
+Copies a range of elements in the list to the specified array.
 * `index`: The index of the first item to copy.
 * `array`: The array to which all elements in the list will be copied.
 * `arrayIndex`: The index in `array` at which copying begins.
@@ -449,11 +440,14 @@ The caller does not have the required permission.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `array` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`array` is `null`.
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `index`, `arrayIndex`, or `count` is less than 0.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index`, `arrayIndex`, or `count` is less than 0.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - 
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+
 `index` and `count` do not indicate a valid range of elements in the current instance.
 
 -OR-
@@ -462,406 +456,372 @@ The caller does not have the required permission.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.GetEnumerator()`
+## Method: `public UIconEdit.IconFileBase.FrameList.Enumerator GetEnumerator()`
 
- Returns an enumerator which iterates through the list.
+Returns an enumerator which iterates through the list.
 
-**Returns:** An enumerator which iterates through the list.
-
-
---------------------------------------------------
-## Method: `IconFileBase.FrameList.ToArray()`
-
- Returns an array containing all elements in the current list.
-
-**Returns:** An array containing elements copied from the current list.
+**Returns:** Type [`Enumerator`](#type-struct-uiconediticonfilebaseframelistenumerator): An enumerator which iterates through the list.
 
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.RemoveWhere(System.Predicate<UIconEdit.IconFrame>)`
+## Method: `public UIconEdit.IconFrame[] ToArray()`
 
- Removes all elements matching the specified predicate.
+Returns an array containing all elements in the current list.
+
+**Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`IconFrame`](#type-public-class-uiconediticonframe): An array containing elements copied from the current list.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 RemoveWhere(System.Predicate<UIconEdit.IconFrame> match)`
+
+Removes all elements matching the specified predicate.
 * `match`: A predicate used to define the elements to remove.
 
-**Returns:** The number of elements which were removed.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `match` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.RemoveAndDisposeWhere(System.Predicate<UIconEdit.IconFrame>)`
+## Method: `public System.Int32 RemoveAndDisposeWhere(System.Predicate<UIconEdit.IconFrame> match)`
 
- Removes all elements matching the specified predicate and immediately calls [`UIconEdit.IconFrame.Dispose`](#method-uiconediticonframedispose)
-.
+Removes all elements matching the specified predicate and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
 * `match`: A predicate used to define the elements to remove.
 
-**Returns:** The number of elements which were removed.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `match` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.Sort()`
+## Method: `public void Sort()`
 
- Sorts all elements in the list according to their [`UIconEdit.IconFrame.FrameKey`](#property-uiconediticonframeframekey)
- value.
-
---------------------------------------------------
-## Method: `IconFileBase.FrameList.Sort(System.Collections.Generic.IComparer<UIconEdit.IconFrame>)`
-
- Sorts all elements in the list according to the specified comparer.
-* `comparer`: The comparer used to compare each [`UIconEdit.IconFrame`](#type-uiconediticonframe)
-, or `null` to their [`UIconEdit.IconFrame.FrameKey`](#property-uiconediticonframeframekey)
- value.
+Sorts all elements in the list according to their [`FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.Sort(System.Comparison<UIconEdit.IconFrame>)`
+## Method: `public void Sort(System.Collections.Generic.IComparer<UIconEdit.IconFrame> comparer)`
 
- Sorts all elements in the list according to the specified delegate.
-* `comparison`: The delegate used to compare each [`UIconEdit.IconFrame`](#type-uiconediticonframe)
-.
+Sorts all elements in the list according to the specified comparer.
+* `comparer`: The comparer used to compare each [`IconFrame`](#type-public-class-uiconediticonframe), or `null` to their [`FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
+
+--------------------------------------------------
+## Method: `public void Sort(System.Comparison<UIconEdit.IconFrame> comparison)`
+
+Sorts all elements in the list according to the specified delegate.
+* `comparison`: The delegate used to compare each [`IconFrame`](#type-public-class-uiconediticonframe).
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `comparison` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`comparison` is `null`.
 
 --------------------------------------------------
-## Property: `IconFileBase.FrameList.Item(System.Int32)`
+## Property: `IconFileBase.FrameList.Item(System.Int32 index)`
 
- Gets and sets the element at the specified index.
+Gets and sets the element at the specified index.
 * `index`: The index of the element to get or set.
 
 ### Exceptions
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - 
-`index` is less than 0 or is greater than or equal to [`UIconEdit.IconFileBase.FrameList.Count`](#property-uiconediticonfilebaseframelistcount)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+
+`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get-).
 
 -OR-
 
 In a set operation, the specified value is `null`.
 
 
-* [`System.NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx) -  In a set operation, an element with the same [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- already exists in the list at a different index, or the specified value is already associated with a different icon file.
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+In a set operation, an element with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list at a different index, or the specified value is already associated with a different icon file.
 
 --------------------------------------------------
-## Property: `IconFileBase.FrameList.Count`
+## Property: `public virtual System.Int32 Count { get; }`
 
- Gets the number of elements in the list.
-
---------------------------------------------------
-# Type: `UIconEdit.IconFileBase.FrameList.Enumerator`
-
- An enumerator which iterates through the list.
+Gets the number of elements in the list.
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.Enumerator.Dispose()`
+# Type: `struct UIconEdit.IconFileBase.FrameList.Enumerator`
 
- Disposes of the current instance.
+An enumerator which iterates through the list.
 
 --------------------------------------------------
-## Method: `IconFileBase.FrameList.Enumerator.MoveNext()`
+## Method: `public void Dispose()`
 
- Advances the enumerator to the next position in the list.
+Disposes of the current instance.
 
-**Returns:** `true` if the enumerator successfully advanced; `false` if the enumerator has passed the end of the list.
+--------------------------------------------------
+## Method: `public System.Boolean MoveNext()`
+
+Advances the enumerator to the next position in the list.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the enumerator successfully advanced; `false` if the enumerator has passed the end of the list.
 
 
 --------------------------------------------------
-## Property: `IconFileBase.FrameList.Enumerator.Current`
+## Property: `public UIconEdit.IconFrame Current { get; }`
 
- Gets the element at the current position in the enumerator.
-
---------------------------------------------------
-# Type: `UIconEdit.IconTypeCode`
-
- The type code for an icon file.
+Gets the element at the current position in the enumerator.
 
 --------------------------------------------------
-## Field: `IconTypeCode.Icon`
+# Type: `public struct UIconEdit.IconTypeCode`
 
- Indicates an icon (.ICO) file.
-
---------------------------------------------------
-## Field: `IconTypeCode.Cursor`
-
- Indicates a cursor (.CUR) file.
+The type code for an icon file.
 
 --------------------------------------------------
-# Type: `UIconEdit.IconLoadException`
+## Field: `public static UIconEdit.IconTypeCode Icon`
 
- The exception that is thrown when an icon file contains invalid data.
+Indicates an icon (.ICO) file.
 
 --------------------------------------------------
-## Constructor: `IconLoadException(System.String, UIconEdit.IconErrorCode, System.Object, System.Int32)`
+## Field: `public static UIconEdit.IconTypeCode Cursor`
 
- Creates a new instance using a message which describes the error and the specified error code.
+Indicates a cursor (.CUR) file.
+
+--------------------------------------------------
+# Type: `public class UIconEdit.IconLoadException`
+
+The exception that is thrown when an icon file contains invalid data.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, System.Object value, System.Int32 index)`
+
+Creates a new instance using a message which describes the error and the specified error code.
 * `message`: A message describing the error.
 * `code`: The error code used to identify the cause of the error.
 * `value`: The value which caused the error.
 * `index`: The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.
 
 --------------------------------------------------
-## Constructor: `IconLoadException(System.String, UIconEdit.IconErrorCode, System.Object)`
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, System.Object value)`
 
- Creates a new instance using a message which describes the error and the specified error code.
+Creates a new instance using a message which describes the error and the specified error code.
 * `message`: A message describing the error.
 * `code`: The error code used to identify the cause of the error.
 * `value`: The value which caused the error.
 
 --------------------------------------------------
-## Constructor: `IconLoadException(System.String, UIconEdit.IconErrorCode, System.Int32)`
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, System.Int32 index)`
 
- Creates a new instance using a message which describes the error and the specified error code.
+Creates a new instance using a message which describes the error and the specified error code.
 * `message`: A message describing the error.
 * `code`: The error code used to identify the cause of the error.
 * `index`: The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.
 
 --------------------------------------------------
-## Constructor: `IconLoadException(UIconEdit.IconErrorCode, System.Object, System.Int32)`
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, System.Object value, System.Int32 index)`
 
- Creates a new instance with the default message and the specified error code.
+Creates a new instance with the default message and the specified error code.
 * `code`: The error code used to identify the cause of the error.
 * `value`: The value which caused the error.
 * `index`: The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.
 
 --------------------------------------------------
-## Constructor: `IconLoadException(UIconEdit.IconErrorCode, System.Int32)`
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, System.Int32 index)`
 
- Creates a new instance with the default message and the specified error code.
+Creates a new instance with the default message and the specified error code.
 * `code`: The error code used to identify the cause of the error.
 * `index`: The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.
 
 --------------------------------------------------
-## Constructor: `IconLoadException(UIconEdit.IconErrorCode, System.Object)`
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, System.Object value)`
 
- Creates a new instance with the default message and the specified error code.
+Creates a new instance with the default message and the specified error code.
 * `code`: The error code used to identify the cause of the error.
 * `value`: The value which caused the error.
 
 --------------------------------------------------
-## Constructor: `IconLoadException(UIconEdit.IconErrorCode)`
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code)`
 
- Creates a new instance with the default message and the specified error code.
+Creates a new instance with the default message and the specified error code.
 * `code`: The error code used to identify the cause of the error.
 
 --------------------------------------------------
-## Constructor: `IconLoadException(System.String, UIconEdit.IconErrorCode, System.Int32, System.Exception)`
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, System.Int32 index, System.Exception innerException)`
 
- Creates a new instance with the specified message and error code and a reference to the exception which caused this error.
+Creates a new instance with the specified message and error code and a reference to the exception which caused this error.
 * `message`: A message describing the error.
 * `code`: The error code used to identify the cause of the error.
 * `index`: The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.
-* `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter  is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
+* `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
 
 --------------------------------------------------
-## Constructor: `IconLoadException(System.String, System.Exception)`
+## Constructor: `public IconLoadException(System.String message, System.Exception innerException)`
 
- Creates a new instance with the specified message and a reference to the exception which caused this error.
+Creates a new instance with the specified message and a reference to the exception which caused this error.
 * `message`: A message describing the error.
-* `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter  is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
+* `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
 
 --------------------------------------------------
-## Property: `IconLoadException.Message`
+## Property: `public virtual System.String Message { get; }`
 
- Gets a message describing the error.
-
---------------------------------------------------
-## Property: `IconLoadException.Code`
-
- Gets an error code describing the icon error.
+Gets a message describing the error.
 
 --------------------------------------------------
-## Property: `IconLoadException.Index`
+## Property: `public UIconEdit.IconErrorCode Code { get; }`
 
- Gets the index in the icon file of the icon frame which caused this exception,  or -1 if it occurred before the icon frames were processed.
-
---------------------------------------------------
-## Property: `IconLoadException.Value`
-
- Gets an object whose value caused the error, or `null` if there was no such value.
+Gets an error code describing the icon error.
 
 --------------------------------------------------
-# Type: `UIconEdit.IconErrorCode`
+## Property: `public System.Int32 Index { get; }`
 
- Indicates the cause of an [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception)
-.
-
---------------------------------------------------
-## Field: `IconErrorCode.Unknown`
-
- Code 0: the cause of the error is unknown.
+Gets the index in the icon file of the icon frame which caused this exception, or -1 if it occurred before the icon frames were processed.
 
 --------------------------------------------------
-## Field: `IconErrorCode.InvalidFormat`
+## Property: `public System.Object Value { get; }`
 
- Code 0x1: The file is not a valid cursor or icon format.  This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.ZeroFrames`
-
- Code 0x2: The icon contains zero frames.  This is a fatal error, and the icon file cannot continue processing when it occurs.
+Gets an object whose value caused the error, or `null` if there was no such value.
 
 --------------------------------------------------
-## Field: `IconErrorCode.ResourceTooSmall`
+# Type: `public struct UIconEdit.IconErrorCode`
 
- Code 0x3: One of the icon directory entries has a length less than or equal to 40 bytes, which is logically too small for either a BMP or a PNG file.[`UIconEdit.IconLoadException.Value`](#property-uiconediticonloadexceptionvalue)
- contains the length.  This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.ResourceTooEarly`
-
- Code 0x4: One of the icon directory entries has a starting offset which would overlap with the list of entries.[`UIconEdit.IconLoadException.Value`](#property-uiconediticonloadexceptionvalue)
- contains the offset.  This is a fatal error, and the icon file cannot continue processing when it occurs.
+Indicates the cause of an [`IconLoadException`](#type-public-class-uiconediticonloadexception).
 
 --------------------------------------------------
-## Field: `IconErrorCode.ResourceOverlap`
+## Field: `public static UIconEdit.IconErrorCode Unknown`
 
- Code 0x5: One or more of the icon directory entries have overlapping offset/length combinations.  This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidFrameType`
-
- Code 0x1000: the file type of a frame is invalid.
+Code 0: the cause of the error is unknown.
 
 --------------------------------------------------
-## Field: `IconErrorCode.InvalidBitDepth`
+## Field: `public static UIconEdit.IconErrorCode InvalidFormat`
 
- Code 0x1001: the file is an icon, and an icon directory entry has a bit depth with any value other than 0, 1, 4, 8, 24, or 32.[`UIconEdit.IconLoadException.Value`](#property-uiconediticonloadexceptionvalue)
- contains the bit depth.
-
---------------------------------------------------
-## Field: `IconErrorCode.ZeroValidFrames`
-
- There are no remaining valid frames after processing.  This is a fatal error, and the icon file cannot continue processing when it occurs.
+Code 0x1: The file is not a valid cursor or icon format. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `IconErrorCode.InvalidPngFile`
+## Field: `public static UIconEdit.IconErrorCode ZeroFrames`
 
- Code 0x1100: an error occurred when attempting to load a PNG frame. The inner exception may contain more information.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidPngSize`
-
- Code 0x1102: the width or height of a PNG frame is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.[`UIconEdit.IconLoadException.Value`](#property-uiconediticonloadexceptionvalue)
- contains the [`System.Drawing.Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx)
- of the image.
+Code 0x2: The icon contains zero frames. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `IconErrorCode.PngSizeMismatch`
+## Field: `public static UIconEdit.IconErrorCode ResourceTooSmall`
 
- Code 0x1105: the width or height of a PNG frame does not match the width or height listed in the icon directory entry.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpFile`
-
- Code 0x1204: an error occurred when attempting to process a BMP frame. The inner exception may contain more information.[`UIconEdit.IconLoadException.Value`](#property-uiconediticonloadexceptionvalue)
- contains a [`System.Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx)
- in which the [`System.Tuple`2.Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx)
- is the [`System.Drawing.Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx)
- listed in the icon directory entry, and [`System.Tuple`2.Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx)
- is the actual size.
+Code 0x3: One of the icon directory entries has a length less than or equal to 40 bytes, which is logically too small for either a BMP or a PNG file.[`Value`](#property-public-systemobject-value--get-) contains the length. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpBitDepth`
+## Field: `public static UIconEdit.IconErrorCode ResourceTooEarly`
 
- Code 0x1201 the bit depth of a BMP frame is not supported.[`UIconEdit.IconLoadException.Value`](#property-uiconediticonloadexceptionvalue)
- contains the bit depth.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpSize`
-
- Code 0x1202: the width or height of a BMP frame is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.  The maximum height is doubled in images with a bit depth less than 32.[`UIconEdit.IconLoadException.Value`](#property-uiconediticonloadexceptionvalue)
- contains the [`System.Drawing.Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx)
- of the image.
+Code 0x4: One of the icon directory entries has a starting offset which would overlap with the list of entries.[`Value`](#property-public-systemobject-value--get-) contains the offset. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `IconErrorCode.BmpHeightMismatch`
+## Field: `public static UIconEdit.IconErrorCode ResourceOverlap`
 
- Code 0x1203: the width or height of a BMP frame does not match the width or height listed in the icon directory entry.[`UIconEdit.IconLoadException.Value`](#property-uiconediticonloadexceptionvalue)
- contains a [`System.Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx)
- in which the [`System.Tuple`2.Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx)
- is the [`System.Drawing.Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx)
- listed in the icon directory entry, and [`System.Tuple`2.Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx)
- is the actual size.
+Code 0x5: One or more of the icon directory entries have overlapping offset/length combinations. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpHeightOdd`
+## Field: `public static UIconEdit.IconErrorCode InvalidFrameType`
 
- Code 0x1204: the height of a BMP frame is an odd number, indicating that there is no AND (transparency) mask.[`UIconEdit.IconLoadException.Value`](#property-uiconediticonloadexceptionvalue)
- contains the [`System.Drawing.Image.Height`](https://msdn.microsoft.com/en-us/library/system.drawing.image.height.aspx)
- of the image.
+Code 0x1000: the file type of a frame is invalid.
 
 --------------------------------------------------
-## Field: `IconErrorCode.BmpBitDepthMismatch`
+## Field: `public static UIconEdit.IconErrorCode InvalidBitDepth`
 
- Code 0x1205: there is a mismatch between the bit depth of a BMP frame and the expected bit depth of the file.[`UIconEdit.IconLoadException.Value`](#property-uiconediticonloadexceptionvalue)
- contains a [`System.Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx)
- in which the [`System.Tuple`2.Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx)
- is the bit depth  listed in the icon directory entry, and [`System.Tuple`2.Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx)
- is the bit depth listed in the BMP frame.
+Code 0x1001: the file is an icon, and an icon directory entry has a bit depth with any value other than 0, 1, 4, 8, 24, or 32.[`Value`](#property-public-systemobject-value--get-) contains the bit depth.
 
 --------------------------------------------------
-# Type: `UIconEdit.IconLoadExceptionHandler`
+## Field: `public static UIconEdit.IconErrorCode ZeroValidFrames`
 
- A delegate function for handling [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception)
- errors.
-* `e`: An [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception)
- containing information about the error.
+There are no remaining valid frames after processing. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-# Type: `UIconEdit.IconFrame`
+## Field: `public static UIconEdit.IconErrorCode InvalidPngFile`
 
- Represents a single frame in an icon.
-
---------------------------------------------------
-## Field: `IconFrame.MinDimension`
-
- The minimum dimensions of an icon. 1 pixel in size.
+Code 0x1100: an error occurred when attempting to load a PNG frame. The inner exception may contain more information.
 
 --------------------------------------------------
-## Field: `IconFrame.MaxDimension`
+## Field: `public static UIconEdit.IconErrorCode InvalidPngSize`
 
- The maximum dimensions of an icon. 768 as of Windows 10.
+Code 0x1102: the width or height of a PNG frame is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).[`Value`](#property-public-systemobject-value--get-) contains the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
 
 --------------------------------------------------
-## Constructor: `IconFrame(System.Drawing.Image, System.Int16, System.Int16, UIconEdit.BitDepth, System.Byte)`
+## Field: `public static UIconEdit.IconErrorCode PngSizeMismatch`
 
- Creates a new instance with the specified image.
+Code 0x1105: the width or height of a PNG frame does not match the width or height listed in the icon directory entry.
+
+--------------------------------------------------
+## Field: `public static UIconEdit.IconErrorCode InvalidBmpFile`
+
+Code 0x1204: an error occurred when attempting to process a BMP frame. The inner exception may contain more information.[`Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx) in which the [`Tuple`Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx) is the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`Tuple`Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx) is the actual size.
+
+--------------------------------------------------
+## Field: `public static UIconEdit.IconErrorCode InvalidBmpBitDepth`
+
+Code 0x1201 the bit depth of a BMP frame is not supported.[`Value`](#property-public-systemobject-value--get-) contains the bit depth.
+
+--------------------------------------------------
+## Field: `public static UIconEdit.IconErrorCode InvalidBmpSize`
+
+Code 0x1202: the width or height of a BMP frame is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension). The maximum height is doubled in images with a bit depth less than 32.[`Value`](#property-public-systemobject-value--get-) contains the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
+
+--------------------------------------------------
+## Field: `public static UIconEdit.IconErrorCode BmpHeightMismatch`
+
+Code 0x1203: the width or height of a BMP frame does not match the width or height listed in the icon directory entry.[`Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx) in which the [`Tuple`Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx) is the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`Tuple`Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx) is the actual size.
+
+--------------------------------------------------
+## Field: `public static UIconEdit.IconErrorCode InvalidBmpHeightOdd`
+
+Code 0x1204: the height of a BMP frame is an odd number, indicating that there is no AND (transparency) mask.[`Value`](#property-public-systemobject-value--get-) contains the [`Height`](https://msdn.microsoft.com/en-us/library/system.drawing.image.height.aspx) of the image.
+
+--------------------------------------------------
+## Field: `public static UIconEdit.IconErrorCode BmpBitDepthMismatch`
+
+Code 0x1205: there is a mismatch between the bit depth of a BMP frame and the expected bit depth of the file.[`Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx) in which the [`Tuple`Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx) is the bit depth listed in the icon directory entry, and [`Tuple`Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx) is the bit depth listed in the BMP frame.
+
+--------------------------------------------------
+# Type: `public class UIconEdit.IconLoadExceptionHandler`
+
+A delegate function for handling [`IconLoadException`](#type-public-class-uiconediticonloadexception) errors.
+* `e`: An [`IconLoadException`](#type-public-class-uiconediticonloadexception) containing information about the error.
+
+--------------------------------------------------
+# Type: `public class UIconEdit.IconFrame`
+
+Represents a single frame in an icon.
+
+--------------------------------------------------
+## Field: `public static System.Int32 MinDimension`
+
+The minimum dimensions of an icon. 1 pixel in size.
+
+--------------------------------------------------
+## Field: `public static System.Int32 MaxDimension`
+
+The maximum dimensions of an icon. 768 as of Windows 10.
+
+--------------------------------------------------
+## Constructor: `public IconFrame(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.Byte height)`
+
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
-* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent.  If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
+* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
 * `width`: The width of the new image.
 * `height`: The height of the new image.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `width` or `height` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Constructor: `IconFrame(System.Drawing.Image, System.Int16, System.Int16, UIconEdit.BitDepth)`
+## Constructor: `public IconFrame(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height)`
 
- Creates a new instance with the specified image.
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
 * `width`: The width of the new image.
@@ -869,170 +829,170 @@ In a set operation, the specified value is `null`.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `width` or `height` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Constructor: `IconFrame(System.Drawing.Image, UIconEdit.BitDepth, System.Byte)`
+## Constructor: `public IconFrame(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth, System.Byte alphaThreshold)`
 
- Creates a new instance with the specified image.
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
-* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent.  If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
+* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The width or height of `baseImage` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Constructor: `IconFrame(System.Drawing.Image, UIconEdit.BitDepth)`
+## Constructor: `public IconFrame(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth)`
 
- Creates a new instance with the specified image.
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The width or height of `baseImage` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
-
---------------------------------------------------
-## Method: `IconFrame.Clone()`
-
- Returns a duplicate of the current instance.
-
-**Returns:** A duplicate of the current instance, with its own clone of [`UIconEdit.IconFrame.BaseImage`](#property-uiconediticonframebaseimage)
-.
-
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Method: `IconFrame.Dispose()`
+## Method: `public virtual UIconEdit.IconFrame Clone()`
 
- Releases all resources used by the current instance.
+Returns a duplicate of the current instance.
+
+**Returns:** Type [`IconFrame`](#type-public-class-uiconediticonframe): A duplicate of the current instance, with its own clone of [`BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-).
+
 
 --------------------------------------------------
-## Method: `IconFrame.Dispose(System.Boolean)`
+## Method: `public virtual void Dispose()`
 
- Releases all unmanaged resources used by the current instance, and optionally releases all managed resources.
+Releases all resources used by the current instance.
+
+--------------------------------------------------
+## Method: `protected virtual void Dispose(System.Boolean disposing)`
+
+Releases all unmanaged resources used by the current instance, and optionally releases all managed resources.
 * `disposing`: `true` to release both managed and unmanaged resources; `false` to release only unmanaged resources.
 
 --------------------------------------------------
-## Property: `IconFrame.BaseImage`
+## Property: `public System.Drawing.Image BaseImage { get; set; }`
 
- Gets and sets the image associated with the current instance.
-
-### Exceptions
-
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) -  In a set operation, the specified value is `null`.
-
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) -  In a set operation, the specified value is disposed.
-
---------------------------------------------------
-## Property: `IconFrame.FrameKey`
-
- Gets a key for the icon frame.
-
---------------------------------------------------
-## Property: `IconFrame.Width`
-
- Gets and sets the resampled width of the icon.
+Gets and sets the image associated with the current instance.
 
 ### Exceptions
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) -  In a set operation, the specified value is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+In a set operation, the specified value is `null`.
+
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+In a set operation, the specified value is disposed.
 
 --------------------------------------------------
-## Property: `IconFrame.Height`
+## Property: `public UIconEdit.FrameKey FrameKey { get; }`
 
- Gets and sets the resampled height of the icon.
+Gets a key for the icon frame.
+
+--------------------------------------------------
+## Property: `public System.Int16 Width { get; set; }`
+
+Gets and sets the resampled width of the icon.
 
 ### Exceptions
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) -  In a set operation, the specified value is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
 --------------------------------------------------
-## Property: `IconFrame.BitDepth`
+## Property: `public System.Int16 Height { get; set; }`
 
- Gets and sets the bit depth of the current instance. This property is ignored if the width or height of the image is greater than 255.
+Gets and sets the resampled height of the icon.
 
 ### Exceptions
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) -  In a set operation, the specified value is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
 --------------------------------------------------
-## Property: `IconFrame.PixelFormat`
+## Property: `public UIconEdit.BitDepth BitDepth { get; set; }`
 
- Gets the pixel format of the resulting image file.
-
---------------------------------------------------
-## Property: `IconFrame.AlphaThreshold`
-
- Gets and sets a value indicating the threshold of alpha values at [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
-s below [`UIconEdit.BitDepth.Bit32`](#field-uiconeditbitdepthbit32)
-.  Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
-
---------------------------------------------------
-## Property: `IconFrame.DrawInterpolationMode`
-
- Gets and sets the interpolation mode used by graphics objects when scaling.
+Gets and sets the bit depth of the current instance. This property is ignored if the width or height of the image is greater than 255.
 
 ### Exceptions
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) -  In a set operation, the specified value is not a valid [`System.Drawing.Drawing2D.InterpolationMode`](https://msdn.microsoft.com/en-us/library/system.drawing.drawing2d.interpolationmode.aspx)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+In a set operation, the specified value is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
 --------------------------------------------------
-## Property: `IconFrame.DrawPixelOffsetMode`
+## Property: `public System.Drawing.Imaging.PixelFormat PixelFormat { get; }`
 
- Gets and sets the pixel offset mode used by graphics objects when rescaling the image.
+Gets the pixel format of the resulting image file.
+
+--------------------------------------------------
+## Property: `public System.Byte AlphaThreshold { get; set; }`
+
+Gets and sets a value indicating the threshold of alpha values at [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-)s below [`Bit32`](#field-public-static-uiconeditbitdepth-bit32). Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
+
+--------------------------------------------------
+## Property: `public System.Drawing.Drawing2D.InterpolationMode DrawInterpolationMode { get; set; }`
+
+Gets and sets the interpolation mode used by graphics objects when scaling.
 
 ### Exceptions
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) -  In a set operation, the specified value is not a valid [`System.Drawing.Drawing2D.PixelOffsetMode`](https://msdn.microsoft.com/en-us/library/system.drawing.drawing2d.pixeloffsetmode.aspx)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+In a set operation, the specified value is not a valid [`InterpolationMode`](https://msdn.microsoft.com/en-us/library/system.drawing.drawing2d.interpolationmode.aspx) value.
 
 --------------------------------------------------
-# Type: `UIconEdit.CursorFrame`
+## Property: `public System.Drawing.Drawing2D.PixelOffsetMode DrawPixelOffsetMode { get; set; }`
 
- Represents a single frame of a cursor.
+Gets and sets the pixel offset mode used by graphics objects when rescaling the image.
+
+### Exceptions
+
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+In a set operation, the specified value is not a valid [`PixelOffsetMode`](https://msdn.microsoft.com/en-us/library/system.drawing.drawing2d.pixeloffsetmode.aspx) value.
 
 --------------------------------------------------
-## Constructor: `CursorFrame(System.Drawing.Image, System.Int16, System.Int16, UIconEdit.BitDepth, System.UInt16, System.UInt16, System.Byte)`
+# Type: `public class UIconEdit.CursorFrame`
 
- Creates a new instance with the specified image.
+Represents a single frame of a cursor.
+
+--------------------------------------------------
+## Constructor: `public CursorFrame(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.UInt16 height, System.UInt16 hotspotX, System.Byte hotspotY)`
+
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
-* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent.  If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
+* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
 * `width`: The width of the new image.
 * `height`: The height of the new image.
 * `hotspotX`: The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
@@ -1040,21 +1000,22 @@ s below [`UIconEdit.BitDepth.Bit32`](#field-uiconeditbitdepthbit32)
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `width` or `height` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Constructor: `CursorFrame(System.Drawing.Image, System.Int16, System.Int16, UIconEdit.BitDepth, System.UInt16, System.UInt16)`
+## Constructor: `public CursorFrame(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height, System.UInt16 hotspotX, System.UInt16 hotspotY)`
 
- Creates a new instance with the specified image.
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
 * `width`: The width of the new image.
@@ -1064,44 +1025,46 @@ s below [`UIconEdit.BitDepth.Bit32`](#field-uiconeditbitdepthbit32)
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `width` or `height` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Constructor: `CursorFrame(System.Drawing.Image, System.Int16, System.Int16, UIconEdit.BitDepth, System.Byte)`
+## Constructor: `public CursorFrame(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.Byte height)`
 
- Creates a new instance with the specified image.
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
-* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent.  If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
+* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
 * `width`: The width of the new image.
 * `height`: The height of the new image.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `width` or `height` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Constructor: `CursorFrame(System.Drawing.Image, System.Int16, System.Int16, UIconEdit.BitDepth)`
+## Constructor: `public CursorFrame(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height)`
 
- Creates a new instance with the specified image.
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
 * `width`: The width of the new image.
@@ -1109,44 +1072,46 @@ s below [`UIconEdit.BitDepth.Bit32`](#field-uiconeditbitdepthbit32)
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `width` or `height` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Constructor: `CursorFrame(System.Drawing.Image, UIconEdit.BitDepth, System.UInt16, System.UInt16, System.Byte)`
+## Constructor: `public CursorFrame(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth, System.UInt16 alphaThreshold, System.UInt16 hotspotX, System.Byte hotspotY)`
 
- Creates a new instance with the specified image.
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
-* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent.  If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
+* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
 * `hotspotX`: The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
 * `hotspotY`: The vertical offset of the cursor's hotspot from the top of the cursor in pixels.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The width or height of `baseImage` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Constructor: `CursorFrame(System.Drawing.Image, UIconEdit.BitDepth, System.UInt16, System.UInt16)`
+## Constructor: `public CursorFrame(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY)`
 
- Creates a new instance with the specified image.
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
 * `hotspotX`: The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
@@ -1154,337 +1119,321 @@ s below [`UIconEdit.BitDepth.Bit32`](#field-uiconeditbitdepthbit32)
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The width or height of `baseImage` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Constructor: `CursorFrame(System.Drawing.Image, UIconEdit.BitDepth, System.Byte)`
+## Constructor: `public CursorFrame(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth, System.Byte alphaThreshold)`
 
- Creates a new instance with the specified image.
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
-* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent.  If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
+* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The width or height of `baseImage` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Constructor: `CursorFrame(System.Drawing.Image, UIconEdit.BitDepth)`
+## Constructor: `public CursorFrame(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth)`
 
- Creates a new instance with the specified image.
+Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
 * `bitDepth`: Indicates the bit depth of the resulting image.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `baseImage` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
 
-* [`System.ComponentModel.InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx) - `bitDepth` is not a valid [`UIconEdit.BitDepth`](#type-uiconeditbitdepth)
- value.
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The width or height of `baseImage` is less than [`UIconEdit.IconFrame.MinDimension`](#field-uiconediticonframemindimension)
- or is greater than [`UIconEdit.IconFrame.MaxDimension`](#field-uiconediticonframemaxdimension)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `baseImage` is disposed.
-
---------------------------------------------------
-## Property: `CursorFrame.HotspotX`
-
- Gets and sets the horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`baseImage` is disposed.
 
 --------------------------------------------------
-## Property: `CursorFrame.HotspotY`
+## Property: `public System.UInt16 HotspotX { get; set; }`
 
- Gets and sets the vertical offset of the cursor's hotspot from the top of the cursor in pixels.
-
---------------------------------------------------
-## Property: `CursorFrame.Hotspot`
-
- Gets the offset of the cursor's hotspot from the upper-left corner of the cursor in pixels.
+Gets and sets the horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
 
 --------------------------------------------------
-# Type: `UIconEdit.FrameKey`
+## Property: `public System.UInt16 HotspotY { get; set; }`
 
- Represents a simplified key for an icon frame.
+Gets and sets the vertical offset of the cursor's hotspot from the top of the cursor in pixels.
 
 --------------------------------------------------
-## Constructor: `FrameKey(System.Int16, System.Int16, UIconEdit.BitDepth)`
+## Property: `public System.Drawing.Point Hotspot { get; }`
 
- Creates a new instance.
+Gets the offset of the cursor's hotspot from the upper-left corner of the cursor in pixels.
+
+--------------------------------------------------
+# Type: `public struct UIconEdit.FrameKey`
+
+Represents a simplified key for an icon frame.
+
+--------------------------------------------------
+## Constructor: `public FrameKey(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Creates a new instance.
 * `width`: The width of the icon frame.
 * `height`: The height of the icon frame.
 * `bitDepth`: The bit depth of the icon frame.
 
 --------------------------------------------------
-## Field: `FrameKey.Width`
+## Field: `public System.Int16 Width`
 
- Indicates the width of the icon frame.
-
---------------------------------------------------
-## Field: `FrameKey.Height`
-
- Indicates the height of the icon frame.
+Indicates the width of the icon frame.
 
 --------------------------------------------------
-## Field: `FrameKey.BitDepth`
+## Field: `public System.Int16 Height`
 
- Indicates the bit depth of the icon frame.
+Indicates the height of the icon frame.
 
 --------------------------------------------------
-## Method: `FrameKey.CompareTo(UIconEdit.FrameKey)`
+## Field: `public UIconEdit.BitDepth BitDepth`
 
- Compares the current instance to the specified other [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- object. First[`UIconEdit.FrameKey.BitDepth`](#field-uiconeditframekeybitdepth)
- is compared, then [`UIconEdit.FrameKey.Height`](#field-uiconeditframekeyheight)
-, then [`UIconEdit.FrameKey.Width`](#field-uiconeditframekeywidth)
- (with  higher color-counts and larger elements first).
-* `other`: The other [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
+Indicates the bit depth of the icon frame.
 
-**Returns:** A value less than 0 if the current value comes before `other`;   a value greater than 0 if the current value comes after `other`; or  0 if the current instance is equal to `other`.
+--------------------------------------------------
+## Method: `public System.Int32 CompareTo(UIconEdit.FrameKey other)`
+
+Compares the current instance to the specified other [`FrameKey`](#type-public-struct-uiconeditframekey) object. First[`BitDepth`](#field-public-uiconeditbitdepth-bitdepth) is compared, then [`Height`](#field-public-systemint16-height), then [`Width`](#field-public-systemint16-width) (with higher color-counts and larger elements first).
+* `other`: The other [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): A value less than 0 if the current value comes before `other`; a value greater than 0 if the current value comes after `other`; or 0 if the current instance is equal to `other`.
 
 
 --------------------------------------------------
-## Operator: `FrameKey.op_LessThan(UIconEdit.FrameKey, UIconEdit.FrameKey)`
+## Operator: `public static System.Boolean op_LessThan(UIconEdit.FrameKey f1, UIconEdit.FrameKey f2)`
 
- Compares two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- objects.
-* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
-* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
+Compares two [`FrameKey`](#type-public-struct-uiconeditframekey) objects.
+* `f1`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
+* `f2`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
 
-**Returns:** `true` if `f1` is less than `f2`; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `f1` is less than `f2`; `false` otherwise.
 
 
 --------------------------------------------------
-## Operator: `FrameKey.op_GreaterThan(UIconEdit.FrameKey, UIconEdit.FrameKey)`
+## Operator: `public static System.Boolean op_GreaterThan(UIconEdit.FrameKey f1, UIconEdit.FrameKey f2)`
 
- Compares two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- objects.
-* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
-* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
+Compares two [`FrameKey`](#type-public-struct-uiconeditframekey) objects.
+* `f1`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
+* `f2`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
 
-**Returns:** `true` if `f1` is greater than `f2`; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `f1` is greater than `f2`; `false` otherwise.
 
 
 --------------------------------------------------
-## Operator: `FrameKey.op_LessThanOrEqual(UIconEdit.FrameKey, UIconEdit.FrameKey)`
+## Operator: `public static System.Boolean op_LessThanOrEqual(UIconEdit.FrameKey f1, UIconEdit.FrameKey f2)`
 
- Compares two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- objects.
-* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
-* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
+Compares two [`FrameKey`](#type-public-struct-uiconeditframekey) objects.
+* `f1`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
+* `f2`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
 
-**Returns:** `true` if `f1` is less than or equal to `f2`; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `f1` is less than or equal to `f2`; `false` otherwise.
 
 
 --------------------------------------------------
-## Operator: `FrameKey.op_GreaterThanOrEqual(UIconEdit.FrameKey, UIconEdit.FrameKey)`
+## Operator: `public static System.Boolean op_GreaterThanOrEqual(UIconEdit.FrameKey f1, UIconEdit.FrameKey f2)`
 
- Compares two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- objects.
-* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
-* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
+Compares two [`FrameKey`](#type-public-struct-uiconeditframekey) objects.
+* `f1`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
+* `f2`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
 
-**Returns:** `true` if `f1` is less than or equal to `f2`; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `f1` is less than or equal to `f2`; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `FrameKey.Equals(UIconEdit.FrameKey)`
+## Method: `public System.Boolean Equals(UIconEdit.FrameKey other)`
 
- Determines if the current instance is equal to the specified other [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- value.
-* `other`: The other [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
+Determines if the current instance is equal to the specified other [`FrameKey`](#type-public-struct-uiconeditframekey) value.
+* `other`: The other [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
 
-**Returns:** `true` if the current instance is equal to `other`; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the current instance is equal to `other`; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `FrameKey.Equals(System.Object)`
+## Method: `public System.Boolean Equals(System.Object obj)`
 
- Determines if the current instance is equal to the specified other object.
+Determines if the current instance is equal to the specified other object.
 * `obj`: The other object to compare.
 
-**Returns:** `true` if the current instance is equal to `obj`; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the current instance is equal to `obj`; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `FrameKey.GetHashCode()`
+## Method: `public System.Int32 GetHashCode()`
 
- Returns a hash code for the current value.
+Returns a hash code for the current value.
 
-**Returns:** A hash code for the current value.
-
-
---------------------------------------------------
-## Operator: `FrameKey.op_Equality(UIconEdit.FrameKey, UIconEdit.FrameKey)`
-
- Determines equality of two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- objects.
-* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
-* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
-
-**Returns:** `true` if `f1` is equal to `f2`; `false` otherwise.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): A hash code for the current value.
 
 
 --------------------------------------------------
-## Operator: `FrameKey.op_Inequality(UIconEdit.FrameKey, UIconEdit.FrameKey)`
+## Operator: `public static System.Boolean op_Equality(UIconEdit.FrameKey f1, UIconEdit.FrameKey f2)`
 
- Determines inequality of two [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- objects.
-* `f1`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
-* `f2`: A [`UIconEdit.FrameKey`](#type-uiconeditframekey)
- to compare.
+Determines equality of two [`FrameKey`](#type-public-struct-uiconeditframekey) objects.
+* `f1`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
+* `f2`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
 
-**Returns:** `true` if `f1` is not equal to `f2`; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `f1` is equal to `f2`; `false` otherwise.
 
 
 --------------------------------------------------
-# Type: `UIconEdit.BitDepth`
+## Operator: `public static System.Boolean op_Inequality(UIconEdit.FrameKey f1, UIconEdit.FrameKey f2)`
 
- Indicates the bit depth of an icon frame.
+Determines inequality of two [`FrameKey`](#type-public-struct-uiconeditframekey) objects.
+* `f1`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
+* `f2`: A [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
 
---------------------------------------------------
-## Field: `BitDepth.Bit32`
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `f1` is not equal to `f2`; `false` otherwise.
 
- Indicates that the frame is full color with alpha (32 bits per pixel).
-
---------------------------------------------------
-## Field: `BitDepth.Bit24`
-
- Indicates that the frame is full color without alpha (24 bits per pixel plus 1 bit per pixel alpha mask).
 
 --------------------------------------------------
-## Field: `BitDepth.Color256`
+# Type: `public struct UIconEdit.BitDepth`
 
- Indicates that the frame is 256-color (8 bits per pixel plus 1 bit per pixel alpha mask)
-
---------------------------------------------------
-## Field: `BitDepth.Color16`
-
- Indicates that the frame is 16-color (4 bits per pixel plus 1 bit per pixel alpha mask).
+Indicates the bit depth of an icon frame.
 
 --------------------------------------------------
-## Field: `BitDepth.Color2`
+## Field: `public static UIconEdit.BitDepth Bit32`
 
- Indicates that the frame is 2-color (1 bit per pixel plus 1 bit per pixel alpha mask).
-
---------------------------------------------------
-# Type: `UIconEdit.IconFile`
-
- Represents an icon file.
+Indicates that the frame is full color with alpha (32 bits per pixel).
 
 --------------------------------------------------
-## Constructor: `IconFile()`
+## Field: `public static UIconEdit.BitDepth Bit24`
 
- Creates a new [`UIconEdit.IconFile`](#type-uiconediticonfile)
- instance.
+Indicates that the frame is full color without alpha (24 bits per pixel plus 1 bit per pixel alpha mask).
 
 --------------------------------------------------
-## Method: `IconFile.Load(System.IO.Stream)`
+## Field: `public static UIconEdit.BitDepth Color256`
 
- Loads a [`UIconEdit.IconFile`](#type-uiconediticonfile)
- from the specified stream.
+Indicates that the frame is 256-color (8 bits per pixel plus 1 bit per pixel alpha mask)
+
+--------------------------------------------------
+## Field: `public static UIconEdit.BitDepth Color16`
+
+Indicates that the frame is 16-color (4 bits per pixel plus 1 bit per pixel alpha mask).
+
+--------------------------------------------------
+## Field: `public static UIconEdit.BitDepth Color2`
+
+Indicates that the frame is 2-color (1 bit per pixel plus 1 bit per pixel alpha mask).
+
+--------------------------------------------------
+# Type: `public class UIconEdit.IconFile`
+
+Represents an icon file.
+
+--------------------------------------------------
+## Constructor: `public IconFile()`
+
+Creates a new [`IconFile`](#type-public-class-uiconediticonfile) instance.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.IconFile Load(System.IO.Stream input)`
+
+Loads a [`IconFile`](#type-public-class-uiconediticonfile) from the specified stream.
 * `input`: A stream containing an icon file.
 
-**Returns:** A [`UIconEdit.IconFile`](#type-uiconediticonfile)
- loaded from `input`.
+**Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): A [`IconFile`](#type-public-class-uiconediticonfile) loaded from `input`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `input` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`input` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `input` is closed or does not support reading.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`input` is closed or does not support reading.
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `input` is closed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`input` is closed.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the icon file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `IconFile.Load(System.IO.Stream, System.Action<UIconEdit.IconLoadException>)`
+## Method: `public static UIconEdit.IconFile Load(System.IO.Stream input, System.Action<UIconEdit.IconLoadException> handler)`
 
- Loads a [`UIconEdit.IconFile`](#type-uiconediticonfile)
- from the specified stream.
+Loads a [`IconFile`](#type-public-class-uiconediticonfile) from the specified stream.
 * `input`: A stream containing an icon file.
-* `handler`: A delegate used to process [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception)
-s thrown when processing individual icon frames,  or `null` to throw an exception in those cases.
+* `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual icon frames, or `null` to throw an exception in those cases.
 
-**Returns:** A [`UIconEdit.IconFile`](#type-uiconediticonfile)
- loaded from `input`.
+**Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): A [`IconFile`](#type-public-class-uiconediticonfile) loaded from `input`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `input` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`input` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `input` is closed or does not support reading.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`input` is closed or does not support reading.
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `input` is closed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`input` is closed.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the icon file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `IconFile.Load(System.String, System.Action<UIconEdit.IconLoadException>)`
+## Method: `public static UIconEdit.IconFile Load(System.String path, System.Action<UIconEdit.IconLoadException> handler)`
 
- Loads an [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation from the specified path.
+Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
 * `path`: The path to a icon file.
-* `handler`: A delegate used to process [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception)
-s thrown when processing individual icon frames,  or `null` to throw an exception in those cases.
+* `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual icon frames, or `null` to throw an exception in those cases.
 
-**Returns:** An [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation loaded from `path`.
+**Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): An [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation loaded from `path`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `path` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`System.IO.Path.GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
-* [`System.IO.PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx) -  The specified path, filename, or both contain the system-defined maximum length.
+##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
+The specified path, filename, or both contain the system-defined maximum length.
 
-* [`System.IO.FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx) -  The specified path was not found.
+##### [`FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx)
+The specified path was not found.
 
-* [`System.IO.DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx) -  The specified path was invalid.
+##### [`DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx)
+The specified path was invalid.
 
-* [`System.UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx) - 
+##### [`UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx)
+
 `path` specified a directory.
 
 -OR-
@@ -1492,37 +1441,43 @@ s thrown when processing individual icon frames,  or `null` to throw an exceptio
 The caller does not have the required permission.
 
 
-* [`System.NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx) - `path` is in an invalid format.
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+`path` is in an invalid format.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the icon file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `IconFile.Load(System.String)`
+## Method: `public static UIconEdit.IconFile Load(System.String path)`
 
- Loads an [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation from the specified path.
+Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
 * `path`: The path to a icon file.
 
-**Returns:** An [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation loaded from `path`.
+**Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): An [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation loaded from `path`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `path` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`System.IO.Path.GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
-* [`System.IO.PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx) -  The specified path, filename, or both contain the system-defined maximum length.
+##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
+The specified path, filename, or both contain the system-defined maximum length.
 
-* [`System.IO.FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx) -  The specified path was not found.
+##### [`FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx)
+The specified path was not found.
 
-* [`System.IO.DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx) -  The specified path was invalid.
+##### [`DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx)
+The specified path was invalid.
 
-* [`System.UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx) - 
+##### [`UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx)
+
 `path` specified a directory.
 
 -OR-
@@ -1530,134 +1485,141 @@ The caller does not have the required permission.
 The caller does not have the required permission.
 
 
-* [`System.NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx) - `path` is in an invalid format.
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+`path` is in an invalid format.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the icon file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `IconFile.GetIcon(UIconEdit.IconFrame)`
+## Method: `public static System.Drawing.Icon GetIcon(UIconEdit.IconFrame frame)`
 
- Gets an [`System.Drawing.Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx)
- from a single frame.
-* `frame`: The icon frame from which to get an [`System.Drawing.Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx)
-.
+Gets an [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx) from a single frame.
+* `frame`: The icon frame from which to get an [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx).
 
-**Returns:** An [`System.Drawing.Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx)
- created from `frame`.
+**Returns:** Type [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx): An [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx) created from `frame`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `frame` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`frame` is `null`.
 
 --------------------------------------------------
-## Method: `IconFile.GetImgX(UIconEdit.IconFrame)`
+## Method: `protected virtual System.UInt16 GetImgX(UIconEdit.IconFrame frame)`
 
- Returns the color panes.
+Returns the color panes.
 * `frame`: This parameter is ignored.
 
 --------------------------------------------------
-## Method: `IconFile.GetImgY(UIconEdit.IconFrame)`
+## Method: `protected virtual System.UInt16 GetImgY(UIconEdit.IconFrame frame)`
 
- Returns the number of bits per pixel in the specified frame.
+Returns the number of bits per pixel in the specified frame.
 * `frame`: The frame for which to get the bits-per-pixel.
 
-**Returns:** The number of bits per pixel in `frame`.
+**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): The number of bits per pixel in `frame`.
 
 
 --------------------------------------------------
-## Property: `IconFile.ID`
+## Property: `public virtual UIconEdit.IconTypeCode ID { get; }`
 
- Gets the 16-bit type code for the current instance.
-
---------------------------------------------------
-# Type: `UIconEdit.CursorFile`
-
- Represents a cursor file.
+Gets the 16-bit type code for the current instance.
 
 --------------------------------------------------
-## Constructor: `CursorFile()`
+# Type: `public class UIconEdit.CursorFile`
 
- Creates a new [`UIconEdit.CursorFile`](#type-uiconeditcursorfile)
- instance.
+Represents a cursor file.
 
 --------------------------------------------------
-## Method: `CursorFile.Load(System.IO.Stream)`
+## Constructor: `public CursorFile()`
 
- Loads a [`UIconEdit.CursorFile`](#type-uiconeditcursorfile)
- from the specified stream.
+Creates a new [`CursorFile`](#type-public-class-uiconeditcursorfile) instance.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.CursorFile Load(System.IO.Stream input)`
+
+Loads a [`CursorFile`](#type-public-class-uiconeditcursorfile) from the specified stream.
 * `input`: A stream containing an cursor file.
 
-**Returns:** A [`UIconEdit.CursorFile`](#type-uiconeditcursorfile)
- loaded from `input`.
+**Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): A [`CursorFile`](#type-public-class-uiconeditcursorfile) loaded from `input`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `input` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`input` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `input` is closed or does not support reading.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`input` is closed or does not support reading.
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `input` is closed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`input` is closed.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the cursor file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the cursor file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `CursorFile.Load(System.IO.Stream, System.Action<UIconEdit.IconLoadException>)`
+## Method: `public static UIconEdit.CursorFile Load(System.IO.Stream input, System.Action<UIconEdit.IconLoadException> handler)`
 
- Loads a [`UIconEdit.CursorFile`](#type-uiconeditcursorfile)
- from the specified stream.
+Loads a [`CursorFile`](#type-public-class-uiconeditcursorfile) from the specified stream.
 * `input`: A stream containing an cursor file.
-* `handler`: A delegate used to process [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception)
-s thrown when processing individual icon frames,  or `null` to throw an exception in those cases.
+* `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual icon frames, or `null` to throw an exception in those cases.
 
-**Returns:** A [`UIconEdit.CursorFile`](#type-uiconeditcursorfile)
- loaded from `input`.
+**Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): A [`CursorFile`](#type-public-class-uiconeditcursorfile) loaded from `input`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `input` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`input` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `input` is closed or does not support reading.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`input` is closed or does not support reading.
 
-* [`System.ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx) - `input` is closed.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`input` is closed.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the cursor file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the cursor file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `CursorFile.Load(System.String, System.Action<UIconEdit.IconLoadException>)`
+## Method: `public static UIconEdit.CursorFile Load(System.String path, System.Action<UIconEdit.IconLoadException> handler)`
 
- Loads an [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation from the specified path.
+Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
 * `path`: The path to a cursor file.
-* `handler`: A delegate used to process [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception)
-s thrown when processing individual icon frames,  or `null` to throw an exception in those cases.
+* `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual icon frames, or `null` to throw an exception in those cases.
 
-**Returns:** An [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation loaded from `path`.
+**Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): An [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation loaded from `path`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `path` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`System.IO.Path.GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
-* [`System.IO.PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx) -  The specified path, filename, or both contain the system-defined maximum length.
+##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
+The specified path, filename, or both contain the system-defined maximum length.
 
-* [`System.IO.FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx) -  The specified path was not found.
+##### [`FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx)
+The specified path was not found.
 
-* [`System.IO.DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx) -  The specified path was invalid.
+##### [`DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx)
+The specified path was invalid.
 
-* [`System.UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx) - 
+##### [`UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx)
+
 `path` specified a directory.
 
 -OR-
@@ -1665,37 +1627,43 @@ s thrown when processing individual icon frames,  or `null` to throw an exceptio
 The caller does not have the required permission.
 
 
-* [`System.NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx) - `path` is in an invalid format.
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+`path` is in an invalid format.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the cursor file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the cursor file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `CursorFile.Load(System.String)`
+## Method: `public static UIconEdit.CursorFile Load(System.String path)`
 
- Loads an [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation from the specified path.
+Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
 * `path`: The path to a cursor file.
 
-**Returns:** An [`UIconEdit.IconFileBase`](#type-uiconediticonfilebase)
- implementation loaded from `path`.
+**Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): An [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation loaded from `path`.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `path` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - `path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`System.IO.Path.GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
-* [`System.IO.PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx) -  The specified path, filename, or both contain the system-defined maximum length.
+##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
+The specified path, filename, or both contain the system-defined maximum length.
 
-* [`System.IO.FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx) -  The specified path was not found.
+##### [`FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx)
+The specified path was not found.
 
-* [`System.IO.DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx) -  The specified path was invalid.
+##### [`DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx)
+The specified path was invalid.
 
-* [`System.UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx) - 
+##### [`UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx)
+
 `path` specified a directory.
 
 -OR-
@@ -1703,208 +1671,188 @@ The caller does not have the required permission.
 The caller does not have the required permission.
 
 
-* [`System.NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx) - `path` is in an invalid format.
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+`path` is in an invalid format.
 
-* [`UIconEdit.IconLoadException`](#type-uiconediticonloadexception) -  An error occurred when processing the cursor file's format.
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the cursor file's format.
 
-* [`System.IO.IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx) -  An I/O error occurred.
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
-## Method: `CursorFile.IsValid(UIconEdit.IconFrame)`
+## Method: `protected virtual System.Boolean IsValid(UIconEdit.IconFrame frame)`
 
- Gets a valid indicating whether the specified instance is a valid [`UIconEdit.CursorFrame`](#type-uiconeditcursorframe)
- object.
+Gets a valid indicating whether the specified instance is a valid [`CursorFrame`](#type-public-class-uiconeditcursorframe) object.
 * `frame`: The icon frame to test.
 
-**Returns:** `true` if `frame` is a [`UIconEdit.CursorFrame`](#type-uiconeditcursorframe)
- instance; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `frame` is a [`CursorFrame`](#type-public-class-uiconeditcursorframe) instance; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `CursorFile.Clone()`
+## Method: `public virtual UIconEdit.IconFileBase Clone()`
 
- Returns a duplicate of the current instance.
+Returns a duplicate of the current instance.
 
-**Returns:** A duplicate of the current instance, with copies of every icon frame and clones of each  frame's [`UIconEdit.IconFrame.BaseImage`](#property-uiconediticonframebaseimage)
- in [`UIconEdit.CursorFile.Frames`](#property-uiconeditcursorfileframes)
-.
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon frame and clones of each frame's [`BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-) in [`Frames`](#property-public-uiconeditcursorfilecursorframelist-frames--get-).
 
 
 --------------------------------------------------
-## Method: `CursorFile.GetImgX(UIconEdit.IconFrame)`
+## Method: `protected virtual System.UInt16 GetImgX(UIconEdit.IconFrame frame)`
 
- Gets the horizontal offset of the hotspot in the specified frame from the left of the specified cursor frame.
+Gets the horizontal offset of the hotspot in the specified frame from the left of the specified cursor frame.
 * `frame`: The frame from which to get the horizontal offset.
 
-**Returns:** The horizontal offset of the hotspot from the left in pixels.
+**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): The horizontal offset of the hotspot from the left in pixels.
 
 
 --------------------------------------------------
-## Method: `CursorFile.GetImgY(UIconEdit.IconFrame)`
+## Method: `protected virtual System.UInt16 GetImgY(UIconEdit.IconFrame frame)`
 
- Gets the vertical offset of the hotspot in the specified frame from the top of the specified cursor frame.
+Gets the vertical offset of the hotspot in the specified frame from the top of the specified cursor frame.
 * `frame`: The frame from which to get the horizontal offset.
 
-**Returns:** The vertical offset of the hotspot from the top in pixels.
+**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): The vertical offset of the hotspot from the top in pixels.
 
 
 --------------------------------------------------
-## Property: `CursorFile.ID`
+## Property: `public virtual UIconEdit.IconTypeCode ID { get; }`
 
- Gets the 16-bit type code for the current instance.
-
---------------------------------------------------
-## Property: `CursorFile.Frames`
-
- Gets a collection containing all frames in the cursor file.
+Gets the 16-bit type code for the current instance.
 
 --------------------------------------------------
-# Type: `UIconEdit.CursorFile.CursorFrameList`
+## Property: `public UIconEdit.CursorFile.CursorFrameList Frames { get; }`
 
- Represents a list of cursor frames.
+Gets a collection containing all frames in the cursor file.
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.SetValue(System.Int32, UIconEdit.CursorFrame)`
+# Type: `class UIconEdit.CursorFile.CursorFrameList`
 
- Sets the value at the specified index.
+Represents a list of cursor frames.
+
+--------------------------------------------------
+## Method: `public System.Boolean SetValue(System.Int32 index, UIconEdit.CursorFrame item)`
+
+Sets the value at the specified index.
 * `index`: The index of the value to set.
 * `item`: The value to set.
 
-**Returns:** `true` if `item` was successfully set; `false` if `item` is `null`,  is already associated with a different icon file, or if an element with the same [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-,  and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- already exists in the list at a different index.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list at a different index.
 
 
 ### Exceptions
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `index` is less than 0 or is greater than [`UIconEdit.CursorFile.CursorFrameList.Count`](#property-uiconeditcursorfilecursorframelistcount)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than [`Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.Add(UIconEdit.CursorFrame)`
+## Method: `public System.Boolean Add(UIconEdit.CursorFrame item)`
 
- Adds the specified cursor frame to the list.
+Adds the specified cursor frame to the list.
 * `item`: The cursor frame to add to the list.
 
-**Returns:** `true` if `item` was successfully added; `false` if `item` is `null`,  is already associated with a different icon file, [`UIconEdit.CursorFile.CursorFrameList.Count`](#property-uiconeditcursorfilecursorframelistcount)
- is equal to [`System.UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx)
-, or if an element with the same[`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same[`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.Insert(System.Int32, UIconEdit.CursorFrame)`
+## Method: `public System.Boolean Insert(System.Int32 index, UIconEdit.CursorFrame item)`
 
- Inserts the specified cursor frame into the list at the specified index.
+Inserts the specified cursor frame into the list at the specified index.
 * `index`: The index at which the cursor frame will be inserted.
 * `item`: The cursor frame to add to the list.
 
-**Returns:** `true` if `item` was successfully added; `false` if `item` is `null`,  is already associated with a different icon file, [`UIconEdit.CursorFile.CursorFrameList.Count`](#property-uiconeditcursorfilecursorframelistcount)
- is equal to [`System.UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx)
-, or if an element with the same[`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same[`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.RemoveAt(System.Int32)`
+## Method: `public virtual void RemoveAt(System.Int32 index)`
 
- Removes the element at the specified index.
+Removes the element at the specified index.
 * `index`: The index of the icon frame to remove.
 
 ### Exceptions
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `index` is less than 0 or is greater than or equal to [`UIconEdit.CursorFile.CursorFrameList.Count`](#property-uiconeditcursorfilecursorframelistcount)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.RemoveAndDisposeAt(System.Int32)`
+## Method: `public void RemoveAndDisposeAt(System.Int32 index)`
 
- Removes the element at the specified index and, if it does not exist elsewhere in the file, immediately calls [`UIconEdit.IconFrame.Dispose`](#method-uiconediticonframedispose)
-.
+Removes the element at the specified index and, if it does not exist elsewhere in the file, immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
 * `index`: The index of the icon frame to remove.
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.Remove(UIconEdit.CursorFrame)`
+## Method: `public virtual System.Boolean Remove(UIconEdit.CursorFrame item)`
 
- Removes the specified cursor frame from the list.
+Removes the specified cursor frame from the list.
 * `item`: The cursor frame to to remove from the list.
 
-**Returns:** `true` if `item` was found and successfully removed; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found and successfully removed; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.RemoveAndDispose(UIconEdit.CursorFrame)`
+## Method: `public System.Boolean RemoveAndDispose(UIconEdit.CursorFrame item)`
 
- Removes the specified cursor frame from the list and immediately calls [`UIconEdit.IconFrame.Dispose`](#method-uiconediticonframedispose)
-.
+Removes the specified cursor frame from the list and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
 * `item`: The cursor frame to to remove from the list.
 
-**Returns:** `true` if `item` was found and successfully removed; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found and successfully removed; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.RemoveSimilar(UIconEdit.CursorFrame)`
+## Method: `public System.Boolean RemoveSimilar(UIconEdit.CursorFrame item)`
 
- Removes an element similar to the specified cursor frame from the list.
+Removes an element similar to the specified cursor frame from the list.
 * `item`: The cursor frame to to compare.
 
-**Returns:** `true` if an icon frame with the same [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.RemoveAndDisposeSimilar(UIconEdit.CursorFrame)`
+## Method: `public System.Boolean RemoveAndDisposeSimilar(UIconEdit.CursorFrame item)`
 
- Removes the specified cursor frame from the list, immediately calls [`UIconEdit.IconFrame.Dispose`](#method-uiconediticonframedispose)
-.
+Removes the specified cursor frame from the list, immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
 * `item`: The cursor frame to compare.
 
-**Returns:** `true` if an icon frame with the same [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.CopyTo(UIconEdit.CursorFrame[])`
+## Method: `public void CopyTo(UIconEdit.CursorFrame[] array)`
 
- Copies all elements in the list to the specified array.
+Copies all elements in the list to the specified array.
 * `array`: The array to which all elements in the list will be copied.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `array` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`array` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The length of `array` is less than [`UIconEdit.CursorFile.CursorFrameList.Count`](#property-uiconeditcursorfilecursorframelistcount)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The length of `array` is less than [`Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.CopyTo(UIconEdit.CursorFrame[], System.Int32)`
+## Method: `public virtual void CopyTo(UIconEdit.CursorFrame[] array, System.Int32 arrayIndex)`
 
- Copies all elements in the list to the specified array, starting at the specified index.
+Copies all elements in the list to the specified array, starting at the specified index.
 * `array`: The array to which all elements in the list will be copied.
 * `arrayIndex`: The index in `array` at which copying begins.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `array` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`array` is `null`.
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `arrayIndex` is less than 0.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`arrayIndex` is less than 0.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The length of `array` minus `arrayIndex` is less than [`UIconEdit.CursorFile.CursorFrameList.Count`](#property-uiconeditcursorfilecursorframelistcount)
-.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The length of `array` minus `arrayIndex` is less than [`Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.CopyTo(System.Int32, UIconEdit.CursorFrame[], System.Int32, System.Int32)`
+## Method: `public void CopyTo(System.Int32 index, UIconEdit.CursorFrame[] array, System.Int32 arrayIndex, System.Int32 count)`
 
- Copies a range of elements in the list to the specified array.
+Copies a range of elements in the list to the specified array.
 * `index`: The index of the first item to copy.
 * `array`: The array to which all elements in the list will be copied.
 * `arrayIndex`: The index in `array` at which copying begins.
@@ -1912,11 +1860,14 @@ The caller does not have the required permission.
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `array` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`array` is `null`.
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - `index`, `arrayIndex`, or `count` is less than 0.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index`, `arrayIndex`, or `count` is less than 0.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) - 
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+
 `index` and `count` do not indicate a valid range of elements in the current instance.
 
 -OR-
@@ -1925,175 +1876,197 @@ The caller does not have the required permission.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.Clear()`
+## Method: `public virtual void Clear()`
 
- Removes all elements from the collection.
-
---------------------------------------------------
-## Method: `CursorFile.CursorFrameList.ClearAndDispose()`
-
- Removes all elements from the collection and immediately calls [`UIconEdit.IconFrame.Dispose`](#method-uiconediticonframedispose)
- on each one.
+Removes all elements from the collection.
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.Contains(UIconEdit.CursorFrame)`
+## Method: `public void ClearAndDispose()`
 
- Determines if the specified cursor frame exists in the list.
+Removes all elements from the collection and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1) on each one.
+
+--------------------------------------------------
+## Method: `public virtual System.Boolean Contains(UIconEdit.CursorFrame item)`
+
+Determines if the specified cursor frame exists in the list.
 * `item`: The cursor frame to search for in the list.
 
-**Returns:** `true` if `item` was found; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.ContainsSimilar(UIconEdit.CursorFrame)`
+## Method: `public System.Boolean ContainsSimilar(UIconEdit.CursorFrame item)`
 
- Determines if an element similar to the specified cursor frame exists in the list.
+Determines if an element similar to the specified cursor frame exists in the list.
 * `item`: The cursor frame to compare.
 
-**Returns:** `true` if a cursor frame with the same with the same [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- as `item` exists in the list; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor frame with the same with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` exists in the list; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.IndexOf(UIconEdit.CursorFrame)`
+## Method: `public virtual System.Int32 IndexOf(UIconEdit.CursorFrame item)`
 
- Gets the index of the specified cursor frame.
+Gets the index of the specified cursor frame.
 * `item`: The cursor frame to search for in the list.
 
-**Returns:** `true` if `item` was found; `false` otherwise.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): `true` if `item` was found; `false` otherwise.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.IndexOfSimilar(UIconEdit.CursorFrame)`
+## Method: `public System.Int32 IndexOfSimilar(UIconEdit.CursorFrame item)`
 
- Gets the index of an element similar to the specified cursor frame.
+Gets the index of an element similar to the specified cursor frame.
 * `item`: The cursor frame to compare.
 
-**Returns:** The index of a cursor frame with the same [`UIconEdit.IconFrame.Width`](#property-uiconediticonframewidth)
-, [`UIconEdit.IconFrame.Height`](#property-uiconediticonframeheight)
-, and [`UIconEdit.IconFrame.BitDepth`](#property-uiconediticonframebitdepth)
- as `item`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item`, if found; otherwise, -1.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.GetEnumerator()`
+## Method: `public UIconEdit.CursorFile.CursorFrameList.Enumerator GetEnumerator()`
 
- Returns an enumerator which iterates through the list.
+Returns an enumerator which iterates through the list.
 
-**Returns:** An enumerator which iterates through the list.
+**Returns:** Type [`Enumerator`](#type-struct-uiconeditcursorfilecursorframelistenumerator): An enumerator which iterates through the list.
 
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.RemoveWhere(System.Predicate<UIconEdit.CursorFrame>)`
+## Method: `public System.Int32 RemoveWhere(System.Predicate<UIconEdit.CursorFrame> match)`
 
- Removes all elements matching the specified predicate.
+Removes all elements matching the specified predicate.
 * `match`: A predicate used to define the elements to remove.
 
-**Returns:** The number of elements which were removed.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `match` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.RemoveAndDisposeWhere(System.Predicate<UIconEdit.CursorFrame>)`
+## Method: `public System.Int32 RemoveAndDisposeWhere(System.Predicate<UIconEdit.CursorFrame> match)`
 
- Removes all elements matching the specified predicate and immediately calls [`UIconEdit.IconFrame.Dispose`](#method-uiconediticonframedispose)
-.
+Removes all elements matching the specified predicate and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
 * `match`: A predicate used to define the elements to remove.
 
-**Returns:** The number of elements which were removed.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
 
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `match` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.ToArray()`
+## Method: `public UIconEdit.CursorFrame[] ToArray()`
 
- Returns an array containing all elements in the current list.
+Returns an array containing all elements in the current list.
 
-**Returns:** An array containing elements copied from the current list.
+**Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`CursorFrame`](#type-public-class-uiconeditcursorframe): An array containing elements copied from the current list.
 
-
---------------------------------------------------
-## Method: `CursorFile.CursorFrameList.Sort()`
-
- Sorts all elements in the list according to their [`UIconEdit.IconFrame.FrameKey`](#property-uiconediticonframeframekey)
- value.
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.Sort(System.Collections.Generic.IComparer<UIconEdit.CursorFrame>)`
+## Method: `public void Sort()`
 
- Sorts all elements in the list according to the specified comparer.
-* `comparer`: The comparer used to compare each [`UIconEdit.CursorFrame`](#type-uiconeditcursorframe)
-, or `null` to use their [`UIconEdit.IconFrame.FrameKey`](#property-uiconediticonframeframekey)
- value.
+Sorts all elements in the list according to their [`FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
+
+--------------------------------------------------
+## Method: `public void Sort(System.Collections.Generic.IComparer<UIconEdit.CursorFrame> comparer)`
+
+Sorts all elements in the list according to the specified comparer.
+* `comparer`: The comparer used to compare each [`CursorFrame`](#type-public-class-uiconeditcursorframe), or `null` to use their [`FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
 
 ### Exceptions
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The implementation of `comparer` caused an error during the sort. For example, `comparer` might not return 0  when comparing an item with itself.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The implementation of `comparer` caused an error during the sort. For example, `comparer` might not return 0 when comparing an item with itself.
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.Sort(System.Comparison<UIconEdit.CursorFrame>)`
+## Method: `public void Sort(System.Comparison<UIconEdit.CursorFrame> comparison)`
 
- Sorts all elements in the list according to the specified delegate.
-* `comparison`: The delegate used to compare each [`UIconEdit.IconFrame`](#type-uiconediticonframe)
-.
+Sorts all elements in the list according to the specified delegate.
+* `comparison`: The delegate used to compare each [`IconFrame`](#type-public-class-uiconediticonframe).
 
 ### Exceptions
 
-* [`System.ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx) - `comparison` is `null`.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`comparison` is `null`.
 
-* [`System.ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx) -  The implementation of `comparison` caused an error during the sort. For example, `comparison` might not return 0  when comparing an item with itself.
-
---------------------------------------------------
-## Property: `CursorFile.CursorFrameList.Count`
-
- Gets the number of frames contained in the list.
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The implementation of `comparison` caused an error during the sort. For example, `comparison` might not return 0 when comparing an item with itself.
 
 --------------------------------------------------
-## Property: `CursorFile.CursorFrameList.Item(System.Int32)`
+## Property: `public virtual System.Int32 Count { get; }`
 
- Gets and sets the cursor frame at the specified index.
+Gets the number of frames contained in the list.
+
+--------------------------------------------------
+## Property: `CursorFile.CursorFrameList.Item(System.Int32 index)`
+
+Gets and sets the cursor frame at the specified index.
 * `index`: The cursor frame at the specified index.
 
 ### Exceptions
 
-* [`System.ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - 
-`index` is less than 0 or is greater than or equal to [`UIconEdit.CursorFile.CursorFrameList.Count`](#property-uiconeditcursorfilecursorframelistcount)
-.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+
+`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get--1).
 
 -OR-
 
 In a set operation, the specified value is `null`.
 
 
-* [`System.NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx) -  In a set operation, the specified value is `null` or is already associated with a different cursor file.
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+In a set operation, the specified value is `null` or is already associated with a different cursor file.
 
 --------------------------------------------------
-# Type: `UIconEdit.CursorFile.CursorFrameList.Enumerator`
+# Type: `struct UIconEdit.CursorFile.CursorFrameList.Enumerator`
 
- An enumerator which iterates through the list.
-
---------------------------------------------------
-## Method: `CursorFile.CursorFrameList.Enumerator.Dispose()`
-
- Disposes of the current instance.
+An enumerator which iterates through the list.
 
 --------------------------------------------------
-## Method: `CursorFile.CursorFrameList.Enumerator.MoveNext()`
+## Method: `public void Dispose()`
 
- Advances the enumerator to the next position in the list.
+Disposes of the current instance.
 
-**Returns:** `true` if the enumerator successfully advanced; `false` if the enumerator has passed the end of the list.
+--------------------------------------------------
+## Method: `public System.Boolean MoveNext()`
+
+Advances the enumerator to the next position in the list.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the enumerator successfully advanced; `false` if the enumerator has passed the end of the list.
 
 
 --------------------------------------------------
-## Property: `CursorFile.CursorFrameList.Enumerator.Current`
+## Property: `public UIconEdit.CursorFrame Current { get; }`
 
- Gets the element at the current position in the enumerator.
+Gets the element at the current position in the enumerator.
+---------------------------------
+##Property: `CursorFile.CursorFrameList.Item(System.Int32 index)`
+
+Gets and sets the cursor frame at the specified index.
+* `index`: The cursor frame at the specified index.
+
+### Exceptions
+
+* [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - 
+`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get--1).
+
+-OR-
+
+In a set operation, the specified value is `null`.
+
+
+* [`NotSupportedException`](https://msdn.microsoft.com/en-us--------------------------
+##Method: `public System.Boolean MoveNext()`
+
+Advances the enumerator to the next position in the list.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the enumerator successfully advanced; `false` if the enumerator has passed the end of the list.
+
+
+--------------------------------------------------
+##Property: `public UIconEdit.CursorFrame Current { get; }`
+
+Gets the element at the current position in the enumerator.

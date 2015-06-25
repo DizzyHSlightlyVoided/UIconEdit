@@ -52,6 +52,7 @@ namespace UIconEdit
             _frames = new FrameList(this);
         }
 
+        #region Load
         /// <summary>
         /// Loads an <see cref="IconFileBase"/> implementation from the specified stream.
         /// </summary>
@@ -507,6 +508,7 @@ namespace UIconEdit
                 throw new IconLoadException(IconErrorCode.ResourceOverlap); //If there's any kind of overlap, someone's wrong.
             }
         }
+        #endregion
 
         /// <summary>
         /// Returns a duplicate of the current instance.
@@ -562,6 +564,7 @@ namespace UIconEdit
         /// <returns>In icon files, the number of bits per pixel. In cursor files, the vertical offset of the hotspot from the top, in pixels.</returns>
         protected abstract ushort GetImgY(IconFrame frame);
 
+        #region Save
         internal void Save(Stream output, IEnumerable<IconFrame> frameCollection)
         {
 #if LEAVEOPEN
@@ -604,7 +607,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="output">The stream to which the file will be written.</param>
         /// <exception cref="InvalidOperationException">
-        /// The current instance contains zero frames, or more than <see cref="ushort.MaxValue"/> frames.
+        /// <see cref="Frames"/> contains zero elements.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="output"/> is <c>null</c>.
@@ -636,7 +639,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="path">The file to which the file will be written.</param>
         /// <exception cref="InvalidOperationException">
-        /// <see cref="Frames"/> instance contains zero elements.
+        /// <see cref="Frames"/> contains zero elements.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is <c>null</c>.
@@ -774,6 +777,7 @@ namespace UIconEdit
             writer.Write(offset); //16
             offset += length;
         }
+        #endregion
 
         private bool isDisposed = false;
         /// <summary>

@@ -470,8 +470,8 @@ namespace UIconEdit
                 for (int x = 0; x < _width; x++)
                 {
                     uint value = pFull[x] >> 24;
-                    if (isPng && value < _alphaThreshold)
-                        pFull[x] &= ~opaqueAlpha;
+                    if (value < _alphaThreshold)
+                        pFull[x] = isPng ? (pFull[x] & ~opaqueAlpha) : opaqueAlpha;
                     else
                         pFull[x] |= opaqueAlpha;
                 }

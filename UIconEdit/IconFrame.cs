@@ -47,7 +47,10 @@ namespace UIconEdit
     /// </summary>
     public class IconFrame : IDisposable
     {
-        internal const byte DefaultAlphaThreshold = 96;
+        /// <summary>
+        /// The default <see cref="AlphaThreshold"/> value.
+        /// </summary>
+        public const byte DefaultAlphaThreshold = 96;
 
         /// <summary>
         /// Creates a new instance with the specified image.
@@ -613,7 +616,7 @@ namespace UIconEdit
         /// <para><paramref name="value"/> does not translate to a valid <see cref="UIconEdit.BitDepth"/> value.</para>
         /// </exception>
         /// <remarks>
-        /// <para><paramref name="value"/> is parsed in a different manner from <see cref="M:Enum.Parse"/>.</para>
+        /// <para><paramref name="value"/> is parsed in a case-insensitive manner which works differently from <see cref="Enum.Parse(Type, string)"/>.</para>
         /// <para>First of all, all non-alphanumeric characters are stripped. If <paramref name="value"/> is entirely numeric, or begins with "Depth"
         /// followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the
         /// integer <see cref="UIconEdit.BitDepth"/> value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits
@@ -658,7 +661,7 @@ namespace UIconEdit
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if <paramref name="value"/> was successfully parsed; <c>false</c> otherwise.</returns>
         /// <remarks>
-        /// <para><paramref name="value"/> is parsed in a different manner from <see cref="M:Enum.TryParse"/>.</para>
+        /// <para><paramref name="value"/> is parsed in a case-insensitive manner which works differently from <see cref="Enum.TryParse{TEnum}(string, bool, out TEnum)"/>.</para>
         /// <para>First of all, all non-alphanumeric characters are stripped. If <paramref name="value"/> is entirely numeric, or begins with "Depth"
         /// followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the
         /// integer <see cref="UIconEdit.BitDepth"/> value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits

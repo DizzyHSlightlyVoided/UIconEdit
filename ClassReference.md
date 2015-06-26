@@ -746,7 +746,7 @@ Code 0x1105: the width or height of a PNG frame does not match the width or heig
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpFile = 4608`
 
-Code 0x1204: an error occurred when attempting to process a BMP frame. The inner exception may contain more information. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2%29;k%28TargetFrameworkMoniker-.NETFramework) in which the [`System.Tuple`2.Item1`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item1%29;k%28TargetFrameworkMoniker-.NETFramework) is the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`System.Tuple`2.Item2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item2%29;k%28TargetFrameworkMoniker-.NETFramework) is the actual size.
+Code 0x1204: an error occurred when attempting to process a BMP frame. The inner exception may contain more information. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpBitDepth = 4609`
@@ -761,7 +761,7 @@ Code 0x1202: the width or height of a BMP frame is less than [`IconFrame.MinDime
 --------------------------------------------------
 ## Field: `IconErrorCode.BmpHeightMismatch = 4611`
 
-Code 0x1203: the width or height of a BMP frame does not match the width or height listed in the icon directory entry. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2%29;k%28TargetFrameworkMoniker-.NETFramework) in which the [`System.Tuple`2.Item1`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item1%29;k%28TargetFrameworkMoniker-.NETFramework) is the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`System.Tuple`2.Item2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item2%29;k%28TargetFrameworkMoniker-.NETFramework) is the actual size.
+Code 0x1203: the width or height of a BMP frame does not match the width or height listed in the icon directory entry. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpHeightOdd = 4612`
@@ -771,7 +771,7 @@ Code 0x1204: the height of a BMP frame is an odd number, indicating that there i
 --------------------------------------------------
 ## Field: `IconErrorCode.BmpBitDepthMismatch = 4613`
 
-Code 0x1205: there is a mismatch between the bit depth of a BMP frame and the expected bit depth of the file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2%29;k%28TargetFrameworkMoniker-.NETFramework) in which the [`System.Tuple`2.Item1`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item1%29;k%28TargetFrameworkMoniker-.NETFramework) is the bit depth listed in the icon directory entry, and [`System.Tuple`2.Item2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item2%29;k%28TargetFrameworkMoniker-.NETFramework) is the bit depth listed in the BMP frame.
+Code 0x1205: there is a mismatch between the bit depth of a BMP frame and the expected bit depth of the file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the bit depth listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the bit depth listed in the BMP frame.
 
 --------------------------------------------------
 # Type: `public class UIconEdit.IconLoadExceptionHandler`
@@ -783,6 +783,11 @@ A delegate function for handling [`IconLoadException`](#type-public-class-uicone
 # Type: `public class UIconEdit.IconFrame`
 
 Represents a single frame in an icon.
+
+--------------------------------------------------
+## Field: `public const System.Byte DefaultAlphaThreshold = 96`
+
+The default [`IconFrame.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-) value.
 
 --------------------------------------------------
 ## Field: `public const System.Int32 MinDimension = 1`
@@ -917,7 +922,7 @@ Parses the specified string as a [`BitDepth`](#type-public-enum-uiconeditbitdept
 ### Remarks
 
 
-`value` is parsed in a different manner from [`Enum.Parse()`](#method-enumparse).
+`value` is parsed in a case-insensitive manner which works differently from [`Enum.Parse()`](https://msdn.microsoft.com/en-us/library/kxydatf9.aspx).
 
 First of all, all non-alphanumeric characters are stripped. If `value` is entirely numeric, or begins with "Depth" followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the integer [`BitDepth`](#type-public-enum-uiconeditbitdepth) value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits per pixel, whereas 2, 16, 256, 16777216, and 4294967296 always refer to the number of colors.
 
@@ -956,7 +961,7 @@ Parses the specified string as a [`BitDepth`](#type-public-enum-uiconeditbitdept
 ### Remarks
 
 
-`value` is parsed in a different manner from [`Enum.TryParse()`](#method-enumtryparse).
+`value` is parsed in a case-insensitive manner which works differently from [`Enum.TryParse()`](https://msdn.microsoft.com/en-us/library/dd991317.aspx).
 
 First of all, all non-alphanumeric characters are stripped. If `value` is entirely numeric, or begins with "Depth" followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the integer [`BitDepth`](#type-public-enum-uiconeditbitdepth) value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits per pixel, whereas 2, 16, 256, 16777216, and 4294967296 always refer to the number of colors.
 

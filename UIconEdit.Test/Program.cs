@@ -29,7 +29,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
-using System.IO;
 using System.Drawing.Imaging;
 
 namespace UIconEdit.Builder
@@ -39,22 +38,57 @@ namespace UIconEdit.Builder
         [STAThread]
         static void Main(string[] args)
         {
+            {
+                string[] strings = new string[] { "32", "64", "29", "Depth32", "32Bit", "32Color", "16777216Color", "Depth4294967296Color", BitDepth.Depth256Color.ToString() };
+
+                foreach (string str in strings)
+                {
+                    Console.Write(string.Format("Testing string \"{0}\": ", str));
+
+                    BitDepth result;
+                    if (IconFrame.TryParseBitDepth(str, out result))
+                    {
+                        Console.WriteLine("Succeeded! BitDepth." + result);
+                    }
+                    else Console.WriteLine("Failed!");
+                }
+                Console.WriteLine();
+                Console.WriteLine("Press any key to continue ...");
+                Console.ReadKey();
+            }
+            Console.WriteLine("Loading file Gradient.ico ...");
             using (IconFile iconFile = IconFile.Load("Gradient.ico"))
             {
                 IconFrame[] frames = iconFile.Frames.ToArray();
                 for (int i = 0; i < frames.Length; i++)
-                    frames[i].BaseImage.Save(string.Format("Gradient{0}.png", i), ImageFormat.Png);
-
+                {
+                    var frame = frames[i];
+                    string filename = string.Format("Gradient{0}bit{1}x{2}.png", frame.BitsPerPixel, frame.Width, frame.Height);
+                    Console.WriteLine("Saving {0} ...", filename);
+                    frame.BaseImage.Save(filename, ImageFormat.Png);
+                }
+                Console.WriteLine("Saving GradientOut.ico ...");
                 iconFile.Save("GradientOut.ico");
             }
+            Console.WriteLine("Completed!");
+            Console.WriteLine("Loading file Crosshair.cur ...");
             using (CursorFile cursorFile = CursorFile.Load("Crosshair.cur"))
             {
                 CursorFrame[] cursorFrames = cursorFile.Frames.ToArray();
                 for (int i = 0; i < cursorFrames.Length; i++)
-                    cursorFrames[i].BaseImage.Save(string.Format("Crosshair{0}.png", i), ImageFormat.Png);
+                {
+                    var frame = cursorFrames[i];
+                    string filename = string.Format("Crosshair{0}bit{1}x{2}.png", frame.BitsPerPixel, frame.Width, frame.Height);
+                    Console.WriteLine("Saving {0} ...", filename);
+                    frame.BaseImage.Save(filename, ImageFormat.Png);
+                }
 
+                Console.WriteLine("Saving CrosshairOut.cur ...");
                 cursorFile.Save("CrosshairOut.cur");
             }
+            Console.WriteLine("Completed!");
+            Console.WriteLine("Press any key to continue ...");
+            Console.ReadKey();
         }
     }
 }

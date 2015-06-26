@@ -34,6 +34,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 using nQuant;
@@ -298,13 +300,16 @@ namespace UIconEdit
             }
         }
 
-        internal ushort BitsPerPixel
+        /// <summary>
+        /// Gets the number of bits per pixel specified by <see cref="BitDepth"/>.
+        /// </summary>
+        public ushort BitsPerPixel
         {
             get
             {
                 switch (_depth)
                 {
-                    default: //Bit32
+                    default: //32-bit
                         return 32;
                     case BitDepth.Depth24BitsPerPixel:
                         return 24;
@@ -314,6 +319,29 @@ namespace UIconEdit
                         return 4;
                     case BitDepth.Depth256Color:
                         return 8;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the maximum color count specified by <see cref="BitDepth"/>.
+        /// </summary>
+        public long ColorCount
+        {
+            get
+            {
+                switch (_depth)
+                {
+                    default: //32-bit
+                        return uint.MaxValue + 1L;
+                    case BitDepth.Depth24BitsPerPixel:
+                        return 0x1000000;
+                    case BitDepth.Depth256Color:
+                        return 256;
+                    case BitDepth.Depth16Color:
+                        return 16;
+                    case BitDepth.Depth2Color:
+                        return 2;
                 }
             }
         }
@@ -568,6 +596,216 @@ namespace UIconEdit
             }
             quantized.Dispose();
             return quant2;
+        }
+
+
+        /// <summary>
+        /// Parses the specified string as a <see cref="UIconEdit.BitDepth"/> value.
+        /// </summary>
+        /// <param name="value">The value to parse.</param>
+        /// <returns>The parsed <see cref="UIconEdit.BitDepth"/> value.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="value"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <para><paramref name="value"/> is an empty string or contains only whitespace.</para>
+        /// <para>-OR-</para>
+        /// <para><paramref name="value"/> does not translate to a valid <see cref="UIconEdit.BitDepth"/> value.</para>
+        /// </exception>
+        /// <remarks>
+        /// <para><paramref name="value"/> is parsed in a different manner from <see cref="M:System.Enum.Parse"/>.</para>
+        /// <para>First of all, all non-alphanumeric characters are stripped. If <paramref name="value"/> is entirely numeric, or begins with "Depth"
+        /// followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the
+        /// integer <see cref="UIconEdit.BitDepth"/> value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits
+        /// per pixel, whereas 2, 16, 256, 16777216, and 4294967296 always refer to the number of colors.</para>
+        /// <para>Otherwise, "Depth" is prepended to the beginning, and it attempts to ensure that the value ends with either "Color" or "BitsPerPixel"
+        /// (or "BitPerPixel" in the case of <see cref="UIconEdit.BitDepth.Depth1BitPerPixel"/>).</para>
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// BitDepth result;
+        /// if (IconFrame.TryParse("32", out result)) Console.WriteLine("Succeeded: " + result);
+        /// else Console.WriteLine("Failed!");
+        /// //Succeeded: BitDepth.Depth32BitsPerPixel
+        /// 
+        /// if (IconFrame.TryParse("32Bit", out result)) Console.WriteLine("Succeeded: " + result);
+        /// else Console.WriteLine("Failed");
+        /// //Succeeded: BitDepth.Depth32BitsPerPixel
+        /// 
+        /// if (IconFrame.TryParse("32Color", out result)) Console.WriteLine("Succeeded: " + result);
+        /// else Console.WriteLine("Failed");
+        /// //Failed
+        /// 
+        /// if (IconFrame.TryParse("Depth256", out result)) Console.WriteLine("Succeeded: " + result);
+        /// else Console.WriteLine("Failed");
+        /// //Succeeded: BitDepth.Depth256Color
+        /// </code>
+        /// </example>
+        public static BitDepth ParseBitDepth(string value)
+        {
+            if (value == null) throw new ArgumentNullException("value");
+            BitDepth result;
+            TryParseBitDepth(value, true, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Parses the specified string as a <see cref="UIconEdit.BitDepth"/> value.
+        /// </summary>
+        /// <param name="value">The value to parse.</param>
+        /// <param name="result">When this method returns, contains the parsed <see cref="UIconEdit.BitDepth"/> result, or
+        /// the default value for type <see cref="UIconEdit.BitDepth"/> if <paramref name="value"/> could not be parsed.
+        /// This parameter is passed uninitialized.</param>
+        /// <returns><c>true</c> if <paramref name="value"/> was successfully parsed; <c>false</c> otherwise.</returns>
+        /// <remarks>
+        /// <para><paramref name="value"/> is parsed in a different manner from <see cref="M:System.Enum.TryParse"/>.</para>
+        /// <para>First of all, all non-alphanumeric characters are stripped. If <paramref name="value"/> is entirely numeric, or begins with "Depth"
+        /// followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the
+        /// integer <see cref="UIconEdit.BitDepth"/> value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits
+        /// per pixel, whereas 2, 16, 256, 16777216, and 4294967296 always refer to the number of colors.</para>
+        /// <para>Otherwise, "Depth" is prepended to the beginning, and it attempts to ensure that the value ends with either "Color" or "BitsPerPixel"
+        /// (or "BitPerPixel" in the case of <see cref="UIconEdit.BitDepth.Depth1BitPerPixel"/>).</para>
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// BitDepth result;
+        /// if (IconFrame.TryParse("32", out result)) Console.WriteLine("Succeeded: " + result);
+        /// else Console.WriteLine("Failed!");
+        /// //Succeeded: BitDepth.Depth32BitsPerPixel
+        /// 
+        /// if (IconFrame.TryParse("32Bit", out result)) Console.WriteLine("Succeeded: " + result);
+        /// else Console.WriteLine("Failed");
+        /// //Succeeded: BitDepth.Depth32BitsPerPixel
+        /// 
+        /// if (IconFrame.TryParse("32Color", out result)) Console.WriteLine("Succeeded: " + result);
+        /// else Console.WriteLine("Failed");
+        /// //Failed
+        /// 
+        /// if (IconFrame.TryParse("Depth256", out result)) Console.WriteLine("Succeeded: " + result);
+        /// else Console.WriteLine("Failed");
+        /// //Succeeded: BitDepth.Depth256Color
+        /// </code>
+        /// </example>
+        public static bool TryParseBitDepth(string value, out BitDepth result)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                result = 0;
+                return false;
+            }
+
+            return TryParseBitDepth(value, false, out result);
+        }
+
+        private static bool TryParseBitDepth(string value, bool throwError, out BitDepth result)
+        {
+            if (throwError && string.IsNullOrWhiteSpace(value))
+                Enum.Parse(typeof(BitDepth), value, true);
+
+            value = value.Trim();
+
+            long intVal;
+
+            const NumberStyles numStyles = NumberStyles.Integer & ~NumberStyles.AllowLeadingSign;
+
+            string stripValue = new string(value.Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant).ToArray());
+
+            if (long.TryParse(stripValue, numStyles, NumberFormatInfo.InvariantInfo, out intVal) || (stripValue.StartsWith("depth") &&
+                long.TryParse(stripValue.Substring(5), numStyles, NumberFormatInfo.InvariantInfo, out intVal)))
+            {
+                switch (intVal)
+                {
+                    case 1:
+                        result = BitDepth.Depth1BitsPerPixel;
+                        return true;
+                    case 2:
+                        result = BitDepth.Depth2Color;
+                        return true;
+                    case 4:
+                        result = BitDepth.Depth4BitsPerPixel;
+                        return true;
+                    case 8:
+                        result = BitDepth.Depth8BitsPerPixel;
+                        return true;
+                    case 16:
+                        result = BitDepth.Depth16Color;
+                        return true;
+                    case 24:
+                        result = BitDepth.Depth24BitsPerPixel;
+                        return true;
+                    case 32:
+                        result = BitDepth.Depth32BitsPerPixel;
+                        return true;
+                    case 256:
+                        result = BitDepth.Depth256Color;
+                        return true;
+                    case 16777216:
+                        result = BitDepth.Depth24BitsPerPixel;
+                        return true;
+                    case uint.MaxValue + 1L:
+                        result = BitDepth.Depth32BitsPerPixel;
+                        return true;
+                    default:
+                        if (throwError)
+                        {
+                            stripValue += "!!+";
+
+                            try
+                            {
+                                result = (BitDepth)Enum.Parse(typeof(BitDepth), stripValue, true);
+                            }
+                            catch (ArgumentException e)
+                            {
+                                throw new ArgumentException(e.Message.Replace(stripValue, value), "value");
+                            }
+                            return false;
+                        }
+
+                        result = 0;
+                        return false;
+                }
+            }
+
+            if (!stripValue.StartsWith("depth"))
+                stripValue = "depth" + stripValue;
+            if (stripValue.EndsWith("bit"))
+                stripValue += "sPerPixel";
+            else if (stripValue.EndsWith("bits"))
+                stripValue += "PerPixel";
+            else if (stripValue.EndsWith("colors", StringComparison.OrdinalIgnoreCase))
+                stripValue = stripValue.Substring(value.Length - 1);
+            else if (!stripValue.Equals("depth1bitperpixel", StringComparison.OrdinalIgnoreCase))
+                stripValue = stripValue.Replace("bitperpixel", "BitsPerPixel");
+
+            if (stripValue.Equals("depth16777216color", StringComparison.OrdinalIgnoreCase))
+            {
+                result = BitDepth.Depth24BitsPerPixel;
+                return true;
+            }
+            else if (stripValue.Equals("depth4294967296color", StringComparison.OrdinalIgnoreCase))
+            {
+                result = BitDepth.Depth32BitsPerPixel;
+                return true;
+            }
+
+            if (Enum.TryParse(stripValue, true, out result))
+                return true;
+
+            if (throwError)
+            {
+                try
+                {
+                    stripValue += "!!+";
+
+                    result = (BitDepth)Enum.Parse(typeof(BitDepth), stripValue, true);
+                }
+                catch (ArgumentException e)
+                {
+                    throw new ArgumentException(e.Message.Replace(stripValue, value), "value");
+                }
+            }
+
+            return false;
         }
 
         private bool isDisposed;

@@ -893,6 +893,97 @@ Returns a duplicate of the current instance.
 
 
 --------------------------------------------------
+## Method: `public static UIconEdit.BitDepth ParseBitDepth(System.String value)`
+
+Parses the specified string as a [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+* `value`: The value to parse.
+
+**Returns:** Type [`BitDepth`](#type-public-enum-uiconeditbitdepth): The parsed [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`value` is `null`.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+
+`value` is an empty string or contains only whitespace.
+
+-OR-
+
+`value` does not translate to a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+
+### Remarks
+
+
+`value` is parsed in a different manner from [`Enum.Parse`](https://msdn.microsoft.com/en-us/library/system.enum.parse.aspx).
+
+First of all, all non-alphanumeric characters are stripped. If `value` is entirely numeric, or begins with "Depth" followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the integer [`BitDepth`](#type-public-enum-uiconeditbitdepth) value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits per pixel, whereas 2, 16, 256, 16777216, and 4294967296 always refer to the number of colors.
+
+Otherwise, "Depth" is prepended to the beginning, and it attempts to ensure that the value ends with either "Color" or "BitsPerPixel" (or "BitPerPixel" in the case of [`Depth1BitPerPixel`](#field-bitdepthdepth1bitperpixel--4)).
+
+### Example
+
+
+```C#
+BitDepth result;
+if (IconFrame.TryParse("32", out result)) Console.WriteLine("Succeeded: " + result);
+else Console.WriteLine("Failed!");
+//Succeeded: BitDepth.Depth32BitsPerPixel
+if (IconFrame.TryParse("32Bit", out result)) Console.WriteLine("Succeeded: " + result);
+else Console.WriteLine("Failed");
+//Succeeded: BitDepth.Depth32BitsPerPixel
+if (IconFrame.TryParse("32Color", out result)) Console.WriteLine("Succeeded: " + result);
+else Console.WriteLine("Failed");
+//Failed
+if (IconFrame.TryParse("Depth256", out result)) Console.WriteLine("Succeeded: " + result);
+else Console.WriteLine("Failed");
+//Succeeded: BitDepth.Depth256Color
+```
+
+
+
+--------------------------------------------------
+## Method: `IconFrame.TryParseBitDepth(System.String value, UIconEdit.BitDepth@ result)`
+
+Parses the specified string as a [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+* `value`: The value to parse.
+* `result`: When this method returns, contains the parsed [`BitDepth`](#type-public-enum-uiconeditbitdepth) result, or the default value for type [`BitDepth`](#type-public-enum-uiconeditbitdepth) if `value` could not be parsed. This parameter is passed uninitialized.
+
+**Returns:** `true` if `value` was successfully parsed; `false` otherwise.
+
+### Remarks
+
+
+`value` is parsed in a different manner from [`Enum.TryParse`](https://msdn.microsoft.com/en-us/library/system.enum.tryparse.aspx).
+
+First of all, all non-alphanumeric characters are stripped. If `value` is entirely numeric, or begins with "Depth" followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the integer [`BitDepth`](#type-public-enum-uiconeditbitdepth) value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits per pixel, whereas 2, 16, 256, 16777216, and 4294967296 always refer to the number of colors.
+
+Otherwise, "Depth" is prepended to the beginning, and it attempts to ensure that the value ends with either "Color" or "BitsPerPixel" (or "BitPerPixel" in the case of [`Depth1BitPerPixel`](#field-bitdepthdepth1bitperpixel--4)).
+
+### Example
+
+
+```C#
+BitDepth result;
+if (IconFrame.TryParse("32", out result)) Console.WriteLine("Succeeded: " + result);
+else Console.WriteLine("Failed!");
+//Succeeded: BitDepth.Depth32BitsPerPixel
+if (IconFrame.TryParse("32Bit", out result)) Console.WriteLine("Succeeded: " + result);
+else Console.WriteLine("Failed");
+//Succeeded: BitDepth.Depth32BitsPerPixel
+if (IconFrame.TryParse("32Color", out result)) Console.WriteLine("Succeeded: " + result);
+else Console.WriteLine("Failed");
+//Failed
+if (IconFrame.TryParse("Depth256", out result)) Console.WriteLine("Succeeded: " + result);
+else Console.WriteLine("Failed");
+//Succeeded: BitDepth.Depth256Color
+```
+
+
+
+--------------------------------------------------
 ## Method: `public virtual void Dispose()`
 
 Releases all resources used by the current instance.
@@ -955,6 +1046,16 @@ In a set operation, the specified value is not a valid [`BitDepth`](#type-public
 ## Property: `public System.Drawing.Imaging.PixelFormat PixelFormat { get; }`
 
 Gets the pixel format of the resulting image file.
+
+--------------------------------------------------
+## Property: `public System.UInt16 BitsPerPixel { get; }`
+
+Gets the number of bits per pixel specified by [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-).
+
+--------------------------------------------------
+## Property: `public System.Int64 ColorCount { get; }`
+
+Gets the maximum color count specified by [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-).
 
 --------------------------------------------------
 ## Property: `public System.Byte AlphaThreshold { get; set; }`
@@ -2051,21 +2152,6 @@ An enumerator which iterates through the list.
 Disposes of the current instance.
 
 --------------------------------------------------
-## Method: `public System.Boolean MoveNext()`
-
-Advances the enumerator to the next position in the list.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the enumerator successfully advanced; `false` if the enumerator has passed the end of the list.
-
-
---------------------------------------------------
-## Property: `public UIconEdit.CursorFrame Current { get; }`
-
-Gets the element at the current position in the enumerator.
-y: `public UIconEdit.CursorFrame Current { get; }`
-
-Gets the element at the current position in the enumerator.
------------------------------------------------
 ## Method: `public System.Boolean MoveNext()`
 
 Advances the enumerator to the next position in the list.

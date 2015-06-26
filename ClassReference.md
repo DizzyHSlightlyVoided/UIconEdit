@@ -76,7 +76,7 @@ Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) imp
 `path` is `null`.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`Path.GetInvalidPathChars()`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
 ##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
 The specified path, filename, or both contain the system-defined maximum length.
@@ -120,7 +120,7 @@ Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) imp
 `path` is `null`.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`Path.GetInvalidPathChars()`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
 ##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
 The specified path, filename, or both contain the system-defined maximum length.
@@ -154,13 +154,13 @@ An I/O error occurred.
 
 Returns a duplicate of the current instance.
 
-**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon frame and clones of each frame's [`BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-) in [`Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-).
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon frame and clones of each frame's [`IconFrame.BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-) in [`IconFileBase.Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-).
 
 
 --------------------------------------------------
 ## Method: `protected virtual System.Boolean IsValid(UIconEdit.IconFrame frame)`
 
-When overridden in a derived class, gets a value indicating whether the specified value may be added to [`Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-).
+When overridden in a derived class, gets a value indicating whether the specified value may be added to [`IconFileBase.Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-).
 * `frame`: The frame to check.
 
 **Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `frame` is not `null`; `false` otherwise.
@@ -193,7 +193,7 @@ Saves the file to the specified stream.
 ### Exceptions
 
 ##### [`InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx)
-[`Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-) contains zero elements.
+[`IconFileBase.Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-) contains zero elements.
 
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 `output` is `null`.
@@ -216,13 +216,13 @@ Saves the file to the specified file.
 ### Exceptions
 
 ##### [`InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx)
-[`Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-) contains zero elements.
+[`IconFileBase.Frames`](#property-public-uiconediticonfilebaseframelist-frames--get-) contains zero elements.
 
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 `path` is `null`.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`Path.GetInvalidPathChars()`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
 ##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
 The specified path, filename, or both contain the system-defined maximum length.
@@ -257,7 +257,7 @@ Gets a collection containing all frames in the icon file.
 --------------------------------------------------
 # Type: `class UIconEdit.IconFileBase.FrameList`
 
-Represents a hash list of frames. This collection treats [`IconFrame`](#type-public-class-uiconediticonframe) objects with the same[`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as though they were equal.
+Represents a hash list of frames. This collection treats [`IconFrame`](#type-public-class-uiconediticonframe) objects with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as though they were equal.
 
 --------------------------------------------------
 ## Method: `public System.Boolean Add(UIconEdit.IconFrame item)`
@@ -265,7 +265,7 @@ Represents a hash list of frames. This collection treats [`IconFrame`](#type-pub
 Adds the specified icon frame to the list.
 * `item`: The icon frame to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`Count`](#property-public-virtual-systemint32-count--get-) is equal to [`MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same[`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`FrameList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
 
 
 --------------------------------------------------
@@ -275,13 +275,13 @@ Adds the specified icon frame to the list at the specified index.
 * `index`: The index at which to insert the icon frame.
 * `item`: The icon frame to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`Count`](#property-public-virtual-systemint32-count--get-) is equal to [`MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same[`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`FrameList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
 
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` is less than 0 or is greater than [`Count`](#property-public-virtual-systemint32-count--get-).
+`index` is less than 0 or is greater than [`FrameList.Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
 ## Method: `public System.Boolean SetValue(System.Int32 index, UIconEdit.IconFrame item)`
@@ -290,7 +290,7 @@ Sets the value at the specified index.
 * `index`: The index of the value to set.
 * `item`: The item to set at the specified index.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists at a different index.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists at a different index.
 
 
 --------------------------------------------------
@@ -302,18 +302,18 @@ Removes the element at the specified index.
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get-).
+`index` is less than 0 or is greater than or equal to [`FrameList.Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
 ## Method: `public void RemoveAndDisposeAt(System.Int32 index)`
 
-Removes the element at the specified index and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
+Removes the element at the specified index and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
 * `index`: The element at the specified index.
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get-).
+`index` is less than 0 or is greater than or equal to [`FrameList.Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
 ## Method: `public virtual System.Boolean Remove(UIconEdit.IconFrame item)`
@@ -327,7 +327,7 @@ Removes the specified icon frame from the list.
 --------------------------------------------------
 ## Method: `public System.Boolean RemoveAndDispose(UIconEdit.IconFrame item)`
 
-Removes the specified icon frame from the list and immediately callse [`Dispose`](#method-public-virtual-void-dispose-1).
+Removes the specified icon frame from the list and immediately callse [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
 * `item`: The icon frame to remove from the list.
 
 **Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found and successfully removed; `false` otherwise.
@@ -339,16 +339,16 @@ Removes the specified icon frame from the list and immediately callse [`Dispose`
 Removes an icon frame similar to the specified value from the list.
 * `item`: The icon frame compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
 
 
 --------------------------------------------------
 ## Method: `public System.Boolean RemoveAndDisposeSimilar(UIconEdit.IconFrame item)`
 
-Removes an icon frame similar to the specified value from the list and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
+Removes an icon frame similar to the specified value from the list and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
 * `item`: The icon frame to search for.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
 
 
 --------------------------------------------------
@@ -359,7 +359,7 @@ Removes all elements from the list.
 --------------------------------------------------
 ## Method: `public void ClearAndDispose()`
 
-Removes all elements from the list and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1) on each one.
+Removes all elements from the list and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1) on each one.
 
 --------------------------------------------------
 ## Method: `public virtual System.Boolean Contains(UIconEdit.IconFrame item)`
@@ -376,7 +376,7 @@ Determines if the specified element exists in the list.
 Determines if an element similar to the specified icon frame exists in the list.
 * `item`: The icon frame to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` exists in the list; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` exists in the list; `false` otherwise.
 
 
 --------------------------------------------------
@@ -394,7 +394,7 @@ Gets the index of the specified item.
 Gets the index of an element similar to the specified item.
 * `item`: The icon frame to compare.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -409,7 +409,7 @@ Copies all elements in the list to the specified array.
 `array` is `null`.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The length of `array` is less than [`Count`](#property-public-virtual-systemint32-count--get-).
+The length of `array` is less than [`FrameList.Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
 ## Method: `public virtual void CopyTo(UIconEdit.IconFrame[] array, System.Int32 arrayIndex)`
@@ -427,7 +427,7 @@ Copies all elements in the list to the specified array, starting at the specifie
 `arrayIndex` is less than 0.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The length of `array` minus `arrayIndex` is less than [`Count`](#property-public-virtual-systemint32-count--get-).
+The length of `array` minus `arrayIndex` is less than [`FrameList.Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
 ## Method: `public void CopyTo(System.Int32 index, UIconEdit.IconFrame[] array, System.Int32 arrayIndex, System.Int32 count)`
@@ -488,7 +488,7 @@ Removes all elements matching the specified predicate.
 --------------------------------------------------
 ## Method: `public System.Int32 RemoveAndDisposeWhere(System.Predicate<UIconEdit.IconFrame> match)`
 
-Removes all elements matching the specified predicate and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
+Removes all elements matching the specified predicate and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
 * `match`: A predicate used to define the elements to remove.
 
 **Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
@@ -502,13 +502,13 @@ Removes all elements matching the specified predicate and immediately calls [`Di
 --------------------------------------------------
 ## Method: `public void Sort()`
 
-Sorts all elements in the list according to their [`FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
+Sorts all elements in the list according to their [`IconFrame.FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
 
 --------------------------------------------------
 ## Method: `public void Sort(System.Collections.Generic.IComparer<UIconEdit.IconFrame> comparer)`
 
 Sorts all elements in the list according to the specified comparer.
-* `comparer`: The comparer used to compare each [`IconFrame`](#type-public-class-uiconediticonframe), or `null` to their [`FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
+* `comparer`: The comparer used to compare each [`IconFrame`](#type-public-class-uiconediticonframe), or `null` to their [`IconFrame.FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
 
 --------------------------------------------------
 ## Method: `public void Sort(System.Comparison<UIconEdit.IconFrame> comparison)`
@@ -531,7 +531,7 @@ Gets and sets the element at the specified index.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
 
-`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get-).
+`index` is less than 0 or is greater than or equal to [`FrameList.Count`](#property-public-virtual-systemint32-count--get-).
 
 -OR-
 
@@ -539,7 +539,7 @@ In a set operation, the specified value is `null`.
 
 
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
-In a set operation, an element with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list at a different index, or the specified value is already associated with a different icon file.
+In a set operation, an element with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list at a different index, or the specified value is already associated with a different icon file.
 
 --------------------------------------------------
 ## Property: `public virtual System.Int32 Count { get; }`
@@ -701,12 +701,12 @@ Code 0x2: The icon contains zero frames. This is a fatal error, and the icon fil
 --------------------------------------------------
 ## Field: `IconErrorCode.ResourceTooSmall = 3`
 
-Code 0x3: One of the icon directory entries has a length less than or equal to 40 bytes, which is logically too small for either a BMP or a PNG file.[`Value`](#property-public-systemobject-value--get-) contains the length. This is a fatal error, and the icon file cannot continue processing when it occurs.
+Code 0x3: One of the icon directory entries has a length less than or equal to 40 bytes, which is logically too small for either a BMP or a PNG file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the length. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.ResourceTooEarly = 4`
 
-Code 0x4: One of the icon directory entries has a starting offset which would overlap with the list of entries.[`Value`](#property-public-systemobject-value--get-) contains the offset. This is a fatal error, and the icon file cannot continue processing when it occurs.
+Code 0x4: One of the icon directory entries has a starting offset which would overlap with the list of entries. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the offset. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.ResourceOverlap = 5`
@@ -721,7 +721,7 @@ Code 0x1000: the file type of a frame is invalid.
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBitDepth = 4097`
 
-Code 0x1001: the file is an icon, and an icon directory entry has a bit depth with any value other than 0, 1, 4, 8, 24, or 32.[`Value`](#property-public-systemobject-value--get-) contains the bit depth.
+Code 0x1001: the file is an icon, and an icon directory entry has a bit depth with any value other than 0, 1, 4, 8, 24, or 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.ZeroValidFrames = 4098`
@@ -736,7 +736,7 @@ Code 0x1100: an error occurred when attempting to load a PNG frame. The inner ex
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidPngSize = 4354`
 
-Code 0x1102: the width or height of a PNG frame is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).[`Value`](#property-public-systemobject-value--get-) contains the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
+Code 0x1102: the width or height of a PNG frame is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768). [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.PngSizeMismatch = 4355`
@@ -746,32 +746,32 @@ Code 0x1105: the width or height of a PNG frame does not match the width or heig
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpFile = 4608`
 
-Code 0x1204: an error occurred when attempting to process a BMP frame. The inner exception may contain more information.[`Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx) in which the [`Tuple`Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx) is the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`Tuple`Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx) is the actual size.
+Code 0x1204: an error occurred when attempting to process a BMP frame. The inner exception may contain more information. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2%29;k%28TargetFrameworkMoniker-.NETFramework) in which the [`System.Tuple`2.Item1`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item1%29;k%28TargetFrameworkMoniker-.NETFramework) is the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`System.Tuple`2.Item2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item2%29;k%28TargetFrameworkMoniker-.NETFramework) is the actual size.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpBitDepth = 4609`
 
-Code 0x1201 the bit depth of a BMP frame is not supported.[`Value`](#property-public-systemobject-value--get-) contains the bit depth.
+Code 0x1201 the bit depth of a BMP frame is not supported. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpSize = 4610`
 
-Code 0x1202: the width or height of a BMP frame is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768). The maximum height is doubled in images with a bit depth less than 32.[`Value`](#property-public-systemobject-value--get-) contains the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
+Code 0x1202: the width or height of a BMP frame is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768). The maximum height is doubled in images with a bit depth less than 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.BmpHeightMismatch = 4611`
 
-Code 0x1203: the width or height of a BMP frame does not match the width or height listed in the icon directory entry.[`Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx) in which the [`Tuple`Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx) is the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`Tuple`Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx) is the actual size.
+Code 0x1203: the width or height of a BMP frame does not match the width or height listed in the icon directory entry. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2%29;k%28TargetFrameworkMoniker-.NETFramework) in which the [`System.Tuple`2.Item1`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item1%29;k%28TargetFrameworkMoniker-.NETFramework) is the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`System.Tuple`2.Item2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item2%29;k%28TargetFrameworkMoniker-.NETFramework) is the actual size.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpHeightOdd = 4612`
 
-Code 0x1204: the height of a BMP frame is an odd number, indicating that there is no AND (transparency) mask.[`Value`](#property-public-systemobject-value--get-) contains the [`Height`](https://msdn.microsoft.com/en-us/library/system.drawing.image.height.aspx) of the image.
+Code 0x1204: the height of a BMP frame is an odd number, indicating that there is no AND (transparency) mask. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the [`Image.Height`](https://msdn.microsoft.com/en-us/library/system.drawing.image.height.aspx) of the image.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.BmpBitDepthMismatch = 4613`
 
-Code 0x1205: there is a mismatch between the bit depth of a BMP frame and the expected bit depth of the file.[`Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx) in which the [`Tuple`Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx) is the bit depth listed in the icon directory entry, and [`Tuple`Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx) is the bit depth listed in the BMP frame.
+Code 0x1205: there is a mismatch between the bit depth of a BMP frame and the expected bit depth of the file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2%29;k%28TargetFrameworkMoniker-.NETFramework) in which the [`System.Tuple`2.Item1`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item1%29;k%28TargetFrameworkMoniker-.NETFramework) is the bit depth listed in the icon directory entry, and [`System.Tuple`2.Item2`](https://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k%28System.Tuple`2.Item2%29;k%28TargetFrameworkMoniker-.NETFramework) is the bit depth listed in the BMP frame.
 
 --------------------------------------------------
 # Type: `public class UIconEdit.IconLoadExceptionHandler`
@@ -813,7 +813,7 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+`width` or `height` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -836,7 +836,7 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+`width` or `height` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -858,7 +858,7 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+The width or height of `baseImage` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -879,7 +879,7 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+The width or height of `baseImage` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -889,7 +889,7 @@ The width or height of `baseImage` is less than [`MinDimension`](#field-public-c
 
 Returns a duplicate of the current instance.
 
-**Returns:** Type [`IconFrame`](#type-public-class-uiconediticonframe): A duplicate of the current instance, with its own clone of [`BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-).
+**Returns:** Type [`IconFrame`](#type-public-class-uiconediticonframe): A duplicate of the current instance, with its own clone of [`IconFrame.BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-).
 
 
 --------------------------------------------------
@@ -917,11 +917,11 @@ Parses the specified string as a [`BitDepth`](#type-public-enum-uiconeditbitdept
 ### Remarks
 
 
-`value` is parsed in a different manner from [`Enum.Parse`](https://msdn.microsoft.com/en-us/library/system.enum.parse.aspx).
+`value` is parsed in a different manner from [`Enum.Parse()`](#method-enumparse).
 
 First of all, all non-alphanumeric characters are stripped. If `value` is entirely numeric, or begins with "Depth" followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the integer [`BitDepth`](#type-public-enum-uiconeditbitdepth) value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits per pixel, whereas 2, 16, 256, 16777216, and 4294967296 always refer to the number of colors.
 
-Otherwise, "Depth" is prepended to the beginning, and it attempts to ensure that the value ends with either "Color" or "BitsPerPixel" (or "BitPerPixel" in the case of [`Depth1BitPerPixel`](#field-bitdepthdepth1bitperpixel--4)).
+Otherwise, "Depth" is prepended to the beginning, and it attempts to ensure that the value ends with either "Color" or "BitsPerPixel" (or "BitPerPixel" in the case of [`BitDepth.Depth1BitPerPixel`](#field-bitdepthdepth1bitperpixel--4)).
 
 ### Example
 
@@ -956,11 +956,11 @@ Parses the specified string as a [`BitDepth`](#type-public-enum-uiconeditbitdept
 ### Remarks
 
 
-`value` is parsed in a different manner from [`Enum.TryParse`](https://msdn.microsoft.com/en-us/library/system.enum.tryparse.aspx).
+`value` is parsed in a different manner from [`Enum.TryParse()`](#method-enumtryparse).
 
 First of all, all non-alphanumeric characters are stripped. If `value` is entirely numeric, or begins with "Depth" followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the integer [`BitDepth`](#type-public-enum-uiconeditbitdepth) value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits per pixel, whereas 2, 16, 256, 16777216, and 4294967296 always refer to the number of colors.
 
-Otherwise, "Depth" is prepended to the beginning, and it attempts to ensure that the value ends with either "Color" or "BitsPerPixel" (or "BitPerPixel" in the case of [`Depth1BitPerPixel`](#field-bitdepthdepth1bitperpixel--4)).
+Otherwise, "Depth" is prepended to the beginning, and it attempts to ensure that the value ends with either "Color" or "BitsPerPixel" (or "BitPerPixel" in the case of [`BitDepth.Depth1BitPerPixel`](#field-bitdepthdepth1bitperpixel--4)).
 
 ### Example
 
@@ -1013,24 +1013,24 @@ In a set operation, the specified value is disposed.
 Gets a key for the icon frame.
 
 --------------------------------------------------
-## Property: `public System.Int16 Width { get; set; }`
+## Property: `public virtual System.Int16 Width { get; set; }`
 
 Gets and sets the resampled width of the icon.
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+In a set operation, the specified value is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 --------------------------------------------------
-## Property: `public System.Int16 Height { get; set; }`
+## Property: `public virtual System.Int16 Height { get; set; }`
 
 Gets and sets the resampled height of the icon.
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+In a set operation, the specified value is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 --------------------------------------------------
 ## Property: `public UIconEdit.BitDepth BitDepth { get; set; }`
@@ -1050,17 +1050,17 @@ Gets the pixel format of the resulting image file.
 --------------------------------------------------
 ## Property: `public System.UInt16 BitsPerPixel { get; }`
 
-Gets the number of bits per pixel specified by [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-).
+Gets the number of bits per pixel specified by [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-).
 
 --------------------------------------------------
 ## Property: `public System.Int64 ColorCount { get; }`
 
-Gets the maximum color count specified by [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-).
+Gets the maximum color count specified by [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-).
 
 --------------------------------------------------
 ## Property: `public System.Byte AlphaThreshold { get; set; }`
 
-Gets and sets a value indicating the threshold of alpha values at [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-)s below [`Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0). Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
+Gets and sets a value indicating the threshold of alpha values at [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-)s below [`BitDepth.Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0). Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
 
 --------------------------------------------------
 ## Property: `public System.Drawing.Drawing2D.InterpolationMode DrawInterpolationMode { get; set; }`
@@ -1108,7 +1108,17 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+
+`width` or `height` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+
+-OR-
+
+`hotspotX` is greater than `width`.
+
+-OR-
+
+`hotspotY` is greater than `height`.
+
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1133,7 +1143,17 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+
+`width` or `height` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+
+-OR-
+
+`hotspotX` is greater than `width`.
+
+-OR-
+
+`hotspotY` is greater than `height`.
+
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1157,7 +1177,7 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+`width` or `height` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1180,7 +1200,7 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+`width` or `height` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1203,8 +1223,19 @@ Creates a new instance with the specified image.
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+
+-OR-
+
+`hotspotX` is greater than the width of `baseImage`.
+
+-OR-
+
+`hotspotY` is greater than the height of `baseImage`.
+
+
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+The width or height of `baseImage` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1223,11 +1254,22 @@ Creates a new instance with the specified image.
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 `baseImage` is `null`.
 
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+
+-OR-
+
+`hotspotX` is greater than the width of `baseImage`.
+
+-OR-
+
+`hotspotY` is greater than the height of `baseImage`.
+
+
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+The width or height of `baseImage` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1249,7 +1291,7 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+The width or height of `baseImage` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1270,10 +1312,30 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+The width or height of `baseImage` is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
+
+--------------------------------------------------
+## Property: `public override System.Int16 Width { get; set; }`
+
+Gets and sets the resampled width of the icon. In a set operation, if the specified value is less than [`CursorFrame.HotspotX`](#property-public-systemuint16-hotspotx--get-set-), [`CursorFrame.HotspotX`](#property-public-systemuint16-hotspotx--get-set-) is automatically resized to this value.
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+
+--------------------------------------------------
+## Property: `public override System.Int16 Height { get; set; }`
+
+Gets and sets the resampled height of the icon. In a set operation, if the specified value is less than [`CursorFrame.HotspotY`](#property-public-systemuint16-hotspoty--get-set-), [`CursorFrame.HotspotY`](#property-public-systemuint16-hotspoty--get-set-) is automatically resized to this value.
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is less than [`IconFrame.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconFrame.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 --------------------------------------------------
 ## Property: `public System.UInt16 HotspotX { get; set; }`
@@ -1321,7 +1383,7 @@ Indicates the bit depth of the icon frame.
 --------------------------------------------------
 ## Method: `public System.Int32 CompareTo(UIconEdit.FrameKey other)`
 
-Compares the current instance to the specified other [`FrameKey`](#type-public-struct-uiconeditframekey) object. First[`BitDepth`](#field-public-uiconeditbitdepth-bitdepth) is compared, then [`Height`](#field-public-systemint16-height), then [`Width`](#field-public-systemint16-width) (with higher color-counts and larger elements first).
+Compares the current instance to the specified other [`FrameKey`](#type-public-struct-uiconeditframekey) object. First [`FrameKey.BitDepth`](#field-public-uiconeditbitdepth-bitdepth) is compared, then [`FrameKey.Height`](#field-public-systemint16-height), then [`FrameKey.Width`](#field-public-systemint16-width) (with higher color-counts and larger elements first).
 * `other`: The other [`FrameKey`](#type-public-struct-uiconeditframekey) to compare.
 
 **Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): A value less than 0 if the current value comes before `other`; a value greater than 0 if the current value comes after `other`; or 0 if the current instance is equal to `other`.
@@ -1431,37 +1493,37 @@ Indicates that the frame is full color without alpha (24 bits per pixel).
 --------------------------------------------------
 ## Field: `BitDepth.Depth256Color = 2`
 
-Indicates that the frame is 256-color (8 bits per pixel). Same value as [`Depth8BitsPerPixel`](#field-bitdepthdepth8bitsperpixel--2).
+Indicates that the frame is 256-color (8 bits per pixel). Same value as [`BitDepth.Depth8BitsPerPixel`](#field-bitdepthdepth8bitsperpixel--2).
 
 --------------------------------------------------
 ## Field: `BitDepth.Depth16Color = 3`
 
-Indicates that the frame is 16-color (4 bits per pixel). Same value as [`Depth4BitsPerPixel`](#field-bitdepthdepth4bitsperpixel--3).
+Indicates that the frame is 16-color (4 bits per pixel). Same value as [`BitDepth.Depth4BitsPerPixel`](#field-bitdepthdepth4bitsperpixel--3).
 
 --------------------------------------------------
 ## Field: `BitDepth.Depth2Color = 4`
 
-Indicates that the frame is 2-color (1 bit per pixel). Same value as [`Depth1BitPerPixel`](#field-bitdepthdepth1bitperpixel--4).
+Indicates that the frame is 2-color (1 bit per pixel). Same value as [`BitDepth.Depth1BitPerPixel`](#field-bitdepthdepth1bitperpixel--4).
 
 --------------------------------------------------
 ## Field: `BitDepth.Depth8BitsPerPixel = 2`
 
-Indicates that the frame is 256-color (8 bits per pixel). Same value as [`Depth256Color`](#field-bitdepthdepth256color--2).
+Indicates that the frame is 256-color (8 bits per pixel). Same value as [`BitDepth.Depth256Color`](#field-bitdepthdepth256color--2).
 
 --------------------------------------------------
 ## Field: `BitDepth.Depth4BitsPerPixel = 3`
 
-Indicates that the frame is 16-color (4 bits per pixel). Same value as [`Depth16Color`](#field-bitdepthdepth16color--3).
+Indicates that the frame is 16-color (4 bits per pixel). Same value as [`BitDepth.Depth16Color`](#field-bitdepthdepth16color--3).
 
 --------------------------------------------------
 ## Field: `BitDepth.Depth1BitPerPixel = 4`
 
-Indicates that the frame is 2-color (1 bit per pixel). Same value as [`Depth2Color`](#field-bitdepthdepth2color--4).
+Indicates that the frame is 2-color (1 bit per pixel). Same value as [`BitDepth.Depth2Color`](#field-bitdepthdepth2color--4).
 
 --------------------------------------------------
 ## Field: `BitDepth.Depth1BitsPerPixel = 4`
 
-Indicates that the frame is 2-color (1 bit per pixel). Same value as [`Depth2Color`](#field-bitdepthdepth2color--4).
+Indicates that the frame is 2-color (1 bit per pixel). Same value as [`BitDepth.Depth2Color`](#field-bitdepthdepth2color--4).
 
 --------------------------------------------------
 # Type: `public class UIconEdit.IconFile`
@@ -1542,7 +1604,7 @@ Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) imp
 `path` is `null`.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`Path.GetInvalidPathChars()`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
 ##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
 The specified path, filename, or both contain the system-defined maximum length.
@@ -1586,7 +1648,7 @@ Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) imp
 `path` is `null`.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`Path.GetInvalidPathChars()`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
 ##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
 The specified path, filename, or both contain the system-defined maximum length.
@@ -1728,7 +1790,7 @@ Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) imp
 `path` is `null`.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`Path.GetInvalidPathChars()`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
 ##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
 The specified path, filename, or both contain the system-defined maximum length.
@@ -1772,7 +1834,7 @@ Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) imp
 `path` is `null`.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in[`GetInvalidPathChars`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`Path.GetInvalidPathChars()`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
 
 ##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
 The specified path, filename, or both contain the system-defined maximum length.
@@ -1815,7 +1877,7 @@ Gets a valid indicating whether the specified instance is a valid [`CursorFrame`
 
 Returns a duplicate of the current instance.
 
-**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon frame and clones of each frame's [`BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-) in [`Frames`](#property-public-uiconeditcursorfilecursorframelist-frames--get-).
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon frame and clones of each frame's [`IconFrame.BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-) in [`CursorFile.Frames`](#property-public-uiconeditcursorfilecursorframelist-frames--get-).
 
 
 --------------------------------------------------
@@ -1858,13 +1920,13 @@ Sets the value at the specified index.
 * `index`: The index of the value to set.
 * `item`: The value to set.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list at a different index.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list at a different index.
 
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` is less than 0 or is greater than [`Count`](#property-public-virtual-systemint32-count--get--1).
+`index` is less than 0 or is greater than [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
 ## Method: `public System.Boolean Add(UIconEdit.CursorFrame item)`
@@ -1872,7 +1934,7 @@ Sets the value at the specified index.
 Adds the specified cursor frame to the list.
 * `item`: The cursor frame to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same[`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
 
 
 --------------------------------------------------
@@ -1882,7 +1944,7 @@ Inserts the specified cursor frame into the list at the specified index.
 * `index`: The index at which the cursor frame will be inserted.
 * `item`: The cursor frame to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same[`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
 
 
 --------------------------------------------------
@@ -1894,12 +1956,12 @@ Removes the element at the specified index.
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get--1).
+`index` is less than 0 or is greater than or equal to [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
 ## Method: `public void RemoveAndDisposeAt(System.Int32 index)`
 
-Removes the element at the specified index and, if it does not exist elsewhere in the file, immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
+Removes the element at the specified index and, if it does not exist elsewhere in the file, immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
 * `index`: The index of the icon frame to remove.
 
 --------------------------------------------------
@@ -1914,7 +1976,7 @@ Removes the specified cursor frame from the list.
 --------------------------------------------------
 ## Method: `public System.Boolean RemoveAndDispose(UIconEdit.CursorFrame item)`
 
-Removes the specified cursor frame from the list and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
+Removes the specified cursor frame from the list and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
 * `item`: The cursor frame to to remove from the list.
 
 **Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found and successfully removed; `false` otherwise.
@@ -1926,16 +1988,16 @@ Removes the specified cursor frame from the list and immediately calls [`Dispose
 Removes an element similar to the specified cursor frame from the list.
 * `item`: The cursor frame to to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
 
 
 --------------------------------------------------
 ## Method: `public System.Boolean RemoveAndDisposeSimilar(UIconEdit.CursorFrame item)`
 
-Removes the specified cursor frame from the list, immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
+Removes the specified cursor frame from the list, immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
 * `item`: The cursor frame to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
 
 
 --------------------------------------------------
@@ -1950,7 +2012,7 @@ Copies all elements in the list to the specified array.
 `array` is `null`.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The length of `array` is less than [`Count`](#property-public-virtual-systemint32-count--get--1).
+The length of `array` is less than [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
 ## Method: `public virtual void CopyTo(UIconEdit.CursorFrame[] array, System.Int32 arrayIndex)`
@@ -1968,7 +2030,7 @@ Copies all elements in the list to the specified array, starting at the specifie
 `arrayIndex` is less than 0.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The length of `array` minus `arrayIndex` is less than [`Count`](#property-public-virtual-systemint32-count--get--1).
+The length of `array` minus `arrayIndex` is less than [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
 ## Method: `public void CopyTo(System.Int32 index, UIconEdit.CursorFrame[] array, System.Int32 arrayIndex, System.Int32 count)`
@@ -2004,7 +2066,7 @@ Removes all elements from the collection.
 --------------------------------------------------
 ## Method: `public void ClearAndDispose()`
 
-Removes all elements from the collection and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1) on each one.
+Removes all elements from the collection and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1) on each one.
 
 --------------------------------------------------
 ## Method: `public virtual System.Boolean Contains(UIconEdit.CursorFrame item)`
@@ -2021,7 +2083,7 @@ Determines if the specified cursor frame exists in the list.
 Determines if an element similar to the specified cursor frame exists in the list.
 * `item`: The cursor frame to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor frame with the same with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` exists in the list; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor frame with the same with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` exists in the list; `false` otherwise.
 
 
 --------------------------------------------------
@@ -2039,7 +2101,7 @@ Gets the index of the specified cursor frame.
 Gets the index of an element similar to the specified cursor frame.
 * `item`: The cursor frame to compare.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor frame with the same [`Width`](#property-public-systemint16-width--get-set-), [`Height`](#property-public-systemint16-height--get-set-), and [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor frame with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -2067,7 +2129,7 @@ Removes all elements matching the specified predicate.
 --------------------------------------------------
 ## Method: `public System.Int32 RemoveAndDisposeWhere(System.Predicate<UIconEdit.CursorFrame> match)`
 
-Removes all elements matching the specified predicate and immediately calls [`Dispose`](#method-public-virtual-void-dispose-1).
+Removes all elements matching the specified predicate and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
 * `match`: A predicate used to define the elements to remove.
 
 **Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
@@ -2089,13 +2151,13 @@ Returns an array containing all elements in the current list.
 --------------------------------------------------
 ## Method: `public void Sort()`
 
-Sorts all elements in the list according to their [`FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
+Sorts all elements in the list according to their [`IconFrame.FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
 
 --------------------------------------------------
 ## Method: `public void Sort(System.Collections.Generic.IComparer<UIconEdit.CursorFrame> comparer)`
 
 Sorts all elements in the list according to the specified comparer.
-* `comparer`: The comparer used to compare each [`CursorFrame`](#type-public-class-uiconeditcursorframe), or `null` to use their [`FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
+* `comparer`: The comparer used to compare each [`CursorFrame`](#type-public-class-uiconeditcursorframe), or `null` to use their [`IconFrame.FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
 
 ### Exceptions
 
@@ -2131,7 +2193,7 @@ Gets and sets the cursor frame at the specified index.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
 
-`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get--1).
+`index` is less than 0 or is greater than or equal to [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 -OR-
 

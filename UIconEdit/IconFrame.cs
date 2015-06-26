@@ -227,7 +227,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentOutOfRangeException">
         /// In a set operation, the specified value is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public short Width
+        public virtual short Width
         {
             get { return _width; }
             set { _setSize(ref _width, value, null); }
@@ -242,7 +242,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentOutOfRangeException">
         /// In a set operation, the specified value is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public short Height
+        public virtual short Height
         {
             get { return _height; }
             set { _setSize(ref _height, value, null); }
@@ -613,7 +613,7 @@ namespace UIconEdit
         /// <para><paramref name="value"/> does not translate to a valid <see cref="UIconEdit.BitDepth"/> value.</para>
         /// </exception>
         /// <remarks>
-        /// <para><paramref name="value"/> is parsed in a different manner from <see cref="M:System.Enum.Parse"/>.</para>
+        /// <para><paramref name="value"/> is parsed in a different manner from <see cref="M:Enum.Parse"/>.</para>
         /// <para>First of all, all non-alphanumeric characters are stripped. If <paramref name="value"/> is entirely numeric, or begins with "Depth"
         /// followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the
         /// integer <see cref="UIconEdit.BitDepth"/> value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits
@@ -658,7 +658,7 @@ namespace UIconEdit
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if <paramref name="value"/> was successfully parsed; <c>false</c> otherwise.</returns>
         /// <remarks>
-        /// <para><paramref name="value"/> is parsed in a different manner from <see cref="M:System.Enum.TryParse"/>.</para>
+        /// <para><paramref name="value"/> is parsed in a different manner from <see cref="M:Enum.TryParse"/>.</para>
         /// <para>First of all, all non-alphanumeric characters are stripped. If <paramref name="value"/> is entirely numeric, or begins with "Depth"
         /// followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the
         /// integer <see cref="UIconEdit.BitDepth"/> value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits
@@ -862,7 +862,12 @@ namespace UIconEdit
         /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// <para><paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than
+        ///  <see cref="IconFrame.MaxDimension"/>.</para>
+        /// <para>-OR-</para>
+        /// <para><paramref name="hotspotX"/> is greater than <paramref name="width"/>.</para>
+        /// <para>-OR-</para>
+        /// <para><paramref name="hotspotY"/> is greater than <paramref name="height"/>.</para>
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
@@ -870,8 +875,8 @@ namespace UIconEdit
         public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
             : base(baseImage, width, height, bitDepth, alphaThreshold)
         {
-            _x = hotspotX;
-            _y = hotspotY;
+            _setX(hotspotX, "hotspotX");
+            _setY(hotspotY, "hotspotY");
         }
 
         /// <summary>
@@ -890,7 +895,12 @@ namespace UIconEdit
         /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// <para><paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than
+        /// <see cref="IconFrame.MaxDimension"/>.</para>
+        /// <para>-OR-</para>
+        /// <para><paramref name="hotspotX"/> is greater than <paramref name="width"/>.</para>
+        /// <para>-OR-</para>
+        /// <para><paramref name="hotspotY"/> is greater than <paramref name="height"/>.</para>
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
@@ -965,6 +975,12 @@ namespace UIconEdit
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
         /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>-OR-</para>
+        /// <para><paramref name="hotspotX"/> is greater than the width of <paramref name="baseImage"/>.</para>
+        /// <para>-OR-</para>
+        /// <para><paramref name="hotspotY"/> is greater than the height of <paramref name="baseImage"/>.</para>
+        /// </exception>
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
         /// </exception>
@@ -974,8 +990,8 @@ namespace UIconEdit
         public CursorFrame(Image baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
             : base(baseImage, bitDepth, alphaThreshold)
         {
-            _x = hotspotX;
-            _y = hotspotY;
+            _setX(hotspotX, "hotspotX");
+            _setY(hotspotY, "hotspotY");
         }
 
         /// <summary>
@@ -987,6 +1003,12 @@ namespace UIconEdit
         /// <param name="hotspotY">The vertical offset of the cursor's hotspot from the top of the cursor in pixels.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>-OR-</para>
+        /// <para><paramref name="hotspotX"/> is greater than the width of <paramref name="baseImage"/>.</para>
+        /// <para>-OR-</para>
+        /// <para><paramref name="hotspotY"/> is greater than the height of <paramref name="baseImage"/>.</para>
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
@@ -1051,8 +1073,48 @@ namespace UIconEdit
         internal CursorFrame(BitDepth bitDepth, Bitmap baseImage, ushort hotspotX, ushort hotspotY)
             : base(baseImage, bitDepth)
         {
-            _x = hotspotX;
-            _y = hotspotY;
+            _setX(hotspotX, "hotspotX");
+            _setY(hotspotY, "hotspotY");
+        }
+
+        /// <summary>
+        /// Gets and sets the resampled width of the icon.
+        /// In a set operation, if the specified value is less than <see cref="HotspotX"/>,
+        /// <see cref="HotspotX"/> is automatically resized to this value.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// In a set operation, the specified value is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// </exception>
+        public override short Width
+        {
+            set
+            {
+                base.Width = value;
+                _x = (ushort)Math.Min(value, _x);
+            }
+        }
+
+        /// <summary>
+        /// Gets and sets the resampled height of the icon.
+        /// In a set operation, if the specified value is less than <see cref="HotspotY"/>,
+        /// <see cref="HotspotY"/> is automatically resized to this value.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// In a set operation, the specified value is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// </exception>
+        public override short Height
+        {
+            set
+            {
+                base.Height = value;
+                _y = (ushort)Math.Min(value, _y);
+            }
+        }
+
+        private void _setX(ushort value, string paramName)
+        {
+            if (value > Width) throw new ArgumentOutOfRangeException(paramName, value, "The hotspot X position is greater than the width of the image.");
+            _x = value;
         }
 
         private ushort _x;
@@ -1062,7 +1124,12 @@ namespace UIconEdit
         public ushort HotspotX
         {
             get { return _x; }
-            set { _x = value; }
+            set { _setX(value, null); }
+        }
+
+        private void _setY(ushort value, string paramName)
+        {
+            if (value > Height) throw new ArgumentOutOfRangeException(paramName, value, "The hotspot Y position is greater than the height of the image.");
         }
 
         private ushort _y;
@@ -1072,7 +1139,7 @@ namespace UIconEdit
         public ushort HotspotY
         {
             get { return _y; }
-            set { _y = value; }
+            set { _setY(value, null); }
         }
 
         /// <summary>

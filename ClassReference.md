@@ -570,17 +570,17 @@ Advances the enumerator to the next position in the list.
 Gets the element at the current position in the enumerator.
 
 --------------------------------------------------
-# Type: `public struct UIconEdit.IconTypeCode`
+# Type: `public enum UIconEdit.IconTypeCode`
 
 The type code for an icon file.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconTypeCode Icon`
+## Field: `IconTypeCode.Icon = 1`
 
 Indicates an icon (.ICO) file.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconTypeCode Cursor`
+## Field: `IconTypeCode.Cursor = 2`
 
 Indicates a cursor (.CUR) file.
 
@@ -679,97 +679,97 @@ Gets the index in the icon file of the icon frame which caused this exception, o
 Gets an object whose value caused the error, or `null` if there was no such value.
 
 --------------------------------------------------
-# Type: `public struct UIconEdit.IconErrorCode`
+# Type: `public enum UIconEdit.IconErrorCode`
 
 Indicates the cause of an [`IconLoadException`](#type-public-class-uiconediticonloadexception).
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode Unknown`
+## Field: `IconErrorCode.Unknown = 0`
 
 Code 0: the cause of the error is unknown.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode InvalidFormat`
+## Field: `IconErrorCode.InvalidFormat = 1`
 
 Code 0x1: The file is not a valid cursor or icon format. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode ZeroFrames`
+## Field: `IconErrorCode.ZeroFrames = 2`
 
 Code 0x2: The icon contains zero frames. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode ResourceTooSmall`
+## Field: `IconErrorCode.ResourceTooSmall = 3`
 
 Code 0x3: One of the icon directory entries has a length less than or equal to 40 bytes, which is logically too small for either a BMP or a PNG file.[`Value`](#property-public-systemobject-value--get-) contains the length. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode ResourceTooEarly`
+## Field: `IconErrorCode.ResourceTooEarly = 4`
 
 Code 0x4: One of the icon directory entries has a starting offset which would overlap with the list of entries.[`Value`](#property-public-systemobject-value--get-) contains the offset. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode ResourceOverlap`
+## Field: `IconErrorCode.ResourceOverlap = 5`
 
 Code 0x5: One or more of the icon directory entries have overlapping offset/length combinations. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode InvalidFrameType`
+## Field: `IconErrorCode.InvalidFrameType = 4096`
 
 Code 0x1000: the file type of a frame is invalid.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode InvalidBitDepth`
+## Field: `IconErrorCode.InvalidBitDepth = 4097`
 
 Code 0x1001: the file is an icon, and an icon directory entry has a bit depth with any value other than 0, 1, 4, 8, 24, or 32.[`Value`](#property-public-systemobject-value--get-) contains the bit depth.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode ZeroValidFrames`
+## Field: `IconErrorCode.ZeroValidFrames = 4098`
 
 There are no remaining valid frames after processing. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode InvalidPngFile`
+## Field: `IconErrorCode.InvalidPngFile = 4352`
 
 Code 0x1100: an error occurred when attempting to load a PNG frame. The inner exception may contain more information.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode InvalidPngSize`
+## Field: `IconErrorCode.InvalidPngSize = 4354`
 
-Code 0x1102: the width or height of a PNG frame is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).[`Value`](#property-public-systemobject-value--get-) contains the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
+Code 0x1102: the width or height of a PNG frame is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).[`Value`](#property-public-systemobject-value--get-) contains the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode PngSizeMismatch`
+## Field: `IconErrorCode.PngSizeMismatch = 4355`
 
 Code 0x1105: the width or height of a PNG frame does not match the width or height listed in the icon directory entry.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode InvalidBmpFile`
+## Field: `IconErrorCode.InvalidBmpFile = 4608`
 
 Code 0x1204: an error occurred when attempting to process a BMP frame. The inner exception may contain more information.[`Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx) in which the [`Tuple`Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx) is the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`Tuple`Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx) is the actual size.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode InvalidBmpBitDepth`
+## Field: `IconErrorCode.InvalidBmpBitDepth = 4609`
 
 Code 0x1201 the bit depth of a BMP frame is not supported.[`Value`](#property-public-systemobject-value--get-) contains the bit depth.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode InvalidBmpSize`
+## Field: `IconErrorCode.InvalidBmpSize = 4610`
 
-Code 0x1202: the width or height of a BMP frame is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension). The maximum height is doubled in images with a bit depth less than 32.[`Value`](#property-public-systemobject-value--get-) contains the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
+Code 0x1202: the width or height of a BMP frame is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768). The maximum height is doubled in images with a bit depth less than 32.[`Value`](#property-public-systemobject-value--get-) contains the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode BmpHeightMismatch`
+## Field: `IconErrorCode.BmpHeightMismatch = 4611`
 
 Code 0x1203: the width or height of a BMP frame does not match the width or height listed in the icon directory entry.[`Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx) in which the [`Tuple`Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx) is the [`Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`Tuple`Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx) is the actual size.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode InvalidBmpHeightOdd`
+## Field: `IconErrorCode.InvalidBmpHeightOdd = 4612`
 
 Code 0x1204: the height of a BMP frame is an odd number, indicating that there is no AND (transparency) mask.[`Value`](#property-public-systemobject-value--get-) contains the [`Height`](https://msdn.microsoft.com/en-us/library/system.drawing.image.height.aspx) of the image.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.IconErrorCode BmpBitDepthMismatch`
+## Field: `IconErrorCode.BmpBitDepthMismatch = 4613`
 
 Code 0x1205: there is a mismatch between the bit depth of a BMP frame and the expected bit depth of the file.[`Value`](#property-public-systemobject-value--get-) contains a [`Tuple`2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.aspx) in which the [`Tuple`Item1`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item1.aspx) is the bit depth listed in the icon directory entry, and [`Tuple`Item2`](https://msdn.microsoft.com/en-us/library/system.tuple`2.item2.aspx) is the bit depth listed in the BMP frame.
 
@@ -785,12 +785,12 @@ A delegate function for handling [`IconLoadException`](#type-public-class-uicone
 Represents a single frame in an icon.
 
 --------------------------------------------------
-## Field: `public static System.Int32 MinDimension`
+## Field: `public const System.Int32 MinDimension = 1`
 
 The minimum dimensions of an icon. 1 pixel in size.
 
 --------------------------------------------------
-## Field: `public static System.Int32 MaxDimension`
+## Field: `public const System.Int32 MaxDimension = 768`
 
 The maximum dimensions of an icon. 768 as of Windows 10.
 
@@ -810,10 +810,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -833,10 +833,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -855,10 +855,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -876,10 +876,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -929,7 +929,7 @@ Gets and sets the resampled width of the icon.
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+In a set operation, the specified value is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 --------------------------------------------------
 ## Property: `public System.Int16 Height { get; set; }`
@@ -939,7 +939,7 @@ Gets and sets the resampled height of the icon.
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+In a set operation, the specified value is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 --------------------------------------------------
 ## Property: `public UIconEdit.BitDepth BitDepth { get; set; }`
@@ -949,7 +949,7 @@ Gets and sets the bit depth of the current instance. This property is ignored if
 ### Exceptions
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-In a set operation, the specified value is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+In a set operation, the specified value is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 --------------------------------------------------
 ## Property: `public System.Drawing.Imaging.PixelFormat PixelFormat { get; }`
@@ -959,7 +959,7 @@ Gets the pixel format of the resulting image file.
 --------------------------------------------------
 ## Property: `public System.Byte AlphaThreshold { get; set; }`
 
-Gets and sets a value indicating the threshold of alpha values at [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-)s below [`Bit32`](#field-public-static-uiconeditbitdepth-bit32). Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
+Gets and sets a value indicating the threshold of alpha values at [`BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-)s below [`Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0). Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
 
 --------------------------------------------------
 ## Property: `public System.Drawing.Drawing2D.InterpolationMode DrawInterpolationMode { get; set; }`
@@ -1004,10 +1004,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1029,10 +1029,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1053,10 +1053,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1076,10 +1076,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+`width` or `height` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1100,10 +1100,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1123,10 +1123,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1145,10 +1145,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1166,10 +1166,10 @@ Creates a new instance with the specified image.
 `baseImage` is `null`.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-struct-uiconeditbitdepth) value.
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`MinDimension`](#field-public-static-systemint32-mindimension) or is greater than [`MaxDimension`](#field-public-static-systemint32-maxdimension).
+The width or height of `baseImage` is less than [`MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`MaxDimension`](#field-public-const-systemint32-maxdimension--768).
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `baseImage` is disposed.
@@ -1313,34 +1313,54 @@ Determines inequality of two [`FrameKey`](#type-public-struct-uiconeditframekey)
 
 
 --------------------------------------------------
-# Type: `public struct UIconEdit.BitDepth`
+# Type: `public enum UIconEdit.BitDepth`
 
 Indicates the bit depth of an icon frame.
 
 --------------------------------------------------
-## Field: `public static UIconEdit.BitDepth Bit32`
+## Field: `BitDepth.Depth32BitsPerPixel = 0`
 
 Indicates that the frame is full color with alpha (32 bits per pixel).
 
 --------------------------------------------------
-## Field: `public static UIconEdit.BitDepth Bit24`
+## Field: `BitDepth.Depth24BitsPerPixel = 1`
 
-Indicates that the frame is full color without alpha (24 bits per pixel plus 1 bit per pixel alpha mask).
-
---------------------------------------------------
-## Field: `public static UIconEdit.BitDepth Color256`
-
-Indicates that the frame is 256-color (8 bits per pixel plus 1 bit per pixel alpha mask)
+Indicates that the frame is full color without alpha (24 bits per pixel).
 
 --------------------------------------------------
-## Field: `public static UIconEdit.BitDepth Color16`
+## Field: `BitDepth.Depth256Color = 2`
 
-Indicates that the frame is 16-color (4 bits per pixel plus 1 bit per pixel alpha mask).
+Indicates that the frame is 256-color (8 bits per pixel). Same value as [`Depth8BitsPerPixel`](#field-bitdepthdepth8bitsperpixel--2).
 
 --------------------------------------------------
-## Field: `public static UIconEdit.BitDepth Color2`
+## Field: `BitDepth.Depth16Color = 3`
 
-Indicates that the frame is 2-color (1 bit per pixel plus 1 bit per pixel alpha mask).
+Indicates that the frame is 16-color (4 bits per pixel). Same value as [`Depth4BitsPerPixel`](#field-bitdepthdepth4bitsperpixel--3).
+
+--------------------------------------------------
+## Field: `BitDepth.Depth2Color = 4`
+
+Indicates that the frame is 2-color (1 bit per pixel). Same value as [`Depth1BitPerPixel`](#field-bitdepthdepth1bitperpixel--4).
+
+--------------------------------------------------
+## Field: `BitDepth.Depth8BitsPerPixel = 2`
+
+Indicates that the frame is 256-color (8 bits per pixel). Same value as [`Depth256Color`](#field-bitdepthdepth256color--2).
+
+--------------------------------------------------
+## Field: `BitDepth.Depth4BitsPerPixel = 3`
+
+Indicates that the frame is 16-color (4 bits per pixel). Same value as [`Depth16Color`](#field-bitdepthdepth16color--3).
+
+--------------------------------------------------
+## Field: `BitDepth.Depth1BitPerPixel = 4`
+
+Indicates that the frame is 2-color (1 bit per pixel). Same value as [`Depth2Color`](#field-bitdepthdepth2color--4).
+
+--------------------------------------------------
+## Field: `BitDepth.Depth1BitsPerPixel = 4`
+
+Indicates that the frame is 2-color (1 bit per pixel). Same value as [`Depth2Color`](#field-bitdepthdepth2color--4).
 
 --------------------------------------------------
 # Type: `public class UIconEdit.IconFile`
@@ -2042,24 +2062,11 @@ Advances the enumerator to the next position in the list.
 ## Property: `public UIconEdit.CursorFrame Current { get; }`
 
 Gets the element at the current position in the enumerator.
----------------------------------
-##Property: `CursorFile.CursorFrameList.Item(System.Int32 index)`
+y: `public UIconEdit.CursorFrame Current { get; }`
 
-Gets and sets the cursor frame at the specified index.
-* `index`: The cursor frame at the specified index.
-
-### Exceptions
-
-* [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx) - 
-`index` is less than 0 or is greater than or equal to [`Count`](#property-public-virtual-systemint32-count--get--1).
-
--OR-
-
-In a set operation, the specified value is `null`.
-
-
-* [`NotSupportedException`](https://msdn.microsoft.com/en-us--------------------------
-##Method: `public System.Boolean MoveNext()`
+Gets the element at the current position in the enumerator.
+-----------------------------------------------
+## Method: `public System.Boolean MoveNext()`
 
 Advances the enumerator to the next position in the list.
 
@@ -2067,6 +2074,6 @@ Advances the enumerator to the next position in the list.
 
 
 --------------------------------------------------
-##Property: `public UIconEdit.CursorFrame Current { get; }`
+## Property: `public UIconEdit.CursorFrame Current { get; }`
 
 Gets the element at the current position in the enumerator.

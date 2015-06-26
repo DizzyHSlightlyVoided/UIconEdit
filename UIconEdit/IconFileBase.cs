@@ -279,26 +279,26 @@ namespace UIconEdit
                             #region Load Png
                             if (loadedId == IconTypeCode.Cursor)
                             {
-                                bitDepth = BitDepth.Bit32;
+                                bitDepth = BitDepth.Depth32BitsPerPixel;
                             }
                             else
                             {
                                 switch (entry.YBitsPerpixel)
                                 {
                                     case 1:
-                                        bitDepth = BitDepth.Color2;
+                                        bitDepth = BitDepth.Depth2Color;
                                         break;
                                     case 4:
-                                        bitDepth = BitDepth.Color16;
+                                        bitDepth = BitDepth.Depth16Color;
                                         break;
                                     case 8:
-                                        bitDepth = BitDepth.Color256;
+                                        bitDepth = BitDepth.Depth256Color;
                                         break;
                                     case 24:
-                                        bitDepth = BitDepth.Bit24;
+                                        bitDepth = BitDepth.Depth24BitsPerPixel;
                                         break;
                                     default: //32
-                                        bitDepth = BitDepth.Bit32;
+                                        bitDepth = BitDepth.Depth32BitsPerPixel;
                                         break;
                                 }
                             }
@@ -351,19 +351,19 @@ namespace UIconEdit
                                 switch (bitsPerPixel)
                                 {
                                     case 1:
-                                        bitDepth = BitDepth.Color2;
+                                        bitDepth = BitDepth.Depth2Color;
                                         break;
                                     case 4:
-                                        bitDepth = BitDepth.Color16;
+                                        bitDepth = BitDepth.Depth16Color;
                                         break;
                                     case 8:
-                                        bitDepth = BitDepth.Color256;
+                                        bitDepth = BitDepth.Depth256Color;
                                         break;
                                     case 24:
-                                        bitDepth = BitDepth.Bit24;
+                                        bitDepth = BitDepth.Depth24BitsPerPixel;
                                         break;
                                     case 32:
-                                        bitDepth = BitDepth.Bit32;
+                                        bitDepth = BitDepth.Depth32BitsPerPixel;
                                         break;
                                     default:
                                         throw new IconLoadException(IconErrorCode.InvalidBmpBitDepth, bitsPerPixel, i);
@@ -374,7 +374,7 @@ namespace UIconEdit
 
                                 int testHeight;
 
-                                if (bitDepth == BitDepth.Bit32 && entry.BHeight != 0 && entry.BHeight == height)
+                                if (bitDepth == BitDepth.Depth32BitsPerPixel && entry.BHeight != 0 && entry.BHeight == height)
                                 {
                                     testHeight = height;
                                 }

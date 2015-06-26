@@ -229,13 +229,13 @@ namespace UIconEdit
         {
             switch (frame.BitDepth)
             {
-                case BitDepth.Color2:
+                case BitDepth.Depth2Color:
                     return 1;
-                case BitDepth.Color16:
+                case BitDepth.Depth16Color:
                     return 4;
-                case BitDepth.Color256:
+                case BitDepth.Depth256Color:
                     return 8;
-                case BitDepth.Bit24:
+                case BitDepth.Depth24BitsPerPixel:
                     return 24;
                 default:
                     return 32;

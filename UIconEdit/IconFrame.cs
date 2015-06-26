@@ -250,11 +250,11 @@ namespace UIconEdit
         {
             switch (depth)
             {
-                case BitDepth.Bit24:
-                case BitDepth.Bit32:
-                case BitDepth.Color2:
-                case BitDepth.Color16:
-                case BitDepth.Color256:
+                case BitDepth.Depth24BitsPerPixel:
+                case BitDepth.Depth32BitsPerPixel:
+                case BitDepth.Depth2Color:
+                case BitDepth.Depth16Color:
+                case BitDepth.Depth256Color:
                     break;
                 default:
                     throw new InvalidEnumArgumentException(null, (int)depth, typeof(BitDepth));
@@ -284,13 +284,13 @@ namespace UIconEdit
             {
                 switch (_depth)
                 {
-                    case BitDepth.Color2:
+                    case BitDepth.Depth2Color:
                         return PixelFormat.Format1bppIndexed;
-                    case BitDepth.Color16:
+                    case BitDepth.Depth16Color:
                         return PixelFormat.Format4bppIndexed;
-                    case BitDepth.Color256:
+                    case BitDepth.Depth256Color:
                         return PixelFormat.Format8bppIndexed;
-                    case BitDepth.Bit24:
+                    case BitDepth.Depth24BitsPerPixel:
                         return PixelFormat.Format24bppRgb;
                     default:
                         return PixelFormat.Format32bppArgb;
@@ -306,13 +306,13 @@ namespace UIconEdit
                 {
                     default: //Bit32
                         return 32;
-                    case BitDepth.Bit24:
+                    case BitDepth.Depth24BitsPerPixel:
                         return 24;
-                    case BitDepth.Color2:
+                    case BitDepth.Depth2Color:
                         return 1;
-                    case BitDepth.Color16:
+                    case BitDepth.Depth16Color:
                         return 4;
-                    case BitDepth.Color256:
+                    case BitDepth.Depth256Color:
                         return 8;
                 }
             }
@@ -320,7 +320,7 @@ namespace UIconEdit
 
         private byte _alphaThreshold;
         /// <summary>
-        /// Gets and sets a value indicating the threshold of alpha values at <see cref="BitDepth"/>s below <see cref="UIconEdit.BitDepth.Bit32"/>.
+        /// Gets and sets a value indicating the threshold of alpha values at <see cref="BitDepth"/>s below <see cref="UIconEdit.BitDepth.Depth32BitsPerPixel"/>.
         /// Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
         /// </summary>
         public byte AlphaThreshold
@@ -413,7 +413,7 @@ namespace UIconEdit
 
             bool isPng = _width > byte.MaxValue || _height > byte.MaxValue;
 
-            if (_image is Bitmap && isPng && _depth == BitDepth.Bit32 && _image.PixelFormat == PixelFormat.Format32bppArgb
+            if (_image is Bitmap && isPng && _depth == BitDepth.Depth32BitsPerPixel && _image.PixelFormat == PixelFormat.Format32bppArgb
                 && _image.Width == _width && _image.Height == _height)
             {
                 paletteCount = 0;
@@ -455,7 +455,7 @@ namespace UIconEdit
                 alphaMask = alphaTemp.Clone(fullRect, formatAlpha);
             }
 
-            if (_depth == BitDepth.Bit32)
+            if (_depth == BitDepth.Depth32BitsPerPixel)
             {
                 paletteCount = 0;
                 return fullColor;
@@ -479,7 +479,7 @@ namespace UIconEdit
 
             fullColor.UnlockBits(bmpData);
 
-            if (_depth == BitDepth.Bit24)
+            if (_depth == BitDepth.Depth24BitsPerPixel)
             {
                 paletteCount = 0;
 
@@ -496,10 +496,10 @@ namespace UIconEdit
 
             switch (_depth)
             {
-                case BitDepth.Color2:
+                case BitDepth.Depth2Color:
                     paletteCount = 2;
                     break;
-                case BitDepth.Color16:
+                case BitDepth.Depth16Color:
                     paletteCount = 16;
                     break;
                 default:
@@ -532,14 +532,14 @@ namespace UIconEdit
 
             fullColor.Dispose();
 
-            if (_depth == BitDepth.Color256)
+            if (_depth == BitDepth.Depth256Color)
                 return quantized;
 
             Bitmap quant2;
 
             BitmapData quant256data = quantized.LockBits(fullRect, ImageLockMode.ReadOnly, format8);
 
-            if (_depth == BitDepth.Color2)
+            if (_depth == BitDepth.Depth2Color)
             {
                 quant2 = quantized.Clone(fullRect, PixelFormat.Format1bppIndexed);
             }
@@ -1045,22 +1045,38 @@ namespace UIconEdit
         /// <summary>
         /// Indicates that the frame is full color with alpha (32 bits per pixel).
         /// </summary>
-        Bit32,
+        Depth32BitsPerPixel = 0,
         /// <summary>
-        /// Indicates that the frame is full color without alpha (24 bits per pixel plus 1 bit per pixel alpha mask).
+        /// Indicates that the frame is full color without alpha (24 bits per pixel).
         /// </summary>
-        Bit24,
+        Depth24BitsPerPixel = 1,
         /// <summary>
-        /// Indicates that the frame is 256-color (8 bits per pixel plus 1 bit per pixel alpha mask)
+        /// Indicates that the frame is 256-color (8 bits per pixel). Same value as <see cref="Depth8BitsPerPixel"/>.
         /// </summary>
-        Color256,
+        Depth256Color = 2,
         /// <summary>
-        /// Indicates that the frame is 16-color (4 bits per pixel plus 1 bit per pixel alpha mask).
+        /// Indicates that the frame is 16-color (4 bits per pixel). Same value as <see cref="Depth4BitsPerPixel"/>.
         /// </summary>
-        Color16,
+        Depth16Color = 3,
         /// <summary>
-        /// Indicates that the frame is 2-color (1 bit per pixel plus 1 bit per pixel alpha mask).
+        /// Indicates that the frame is 2-color (1 bit per pixel). Same value as <see cref="Depth1BitPerPixel"/>.
         /// </summary>
-        Color2,
+        Depth2Color = 4,
+        /// <summary>
+        /// Indicates that the frame is 256-color (8 bits per pixel). Same value as <see cref="Depth256Color"/>.
+        /// </summary>
+        Depth8BitsPerPixel = Depth256Color,
+        /// <summary>
+        /// Indicates that the frame is 16-color (4 bits per pixel). Same value as <see cref="Depth16Color"/>.
+        /// </summary>
+        Depth4BitsPerPixel = Depth16Color,
+        /// <summary>
+        /// Indicates that the frame is 2-color (1 bit per pixel). Same value as <see cref="Depth2Color"/>.
+        /// </summary>
+        Depth1BitPerPixel = Depth2Color,
+        /// <summary>
+        /// Indicates that the frame is 2-color (1 bit per pixel). Same value as <see cref="Depth2Color"/>.
+        /// </summary>
+        Depth1BitsPerPixel = Depth2Color,
     }
 }

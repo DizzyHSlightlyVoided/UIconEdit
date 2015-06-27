@@ -46,7 +46,7 @@ namespace UIconEdit.Builder
                     Console.Write(string.Format("Testing string \"{0}\": ", str));
 
                     BitDepth result;
-                    if (IconFrame.TryParseBitDepth(str, out result))
+                    if (IconEntry.TryParseBitDepth(str, out result))
                     {
                         Console.WriteLine("Succeeded! BitDepth." + result);
                     }
@@ -59,13 +59,13 @@ namespace UIconEdit.Builder
             Console.WriteLine("Loading file Gradient.ico ...");
             using (IconFile iconFile = IconFile.Load("Gradient.ico"))
             {
-                IconFrame[] frames = iconFile.Frames.ToArray();
-                for (int i = 0; i < frames.Length; i++)
+                IconEntry[] entries = iconFile.Entries.ToArray();
+                for (int i = 0; i < entries.Length; i++)
                 {
-                    var frame = frames[i];
-                    string filename = string.Format("Gradient{0}bit{1}x{2}.png", frame.BitsPerPixel, frame.Width, frame.Height);
+                    var entry = entries[i];
+                    string filename = string.Format("Gradient{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height);
                     Console.WriteLine("Saving {0} ...", filename);
-                    frame.BaseImage.Save(filename, ImageFormat.Png);
+                    entry.BaseImage.Save(filename, ImageFormat.Png);
                 }
                 Console.WriteLine("Saving GradientOut.ico ...");
                 iconFile.Save("GradientOut.ico");
@@ -74,13 +74,13 @@ namespace UIconEdit.Builder
             Console.WriteLine("Loading file Crosshair.cur ...");
             using (CursorFile cursorFile = CursorFile.Load("Crosshair.cur"))
             {
-                CursorFrame[] cursorFrames = cursorFile.Frames.ToArray();
-                for (int i = 0; i < cursorFrames.Length; i++)
+                CursorEntry[] cursorEntries = cursorFile.Entries.ToArray();
+                for (int i = 0; i < cursorEntries.Length; i++)
                 {
-                    var frame = cursorFrames[i];
-                    string filename = string.Format("Crosshair{0}bit{1}x{2}.png", frame.BitsPerPixel, frame.Width, frame.Height);
+                    var entry = cursorEntries[i];
+                    string filename = string.Format("Crosshair{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height);
                     Console.WriteLine("Saving {0} ...", filename);
-                    frame.BaseImage.Save(filename, ImageFormat.Png);
+                    entry.BaseImage.Save(filename, ImageFormat.Png);
                 }
 
                 Console.WriteLine("Saving CrosshairOut.cur ...");

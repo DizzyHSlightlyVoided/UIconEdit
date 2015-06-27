@@ -128,7 +128,7 @@ namespace UIconEdit.Builder
                 if (outputFile == null || imageParams == null)
                     throw new ArgumentException("Missing parameters!");
 
-                FrameItem item = new FrameItem(IconFrame.DefaultAlphaThreshold);
+                EntryItem item = new EntryItem(IconEntry.DefaultAlphaThreshold);
                 _images = new Dictionary<string, Image>();
 
                 foreach (string[] curLine in imageParams.Select(s => s.Trim().Split(default(string[]), StringSplitOptions.RemoveEmptyEntries)))
@@ -164,7 +164,7 @@ namespace UIconEdit.Builder
                         }
 
                         BitDepth depth;
-                        if (IconFrame.TryParseBitDepth(curWord, out depth))
+                        if (IconEntry.TryParseBitDepth(curWord, out depth))
                         {
                             if (seen.HasFlag(Seen.Depth))
                                 throw new ArgumentException("Duplicate bit-depth parameter: " + depth);
@@ -230,8 +230,8 @@ namespace UIconEdit.Builder
                             short width, height;
                             if (!short.TryParse(first, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out width) ||
                                 !short.TryParse(second, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out height) ||
-                                width < IconFrame.MinDimension || height < IconFrame.MinDimension ||
-                                width > IconFrame.MaxDimension || height > IconFrame.MaxDimension)
+                                width < IconEntry.MinDimension || height < IconEntry.MinDimension ||
+                                width > IconEntry.MaxDimension || height > IconEntry.MaxDimension)
                                 throw new ArgumentException("Invalid size parameter: " + curWord);
 
                             item.Width = width;
@@ -250,21 +250,21 @@ namespace UIconEdit.Builder
                     if (item.Width < item.X || item.Height < item.Y)
                         throw new ArgumentException(string.Format("Hotspot {0},{1} is larger than item size {2}x{3}.", item.X, item.Y, item.Width, item.Height));
 
-                    IconFrame frame;
+                    IconEntry entry;
 
                     if (file.ID == IconTypeCode.Cursor)
-                        frame = item.GetCursorFrame();
+                        entry = item.GetCursorEntry();
                     else
-                        frame = item.GetIconFrame();
+                        entry = item.GetIconEntry();
 
-                    if (!file.Frames.Add(frame))
+                    if (!file.Entries.Add(entry))
                     {
-                        file.Frames.RemoveAndDisposeSimilar(frame);
-                        file.Frames.Add(frame);
+                        file.Entries.RemoveAndDisposeSimilar(entry);
+                        file.Entries.Add(entry);
                     }
                 }
 
-                if (file.Frames.Count == 0)
+                if (file.Entries.Count == 0)
                     throw new ArgumentException("Missing parameters!");
 
                 file.Save(outputFile);
@@ -297,14 +297,14 @@ namespace UIconEdit.Builder
             Alpha = 8,
         }
 
-        private struct FrameItem
+        private struct EntryItem
         {
-            public FrameItem(byte alpha)
+            public EntryItem(byte alpha)
                 : this(null, 0, 0, 0, 0, 0, alpha)
             {
             }
 
-            public FrameItem(Image img, short width, short height, BitDepth depth, ushort x, ushort y, byte alpha)
+            public EntryItem(Image img, short width, short height, BitDepth depth, ushort x, ushort y, byte alpha)
             {
                 Img = img;
                 Width = width;
@@ -316,7 +316,7 @@ namespace UIconEdit.Builder
                 SeenHotspot = false;
             }
 
-            public FrameItem(Image img, short width, short height, BitDepth depth, byte alpha)
+            public EntryItem(Image img, short width, short height, BitDepth depth, byte alpha)
                 : this(img, width, height, depth, 0, 0, alpha)
             {
             }
@@ -328,14 +328,14 @@ namespace UIconEdit.Builder
             public BitDepth Depth;
             internal bool SeenHotspot;
 
-            public IconFrame GetIconFrame()
+            public IconEntry GetIconEntry()
             {
-                return new IconFrame(Img, Width, Height, Depth, Alpha);
+                return new IconEntry(Img, Width, Height, Depth, Alpha);
             }
 
-            public CursorFrame GetCursorFrame()
+            public CursorEntry GetCursorEntry()
             {
-                return new CursorFrame(Img, Width, Height, Depth, X, Y, Alpha);
+                return new CursorEntry(Img, Width, Height, Depth, X, Y, Alpha);
             }
         }
 
@@ -381,10 +381,10 @@ namespace UIconEdit.Builder
             Console.WriteLine();
             Console.WriteLine("[Image options] consists of: ");
             Console.WriteLine("    /i [width]x[height] [HotspotX],[HotspotY] [Depth] a=[Alpha] f=[image path]");
-            Console.WriteLine("* /i - separates each image frame from the next. Not mandatory in text-file");
+            Console.WriteLine("* /i - separates each image entry from the next. Not mandatory in text-file");
             Console.WriteLine(" form.");
-            Console.WriteLine("* [width]x[height] - two integers between {0} and {1}, separated by the letter X.", IconFrame.MinDimension, IconFrame.MaxDimension);
-            Console.WriteLine(" Specifies the size of the icon frame.");
+            Console.WriteLine("* [width]x[height] - two integers between {0} and {1}, separated by the letter X.", IconEntry.MinDimension, IconEntry.MaxDimension);
+            Console.WriteLine(" Specifies the size of the icon entry.");
             Console.WriteLine("* [HotspotX],[HotspotY] - Two integers between 0 and the width and height,");
             Console.WriteLine(" separated by a comma. Cursors only. Specifies the offset of the cursor's");
             Console.WriteLine(" hotspot from the upper-left corner.");
@@ -400,7 +400,7 @@ namespace UIconEdit.Builder
             Console.WriteLine("* a=[Alpha] - an integer between 0 and 255, preceded by the letter A. Indicates");
             Console.WriteLine(" alpha threshold; opacity values less than this will be rendered fully");
             Console.WriteLine(" transparent below 32-bit colors, and values greater than this will be fully");
-            Console.WriteLine(" opaque. This parameter is optional and defaults to {0}.", IconFrame.DefaultAlphaThreshold);
+            Console.WriteLine(" opaque. This parameter is optional and defaults to {0}.", IconEntry.DefaultAlphaThreshold);
             Console.WriteLine("* f=[image path] - The path to the image file used. Everything between this");
             Console.WriteLine(" and the next /i are used.");
             Console.WriteLine();

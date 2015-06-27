@@ -43,9 +43,9 @@ using nQuant;
 namespace UIconEdit
 {
     /// <summary>
-    /// Represents a single frame in an icon.
+    /// Represents a single entry in an icon.
     /// </summary>
-    public class IconFrame : IDisposable
+    public class IconEntry : IDisposable
     {
         /// <summary>
         /// The default <see cref="AlphaThreshold"/> value.
@@ -73,7 +73,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public IconFrame(Image baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
+        public IconEntry(Image baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
         {
             _setImage(baseImage, "baseImage");
             _setDepth(bitDepth, "bitDepth");
@@ -101,7 +101,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public IconFrame(Image baseImage, short width, short height, BitDepth bitDepth)
+        public IconEntry(Image baseImage, short width, short height, BitDepth bitDepth)
             : this(baseImage, width, height, bitDepth, DefaultAlphaThreshold)
         {
         }
@@ -125,7 +125,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public IconFrame(Image baseImage, BitDepth bitDepth, byte alphaThreshold)
+        public IconEntry(Image baseImage, BitDepth bitDepth, byte alphaThreshold)
         {
             _setImage(baseImage, "baseImage");
             if (baseImage.Width < MinDimension || baseImage.Width > MaxDimension || baseImage.Height < MinDimension || baseImage.Height > MaxDimension)
@@ -153,12 +153,12 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public IconFrame(Image baseImage, BitDepth bitDepth)
+        public IconEntry(Image baseImage, BitDepth bitDepth)
             : this(baseImage, bitDepth, DefaultAlphaThreshold)
         {
         }
 
-        internal IconFrame(BitDepth bitDepth, Bitmap baseImage)
+        internal IconEntry(BitDepth bitDepth, Bitmap baseImage)
             : this(baseImage, bitDepth, DefaultAlphaThreshold)
         {
             _ownedImage = true;
@@ -219,9 +219,9 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Gets a key for the icon frame.
+        /// Gets a key for the icon entry.
         /// </summary>
-        public FrameKey FrameKey { get { return new FrameKey(_width, _height, _depth); } }
+        public EntryKey EntryKey { get { return new EntryKey(_width, _height, _depth); } }
 
         private short _width;
         /// <summary>
@@ -429,9 +429,9 @@ namespace UIconEdit
         /// Returns a duplicate of the current instance.
         /// </summary>
         /// <returns>A duplicate of the current instance, with its own clone of <see cref="BaseImage"/>.</returns>
-        public virtual IconFrame Clone()
+        public virtual IconEntry Clone()
         {
-            IconFrame copy = (IconFrame)MemberwiseClone();
+            IconEntry copy = (IconEntry)MemberwiseClone();
             copy._image = (Image)this._image.Clone();
             copy._ownedImage = true;
             copy.File = null;
@@ -627,19 +627,19 @@ namespace UIconEdit
         /// <example>
         /// <code>
         /// BitDepth result;
-        /// if (IconFrame.TryParse("32", out result)) Console.WriteLine("Succeeded: " + result);
+        /// if (IconEntry.TryParse("32", out result)) Console.WriteLine("Succeeded: " + result);
         /// else Console.WriteLine("Failed!");
         /// //Succeeded: BitDepth.Depth32BitsPerPixel
         /// 
-        /// if (IconFrame.TryParse("32Bit", out result)) Console.WriteLine("Succeeded: " + result);
+        /// if (IconEntry.TryParse("32Bit", out result)) Console.WriteLine("Succeeded: " + result);
         /// else Console.WriteLine("Failed");
         /// //Succeeded: BitDepth.Depth32BitsPerPixel
         /// 
-        /// if (IconFrame.TryParse("32Color", out result)) Console.WriteLine("Succeeded: " + result);
+        /// if (IconEntry.TryParse("32Color", out result)) Console.WriteLine("Succeeded: " + result);
         /// else Console.WriteLine("Failed");
         /// //Failed
         /// 
-        /// if (IconFrame.TryParse("Depth256", out result)) Console.WriteLine("Succeeded: " + result);
+        /// if (IconEntry.TryParse("Depth256", out result)) Console.WriteLine("Succeeded: " + result);
         /// else Console.WriteLine("Failed");
         /// //Succeeded: BitDepth.Depth256Color
         /// </code>
@@ -672,19 +672,19 @@ namespace UIconEdit
         /// <example>
         /// <code>
         /// BitDepth result;
-        /// if (IconFrame.TryParse("32", out result)) Console.WriteLine("Succeeded: " + result);
+        /// if (IconEntry.TryParse("32", out result)) Console.WriteLine("Succeeded: " + result);
         /// else Console.WriteLine("Failed!");
         /// //Succeeded: BitDepth.Depth32BitsPerPixel
         /// 
-        /// if (IconFrame.TryParse("32Bit", out result)) Console.WriteLine("Succeeded: " + result);
+        /// if (IconEntry.TryParse("32Bit", out result)) Console.WriteLine("Succeeded: " + result);
         /// else Console.WriteLine("Failed");
         /// //Succeeded: BitDepth.Depth32BitsPerPixel
         /// 
-        /// if (IconFrame.TryParse("32Color", out result)) Console.WriteLine("Succeeded: " + result);
+        /// if (IconEntry.TryParse("32Color", out result)) Console.WriteLine("Succeeded: " + result);
         /// else Console.WriteLine("Failed");
         /// //Failed
         /// 
-        /// if (IconFrame.TryParse("Depth256", out result)) Console.WriteLine("Succeeded: " + result);
+        /// if (IconEntry.TryParse("Depth256", out result)) Console.WriteLine("Succeeded: " + result);
         /// else Console.WriteLine("Failed");
         /// //Succeeded: BitDepth.Depth256Color
         /// </code>
@@ -836,16 +836,16 @@ namespace UIconEdit
         /// <summary>
         /// Disposes of the current instance.
         /// </summary>
-        ~IconFrame()
+        ~IconEntry()
         {
             Dispose(false);
         }
     }
 
     /// <summary>
-    /// Represents a single frame of a cursor.
+    /// Represents a single entry of a cursor.
     /// </summary>
-    public class CursorFrame : IconFrame
+    public class CursorEntry : IconEntry
     {
         /// <summary>
         /// Creates a new instance with the specified image.
@@ -865,8 +865,8 @@ namespace UIconEdit
         /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <para><paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than
-        ///  <see cref="IconFrame.MaxDimension"/>.</para>
+        /// <para><paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than
+        ///  <see cref="IconEntry.MaxDimension"/>.</para>
         /// <para>-OR-</para>
         /// <para><paramref name="hotspotX"/> is greater than <paramref name="width"/>.</para>
         /// <para>-OR-</para>
@@ -875,7 +875,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
+        public CursorEntry(Image baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
             : base(baseImage, width, height, bitDepth, alphaThreshold)
         {
             _setX(hotspotX, "hotspotX");
@@ -898,8 +898,8 @@ namespace UIconEdit
         /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <para><paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than
-        /// <see cref="IconFrame.MaxDimension"/>.</para>
+        /// <para><paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than
+        /// <see cref="IconEntry.MaxDimension"/>.</para>
         /// <para>-OR-</para>
         /// <para><paramref name="hotspotX"/> is greater than <paramref name="width"/>.</para>
         /// <para>-OR-</para>
@@ -908,7 +908,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+        public CursorEntry(Image baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
             : this(baseImage, width, height, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
         }
@@ -929,12 +929,12 @@ namespace UIconEdit
         /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
+        public CursorEntry(Image baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
             : base(baseImage, width, height, bitDepth, alphaThreshold)
         {
         }
@@ -953,12 +953,12 @@ namespace UIconEdit
         /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, short width, short height, BitDepth bitDepth)
+        public CursorEntry(Image baseImage, short width, short height, BitDepth bitDepth)
             : base(baseImage, width, height, bitDepth)
         {
         }
@@ -985,12 +985,12 @@ namespace UIconEdit
         /// <para><paramref name="hotspotY"/> is greater than the height of <paramref name="baseImage"/>.</para>
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
+        public CursorEntry(Image baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
             : base(baseImage, bitDepth, alphaThreshold)
         {
             _setX(hotspotX, "hotspotX");
@@ -1017,12 +1017,12 @@ namespace UIconEdit
         /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+        public CursorEntry(Image baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
             : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
         }
@@ -1041,12 +1041,12 @@ namespace UIconEdit
         /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, BitDepth bitDepth, byte alphaThreshold)
+        public CursorEntry(Image baseImage, BitDepth bitDepth, byte alphaThreshold)
             : base(baseImage, bitDepth, alphaThreshold)
         {
         }
@@ -1063,17 +1063,17 @@ namespace UIconEdit
         /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="baseImage"/> is disposed.
         /// </exception>
-        public CursorFrame(Image baseImage, BitDepth bitDepth)
+        public CursorEntry(Image baseImage, BitDepth bitDepth)
             : base(baseImage, bitDepth)
         {
         }
 
-        internal CursorFrame(BitDepth bitDepth, Bitmap baseImage, ushort hotspotX, ushort hotspotY)
+        internal CursorEntry(BitDepth bitDepth, Bitmap baseImage, ushort hotspotX, ushort hotspotY)
             : base(baseImage, bitDepth)
         {
             _setX(hotspotX, "hotspotX");
@@ -1086,7 +1086,7 @@ namespace UIconEdit
         /// <see cref="HotspotX"/> is automatically resized to this value.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// In a set operation, the specified value is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
         public override short Width
         {
@@ -1103,7 +1103,7 @@ namespace UIconEdit
         /// <see cref="HotspotY"/> is automatically resized to this value.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than <see cref="IconFrame.MinDimension"/> or is greater than <see cref="IconFrame.MaxDimension"/>.
+        /// In a set operation, the specified value is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
         public override short Height
         {
@@ -1155,18 +1155,18 @@ namespace UIconEdit
     }
 
     /// <summary>
-    /// Represents a simplified key for an icon frame.
+    /// Represents a simplified key for an icon entry.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct FrameKey : IEquatable<FrameKey>, IComparable<FrameKey>
+    public struct EntryKey : IEquatable<EntryKey>, IComparable<EntryKey>
     {
         /// <summary>
         /// Creates a new instance.
         /// </summary>
-        /// <param name="width">The width of the icon frame.</param>
-        /// <param name="height">The height of the icon frame.</param>
-        /// <param name="bitDepth">The bit depth of the icon frame.</param>
-        public FrameKey(short width, short height, BitDepth bitDepth)
+        /// <param name="width">The width of the icon entry.</param>
+        /// <param name="height">The height of the icon entry.</param>
+        /// <param name="bitDepth">The bit depth of the icon entry.</param>
+        public EntryKey(short width, short height, BitDepth bitDepth)
         {
             Width = width;
             Height = height;
@@ -1174,15 +1174,15 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Indicates the width of the icon frame.
+        /// Indicates the width of the icon entry.
         /// </summary>
         public short Width;
         /// <summary>
-        /// Indicates the height of the icon frame.
+        /// Indicates the height of the icon entry.
         /// </summary>
         public short Height;
         /// <summary>
-        /// Indicates the bit depth of the icon frame.
+        /// Indicates the bit depth of the icon entry.
         /// </summary>
         public BitDepth BitDepth;
 
@@ -1192,13 +1192,13 @@ namespace UIconEdit
         public bool IsEmpty { get { return Width == 0 && Height == 0 && BitDepth == 0; } }
 
         /// <summary>
-        /// Gets a value indicating whether the current instance contains valid values which would actually occur in an <see cref="IconFrame"/>.
+        /// Gets a value indicating whether the current instance contains valid values which would actually occur in an <see cref="IconEntry"/>.
         /// </summary>
         public bool IsValid
         {
             get
             {
-                if (Width < IconFrame.MinDimension || Width > IconFrame.MaxDimension || Height < IconFrame.MinDimension || Height > IconFrame.MaxDimension)
+                if (Width < IconEntry.MinDimension || Width > IconEntry.MaxDimension || Height < IconEntry.MinDimension || Height > IconEntry.MaxDimension)
                     return false;
 
                 switch (BitDepth)
@@ -1216,15 +1216,15 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Compares the current instance to the specified other <see cref="FrameKey"/> object. First
+        /// Compares the current instance to the specified other <see cref="EntryKey"/> object. First
         /// <see cref="BitDepth"/> is compared, then <see cref="Height"/>, then <see cref="Width"/> (with
         /// higher color-counts and larger elements first).
         /// </summary>
-        /// <param name="other">The other <see cref="FrameKey"/> to compare.</param>
+        /// <param name="other">The other <see cref="EntryKey"/> to compare.</param>
         /// <returns>A value less than 0 if the current value comes before <paramref name="other"/>; 
         /// a value greater than 0 if the current value comes after <paramref name="other"/>; or
         /// 0 if the current instance is equal to <paramref name="other"/>.</returns>
-        public int CompareTo(FrameKey other)
+        public int CompareTo(EntryKey other)
         {
             if (BitDepth != other.BitDepth)
                 return BitDepth.CompareTo(other.BitDepth);
@@ -1236,56 +1236,56 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Compares two <see cref="FrameKey"/> objects.
+        /// Compares two <see cref="EntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
-        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is less than <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator <(FrameKey f1, FrameKey f2)
+        public static bool operator <(EntryKey f1, EntryKey f2)
         {
             return f1.CompareTo(f2) < 0;
         }
 
         /// <summary>
-        /// Compares two <see cref="FrameKey"/> objects.
+        /// Compares two <see cref="EntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
-        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is greater than <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator >(FrameKey f1, FrameKey f2)
+        public static bool operator >(EntryKey f1, EntryKey f2)
         {
             return f1.CompareTo(f2) > 0;
         }
 
         /// <summary>
-        /// Compares two <see cref="FrameKey"/> objects.
+        /// Compares two <see cref="EntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
-        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is less than or equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator <=(FrameKey f1, FrameKey f2)
+        public static bool operator <=(EntryKey f1, EntryKey f2)
         {
             return f1.CompareTo(f2) <= 0;
         }
 
         /// <summary>
-        /// Compares two <see cref="FrameKey"/> objects.
+        /// Compares two <see cref="EntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
-        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is less than or equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator >=(FrameKey f1, FrameKey f2)
+        public static bool operator >=(EntryKey f1, EntryKey f2)
         {
             return f1.CompareTo(f2) >= 0;
         }
 
 
         /// <summary>
-        /// Determines if the current instance is equal to the specified other <see cref="FrameKey"/> value.
+        /// Determines if the current instance is equal to the specified other <see cref="EntryKey"/> value.
         /// </summary>
-        /// <param name="other">The other <see cref="FrameKey"/> to compare.</param>
+        /// <param name="other">The other <see cref="EntryKey"/> to compare.</param>
         /// <returns><c>true</c> if the current instance is equal to <paramref name="other"/>; <c>false</c> otherwise.</returns>
-        public bool Equals(FrameKey other)
+        public bool Equals(EntryKey other)
         {
             return Width == other.Width && Height == other.Height && BitDepth == other.BitDepth;
         }
@@ -1297,7 +1297,7 @@ namespace UIconEdit
         /// <returns><c>true</c> if the current instance is equal to <paramref name="obj"/>; <c>false</c> otherwise.</returns>
         public override bool Equals(object obj)
         {
-            return obj is FrameKey && Equals((FrameKey)obj);
+            return obj is EntryKey && Equals((EntryKey)obj);
         }
 
         /// <summary>
@@ -1310,36 +1310,36 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Determines equality of two <see cref="FrameKey"/> objects.
+        /// Determines equality of two <see cref="EntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
-        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator ==(FrameKey f1, FrameKey f2)
+        public static bool operator ==(EntryKey f1, EntryKey f2)
         {
             return f1.Equals(f2);
         }
 
         /// <summary>
-        /// Determines inequality of two <see cref="FrameKey"/> objects.
+        /// Determines inequality of two <see cref="EntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">A <see cref="FrameKey"/> to compare.</param>
-        /// <param name="f2">A <see cref="FrameKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is not equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator !=(FrameKey f1, FrameKey f2)
+        public static bool operator !=(EntryKey f1, EntryKey f2)
         {
             return !f1.Equals(f2);
         }
     }
 
-    internal struct IconFrameComparer : IEqualityComparer<IconFrame>, IComparer<IconFrame>, IEqualityComparer<CursorFrame>, IComparer<CursorFrame>
+    internal struct IconEntryComparer : IEqualityComparer<IconEntry>, IComparer<IconEntry>, IEqualityComparer<CursorEntry>, IComparer<CursorEntry>
     {
-        public int Compare(CursorFrame x, CursorFrame y)
+        public int Compare(CursorEntry x, CursorEntry y)
         {
-            return Compare((IconFrame)x, y);
+            return Compare((IconEntry)x, y);
         }
 
-        public int Compare(IconFrame x, IconFrame y)
+        public int Compare(IconEntry x, IconEntry y)
         {
             if (ReferenceEquals(x, y))
                 return 0;
@@ -1347,72 +1347,72 @@ namespace UIconEdit
             if (ReferenceEquals(x, null)) return -1;
             else if (ReferenceEquals(y, null)) return 1;
 
-            return x.FrameKey.CompareTo(y.FrameKey);
+            return x.EntryKey.CompareTo(y.EntryKey);
         }
 
-        public bool Equals(CursorFrame x, CursorFrame y)
+        public bool Equals(CursorEntry x, CursorEntry y)
         {
-            return Equals((IconFrame)x, y);
+            return Equals((IconEntry)x, y);
         }
 
-        public bool Equals(IconFrame x, IconFrame y)
+        public bool Equals(IconEntry x, IconEntry y)
         {
             if (ReferenceEquals(x, y)) return true;
             if (ReferenceEquals(x, null) ^ ReferenceEquals(y, null)) return false;
-            return x.FrameKey == y.FrameKey;
+            return x.EntryKey == y.EntryKey;
         }
 
-        public int GetHashCode(CursorFrame obj)
+        public int GetHashCode(CursorEntry obj)
         {
-            return GetHashCode((IconFrame)obj);
+            return GetHashCode((IconEntry)obj);
         }
 
-        public int GetHashCode(IconFrame obj)
+        public int GetHashCode(IconEntry obj)
         {
             if (obj == null) return 0;
-            return obj.FrameKey.GetHashCode();
+            return obj.EntryKey.GetHashCode();
         }
     }
 
     /// <summary>
-    /// Indicates the bit depth of an icon frame.
+    /// Indicates the bit depth of an icon entry.
     /// </summary>
     public enum BitDepth
     {
         /// <summary>
-        /// Indicates that the frame is full color with alpha (32 bits per pixel).
+        /// Indicates that the entry is full color with alpha (32 bits per pixel).
         /// </summary>
         Depth32BitsPerPixel = 0,
         /// <summary>
-        /// Indicates that the frame is full color without alpha (24 bits per pixel).
+        /// Indicates that the entry is full color without alpha (24 bits per pixel).
         /// </summary>
         Depth24BitsPerPixel = 1,
         /// <summary>
-        /// Indicates that the frame is 256-color (8 bits per pixel). Same value as <see cref="Depth8BitsPerPixel"/>.
+        /// Indicates that the entry is 256-color (8 bits per pixel). Same value as <see cref="Depth8BitsPerPixel"/>.
         /// </summary>
         Depth256Color = 2,
         /// <summary>
-        /// Indicates that the frame is 16-color (4 bits per pixel). Same value as <see cref="Depth4BitsPerPixel"/>.
+        /// Indicates that the entry is 16-color (4 bits per pixel). Same value as <see cref="Depth4BitsPerPixel"/>.
         /// </summary>
         Depth16Color = 3,
         /// <summary>
-        /// Indicates that the frame is 2-color (1 bit per pixel). Same value as <see cref="Depth1BitPerPixel"/>.
+        /// Indicates that the entry is 2-color (1 bit per pixel). Same value as <see cref="Depth1BitPerPixel"/>.
         /// </summary>
         Depth2Color = 4,
         /// <summary>
-        /// Indicates that the frame is 256-color (8 bits per pixel). Same value as <see cref="Depth256Color"/>.
+        /// Indicates that the entry is 256-color (8 bits per pixel). Same value as <see cref="Depth256Color"/>.
         /// </summary>
         Depth8BitsPerPixel = Depth256Color,
         /// <summary>
-        /// Indicates that the frame is 16-color (4 bits per pixel). Same value as <see cref="Depth16Color"/>.
+        /// Indicates that the entry is 16-color (4 bits per pixel). Same value as <see cref="Depth16Color"/>.
         /// </summary>
         Depth4BitsPerPixel = Depth16Color,
         /// <summary>
-        /// Indicates that the frame is 2-color (1 bit per pixel). Same value as <see cref="Depth2Color"/>.
+        /// Indicates that the entry is 2-color (1 bit per pixel). Same value as <see cref="Depth2Color"/>.
         /// </summary>
         Depth1BitPerPixel = Depth2Color,
         /// <summary>
-        /// Indicates that the frame is 2-color (1 bit per pixel). Same value as <see cref="Depth2Color"/>.
+        /// Indicates that the entry is 2-color (1 bit per pixel). Same value as <see cref="Depth2Color"/>.
         /// </summary>
         Depth1BitsPerPixel = Depth2Color,
     }

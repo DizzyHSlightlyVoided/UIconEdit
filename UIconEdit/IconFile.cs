@@ -75,7 +75,7 @@ namespace UIconEdit
         /// Loads a <see cref="IconFile"/> from the specified stream.
         /// </summary>
         /// <param name="input">A stream containing an icon file.</param>
-        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon frames,
+        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon entries,
         /// or <c>null</c> to throw an exception in those cases.</param>
         /// <returns>A <see cref="IconFile"/> loaded from <paramref name="input"/>.</returns>
         /// <exception cref="ArgumentNullException">
@@ -102,7 +102,7 @@ namespace UIconEdit
         /// Loads an <see cref="IconFileBase"/> implementation from the specified path.
         /// </summary>
         /// <param name="path">The path to a icon file.</param>
-        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon frames,
+        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon entries,
         /// or <c>null</c> to throw an exception in those cases.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
@@ -190,19 +190,19 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Gets an <see cref="Icon"/> from a single frame.
+        /// Gets an <see cref="Icon"/> from a single entry.
         /// </summary>
-        /// <param name="frame">The icon frame from which to get an <see cref="Icon"/>.</param>
-        /// <returns>An <see cref="Icon"/> created from <paramref name="frame"/>.</returns>
+        /// <param name="entry">The icon entry from which to get an <see cref="Icon"/>.</param>
+        /// <returns>An <see cref="Icon"/> created from <paramref name="entry"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="frame"/> is <c>null</c>.
+        /// <paramref name="entry"/> is <c>null</c>.
         /// </exception>
-        public static Icon GetIcon(IconFrame frame)
+        public static Icon GetIcon(IconEntry entry)
         {
-            if (frame == null) throw new ArgumentNullException("frame");
+            if (entry == null) throw new ArgumentNullException("entry");
 
             IconFile file = new IconFile();
-            file.Frames.Add(frame);
+            file.Entries.Add(entry);
             using (MemoryStream ms = new MemoryStream())
             {
                 file.Save(ms);
@@ -214,20 +214,20 @@ namespace UIconEdit
         /// <summary>
         /// Returns the color panes.
         /// </summary>
-        /// <param name="frame">This parameter is ignored.</param>
-        protected override ushort GetImgX(IconFrame frame)
+        /// <param name="entry">This parameter is ignored.</param>
+        protected override ushort GetImgX(IconEntry entry)
         {
             return 1;
         }
 
         /// <summary>
-        /// Returns the number of bits per pixel in the specified frame.
+        /// Returns the number of bits per pixel in the specified entry.
         /// </summary>
-        /// <param name="frame">The frame for which to get the bits-per-pixel.</param>
-        /// <returns>The number of bits per pixel in <paramref name="frame"/>.</returns>
-        protected override ushort GetImgY(IconFrame frame)
+        /// <param name="entry">The entry for which to get the bits-per-pixel.</param>
+        /// <returns>The number of bits per pixel in <paramref name="entry"/>.</returns>
+        protected override ushort GetImgY(IconEntry entry)
         {
-            switch (frame.BitDepth)
+            switch (entry.BitDepth)
             {
                 case BitDepth.Depth2Color:
                     return 1;

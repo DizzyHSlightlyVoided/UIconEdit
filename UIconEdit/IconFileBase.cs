@@ -49,7 +49,7 @@ namespace UIconEdit
         /// </summary>
         public IconFileBase()
         {
-            _frames = new FrameList(this);
+            _entries = new EntryList(this);
         }
 
         #region Load
@@ -82,7 +82,7 @@ namespace UIconEdit
         /// Loads an <see cref="IconFileBase"/> implementation from the specified stream.
         /// </summary>
         /// <param name="input">A stream containing an icon or cursor file.</param>
-        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon frames,
+        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon entries,
         /// or <c>null</c> to throw an exception in those cases.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="input"/>.</returns>
         /// <exception cref="ArgumentNullException">
@@ -109,7 +109,7 @@ namespace UIconEdit
         /// Loads an <see cref="IconFileBase"/> implementation from the specified path.
         /// </summary>
         /// <param name="path">The path to a cursor or icon file.</param>
-        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon frames,
+        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon entries,
         /// or <c>null</c> to throw an exception in those cases.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
@@ -213,14 +213,14 @@ namespace UIconEdit
                         throw new IconLoadException(IconErrorCode.InvalidFormat);
                 }
 
-                ushort frameCount = reader.ReadUInt16();
+                ushort entryCount = reader.ReadUInt16();
 
-                if (frameCount == 0) throw new IconLoadException(IconErrorCode.ZeroFrames);
+                if (entryCount == 0) throw new IconLoadException(IconErrorCode.ZeroEntries);
 
-                IconDirEntry[] frameList = new IconDirEntry[frameCount];
-                long offset = (16 * frameCount) + 6;
+                IconDirEntry[] entryList = new IconDirEntry[entryCount];
+                long offset = (16 * entryCount) + 6;
 
-                for (int i = 0; i < frameCount; i++)
+                for (int i = 0; i < entryCount; i++)
                 {
                     IconDirEntry entry = new IconDirEntry();
                     entry.BWidth = reader.ReadByte();
@@ -233,15 +233,15 @@ namespace UIconEdit
                     if (entry.ResourceLength < MinDibSize) throw new IconLoadException(IconErrorCode.ResourceTooSmall, entry.ResourceLength, i);
                     entry.ImageOffset = reader.ReadUInt32();
                     if (entry.ImageOffset < offset) throw new IconLoadException(IconErrorCode.ResourceTooEarly, entry.ImageOffset, i);
-                    frameList[i] = entry;
+                    entryList[i] = entry;
                 }
 
-                Array.Sort(frameList);
+                Array.Sort(entryList);
 
                 const int bufferSize = 8192;
-                for (int i = 0; i < frameList.Length; i++)
+                for (int i = 0; i < entryList.Length; i++)
                 {
-                    IconDirEntry entry = frameList[i];
+                    IconDirEntry entry = entryList[i];
 
                     try
                     {
@@ -253,7 +253,7 @@ namespace UIconEdit
                         Bitmap loadedImage;
 
                         int dibSize = reader.ReadInt32();
-                        if (dibSize < MinDibSize) throw new IconLoadException(IconErrorCode.InvalidFrameType, i);
+                        if (dibSize < MinDibSize) throw new IconLoadException(IconErrorCode.InvalidEntryType, i);
 
                         if (loadedId == IconTypeCode.Icon)
                         {
@@ -310,8 +310,8 @@ namespace UIconEdit
                                 {
                                     using (Image img = Image.FromStream(ms, false))
                                     {
-                                        if (img.Width > IconFrame.MaxDimension || img.Height > IconFrame.MaxDimension ||
-                                            img.Width < IconFrame.MinDimension || img.Height < IconFrame.MinDimension)
+                                        if (img.Width > IconEntry.MaxDimension || img.Height > IconEntry.MaxDimension ||
+                                            img.Width < IconEntry.MinDimension || img.Height < IconEntry.MinDimension)
                                             throw new IconLoadException(IconErrorCode.InvalidPngSize, img.Size, i);
 
                                         if ((entry.BWidth != 0 && entry.BWidth != img.Width) ||
@@ -342,7 +342,7 @@ namespace UIconEdit
                             {
                                 int width = curReader.ReadInt32(); //8
                                 int height = curReader.ReadInt32(); //12
-                                if (width > IconFrame.MaxDimension || width < IconFrame.MinDimension)
+                                if (width > IconEntry.MaxDimension || width < IconEntry.MinDimension)
                                     throw new IconLoadException(IconErrorCode.InvalidBmpSize, new Size(width, height), i);
 
                                 ushort colorPanes = curReader.ReadUInt16(); //14
@@ -385,7 +385,7 @@ namespace UIconEdit
                                     testHeight = height >> 1;
                                 }
 
-                                if (height > (IconFrame.MaxDimension << 1) || height < (IconFrame.MinDimension << 1))
+                                if (height > (IconEntry.MaxDimension << 1) || height < (IconEntry.MinDimension << 1))
                                     throw new IconLoadException(IconErrorCode.InvalidBmpSize, new Size(width, height), i);
 
                                 if ((entry.BWidth != 0 && entry.BWidth != width) ||
@@ -442,21 +442,21 @@ namespace UIconEdit
                             }
                             #endregion
                         }
-                        else throw new IconLoadException(IconErrorCode.InvalidFrameType, i);
+                        else throw new IconLoadException(IconErrorCode.InvalidEntryType, i);
                         Debug.WriteLine("Reading type {0}, width:{1}, height:{2}, bit depth:{3}",
                             isPng ? "PNG" : "BMP", loadedImage.Width, loadedImage.Height, bitDepth);
 
-                        IconFrame frame;
+                        IconEntry resultEntry;
 
                         if (loadedId == IconTypeCode.Cursor)
-                            frame = new CursorFrame(bitDepth, loadedImage, entry.XPlanes, entry.YBitsPerpixel);
+                            resultEntry = new CursorEntry(bitDepth, loadedImage, entry.XPlanes, entry.YBitsPerpixel);
                         else
-                            frame = new IconFrame(bitDepth, loadedImage);
+                            resultEntry = new IconEntry(bitDepth, loadedImage);
 
-                        if (!returner.Frames.Add(frame))
+                        if (!returner.Entries.Add(resultEntry))
                         {
-                            returner.Frames.RemoveAndDisposeSimilar(frame);
-                            returner.Frames.Add(frame);
+                            returner.Entries.RemoveAndDisposeSimilar(resultEntry);
+                            returner.Entries.Add(resultEntry);
                         }
                     }
                     catch (IconLoadException e)
@@ -475,10 +475,10 @@ namespace UIconEdit
                     }
                 }
 
-                if (returner.Frames.Count == 0)
+                if (returner.Entries.Count == 0)
                 {
                     returner.Dispose();
-                    throw new IconLoadException(IconErrorCode.ZeroValidFrames);
+                    throw new IconLoadException(IconErrorCode.ZeroValidEntries);
                 }
 
                 return returner;
@@ -513,14 +513,14 @@ namespace UIconEdit
         /// <summary>
         /// Returns a duplicate of the current instance.
         /// </summary>
-        /// <returns>A duplicate of the current instance, with copies of every icon frame and clones of each
-        /// frame's <see cref="IconFrame.BaseImage"/> in <see cref="Frames"/>.</returns>
+        /// <returns>A duplicate of the current instance, with copies of every icon entry and clones of each
+        /// entry's <see cref="IconEntry.BaseImage"/> in <see cref="Entries"/>.</returns>
         public virtual IconFileBase Clone()
         {
             IconFileBase copy = (IconFileBase)MemberwiseClone();
-            copy._frames = new FrameList(copy);
-            foreach (IconFrame curFrame in _frames)
-                copy._frames.Add(curFrame.Clone());
+            copy._entries = new EntryList(copy);
+            foreach (IconEntry curEntry in _entries)
+                copy._entries.Add(curEntry.Clone());
             return copy;
         }
 
@@ -534,38 +534,38 @@ namespace UIconEdit
         /// </summary>
         public abstract IconTypeCode ID { get; }
 
-        private FrameList _frames;
+        private EntryList _entries;
         /// <summary>
-        /// Gets a collection containing all frames in the icon file. 
+        /// Gets a collection containing all entries in the icon file. 
         /// </summary>
-        public FrameList Frames { get { return _frames; } }
+        public EntryList Entries { get { return _entries; } }
 
         /// <summary>
-        /// When overridden in a derived class, gets a value indicating whether the specified value may be added to <see cref="Frames"/>.
+        /// When overridden in a derived class, gets a value indicating whether the specified value may be added to <see cref="Entries"/>.
         /// </summary>
-        /// <param name="frame">The frame to check.</param>
-        /// <returns><c>true</c> if <paramref name="frame"/> is not <c>null</c>; <c>false</c> otherwise.</returns>
-        protected virtual bool IsValid(IconFrame frame)
+        /// <param name="entry">The entry to check.</param>
+        /// <returns><c>true</c> if <paramref name="entry"/> is not <c>null</c>; <c>false</c> otherwise.</returns>
+        protected virtual bool IsValid(IconEntry entry)
         {
-            return frame != null;
+            return entry != null;
         }
 
         /// <summary>
         /// When overridden in a derived class, computes the 16-bit X component.
         /// </summary>
-        /// <param name="frame">The image frame to calculate.</param>
+        /// <param name="entry">The image entry to calculate.</param>
         /// <returns>In icon files, the color panes. In cursor files, the horizontal offset of the hotspot from the left in pixels.</returns>
-        protected abstract ushort GetImgX(IconFrame frame);
+        protected abstract ushort GetImgX(IconEntry entry);
 
         /// <summary>
         /// When overridden in a derived class, computes the 16-bit Y component.
         /// </summary>
-        /// <param name="frame">The image frame to calculate.</param>
+        /// <param name="entry">The image entry to calculate.</param>
         /// <returns>In icon files, the number of bits per pixel. In cursor files, the vertical offset of the hotspot from the top, in pixels.</returns>
-        protected abstract ushort GetImgY(IconFrame frame);
+        protected abstract ushort GetImgY(IconEntry entry);
 
         #region Save
-        internal void Save(Stream output, IEnumerable<IconFrame> frameCollection)
+        internal void Save(Stream output, IEnumerable<IconEntry> entryCollection)
         {
 #if LEAVEOPEN
             using (BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding(), true))
@@ -573,20 +573,20 @@ namespace UIconEdit
             BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding());
 #endif
             {
-                SortedSet<IconFrame> frames = new SortedSet<IconFrame>(frameCollection, new IconFrameComparer());
+                SortedSet<IconEntry> entries = new SortedSet<IconEntry>(entryCollection, new IconEntryComparer());
 
                 writer.Write(ushort.MinValue);
                 writer.Write((short)ID);
-                writer.Write((short)frames.Count);
+                writer.Write((short)entries.Count);
 
-                uint offset = (uint)(6 + (frames.Count * 16));
+                uint offset = (uint)(6 + (entries.Count * 16));
 
                 List<MemoryStream> streamList = new List<MemoryStream>();
 
-                foreach (IconFrame curFrame in frames)
+                foreach (IconEntry curEntry in entries)
                 {
                     MemoryStream writeStream;
-                    WriteImage(writer, curFrame, ref offset, out writeStream);
+                    WriteImage(writer, curEntry, ref offset, out writeStream);
                     streamList.Add(writeStream);
                 }
 
@@ -607,7 +607,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="output">The stream to which the file will be written.</param>
         /// <exception cref="InvalidOperationException">
-        /// <see cref="Frames"/> contains zero elements.
+        /// <see cref="Entries"/> contains zero elements.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="output"/> is <c>null</c>.
@@ -623,11 +623,11 @@ namespace UIconEdit
         /// </exception>
         public void Save(Stream output)
         {
-            var frames = Frames;
-            if (frames.Count == 0 || frames.Count > ushort.MaxValue) throw new InvalidOperationException();
+            var entries = Entries;
+            if (entries.Count == 0 || entries.Count > ushort.MaxValue) throw new InvalidOperationException();
             try
             {
-                Save(output, frames);
+                Save(output, entries);
             }
             catch (ObjectDisposedException) { throw; }
             catch (IOException) { throw; }
@@ -639,7 +639,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="path">The file to which the file will be written.</param>
         /// <exception cref="InvalidOperationException">
-        /// <see cref="Frames"/> contains zero elements.
+        /// <see cref="Entries"/> contains zero elements.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is <c>null</c>.
@@ -658,12 +658,12 @@ namespace UIconEdit
         /// </exception>
         public void Save(string path)
         {
-            var frames = Frames;
-            if (frames.Count == 0) throw new InvalidOperationException("At least one frame is needed.");
+            var entries = Entries;
+            if (entries.Count == 0) throw new InvalidOperationException("At least one entry is needed.");
             using (FileStream fs = File.OpenWrite(path))
                 try
                 {
-                    Save(fs, frames);
+                    Save(fs, entries);
                 }
                 catch (ObjectDisposedException) { throw; }
                 catch (IOException) { throw; }
@@ -672,25 +672,25 @@ namespace UIconEdit
 
         const int MinDibSize = 40;
 
-        private void WriteImage(BinaryWriter writer, IconFrame frame, ref uint offset, out MemoryStream writeStream)
+        private void WriteImage(BinaryWriter writer, IconEntry entry, ref uint offset, out MemoryStream writeStream)
         {
-            var image = frame.BaseImage;
+            var image = entry.BaseImage;
 
-            bool isPng = (frame.Width > byte.MaxValue || frame.Height > byte.MaxValue);
+            bool isPng = (entry.Width > byte.MaxValue || entry.Height > byte.MaxValue);
 
             Debug.WriteLine("Writing type {0} - width:{1}, height:{2}, bit depth:{3} computed bits per pixel:{4}",
-                isPng ? "PNG" : "BMP", frame.Width, frame.Height, frame.BitDepth, GetImgY(frame));
+                isPng ? "PNG" : "BMP", entry.Width, entry.Height, entry.BitDepth, GetImgY(entry));
 
             if (isPng)
                 writer.Write(ushort.MinValue); //2
             else
             {
-                writer.Write((byte)frame.Width);
-                writer.Write((byte)frame.Height);
+                writer.Write((byte)entry.Width);
+                writer.Write((byte)entry.Height);
             }
 
             int paletteCount;
-            Bitmap alphaMask, quantized = frame.GetQuantized(out alphaMask, out paletteCount);
+            Bitmap alphaMask, quantized = entry.GetQuantized(out alphaMask, out paletteCount);
 
             if (alphaMask == null || quantized.Palette == null || quantized.Palette.Entries.Length > byte.MaxValue)
                 writer.Write(byte.MinValue);
@@ -699,8 +699,8 @@ namespace UIconEdit
 
             writer.Write(byte.MinValue); //4
 
-            writer.Write(GetImgX(frame)); //6
-            writer.Write(GetImgY(frame)); //8
+            writer.Write(GetImgX(entry)); //6
+            writer.Write(GetImgY(entry)); //8
 
             uint length;
             writeStream = new MemoryStream();
@@ -716,7 +716,7 @@ namespace UIconEdit
                 BinaryWriter msWriter = new BinaryWriter(writeStream, new UTF8Encoding());
 #endif
                 {
-                    ushort bitsPerPixel = frame.BitsPerPixel;
+                    ushort bitsPerPixel = entry.BitsPerPixel;
                     int height = quantized.Height;
                     if (alphaMask != null) height += alphaMask.Height; //Only if bit depth != 32
                     msWriter.Write(MinDibSize);
@@ -798,7 +798,7 @@ namespace UIconEdit
             if (isDisposed)
                 return;
 
-            Frames.ClearAndDispose();
+            Entries.ClearAndDispose();
 
             isDisposed = true;
         }
@@ -812,33 +812,33 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Represents a hash list of frames. This collection treats <see cref="IconFrame"/> objects with the same
-        /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> as though they were equal.
+        /// Represents a hash list of entries. This collection treats <see cref="IconEntry"/> objects with the same
+        /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> as though they were equal.
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(DebugView))]
-        public class FrameList : IList<IconFrame>, IList
+        public class EntryList : IList<IconEntry>, IList
 #if IREADONLY
-            , IReadOnlyList<IconFrame>
+            , IReadOnlyList<IconEntry>
 #endif
         {
-            private HashSet<FrameKey> _set;
-            private List<IconFrame> _items;
+            private HashSet<EntryKey> _set;
+            private List<IconEntry> _items;
             private IconFileBase _file;
 
-            internal FrameList(IconFileBase file)
+            internal EntryList(IconFileBase file)
             {
                 _file = file;
-                _set = new HashSet<FrameKey>();
-                _items = new List<IconFrame>();
+                _set = new HashSet<EntryKey>();
+                _items = new List<IconEntry>();
             }
 
-            private IconFrame _checkAdd(object value, string paramName)
+            private IconEntry _checkAdd(object value, string paramName)
             {
                 if (value == null) throw new ArgumentNullException(paramName);
-                IconFrame frame = value as IconFrame;
-                if (frame == null) throw new ArgumentException("The specified value is the wrong type.", paramName);
-                return frame;
+                IconEntry entry = value as IconEntry;
+                if (entry == null) throw new ArgumentException("The specified value is the wrong type.", paramName);
+                return entry;
             }
 
             /// <summary>
@@ -851,10 +851,10 @@ namespace UIconEdit
             /// <para>In a set operation, the specified value is <c>null</c>.</para>
             /// </exception>
             /// <exception cref="NotSupportedException">
-            /// In a set operation, an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// In a set operation, an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// already exists in the list at a different index, or the specified value is already associated with a different icon file.
             /// </exception>
-            public IconFrame this[int index]
+            public IconEntry this[int index]
             {
                 get { return _items[index]; }
                 set
@@ -878,18 +878,18 @@ namespace UIconEdit
             public int Count { get { return _items.Count; } }
 
             /// <summary>
-            /// Adds the specified icon frame to the list.
+            /// Adds the specified icon entry to the list.
             /// </summary>
-            /// <param name="item">The icon frame to add to the list.</param>
+            /// <param name="item">The icon entry to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
-            /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
-            public bool Add(IconFrame item)
+            /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
+            public bool Add(IconEntry item)
             {
                 return Insert(_items.Count, item);
             }
 
-            void ICollection<IconFrame>.Add(IconFrame item)
+            void ICollection<IconEntry>.Add(IconEntry item)
             {
                 Add(item);
             }
@@ -901,26 +901,26 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Adds the specified icon frame to the list at the specified index.
+            /// Adds the specified icon entry to the list at the specified index.
             /// </summary>
-            /// <param name="index">The index at which to insert the icon frame.</param>
-            /// <param name="item">The icon frame to add to the list.</param>
+            /// <param name="index">The index at which to insert the icon entry.</param>
+            /// <param name="item">The icon entry to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
-            /// <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
+            /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
             /// <exception cref="ArgumentOutOfRangeException">
             /// <paramref name="index"/> is less than 0 or is greater than <see cref="Count"/>.
             /// </exception>
-            public bool Insert(int index, IconFrame item)
+            public bool Insert(int index, IconEntry item)
             {
                 if (index < 0 || index > _items.Count) throw new ArgumentOutOfRangeException("index");
-                if (_items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item.FrameKey)) return false;
+                if (_items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item.EntryKey)) return false;
                 _items.Insert(index, item);
                 item.File = _file;
                 return true;
             }
 
-            void IList<IconFrame>.Insert(int index, IconFrame item)
+            void IList<IconEntry>.Insert(int index, IconEntry item)
             {
                 Insert(index, item);
             }
@@ -930,12 +930,12 @@ namespace UIconEdit
                 Insert(index, _checkAdd(value, "value"));
             }
 
-            private bool _setValue(int index, IconFrame value, bool setter)
+            private bool _setValue(int index, IconEntry value, bool setter)
             {
                 if (setter && index == _items.Count)
                     return Add(value);
                 var oldItem = _items[index];
-                if (value == null || value.File != null || !_file.IsValid(value) || (_set.Contains(value.FrameKey) && oldItem.FrameKey != value.FrameKey))
+                if (value == null || value.File != null || !_file.IsValid(value) || (_set.Contains(value.EntryKey) && oldItem.EntryKey != value.EntryKey))
                     return false;
                 _items[index] = value;
                 oldItem.File = null;
@@ -949,18 +949,18 @@ namespace UIconEdit
             /// <param name="index">The index of the value to set.</param>
             /// <param name="item">The item to set at the specified index.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c>,
-            /// is already associated with a different icon file, or if an element with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>,
-            /// and <see cref="IconFrame.BitDepth"/> already exists at a different index.</returns>
-            public bool SetValue(int index, IconFrame item)
+            /// is already associated with a different icon file, or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
+            /// and <see cref="IconEntry.BitDepth"/> already exists at a different index.</returns>
+            public bool SetValue(int index, IconEntry item)
             {
                 return _setValue(index, item, false);
             }
 
             private void _removeAt(int index, bool disposing)
             {
-                IconFrame item = _items[index];
+                IconEntry item = _items[index];
                 _items.RemoveAt(index);
-                _set.Remove(item.FrameKey);
+                _set.Remove(item.EntryKey);
                 item.File = null;
                 if (disposing)
                     item.Dispose();
@@ -979,7 +979,7 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes the element at the specified index and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// Removes the element at the specified index and immediately calls <see cref="IconEntry.Dispose()"/>.
             /// </summary>
             /// <param name="index">The element at the specified index.</param>
             /// <exception cref="ArgumentOutOfRangeException">
@@ -990,10 +990,10 @@ namespace UIconEdit
                 _removeAt(index, true);
             }
 
-            private bool _remove(IconFrame item, bool disposing)
+            private bool _remove(IconEntry item, bool disposing)
             {
                 if (!_items.Remove(item)) return false;
-                _set.Remove(item.FrameKey);
+                _set.Remove(item.EntryKey);
                 item.File = null;
                 if (disposing)
                     item.Dispose();
@@ -1001,36 +1001,36 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes the specified icon frame from the list.
+            /// Removes the specified icon entry from the list.
             /// </summary>
-            /// <param name="item">The icon frame to remove from the list.</param>
+            /// <param name="item">The icon entry to remove from the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
-            public bool Remove(IconFrame item)
+            public bool Remove(IconEntry item)
             {
                 return _remove(item, false);
             }
 
             void IList.Remove(object value)
             {
-                Remove(value as IconFrame);
+                Remove(value as IconEntry);
             }
 
             /// <summary>
-            /// Removes the specified icon frame from the list and immediately callse <see cref="IconFrame.Dispose()"/>.
+            /// Removes the specified icon entry from the list and immediately callse <see cref="IconEntry.Dispose()"/>.
             /// </summary>
-            /// <param name="item">The icon frame to remove from the list.</param>
+            /// <param name="item">The icon entry to remove from the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
-            public bool RemoveAndDispose(IconFrame item)
+            public bool RemoveAndDispose(IconEntry item)
             {
                 return _remove(item, true);
             }
 
-            private bool _removeSimilar(FrameKey key, bool disposing)
+            private bool _removeSimilar(EntryKey key, bool disposing)
             {
                 if (!key.IsValid) return false;
                 for (int i = 0; i < _items.Count; i++)
                 {
-                    if (key == _items[i].FrameKey)
+                    if (key == _items[i].EntryKey)
                     {
                         _removeAt(i, disposing);
                         return true;
@@ -1040,85 +1040,85 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes an icon frame similar to the specified value from the list.
+            /// Removes an icon entry similar to the specified value from the list.
             /// </summary>
-            /// <param name="item">The icon frame to compare.</param>
-            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
-            public bool RemoveSimilar(IconFrame item)
+            /// <param name="item">The icon entry to compare.</param>
+            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
+            public bool RemoveSimilar(IconEntry item)
             {
                 if (item == null) return false;
-                return _removeSimilar(item.FrameKey, false);
+                return _removeSimilar(item.EntryKey, false);
             }
 
             /// <summary>
-            /// Removes an icon frame similar to the specified value from the list.
+            /// Removes an icon entry similar to the specified value from the list.
             /// </summary>
-            /// <param name="key">The frame key to compare.</param>
-            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
-            public bool RemoveSimilar(FrameKey key)
+            /// <param name="key">The entry key to compare.</param>
+            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
+            public bool RemoveSimilar(EntryKey key)
             {
                 return _removeSimilar(key, false);
             }
 
             /// <summary>
-            /// Removes an icon frame similar to the specified values from the list.
+            /// Removes an icon entry similar to the specified values from the list.
             /// </summary>
-            /// <param name="width">The width of the icon frame to search for.</param>
-            /// <param name="height">The height of the icon frame to search for.</param>
-            /// <param name="bitDepth">The bit depth of the icon frame to search for.</param>
-            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
-            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
-            /// <c>false</c> if no such icon frame was found in the list.</returns>
+            /// <param name="width">The width of the icon entry to search for.</param>
+            /// <param name="height">The height of the icon entry to search for.</param>
+            /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
+            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
+            /// <c>false</c> if no such icon entry was found in the list.</returns>
             public bool RemoveSimilar(short width, short height, BitDepth bitDepth)
             {
-                return _removeSimilar(new FrameKey(width, height, bitDepth), false);
+                return _removeSimilar(new EntryKey(width, height, bitDepth), false);
             }
 
             /// <summary>
-            /// Removes an icon frame similar to the specified value from the list
-            /// and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// Removes an icon entry similar to the specified value from the list
+            /// and immediately calls <see cref="IconEntry.Dispose()"/>.
             /// </summary>
-            /// <param name="item">The icon frame to search for.</param>
-            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
-            public bool RemoveAndDisposeSimilar(IconFrame item)
+            /// <param name="item">The icon entry to search for.</param>
+            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
+            public bool RemoveAndDisposeSimilar(IconEntry item)
             {
                 if (item == null) return false;
-                return _removeSimilar(item.FrameKey, true);
+                return _removeSimilar(item.EntryKey, true);
             }
 
             /// <summary>
-            /// Removes an icon frame similar to the specified value from the list
-            /// and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// Removes an icon entry similar to the specified value from the list
+            /// and immediately calls <see cref="IconEntry.Dispose()"/>.
             /// </summary>
-            /// <param name="key">The frame key to search for.</param>
-            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
-            public bool RemoveAndDisposeSimilar(FrameKey key)
+            /// <param name="key">The entry key to search for.</param>
+            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
+            public bool RemoveAndDisposeSimilar(EntryKey key)
             {
                 return _removeSimilar(key, true);
             }
 
             /// <summary>
-            /// Removes an icon frame similar to the specified value from the list
-            /// and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// Removes an icon entry similar to the specified value from the list
+            /// and immediately calls <see cref="IconEntry.Dispose()"/>.
             /// </summary>
-            /// <param name="width">The width of the icon frame to search for.</param>
-            /// <param name="height">The height of the icon frame to search for.</param>
-            /// <param name="bitDepth">The bit depth of the icon frame to search for.</param>
-            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
-            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
-            /// <c>false</c> if no such icon frame was found in the list.</returns>
+            /// <param name="width">The width of the icon entry to search for.</param>
+            /// <param name="height">The height of the icon entry to search for.</param>
+            /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
+            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
+            /// <c>false</c> if no such icon entry was found in the list.</returns>
             public bool RemoveAndDisposeSimilar(short width, short height, BitDepth bitDepth)
             {
-                return _removeSimilar(new FrameKey(width, height, bitDepth), true);
+                return _removeSimilar(new EntryKey(width, height, bitDepth), true);
             }
 
             private void _clear(bool disposing)
             {
-                foreach (IconFrame item in _items)
+                foreach (IconEntry item in _items)
                 {
                     item.File = null;
                     if (disposing)
@@ -1137,7 +1137,7 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes all elements from the list and immediately calls <see cref="IconFrame.Dispose()"/> on each one.
+            /// Removes all elements from the list and immediately calls <see cref="IconEntry.Dispose()"/> on each one.
             /// </summary>
             public void ClearAndDispose()
             {
@@ -1147,36 +1147,36 @@ namespace UIconEdit
             /// <summary>
             /// Determines if the specified element exists in the list.
             /// </summary>
-            /// <param name="item">The icon frame to search for in the list.</param>
+            /// <param name="item">The icon entry to search for in the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was found; <c>false</c> otherwise.</returns>
-            public bool Contains(IconFrame item)
+            public bool Contains(IconEntry item)
             {
                 return _file.IsValid(item) && _items.Contains(item);
             }
 
             bool IList.Contains(object value)
             {
-                return Contains(value as IconFrame);
+                return Contains(value as IconEntry);
             }
 
             /// <summary>
-            /// Determines if an element similar to the specified icon frame exists in the list.
+            /// Determines if an element similar to the specified icon entry exists in the list.
             /// </summary>
-            /// <param name="item">The icon frame to compare.</param>
-            /// <returns><c>true</c> if an icon frame with the same with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// <param name="item">The icon entry to compare.</param>
+            /// <returns><c>true</c> if an icon entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="item"/> exists in the list; <c>false</c> otherwise.</returns>
-            public bool ContainsSimilar(IconFrame item)
+            public bool ContainsSimilar(IconEntry item)
             {
-                return item != null && _set.Contains(item.FrameKey);
+                return item != null && _set.Contains(item.EntryKey);
             }
 
             /// <summary>
             /// Determines if an element similar to the specified value exists in the list.
             /// </summary>
-            /// <param name="key">The frame key to compare.</param>
-            /// <returns><c>true</c> if an icon frame with the same with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// <param name="key">The entry key to compare.</param>
+            /// <returns><c>true</c> if an icon entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="key"/> exists in the list; <c>false</c> otherwise.</returns>
-            public bool ContainsSimilar(FrameKey key)
+            public bool ContainsSimilar(EntryKey key)
             {
                 return _set.Contains(key);
             }
@@ -1184,23 +1184,23 @@ namespace UIconEdit
             /// <summary>
             /// Determines if an element similar to the specified values exists in the list.
             /// </summary>
-            /// <param name="width">The width of the icon frame to search for.</param>
-            /// <param name="height">The height of the icon frame to search for.</param>
-            /// <param name="bitDepth">The bit depth of the icon frame to search for.</param>
-            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
-            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>  was found;
-            /// <c>false</c> if no such icon frame was found in the list.</returns>
+            /// <param name="width">The width of the icon entry to search for.</param>
+            /// <param name="height">The height of the icon entry to search for.</param>
+            /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
+            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was found;
+            /// <c>false</c> if no such icon entry was found in the list.</returns>
             public bool ContainsSimilar(short width, short height, BitDepth bitDepth)
             {
-                return _set.Contains(new FrameKey(width, height, bitDepth));
+                return _set.Contains(new EntryKey(width, height, bitDepth));
             }
 
             /// <summary>
             /// Gets the index of the specified item.
             /// </summary>
-            /// <param name="item">The icon frame to search for in the list.</param>
+            /// <param name="item">The icon entry to search for in the list.</param>
             /// <returns>The index of <paramref name="item"/>, if found; otherwise, -1.</returns>
-            public int IndexOf(IconFrame item)
+            public int IndexOf(IconEntry item)
             {
                 if (!_file.IsValid(item)) return -1;
                 return _items.IndexOf(item);
@@ -1208,46 +1208,46 @@ namespace UIconEdit
 
             int IList.IndexOf(object value)
             {
-                return IndexOf(value as IconFrame);
+                return IndexOf(value as IconEntry);
             }
 
             /// <summary>
             /// Gets the index of an element similar to the specified item.
             /// </summary>
-            /// <param name="item">The icon frame to compare.</param>
-            /// <returns>The index of an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// <param name="item">The icon entry to compare.</param>
+            /// <returns>The index of an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="item"/>, if found; otherwise, -1.</returns>
-            public int IndexOfSimilar(IconFrame item)
+            public int IndexOfSimilar(IconEntry item)
             {
                 if (item == null) return -1;
-                return IndexOfSimilar(item.FrameKey);
+                return IndexOfSimilar(item.EntryKey);
             }
 
             /// <summary>
             /// Gets the index of an element similar to the specified value.
             /// </summary>
-            /// <param name="key">The frame key to compare.</param>
-            /// <returns>The index of an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// <param name="key">The entry key to compare.</param>
+            /// <returns>The index of an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="key"/>, if found; otherwise, -1.</returns>
-            public int IndexOfSimilar(FrameKey key)
+            public int IndexOfSimilar(EntryKey key)
             {
                 if (!key.IsValid) return -1;
                 for (int i = 0; i < _items.Count; i++)
-                    if (key == _items[i].FrameKey) return i;
+                    if (key == _items[i].EntryKey) return i;
                 return -1;
             }
 
             /// <summary>
             /// Gets the index of an element similar to the specified values.
             /// </summary>
-            /// <param name="width">The width of the icon frame to search for.</param>
-            /// <param name="height">The height of the icon frame to search for.</param>
-            /// <param name="bitDepth">The bit depth of the icon frame to search for.</param>
-            /// <returns>The index of an icon frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
-            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>, if found; otherwise, -1.</returns>
+            /// <param name="width">The width of the icon entry to search for.</param>
+            /// <param name="height">The height of the icon entry to search for.</param>
+            /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
+            /// <returns>The index of an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>, if found; otherwise, -1.</returns>
             public int IndexOfSimilar(short width, short height, BitDepth bitDepth)
             {
-                return IndexOfSimilar(new FrameKey(width, height, bitDepth));
+                return IndexOfSimilar(new EntryKey(width, height, bitDepth));
             }
 
             /// <summary>
@@ -1260,7 +1260,7 @@ namespace UIconEdit
             /// <exception cref="ArgumentException">
             /// The length of <paramref name="array"/> is less than <see cref="Count"/>.
             /// </exception>
-            public void CopyTo(IconFrame[] array)
+            public void CopyTo(IconEntry[] array)
             {
                 _items.CopyTo(array);
             }
@@ -1279,7 +1279,7 @@ namespace UIconEdit
             /// <exception cref="ArgumentException">
             /// The length of <paramref name="array"/> minus <paramref name="arrayIndex"/> is less than <see cref="Count"/>.
             /// </exception>
-            public void CopyTo(IconFrame[] array, int arrayIndex)
+            public void CopyTo(IconEntry[] array, int arrayIndex)
             {
                 _items.CopyTo(array, arrayIndex);
             }
@@ -1302,7 +1302,7 @@ namespace UIconEdit
             /// <para>-OR-</para>
             /// <para><paramref name="arrayIndex"/> and <paramref name="count"/> do not indicate a valid range of elements in <paramref name="array"/>.</para>
             /// </exception>
-            public void CopyTo(int index, IconFrame[] array, int arrayIndex, int count)
+            public void CopyTo(int index, IconEntry[] array, int arrayIndex, int count)
             {
                 _items.CopyTo(index, array, arrayIndex, count);
             }
@@ -1320,7 +1320,7 @@ namespace UIconEdit
             /// Returns an array containing all elements in the current list.
             /// </summary>
             /// <returns>An array containing elements copied from the current list.</returns>
-            public IconFrame[] ToArray()
+            public IconEntry[] ToArray()
             {
                 return _items.ToArray();
             }
@@ -1330,7 +1330,7 @@ namespace UIconEdit
                 return GetEnumerator();
             }
 
-            IEnumerator<IconFrame> IEnumerable<IconFrame>.GetEnumerator()
+            IEnumerator<IconEntry> IEnumerable<IconEntry>.GetEnumerator()
             {
                 return GetEnumerator();
             }
@@ -1341,7 +1341,7 @@ namespace UIconEdit
                 _items.RemoveRange(index, count);
                 foreach (var curItem in items)
                 {
-                    _set.Remove(curItem.FrameKey);
+                    _set.Remove(curItem.EntryKey);
                     if (disposing)
                         curItem.Dispose();
                 }
@@ -1364,7 +1364,7 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes a range of elements from the list and immediately calls <see cref="IconFrame.Dispose()"/> on each one.
+            /// Removes a range of elements from the list and immediately calls <see cref="IconEntry.Dispose()"/> on each one.
             /// </summary>
             /// <param name="index">The zero-based starting index of the elements to remove.</param>
             /// <param name="count">The number of elements to remove.</param>
@@ -1379,7 +1379,7 @@ namespace UIconEdit
                 _removeRange(index, count, true);
             }
 
-            private int _removeWhere(Predicate<IconFrame> match, bool disposing)
+            private int _removeWhere(Predicate<IconEntry> match, bool disposing)
             {
                 if (match == null) throw new ArgumentNullException("match");
                 int removed = 0;
@@ -1388,8 +1388,8 @@ namespace UIconEdit
                     while (i < _items.Count && match(_items[i]))
                     {
                         removed++;
-                        IconFrame oldItem = _items[i];
-                        _set.Remove(oldItem.FrameKey);
+                        IconEntry oldItem = _items[i];
+                        _set.Remove(oldItem.EntryKey);
                         _items.RemoveAt(i);
                         if (disposing)
                             oldItem.Dispose();
@@ -1406,46 +1406,46 @@ namespace UIconEdit
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public int RemoveWhere(Predicate<IconFrame> match)
+            public int RemoveWhere(Predicate<IconEntry> match)
             {
                 return _removeWhere(match, false);
             }
 
             /// <summary>
-            /// Removes all elements matching the specified predicate and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// Removes all elements matching the specified predicate and immediately calls <see cref="IconEntry.Dispose()"/>.
             /// </summary>
             /// <param name="match">A predicate used to define the elements to remove.</param>
             /// <returns>The number of elements which were removed.</returns>
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public int RemoveAndDisposeWhere(Predicate<IconFrame> match)
+            public int RemoveAndDisposeWhere(Predicate<IconEntry> match)
             {
                 return _removeWhere(match, true);
             }
 
             /// <summary>
-            /// Searches for an element which matches the specified predicate, and returns the first matching icon frame in the list.
+            /// Searches for an element which matches the specified predicate, and returns the first matching icon entry in the list.
             /// </summary>
             /// <param name="match">A predicate used to define the element to search for.</param>
-            /// <returns>An icon frame matching the specified predicate, or <c>null</c> if no such icon frame was found.</returns>
+            /// <returns>An icon entry matching the specified predicate, or <c>null</c> if no such icon entry was found.</returns>
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public IconFrame Find(Predicate<IconFrame> match)
+            public IconEntry Find(Predicate<IconEntry> match)
             {
                 return _items.Find(match);
             }
 
             /// <summary>
-            /// Searches for an element which matches the specified predicate, and returns the index of the first matching icon frame in the list.
+            /// Searches for an element which matches the specified predicate, and returns the index of the first matching icon entry in the list.
             /// </summary>
             /// <param name="match">A predicate used to define the element to search for.</param>
-            /// <returns>The index of the icon frame matching the specified predicate, or -1 if no such icon frame was found.</returns>
+            /// <returns>The index of the icon entry matching the specified predicate, or -1 if no such icon entry was found.</returns>
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public int FindIndex(Predicate<IconFrame> match)
+            public int FindIndex(Predicate<IconEntry> match)
             {
                 return _items.FindIndex(match);
             }
@@ -1458,7 +1458,7 @@ namespace UIconEdit
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public bool Exists(Predicate<IconFrame> match)
+            public bool Exists(Predicate<IconEntry> match)
             {
                 return _items.Exists(match);
             }
@@ -1471,51 +1471,51 @@ namespace UIconEdit
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public bool TrueForAll(Predicate<IconFrame> match)
+            public bool TrueForAll(Predicate<IconEntry> match)
             {
                 return _items.TrueForAll(match);
             }
 
             /// <summary>
-            /// Returns a list containing all icon frames which match the specified predicate.
+            /// Returns a list containing all icon entries which match the specified predicate.
             /// </summary>
             /// <param name="match">A predicate used to define the elements to search for.</param>
             /// <returns>A list containing all elements matching <paramref name="match"/>.</returns>
-            public List<IconFrame> FindAll(Predicate<IconFrame> match)
+            public List<IconEntry> FindAll(Predicate<IconEntry> match)
             {
                 return _items.FindAll(match);
             }
 
             /// <summary>
-            /// Sorts all elements in the list according to their <see cref="IconFrame.FrameKey"/> value.
+            /// Sorts all elements in the list according to their <see cref="IconEntry.EntryKey"/> value.
             /// </summary>
             public void Sort()
             {
-                _items.Sort(new IconFrameComparer());
+                _items.Sort(new IconEntryComparer());
             }
 
             /// <summary>
             /// Sorts all elements in the list according to the specified comparer.
             /// </summary>
-            /// <param name="comparer">The comparer used to compare each <see cref="IconFrame"/>, or <c>null</c> to their <see cref="IconFrame.FrameKey"/> value.</param>
-            public void Sort(IComparer<IconFrame> comparer)
+            /// <param name="comparer">The comparer used to compare each <see cref="IconEntry"/>, or <c>null</c> to their <see cref="IconEntry.EntryKey"/> value.</param>
+            public void Sort(IComparer<IconEntry> comparer)
             {
-                _items.Sort(comparer ?? new IconFrameComparer());
+                _items.Sort(comparer ?? new IconEntryComparer());
             }
 
             /// <summary>
             /// Sorts all elements in the list according to the specified delegate.
             /// </summary>
-            /// <param name="comparison">The delegate used to compare each <see cref="IconFrame"/>.</param>
+            /// <param name="comparison">The delegate used to compare each <see cref="IconEntry"/>.</param>
             /// <exception cref="ArgumentNullException">
             /// <paramref name="comparison"/> is <c>null</c>.
             /// </exception>
-            public void Sort(Comparison<IconFrame> comparison)
+            public void Sort(Comparison<IconEntry> comparison)
             {
                 _items.Sort(comparison);
             }
 
-            bool ICollection<IconFrame>.IsReadOnly
+            bool ICollection<IconEntry>.IsReadOnly
             {
                 get { return true; }
             }
@@ -1549,12 +1549,12 @@ namespace UIconEdit
             /// <summary>
             /// An enumerator which iterates through the list.
             /// </summary>
-            public struct Enumerator : IEnumerator<IconFrame>
+            public struct Enumerator : IEnumerator<IconEntry>
             {
-                private IconFrame _current;
-                private IEnumerator<IconFrame> _enum;
+                private IconEntry _current;
+                private IEnumerator<IconEntry> _enum;
 
-                internal Enumerator(FrameList set)
+                internal Enumerator(EntryList set)
                 {
                     _current = null;
                     _enum = set._items.GetEnumerator();
@@ -1563,7 +1563,7 @@ namespace UIconEdit
                 /// <summary>
                 /// Gets the element at the current position in the enumerator.
                 /// </summary>
-                public IconFrame Current
+                public IconEntry Current
                 {
                     get { return _current; }
                 }
@@ -1608,15 +1608,15 @@ namespace UIconEdit
 
             private class DebugView
             {
-                private FrameList _list;
+                private EntryList _list;
 
-                public DebugView(FrameList list)
+                public DebugView(EntryList list)
                 {
                     _list = list;
                 }
 
                 [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-                public IconFrame[] Items
+                public IconEntry[] Items
                 {
                     get { return _list._items.ToArray(); }
                 }
@@ -1646,7 +1646,7 @@ namespace UIconEdit
     {
         private static string DefaultMessage { get { return new InvalidDataException().Message; } }
 
-        internal const int BeforeFrames = -1;
+        internal const int BeforeEntries = -1;
 
         /// <summary>
         /// Creates a new instance using a message which describes the error and the specified error code.
@@ -1654,7 +1654,7 @@ namespace UIconEdit
         /// <param name="message">A message describing the error.</param>
         /// <param name="code">The error code used to identify the cause of the error.</param>
         /// <param name="value">The value which caused the error.</param>
-        /// <param name="index">The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.</param>
+        /// <param name="index">The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.</param>
         public IconLoadException(string message, IconErrorCode code, object value, int index)
             : base(message)
         {
@@ -1670,7 +1670,7 @@ namespace UIconEdit
         /// <param name="code">The error code used to identify the cause of the error.</param>
         /// <param name="value">The value which caused the error.</param>
         public IconLoadException(string message, IconErrorCode code, object value)
-            : this(message, code, value, BeforeFrames)
+            : this(message, code, value, BeforeEntries)
         {
         }
 
@@ -1679,7 +1679,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="message">A message describing the error.</param>
         /// <param name="code">The error code used to identify the cause of the error.</param>
-        /// <param name="index">The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.</param>
+        /// <param name="index">The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.</param>
         public IconLoadException(string message, IconErrorCode code, int index)
             : this(message, code, null, index)
         {
@@ -1690,7 +1690,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="code">The error code used to identify the cause of the error.</param>
         /// <param name="value">The value which caused the error.</param>
-        /// <param name="index">The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.</param>
+        /// <param name="index">The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.</param>
         public IconLoadException(IconErrorCode code, object value, int index)
             : this(DefaultMessage, code, value, index)
         {
@@ -1700,7 +1700,7 @@ namespace UIconEdit
         /// Creates a new instance with the default message and the specified error code.
         /// </summary>
         /// <param name="code">The error code used to identify the cause of the error.</param>
-        /// <param name="index">The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.</param>
+        /// <param name="index">The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.</param>
         public IconLoadException(IconErrorCode code, int index)
             : this(DefaultMessage, code, null, index)
         {
@@ -1712,7 +1712,7 @@ namespace UIconEdit
         /// <param name="code">The error code used to identify the cause of the error.</param>
         /// <param name="value">The value which caused the error.</param>
         public IconLoadException(IconErrorCode code, object value)
-            : this(DefaultMessage, code, value, BeforeFrames)
+            : this(DefaultMessage, code, value, BeforeEntries)
         {
         }
 
@@ -1721,7 +1721,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="code">The error code used to identify the cause of the error.</param>
         public IconLoadException(IconErrorCode code)
-            : this(DefaultMessage, code, null, BeforeFrames)
+            : this(DefaultMessage, code, null, BeforeEntries)
         {
         }
 
@@ -1730,7 +1730,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="message">A message describing the error.</param>
         /// <param name="code">The error code used to identify the cause of the error.</param>
-        /// <param name="index">The index of the frame in the icon file which caused this error, or -1 if it occurred before processing the icon frames.</param>
+        /// <param name="index">The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException"/> parameter
         /// is not <c>null</c>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
         public IconLoadException(string message, IconErrorCode code, int index, Exception innerException)
@@ -1747,7 +1747,7 @@ namespace UIconEdit
         /// <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException"/> parameter
         /// is not <c>null</c>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
         public IconLoadException(string message, Exception innerException)
-            : this(message, IconErrorCode.Unknown, BeforeFrames, innerException)
+            : this(message, IconErrorCode.Unknown, BeforeEntries, innerException)
         {
         }
 
@@ -1776,7 +1776,7 @@ namespace UIconEdit
                 if (_code != IconErrorCode.Unknown)
                     messages.Add(string.Format("Code: 0x{0:x}, {1}", (int)_code, _code));
                 if (_index >= 0)
-                    messages.Add("Frame index: " + _index);
+                    messages.Add("Entry index: " + _index);
                 if (_value != null)
                     messages.Add("Value: " + _value);
                 switch (messages.Count)
@@ -1796,8 +1796,8 @@ namespace UIconEdit
 
         private int _index;
         /// <summary>
-        /// Gets the index in the icon file of the icon frame which caused this exception,
-        /// or -1 if it occurred before the icon frames were processed.
+        /// Gets the index in the icon file of the icon entry which caused this exception,
+        /// or -1 if it occurred before the icon entries were processed.
         /// </summary>
         public int Index { get { return _index; } }
 
@@ -1823,10 +1823,10 @@ namespace UIconEdit
         /// </summary>
         InvalidFormat = 1,
         /// <summary>
-        /// Code 0x2: The icon contains zero frames.
+        /// Code 0x2: The icon contains zero entries.
         /// This is a fatal error, and the icon file cannot continue processing when it occurs.
         /// </summary>
-        ZeroFrames = 2,
+        ZeroEntries = 2,
         /// <summary>
         /// Code 0x3: One of the icon directory entries has a length less than or equal to 40 bytes, which is logically too small for either a BMP or a PNG file.
         /// <see cref="IconLoadException.Value"/> contains the length.
@@ -1845,64 +1845,64 @@ namespace UIconEdit
         /// </summary>
         ResourceOverlap = 5,
         /// <summary>
-        /// Code 0x1000: the file type of a frame is invalid.
+        /// Code 0x1000: the file type of an entry is invalid.
         /// </summary>
-        InvalidFrameType = 0x1000,
+        InvalidEntryType = 0x1000,
         /// <summary>
         /// Code 0x1001: the file is an icon, and an icon directory entry has a bit depth with any value other than 0, 1, 4, 8, 24, or 32.
         /// <see cref="IconLoadException.Value"/> contains the bit depth.
         /// </summary>
         InvalidBitDepth = 0x1001,
         /// <summary>
-        /// There are no remaining valid frames after processing.
+        /// There are no remaining valid entries after processing.
         /// This is a fatal error, and the icon file cannot continue processing when it occurs.
         /// </summary>
-        ZeroValidFrames = 0x1002,
+        ZeroValidEntries = 0x1002,
         /// <summary>
-        /// Code 0x1100: an error occurred when attempting to load a PNG frame. The inner exception may contain more information.
+        /// Code 0x1100: an error occurred when attempting to load a PNG entry. The inner exception may contain more information.
         /// </summary>
         InvalidPngFile = 0x1100,
         /// <summary>
-        /// Code 0x1102: the width or height of a PNG frame is less than <see cref="IconFrame.MinDimension"/> or greater than <see cref="IconFrame.MaxDimension"/>.
+        /// Code 0x1102: the width or height of a PNG entry is less than <see cref="IconEntry.MinDimension"/> or greater than <see cref="IconEntry.MaxDimension"/>.
         /// <see cref="IconLoadException.Value"/> contains the <see cref="Image.Size"/> of the image.
         /// </summary>
         InvalidPngSize = 0x1102,
         /// <summary>
-        /// Code 0x1105: the width or height of a PNG frame does not match the width or height listed in the icon directory entry.
+        /// Code 0x1105: the width or height of a PNG entry does not match the width or height listed in the icon directory entry.
         /// </summary>
         PngSizeMismatch = 0x1103,
         /// <summary>
-        /// Code 0x1204: an error occurred when attempting to process a BMP frame. The inner exception may contain more information.
+        /// Code 0x1204: an error occurred when attempting to process a BMP entry. The inner exception may contain more information.
         /// <see cref="IconLoadException.Value"/> contains a <see cref="Tuple{T1, T2}"/> in which the <see cref="Tuple{T1, T2}.Item1"/> is the 
         /// <see cref="Image.Size"/> listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the actual size.
         /// </summary>
         InvalidBmpFile = 0x1200,
         /// <summary>
-        /// Code 0x1201 the bit depth of a BMP frame is not supported.
+        /// Code 0x1201 the bit depth of a BMP entry is not supported.
         /// <see cref="IconLoadException.Value"/> contains the bit depth.
         /// </summary>
         InvalidBmpBitDepth = 0x1201,
         /// <summary>
-        /// Code 0x1202: the width or height of a BMP frame is less than <see cref="IconFrame.MinDimension"/> or greater than <see cref="IconFrame.MaxDimension"/>.
+        /// Code 0x1202: the width or height of a BMP entry is less than <see cref="IconEntry.MinDimension"/> or greater than <see cref="IconEntry.MaxDimension"/>.
         /// The maximum height is doubled in images with a bit depth less than 32.
         /// <see cref="IconLoadException.Value"/> contains the <see cref="Image.Size"/> of the image.
         /// </summary>
         InvalidBmpSize = 0x1202,
         /// <summary>
-        /// Code 0x1203: the width or height of a BMP frame does not match the width or height listed in the icon directory entry.
+        /// Code 0x1203: the width or height of a BMP entry does not match the width or height listed in the icon directory entry.
         /// <see cref="IconLoadException.Value"/> contains a <see cref="Tuple{T1, T2}"/> in which the <see cref="Tuple{T1, T2}.Item1"/> is the 
         /// <see cref="Image.Size"/> listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the actual size.
         /// </summary>
         BmpHeightMismatch = 0x1203,
         /// <summary>
-        /// Code 0x1204: the height of a BMP frame is an odd number, indicating that there is no AND (transparency) mask.
+        /// Code 0x1204: the height of a BMP entry is an odd number, indicating that there is no AND (transparency) mask.
         /// <see cref="IconLoadException.Value"/> contains the <see cref="Image.Height"/> of the image.
         /// </summary>
         InvalidBmpHeightOdd = 0x1204,
         /// <summary>
-        /// Code 0x1205: there is a mismatch between the bit depth of a BMP frame and the expected bit depth of the file.
+        /// Code 0x1205: there is a mismatch between the bit depth of a BMP entry and the expected bit depth of the file.
         /// <see cref="IconLoadException.Value"/> contains a <see cref="Tuple{T1, T2}"/> in which the <see cref="Tuple{T1, T2}.Item1"/> is the bit depth
-        /// listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the bit depth listed in the BMP frame.
+        /// listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the bit depth listed in the BMP entry.
         /// </summary>
         BmpBitDepthMismatch = 0x1205,
     }

@@ -47,7 +47,7 @@ namespace UIconEdit
         /// </summary>
         public CursorFile()
         {
-            _frames = new FrameList(this);
+            _entries = new EntryList(this);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace UIconEdit
         /// Loads a <see cref="CursorFile"/> from the specified stream.
         /// </summary>
         /// <param name="input">A stream containing an cursor file.</param>
-        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual cursor frames,
+        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual cursor entries,
         /// or <c>null</c> to throw an exception in those cases.</param>
         /// <returns>A <see cref="CursorFile"/> loaded from <paramref name="input"/>.</returns>
         /// <exception cref="ArgumentNullException">
@@ -106,7 +106,7 @@ namespace UIconEdit
         /// Loads an <see cref="IconFileBase"/> implementation from the specified path.
         /// </summary>
         /// <param name="path">The path to a cursor file.</param>
-        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual cursor frames,
+        /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual cursor entries,
         /// or <c>null</c> to throw an exception in those cases.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
@@ -193,82 +193,82 @@ namespace UIconEdit
             get { return IconTypeCode.Cursor; }
         }
 
-        private FrameList _frames;
+        private EntryList _entries;
         /// <summary>
-        /// Gets a collection containing all frames in the cursor file.
+        /// Gets a collection containing all entries in the cursor file.
         /// </summary>
-        public new FrameList Frames { get { return _frames; } }
+        public new EntryList Entries { get { return _entries; } }
 
         /// <summary>
-        /// Gets a valid indicating whether the specified instance is a valid <see cref="CursorFrame"/> object.
+        /// Gets a valid indicating whether the specified instance is a valid <see cref="CursorEntry"/> object.
         /// </summary>
-        /// <param name="frame">The cursor frame to test.</param>
-        /// <returns><c>true</c> if <paramref name="frame"/> is a <see cref="CursorFrame"/> instance; <c>false</c> otherwise.</returns>
-        protected override bool IsValid(IconFrame frame)
+        /// <param name="entry">The cursor entry to test.</param>
+        /// <returns><c>true</c> if <paramref name="entry"/> is a <see cref="CursorEntry"/> instance; <c>false</c> otherwise.</returns>
+        protected override bool IsValid(IconEntry entry)
         {
-            return frame is CursorFrame;
+            return entry is CursorEntry;
         }
 
         /// <summary>
         /// Returns a duplicate of the current instance.
         /// </summary>
-        /// <returns>A duplicate of the current instance, with copies of every cursor frame and clones of each
-        /// frame's <see cref="IconFrame.BaseImage"/> in <see cref="Frames"/>.</returns>
+        /// <returns>A duplicate of the current instance, with copies of every cursor entry and clones of each
+        /// entry's <see cref="IconEntry.BaseImage"/> in <see cref="Entries"/>.</returns>
         public override IconFileBase Clone()
         {
             CursorFile copy = (CursorFile)base.Clone();
-            copy._frames = new FrameList(copy);
+            copy._entries = new EntryList(copy);
             return copy;
         }
 
         /// <summary>
-        /// Gets the horizontal offset of the hotspot in the specified frame from the left of the specified cursor frame.
+        /// Gets the horizontal offset of the hotspot in the specified entry from the left of the specified cursor entry.
         /// </summary>
-        /// <param name="frame">The frame from which to get the horizontal offset.</param>
+        /// <param name="entry">The entry from which to get the horizontal offset.</param>
         /// <returns>The horizontal offset of the hotspot from the left in pixels.</returns>
-        protected override ushort GetImgX(IconFrame frame)
+        protected override ushort GetImgX(IconEntry entry)
         {
-            return ((CursorFrame)frame).HotspotX;
+            return ((CursorEntry)entry).HotspotX;
         }
 
         /// <summary>
-        /// Gets the vertical offset of the hotspot in the specified frame from the top of the specified cursor frame.
+        /// Gets the vertical offset of the hotspot in the specified entry from the top of the specified cursor entry.
         /// </summary>
-        /// <param name="frame">The frame from which to get the horizontal offset.</param>
+        /// <param name="entry">The entry from which to get the horizontal offset.</param>
         /// <returns>The vertical offset of the hotspot from the top in pixels.</returns>
-        protected override ushort GetImgY(IconFrame frame)
+        protected override ushort GetImgY(IconEntry entry)
         {
-            return ((CursorFrame)frame).HotspotY;
+            return ((CursorEntry)entry).HotspotY;
         }
 
         /// <summary>
-        /// Represents a list of cursor frames.
+        /// Represents a list of cursor entries.
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(DebugView))]
-        public new class FrameList : IList<CursorFrame>, IList
+        public new class EntryList : IList<CursorEntry>, IList
 #if IREADONLY
-            , IReadOnlyList<CursorFrame>
+            , IReadOnlyList<CursorEntry>
 #endif
         {
-            internal FrameList(CursorFile file)
+            internal EntryList(CursorFile file)
             {
                 _file = file;
-                _frames = ((IconFileBase)file).Frames;
+                _entries = ((IconFileBase)file).Entries;
             }
 
             private IconFileBase _file;
-            private IconFileBase.FrameList _frames;
+            private IconFileBase.EntryList _entries;
 
             /// <summary>
-            /// Gets the number of frames contained in the list.
+            /// Gets the number of entries contained in the list.
             /// </summary>
-            public int Count { get { return _frames.Count; } }
+            public int Count { get { return _entries.Count; } }
 
             /// <summary>
-            /// Gets and sets the cursor frame at the specified index.
+            /// Gets and sets the cursor entry at the specified index.
             /// </summary>
-            /// <param name="index">The cursor frame at the specified index.</param>
+            /// <param name="index">The cursor entry at the specified index.</param>
             /// <exception cref="ArgumentOutOfRangeException">
             /// <para><paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.</para>
             /// <para>-OR-</para>
@@ -277,16 +277,16 @@ namespace UIconEdit
             /// <exception cref="NotSupportedException">
             /// In a set operation, the specified value is <c>null</c> or is already associated with a different cursor file.
             /// </exception>
-            public CursorFrame this[int index]
+            public CursorEntry this[int index]
             {
-                get { return (CursorFrame)_frames[index]; }
-                set { _frames[index] = value; }
+                get { return (CursorEntry)_entries[index]; }
+                set { _entries[index] = value; }
             }
 
             object IList.this[int index]
             {
-                get { return _frames[index]; }
-                set { ((IList)_frames)[index] = value; }
+                get { return _entries[index]; }
+                set { ((IList)_entries)[index] = value; }
             }
 
             /// <summary>
@@ -295,179 +295,179 @@ namespace UIconEdit
             /// <param name="index">The index of the value to set.</param>
             /// <param name="item">The value to set.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c>,
-            /// is already associated with a different icon file, or if an element with the same <see cref="CursorFrame.Width"/>, <see cref="CursorFrame.Height"/>,
-            /// and <see cref="IconFrame.BitDepth"/> already exists in the list at a different index.</returns>
+            /// is already associated with a different icon file, or if an element with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>,
+            /// and <see cref="IconEntry.BitDepth"/> already exists in the list at a different index.</returns>
             /// <exception cref="ArgumentOutOfRangeException">
             /// <paramref name="index"/> is less than 0 or is greater than <see cref="Count"/>.
             /// </exception>
-            public bool SetValue(int index, CursorFrame item)
+            public bool SetValue(int index, CursorEntry item)
             {
-                return _frames.SetValue(index, item);
+                return _entries.SetValue(index, item);
             }
 
             /// <summary>
-            /// Adds the specified cursor frame to the list.
+            /// Adds the specified cursor entry to the list.
             /// </summary>
-            /// <param name="item">The cursor frame to add to the list.</param>
+            /// <param name="item">The cursor entry to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
-            /// <see cref="CursorFrame.Width"/>, <see cref="CursorFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
-            public bool Add(CursorFrame item)
+            /// <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
+            public bool Add(CursorEntry item)
             {
-                return _frames.Add(item);
+                return _entries.Add(item);
             }
 
-            void ICollection<CursorFrame>.Add(CursorFrame item)
+            void ICollection<CursorEntry>.Add(CursorEntry item)
             {
                 Add(item);
             }
 
             int IList.Add(object value)
             {
-                return ((IList)_frames).Add(value);
+                return ((IList)_entries).Add(value);
             }
 
             /// <summary>
-            /// Inserts the specified cursor frame into the list at the specified index.
+            /// Inserts the specified cursor entry into the list at the specified index.
             /// </summary>
-            /// <param name="index">The index at which the cursor frame will be inserted.</param>
-            /// <param name="item">The cursor frame to add to the list.</param>
+            /// <param name="index">The index at which the cursor entry will be inserted.</param>
+            /// <param name="item">The cursor entry to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
-            /// <see cref="CursorFrame.Width"/>, <see cref="CursorFrame.Height"/>, and <see cref="IconFrame.BitDepth"/> already exists in the list.</returns>
-            public bool Insert(int index, CursorFrame item)
+            /// <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
+            public bool Insert(int index, CursorEntry item)
             {
-                return _frames.Insert(index, item);
+                return _entries.Insert(index, item);
             }
 
-            void IList<CursorFrame>.Insert(int index, CursorFrame item)
+            void IList<CursorEntry>.Insert(int index, CursorEntry item)
             {
                 Insert(index, item);
             }
 
             void IList.Insert(int index, object value)
             {
-                ((IList)_frames).Insert(index, value);
+                ((IList)_entries).Insert(index, value);
             }
 
             /// <summary>
             /// Removes the element at the specified index.
             /// </summary>
-            /// <param name="index">The index of the cursor frame to remove.</param>
+            /// <param name="index">The index of the cursor entry to remove.</param>
             /// <exception cref="ArgumentOutOfRangeException">
             /// <paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.
             /// </exception>
             public void RemoveAt(int index)
             {
-                _frames.RemoveAt(index);
+                _entries.RemoveAt(index);
             }
 
             /// <summary>
-            /// Removes the element at the specified index and, if it does not exist elsewhere in the file, immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// Removes the element at the specified index and, if it does not exist elsewhere in the file, immediately calls <see cref="IconEntry.Dispose()"/>.
             /// </summary>
-            /// <param name="index">The index of the cursor frame to remove.</param>
+            /// <param name="index">The index of the cursor entry to remove.</param>
             public void RemoveAndDisposeAt(int index)
             {
-                _frames.RemoveAndDisposeAt(index);
+                _entries.RemoveAndDisposeAt(index);
             }
 
             /// <summary>
-            /// Removes the specified cursor frame from the list.
+            /// Removes the specified cursor entry from the list.
             /// </summary>
-            /// <param name="item">The cursor frame to to remove from the list.</param>
+            /// <param name="item">The cursor entry to to remove from the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
-            public bool Remove(CursorFrame item)
+            public bool Remove(CursorEntry item)
             {
-                return _frames.Remove(item);
+                return _entries.Remove(item);
             }
 
             void IList.Remove(object value)
             {
-                ((IList)_frames).Remove(value);
+                ((IList)_entries).Remove(value);
             }
 
             /// <summary>
-            /// Removes the specified cursor frame from the list and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// Removes the specified cursor entry from the list and immediately calls <see cref="IconEntry.Dispose()"/>.
             /// </summary>
-            /// <param name="item">The cursor frame to to remove from the list.</param>
+            /// <param name="item">The cursor entry to to remove from the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
-            public bool RemoveAndDispose(CursorFrame item)
+            public bool RemoveAndDispose(CursorEntry item)
             {
-                return _frames.RemoveAndDispose(item);
+                return _entries.RemoveAndDispose(item);
             }
 
             /// <summary>
-            /// Removes an element similar to the specified cursor frame from the list.
+            /// Removes an element similar to the specified cursor entry from the list.
             /// </summary>
-            /// <param name="item">The cursor frame to to compare.</param>
-            /// <returns><c>true</c> if a cursor frame with the same <see cref="CursorFrame.Width"/>, <see cref="CursorFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such cursor frame was found in the list.</returns>
-            public bool RemoveSimilar(CursorFrame item)
+            /// <param name="item">The cursor entry to to compare.</param>
+            /// <returns><c>true</c> if a cursor entry with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such cursor entry was found in the list.</returns>
+            public bool RemoveSimilar(CursorEntry item)
             {
-                return _frames.RemoveSimilar(item);
+                return _entries.RemoveSimilar(item);
             }
 
             /// <summary>
-            /// Removes a cursor frame similar to the specified value from the list.
+            /// Removes a cursor entry similar to the specified value from the list.
             /// </summary>
-            /// <param name="key">The frame key to compare.</param>
-            /// <returns><c>true</c> if a cursor frame with the same <see cref="CursorFrame.Width"/>, <see cref="CursorFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such cursor frame was found in the list.</returns>
-            public bool RemoveSimilar(FrameKey key)
+            /// <param name="key">The entry key to compare.</param>
+            /// <returns><c>true</c> if a cursor entry with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such cursor entry was found in the list.</returns>
+            public bool RemoveSimilar(EntryKey key)
             {
-                return _frames.RemoveSimilar(key);
+                return _entries.RemoveSimilar(key);
             }
 
             /// <summary>
-            /// Removes a cursor frame similar to the specified values from the list.
+            /// Removes a cursor entry similar to the specified values from the list.
             /// </summary>
-            /// <param name="width">The width of the cursor frame to search for.</param>
-            /// <param name="height">The height of the cursor frame to search for.</param>
-            /// <param name="bitDepth">The bit depth of the cursor frame to search for.</param>
-            /// <returns><c>true</c> if a cursor frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
-            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
-            /// <c>false</c> if no such cursor frame was found in the list.</returns>
+            /// <param name="width">The width of the cursor entry to search for.</param>
+            /// <param name="height">The height of the cursor entry to search for.</param>
+            /// <param name="bitDepth">The bit depth of the cursor entry to search for.</param>
+            /// <returns><c>true</c> if a cursor entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
+            /// <c>false</c> if no such cursor entry was found in the list.</returns>
             public bool RemoveSimilar(short width, short height, BitDepth bitDepth)
             {
-                return _frames.RemoveSimilar(width, height, bitDepth);
+                return _entries.RemoveSimilar(width, height, bitDepth);
             }
 
             /// <summary>
-            /// Removes the specified cursor frame from the list, immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// Removes the specified cursor entry from the list, immediately calls <see cref="IconEntry.Dispose()"/>.
             /// </summary>
-            /// <param name="item">The cursor frame to compare.</param>
-            /// <returns><c>true</c> if a cursor frame with the same <see cref="CursorFrame.Width"/>, <see cref="CursorFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such cursor frame was found in the list.</returns>
-            public bool RemoveAndDisposeSimilar(CursorFrame item)
+            /// <param name="item">The cursor entry to compare.</param>
+            /// <returns><c>true</c> if a cursor entry with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such cursor entry was found in the list.</returns>
+            public bool RemoveAndDisposeSimilar(CursorEntry item)
             {
-                return _frames.RemoveAndDisposeSimilar(item);
+                return _entries.RemoveAndDisposeSimilar(item);
             }
 
             /// <summary>
-            /// Removes a cursor frame similar to the specified value from the list
-            /// and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// Removes a cursor entry similar to the specified value from the list
+            /// and immediately calls <see cref="IconEntry.Dispose()"/>.
             /// </summary>
-            /// <param name="key">The frame key to search for.</param>
-            /// <returns><c>true</c> if a cursor frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
-            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such cursor frame was found in the list.</returns>
-            public bool RemoveAndDisposeSimilar(FrameKey key)
+            /// <param name="key">The entry key to search for.</param>
+            /// <returns><c>true</c> if a cursor entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such cursor entry was found in the list.</returns>
+            public bool RemoveAndDisposeSimilar(EntryKey key)
             {
-                return _frames.RemoveAndDisposeSimilar(key);
+                return _entries.RemoveAndDisposeSimilar(key);
             }
 
             /// <summary>
-            /// Removes a cursor frame similar to the specified value from the list
-            /// and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// Removes a cursor entry similar to the specified value from the list
+            /// and immediately calls <see cref="IconEntry.Dispose()"/>.
             /// </summary>
-            /// <param name="width">The width of the cursor frame to search for.</param>
-            /// <param name="height">The height of the cursor frame to search for.</param>
-            /// <param name="bitDepth">The bit depth of the cursor frame to search for.</param>
-            /// <returns><c>true</c> if a cursor frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
-            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
-            /// <c>false</c> if no such cursor frame was found in the list.</returns>
+            /// <param name="width">The width of the cursor entry to search for.</param>
+            /// <param name="height">The height of the cursor entry to search for.</param>
+            /// <param name="bitDepth">The bit depth of the cursor entry to search for.</param>
+            /// <returns><c>true</c> if a cursor entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
+            /// <c>false</c> if no such cursor entry was found in the list.</returns>
             public bool RemoveAndDisposeSimilar(short width, short height, BitDepth bitDepth)
             {
-                return _frames.RemoveAndDisposeSimilar(width, height, bitDepth);
+                return _entries.RemoveAndDisposeSimilar(width, height, bitDepth);
             }
 
             /// <summary>
@@ -480,9 +480,9 @@ namespace UIconEdit
             /// <exception cref="ArgumentException">
             /// The length of <paramref name="array"/> is less than <see cref="Count"/>.
             /// </exception>
-            public void CopyTo(CursorFrame[] array)
+            public void CopyTo(CursorEntry[] array)
             {
-                _frames.CopyTo(array);
+                _entries.CopyTo(array);
             }
 
             /// <summary>
@@ -499,9 +499,9 @@ namespace UIconEdit
             /// <exception cref="ArgumentException">
             /// The length of <paramref name="array"/> minus <paramref name="arrayIndex"/> is less than <see cref="Count"/>.
             /// </exception>
-            public void CopyTo(CursorFrame[] array, int arrayIndex)
+            public void CopyTo(CursorEntry[] array, int arrayIndex)
             {
-                _frames.CopyTo(array, arrayIndex);
+                _entries.CopyTo(array, arrayIndex);
             }
 
             /// <summary>
@@ -522,14 +522,14 @@ namespace UIconEdit
             /// <para>-OR-</para>
             /// <para><paramref name="arrayIndex"/> and <paramref name="count"/> do not indicate a valid range of elements in <paramref name="array"/>.</para>
             /// </exception>
-            public void CopyTo(int index, CursorFrame[] array, int arrayIndex, int count)
+            public void CopyTo(int index, CursorEntry[] array, int arrayIndex, int count)
             {
-                _frames.CopyTo(index, array, arrayIndex, count);
+                _entries.CopyTo(index, array, arrayIndex, count);
             }
 
             void ICollection.CopyTo(Array array, int index)
             {
-                ((IList)_frames).CopyTo(array, index);
+                ((IList)_entries).CopyTo(array, index);
             }
 
             /// <summary>
@@ -537,116 +537,116 @@ namespace UIconEdit
             /// </summary>
             public void Clear()
             {
-                _frames.Clear();
+                _entries.Clear();
             }
 
             /// <summary>
-            /// Removes all elements from the collection and immediately calls <see cref="IconFrame.Dispose()"/> on each one.
+            /// Removes all elements from the collection and immediately calls <see cref="IconEntry.Dispose()"/> on each one.
             /// </summary>
             public void ClearAndDispose()
             {
-                _frames.Clear();
+                _entries.Clear();
             }
 
             /// <summary>
-            /// Determines if the specified cursor frame exists in the list.
+            /// Determines if the specified cursor entry exists in the list.
             /// </summary>
-            /// <param name="item">The cursor frame to search for in the list.</param>
+            /// <param name="item">The cursor entry to search for in the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was found; <c>false</c> otherwise.</returns>
-            public bool Contains(CursorFrame item)
+            public bool Contains(CursorEntry item)
             {
-                return _frames.Contains(item);
+                return _entries.Contains(item);
             }
 
             bool IList.Contains(object item)
             {
-                return Contains(item as CursorFrame);
+                return Contains(item as CursorEntry);
             }
 
             /// <summary>
-            /// Determines if an element similar to the specified cursor frame exists in the list.
+            /// Determines if an element similar to the specified cursor entry exists in the list.
             /// </summary>
-            /// <param name="item">The cursor frame to compare.</param>
-            /// <returns><c>true</c> if a cursor frame with the same with the same <see cref="CursorFrame.Width"/>, <see cref="CursorFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// <param name="item">The cursor entry to compare.</param>
+            /// <returns><c>true</c> if a cursor entry with the same with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="item"/> exists in the list; <c>false</c> otherwise.</returns>
-            public bool ContainsSimilar(CursorFrame item)
+            public bool ContainsSimilar(CursorEntry item)
             {
-                return _frames.ContainsSimilar(item);
+                return _entries.ContainsSimilar(item);
             }
 
             /// <summary>
             /// Determines if an element similar to the specified value exists in the list.
             /// </summary>
-            /// <param name="key">The frame key to compare.</param>
-            /// <returns><c>true</c> if a cursor frame with the same with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// <param name="key">The entry key to compare.</param>
+            /// <returns><c>true</c> if a cursor entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="key"/> exists in the list; <c>false</c> otherwise.</returns>
-            public bool ContainsSimilar(FrameKey key)
+            public bool ContainsSimilar(EntryKey key)
             {
-                return _frames.ContainsSimilar(key);
+                return _entries.ContainsSimilar(key);
             }
 
             /// <summary>
             /// Determines if an element similar to the specified values exists in the list.
             /// </summary>
-            /// <param name="width">The width of the cursor frame to search for.</param>
-            /// <param name="height">The height of the cursor frame to search for.</param>
-            /// <param name="bitDepth">The bit depth of the cursor frame to search for.</param>
-            /// <returns><c>true</c> if a cursor frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
-            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>  was found;
-            /// <c>false</c> if no such cursor frame was found in the list.</returns>
+            /// <param name="width">The width of the cursor entry to search for.</param>
+            /// <param name="height">The height of the cursor entry to search for.</param>
+            /// <param name="bitDepth">The bit depth of the cursor entry to search for.</param>
+            /// <returns><c>true</c> if a cursor entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was found;
+            /// <c>false</c> if no such cursor entry was found in the list.</returns>
             public bool ContainsSimilar(short width, short height, BitDepth bitDepth)
             {
-                return _frames.ContainsSimilar(width, height, bitDepth);
+                return _entries.ContainsSimilar(width, height, bitDepth);
             }
 
             /// <summary>
-            /// Gets the index of the specified cursor frame.
+            /// Gets the index of the specified cursor entry.
             /// </summary>
-            /// <param name="item">The cursor frame to search for in the list.</param>
+            /// <param name="item">The cursor entry to search for in the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was found; <c>false</c> otherwise.</returns>
-            public int IndexOf(CursorFrame item)
+            public int IndexOf(CursorEntry item)
             {
-                return _frames.IndexOf(item);
+                return _entries.IndexOf(item);
             }
 
             int IList.IndexOf(object item)
             {
-                return IndexOf(item as CursorFrame);
+                return IndexOf(item as CursorEntry);
             }
 
             /// <summary>
-            /// Gets the index of an element similar to the specified cursor frame.
+            /// Gets the index of an element similar to the specified cursor entry.
             /// </summary>
-            /// <param name="item">The cursor frame to compare.</param>
-            /// <returns>The index of a cursor frame with the same <see cref="CursorFrame.Width"/>, <see cref="CursorFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// <param name="item">The cursor entry to compare.</param>
+            /// <returns>The index of a cursor entry with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="item"/>, if found; otherwise, -1.</returns>
-            public int IndexOfSimilar(CursorFrame item)
+            public int IndexOfSimilar(CursorEntry item)
             {
-                return _frames.IndexOfSimilar(item);
+                return _entries.IndexOfSimilar(item);
             }
 
             /// <summary>
             /// Gets the index of an element similar to the specified value.
             /// </summary>
-            /// <param name="key">The frame key to compare.</param>
-            /// <returns>The index of a cursor frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// <param name="key">The entry key to compare.</param>
+            /// <returns>The index of a cursor entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="key"/>, if found; otherwise, -1.</returns>
-            public int IndexOfSimilar(FrameKey key)
+            public int IndexOfSimilar(EntryKey key)
             {
-                return _frames.IndexOfSimilar(key);
+                return _entries.IndexOfSimilar(key);
             }
 
             /// <summary>
             /// Gets the index of an element similar to the specified values.
             /// </summary>
-            /// <param name="width">The width of the cursor frame to search for.</param>
-            /// <param name="height">The height of the cursor frame to search for.</param>
-            /// <param name="bitDepth">The bit depth of the cursor frame to search for.</param>
-            /// <returns>The index of a cursor frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
-            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>, if found; otherwise, -1.</returns>
+            /// <param name="width">The width of the cursor entry to search for.</param>
+            /// <param name="height">The height of the cursor entry to search for.</param>
+            /// <param name="bitDepth">The bit depth of the cursor entry to search for.</param>
+            /// <returns>The index of a cursor entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>, if found; otherwise, -1.</returns>
             public int IndexOfSimilar(short width, short height, BitDepth bitDepth)
             {
-                return _frames.IndexOfSimilar(width, height, bitDepth);
+                return _entries.IndexOfSimilar(width, height, bitDepth);
             }
 
             /// <summary>
@@ -658,7 +658,7 @@ namespace UIconEdit
                 return new Enumerator(this);
             }
 
-            IEnumerator<CursorFrame> IEnumerable<CursorFrame>.GetEnumerator()
+            IEnumerator<CursorEntry> IEnumerable<CursorEntry>.GetEnumerator()
             {
                 return GetEnumerator();
             }
@@ -681,11 +681,11 @@ namespace UIconEdit
             /// </exception>
             public void RemoveRange(int index, int count)
             {
-                _frames.RemoveRange(index, count);
+                _entries.RemoveRange(index, count);
             }
 
             /// <summary>
-            /// Removes a range of elements from the list and immediately calls <see cref="IconFrame.Dispose()"/> on each one.
+            /// Removes a range of elements from the list and immediately calls <see cref="IconEntry.Dispose()"/> on each one.
             /// </summary>
             /// <param name="index">The zero-based starting index of the elements to remove.</param>
             /// <param name="count">The number of elements to remove.</param>
@@ -697,7 +697,7 @@ namespace UIconEdit
             /// </exception>
             public void RemoveAndDisposeRange(int index, int count)
             {
-                _frames.RemoveAndDisposeRange(index, count);
+                _entries.RemoveAndDisposeRange(index, count);
             }
 
             /// <summary>
@@ -708,52 +708,52 @@ namespace UIconEdit
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public int RemoveWhere(Predicate<CursorFrame> match)
+            public int RemoveWhere(Predicate<CursorEntry> match)
             {
                 if (match == null) throw new ArgumentNullException("match");
-                return _frames.RemoveWhere(i => match((CursorFrame)i));
+                return _entries.RemoveWhere(i => match((CursorEntry)i));
             }
 
             /// <summary>
-            /// Removes all elements matching the specified predicate and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// Removes all elements matching the specified predicate and immediately calls <see cref="IconEntry.Dispose()"/>.
             /// </summary>
             /// <param name="match">A predicate used to define the elements to remove.</param>
             /// <returns>The number of elements which were removed.</returns>
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public int RemoveAndDisposeWhere(Predicate<CursorFrame> match)
+            public int RemoveAndDisposeWhere(Predicate<CursorEntry> match)
             {
                 if (match == null) throw new ArgumentNullException("match");
-                return _frames.RemoveAndDisposeWhere(i => match((CursorFrame)i));
+                return _entries.RemoveAndDisposeWhere(i => match((CursorEntry)i));
             }
 
             /// <summary>
-            /// Searches for an element which matches the specified predicate, and returns the first matching cursor frame in the list.
+            /// Searches for an element which matches the specified predicate, and returns the first matching cursor entry in the list.
             /// </summary>
             /// <param name="match">A predicate used to define the element to search for.</param>
-            /// <returns>A cursor frame matching the specified predicate, or <c>null</c> if no such cursor frame was found.</returns>
+            /// <returns>A cursor entry matching the specified predicate, or <c>null</c> if no such cursor entry was found.</returns>
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public CursorFrame Find(Predicate<CursorFrame> match)
+            public CursorEntry Find(Predicate<CursorEntry> match)
             {
                 if (match == null) throw new ArgumentNullException("match");
-                return (CursorFrame)_frames.Find(i => match((CursorFrame)i));
+                return (CursorEntry)_entries.Find(i => match((CursorEntry)i));
             }
 
             /// <summary>
-            /// Searches for an element which matches the specified predicate, and returns the index of the first matching cursor frame in the list.
+            /// Searches for an element which matches the specified predicate, and returns the index of the first matching cursor entry in the list.
             /// </summary>
             /// <param name="match">A predicate used to define the element to search for.</param>
-            /// <returns>The index of the cursor frame matching the specified predicate, or -1 if no such cursor frame was found.</returns>
+            /// <returns>The index of the cursor entry matching the specified predicate, or -1 if no such cursor entry was found.</returns>
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public int FindIndex(Predicate<CursorFrame> match)
+            public int FindIndex(Predicate<CursorEntry> match)
             {
                 if (match == null) throw new ArgumentNullException("match");
-                return _frames.FindIndex(i => match((CursorFrame)i));
+                return _entries.FindIndex(i => match((CursorEntry)i));
             }
 
             /// <summary>
@@ -764,10 +764,10 @@ namespace UIconEdit
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public bool Exists(Predicate<CursorFrame> match)
+            public bool Exists(Predicate<CursorEntry> match)
             {
                 if (match == null) throw new ArgumentNullException("match");
-                return _frames.Exists(i => match((CursorFrame)i));
+                return _entries.Exists(i => match((CursorEntry)i));
             }
 
             /// <summary>
@@ -778,18 +778,18 @@ namespace UIconEdit
             /// <exception cref="ArgumentNullException">
             /// <paramref name="match"/> is <c>null</c>.
             /// </exception>
-            public bool TrueForAll(Predicate<CursorFrame> match)
+            public bool TrueForAll(Predicate<CursorEntry> match)
             {
                 if (match == null) throw new ArgumentNullException("match");
-                return _frames.TrueForAll(i => match((CursorFrame)i));
+                return _entries.TrueForAll(i => match((CursorEntry)i));
             }
 
             /// <summary>
-            /// Returns a list containing all cursor frames which match the specified predicate.
+            /// Returns a list containing all cursor entries which match the specified predicate.
             /// </summary>
             /// <param name="match">A predicate used to define the elements to search for.</param>
             /// <returns>A list containing all elements matching <paramref name="match"/>.</returns>
-            public List<CursorFrame> FindAll(Predicate<CursorFrame> match)
+            public List<CursorEntry> FindAll(Predicate<CursorEntry> match)
             {
                 if (match == null) throw new ArgumentNullException("match");
                 return this.Where(i => match(i)).ToList();
@@ -799,36 +799,36 @@ namespace UIconEdit
             /// Returns an array containing all elements in the current list.
             /// </summary>
             /// <returns>An array containing elements copied from the current list.</returns>
-            public CursorFrame[] ToArray()
+            public CursorEntry[] ToArray()
             {
-                return this.ToArray<CursorFrame>();
+                return this.ToArray<CursorEntry>();
             }
 
             /// <summary>
-            /// Sorts all elements in the list according to their <see cref="IconFrame.FrameKey"/> value.
+            /// Sorts all elements in the list according to their <see cref="IconEntry.EntryKey"/> value.
             /// </summary>
             public void Sort()
             {
-                _frames.Sort();
+                _entries.Sort();
             }
 
             /// <summary>
             /// Sorts all elements in the list according to the specified comparer.
             /// </summary>
-            /// <param name="comparer">The comparer used to compare each <see cref="CursorFrame"/>, or <c>null</c> to use their <see cref="IconFrame.FrameKey"/> value.</param>
+            /// <param name="comparer">The comparer used to compare each <see cref="CursorEntry"/>, or <c>null</c> to use their <see cref="IconEntry.EntryKey"/> value.</param>
             /// <exception cref="ArgumentException">
             /// The implementation of <paramref name="comparer"/> caused an error during the sort. For example, <paramref name="comparer"/> might not return 0
             /// when comparing an item with itself.
             /// </exception>
-            public void Sort(IComparer<CursorFrame> comparer)
+            public void Sort(IComparer<CursorEntry> comparer)
             {
-                _frames.Sort(new FrameComparer(comparer));
+                _entries.Sort(new EntryComparer(comparer));
             }
 
             /// <summary>
             /// Sorts all elements in the list according to the specified delegate.
             /// </summary>
-            /// <param name="comparison">The delegate used to compare each <see cref="IconFrame"/>.</param>
+            /// <param name="comparison">The delegate used to compare each <see cref="IconEntry"/>.</param>
             /// <exception cref="ArgumentNullException">
             /// <paramref name="comparison"/> is <c>null</c>.
             /// </exception>
@@ -836,22 +836,22 @@ namespace UIconEdit
             /// The implementation of <paramref name="comparison"/> caused an error during the sort. For example, <paramref name="comparison"/> might not return 0
             /// when comparing an item with itself.
             /// </exception>
-            public void Sort(Comparison<CursorFrame> comparison)
+            public void Sort(Comparison<CursorEntry> comparison)
             {
                 if (comparison == null) throw new ArgumentNullException("comparison");
-                _frames.Sort((x, y) => comparison((CursorFrame)x, (CursorFrame)y));
+                _entries.Sort((x, y) => comparison((CursorEntry)x, (CursorEntry)y));
             }
 
-            private class FrameComparer : IComparer<IconFrame>
+            private class EntryComparer : IComparer<IconEntry>
             {
-                private IComparer<CursorFrame> _comparer;
+                private IComparer<CursorEntry> _comparer;
 
-                public FrameComparer(IComparer<CursorFrame> comparer) { _comparer = comparer ?? new IconFrameComparer(); }
+                public EntryComparer(IComparer<CursorEntry> comparer) { _comparer = comparer ?? new IconEntryComparer(); }
 
-                public int Compare(IconFrame x, IconFrame y) { return _comparer.Compare((CursorFrame)x, (CursorFrame)y); }
+                public int Compare(IconEntry x, IconEntry y) { return _comparer.Compare((CursorEntry)x, (CursorEntry)y); }
             }
 
-            bool ICollection<CursorFrame>.IsReadOnly
+            bool ICollection<CursorEntry>.IsReadOnly
             {
                 get { return false; }
             }
@@ -873,20 +873,20 @@ namespace UIconEdit
 
             object ICollection.SyncRoot
             {
-                get { return ((ICollection)_frames).SyncRoot; }
+                get { return ((ICollection)_entries).SyncRoot; }
             }
 
             /// <summary>
             /// An enumerator which iterates through the list.
             /// </summary>
-            public struct Enumerator : IEnumerator<CursorFrame>
+            public struct Enumerator : IEnumerator<CursorEntry>
             {
-                private IEnumerator<IconFrame> _enum;
-                private CursorFrame _current;
+                private IEnumerator<IconEntry> _enum;
+                private CursorEntry _current;
 
-                internal Enumerator(FrameList list)
+                internal Enumerator(EntryList list)
                 {
-                    _enum = list._frames.GetEnumerator();
+                    _enum = list._entries.GetEnumerator();
                     _current = null;
                 }
 
@@ -903,7 +903,7 @@ namespace UIconEdit
                 /// <summary>
                 /// Gets the element at the current position in the enumerator.
                 /// </summary>
-                public CursorFrame Current
+                public CursorEntry Current
                 {
                     get { return _current; }
                 }
@@ -922,7 +922,7 @@ namespace UIconEdit
                     if (_enum == null) return false;
                     if (_enum.MoveNext())
                     {
-                        _current = (CursorFrame)_enum.Current;
+                        _current = (CursorEntry)_enum.Current;
                         return true;
                     }
                     Dispose();
@@ -937,15 +937,15 @@ namespace UIconEdit
 
             private class DebugView
             {
-                private FrameList _list;
+                private EntryList _list;
 
-                public DebugView(FrameList list)
+                public DebugView(EntryList list)
                 {
                     _list = list;
                 }
 
                 [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-                public IconFrame[] Items
+                public IconEntry[] Items
                 {
                     get { return _list.ToArray(); }
                 }

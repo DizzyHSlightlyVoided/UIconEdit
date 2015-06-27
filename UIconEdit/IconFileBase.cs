@@ -1025,26 +1025,9 @@ namespace UIconEdit
                 return _remove(item, true);
             }
 
-            private bool _invalidateItems(short width, short height, BitDepth bitDepth)
-            {
-                if (width < IconFrame.MinDimension || width > IconFrame.MaxDimension ||
-                    height < IconFrame.MinDimension || height > IconFrame.MaxDimension)
-                    return true;
-                switch (bitDepth)
-                {
-                    case BitDepth.Depth1BitPerPixel:
-                    case BitDepth.Depth4BitsPerPixel:
-                    case BitDepth.Depth8BitsPerPixel:
-                    case BitDepth.Depth24BitsPerPixel:
-                    case BitDepth.Depth32BitsPerPixel:
-                        return false;
-                    default:
-                        return true;
-                }
-            }
-
             private bool _removeSimilar(FrameKey key, bool disposing)
             {
+                if (!key.IsValid) return false;
                 for (int i = 0; i < _items.Count; i++)
                 {
                     if (key == _items[i].FrameKey)
@@ -1090,9 +1073,6 @@ namespace UIconEdit
             /// <c>false</c> if no such icon frame was found in the list.</returns>
             public bool RemoveSimilar(short width, short height, BitDepth bitDepth)
             {
-                if (_invalidateItems(width, height, bitDepth))
-                    return false;
-
                 return _removeSimilar(new FrameKey(width, height, bitDepth), false);
             }
 
@@ -1133,8 +1113,6 @@ namespace UIconEdit
             /// <c>false</c> if no such icon frame was found in the list.</returns>
             public bool RemoveAndDisposeSimilar(short width, short height, BitDepth bitDepth)
             {
-                if (_invalidateItems(width, height, bitDepth))
-                    return false;
                 return _removeSimilar(new FrameKey(width, height, bitDepth), true);
             }
 
@@ -1253,6 +1231,7 @@ namespace UIconEdit
             /// as <paramref name="key"/>, if found; otherwise, -1.</returns>
             public int IndexOfSimilar(FrameKey key)
             {
+                if (!key.IsValid) return -1;
                 for (int i = 0; i < _items.Count; i++)
                     if (key == _items[i].FrameKey) return i;
                 return -1;
@@ -1268,8 +1247,6 @@ namespace UIconEdit
             /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>, if found; otherwise, -1.</returns>
             public int IndexOfSimilar(short width, short height, BitDepth bitDepth)
             {
-                if (_invalidateItems(width, height, bitDepth))
-                    return -1;
                 return IndexOfSimilar(new FrameKey(width, height, bitDepth));
             }
 
@@ -1401,6 +1378,68 @@ namespace UIconEdit
             public int RemoveAndDisposeWhere(Predicate<IconFrame> match)
             {
                 return _removeWhere(match, true);
+            }
+
+            /// <summary>
+            /// Searches for an element which matches the specified predicate, and returns the first matching icon frame in the list.
+            /// </summary>
+            /// <param name="match">A predicate used to define the element to search for.</param>
+            /// <returns>An icon frame matching the specified predicate, or <c>null</c> if no such icon frame was found.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public IconFrame Find(Predicate<IconFrame> match)
+            {
+                return _items.Find(match);
+            }
+
+            /// <summary>
+            /// Searches for an element which matches the specified predicate, and returns the index of the first matching icon frame in the list.
+            /// </summary>
+            /// <param name="match">A predicate used to define the element to search for.</param>
+            /// <returns>The index of the icon frame matching the specified predicate, or -1 if no such icon frame was found.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public int FindIndex(Predicate<IconFrame> match)
+            {
+                return _items.FindIndex(match);
+            }
+
+            /// <summary>
+            /// Determines whether any element matching the specified predicate exists in the list.
+            /// </summary>
+            /// <param name="match">A predicate used to define the elements to search for.</param>
+            /// <returns><c>true</c> if at least one element matches the specified predicate; <c>false</c> otherwise.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public bool Exists(Predicate<IconFrame> match)
+            {
+                return _items.Exists(match);
+            }
+
+            /// <summary>
+            /// Determines whether every element in the list matches the specified predicate.
+            /// </summary>
+            /// <param name="match">A predicate used to define the elements to search for.</param>
+            /// <returns><c>true</c> if every element in the list matches the specified predicate; <c>false</c> otherwise.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public bool TrueForAll(Predicate<IconFrame> match)
+            {
+                return _items.TrueForAll(match);
+            }
+
+            /// <summary>
+            /// Returns a list containing all icon frames which match the specified predicate.
+            /// </summary>
+            /// <param name="match">A predicate used to define the elements to search for.</param>
+            /// <returns>A list containing all elements matching <paramref name="match"/>.</returns>
+            public List<IconFrame> FindAll(Predicate<IconFrame> match)
+            {
+                return _items.FindAll(match);
             }
 
             /// <summary>

@@ -616,7 +616,7 @@ namespace UIconEdit
         /// <para><paramref name="value"/> does not translate to a valid <see cref="UIconEdit.BitDepth"/> value.</para>
         /// </exception>
         /// <remarks>
-        /// <para><paramref name="value"/> is parsed in a case-insensitive manner which works differently from <see cref="Enum.Parse(Type, string)"/>.</para>
+        /// <para><paramref name="value"/> is parsed in a case-insensitive manner which works differently from <see cref="Enum.Parse(Type, string, bool)"/>.</para>
         /// <para>First of all, all non-alphanumeric characters are stripped. If <paramref name="value"/> is entirely numeric, or begins with "Depth"
         /// followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the
         /// integer <see cref="UIconEdit.BitDepth"/> value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits
@@ -1185,6 +1185,35 @@ namespace UIconEdit
         /// Indicates the bit depth of the icon frame.
         /// </summary>
         public BitDepth BitDepth;
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="Width"/>, <see cref="Height"/>, and <see cref="BitDepth"/> are all 0.
+        /// </summary>
+        public bool IsEmpty { get { return Width == 0 && Height == 0 && BitDepth == 0; } }
+
+        /// <summary>
+        /// Gets a value indicating whether the current instance contains valid values which would actually occur in an <see cref="IconFrame"/>.
+        /// </summary>
+        public bool IsValid
+        {
+            get
+            {
+                if (Width < IconFrame.MinDimension || Width > IconFrame.MaxDimension || Height < IconFrame.MinDimension || Height > IconFrame.MaxDimension)
+                    return false;
+
+                switch (BitDepth)
+                {
+                    case BitDepth.Depth1BitPerPixel:
+                    case BitDepth.Depth4BitsPerPixel:
+                    case BitDepth.Depth8BitsPerPixel:
+                    case BitDepth.Depth24BitsPerPixel:
+                    case BitDepth.Depth32BitsPerPixel:
+                        return true;
+                }
+
+                return false;
+            }
+        }
 
         /// <summary>
         /// Compares the current instance to the specified other <see cref="FrameKey"/> object. First

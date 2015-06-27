@@ -697,6 +697,73 @@ namespace UIconEdit
             }
 
             /// <summary>
+            /// Searches for an element which matches the specified predicate, and returns the first matching cursor frame in the list.
+            /// </summary>
+            /// <param name="match">A predicate used to define the element to search for.</param>
+            /// <returns>A cursor frame matching the specified predicate, or <c>null</c> if no such cursor frame was found.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public CursorFrame Find(Predicate<CursorFrame> match)
+            {
+                if (match == null) throw new ArgumentNullException("match");
+                return (CursorFrame)_frames.Find(i => match((CursorFrame)i));
+            }
+
+            /// <summary>
+            /// Searches for an element which matches the specified predicate, and returns the index of the first matching cursor frame in the list.
+            /// </summary>
+            /// <param name="match">A predicate used to define the element to search for.</param>
+            /// <returns>The index of the cursor frame matching the specified predicate, or -1 if no such cursor frame was found.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public int FindIndex(Predicate<CursorFrame> match)
+            {
+                if (match == null) throw new ArgumentNullException("match");
+                return _frames.FindIndex(i => match((CursorFrame)i));
+            }
+
+            /// <summary>
+            /// Determines whether any element matching the specified predicate exists in the list.
+            /// </summary>
+            /// <param name="match">A predicate used to define the elements to search for.</param>
+            /// <returns><c>true</c> if at least one element matches the specified predicate; <c>false</c> otherwise.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public bool Exists(Predicate<CursorFrame> match)
+            {
+                if (match == null) throw new ArgumentNullException("match");
+                return _frames.Exists(i => match((CursorFrame)i));
+            }
+
+            /// <summary>
+            /// Determines whether every element in the list matches the specified predicate.
+            /// </summary>
+            /// <param name="match">A predicate used to define the elements to search for.</param>
+            /// <returns><c>true</c> if every element in the list matches the specified predicate; <c>false</c> otherwise.</returns>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="match"/> is <c>null</c>.
+            /// </exception>
+            public bool TrueForAll(Predicate<CursorFrame> match)
+            {
+                if (match == null) throw new ArgumentNullException("match");
+                return _frames.TrueForAll(i => match((CursorFrame)i));
+            }
+
+            /// <summary>
+            /// Returns a list containing all cursor frames which match the specified predicate.
+            /// </summary>
+            /// <param name="match">A predicate used to define the elements to search for.</param>
+            /// <returns>A list containing all elements matching <paramref name="match"/>.</returns>
+            public List<CursorFrame> FindAll(Predicate<CursorFrame> match)
+            {
+                if (match == null) throw new ArgumentNullException("match");
+                return this.Where(i => match(i)).ToList();
+            }
+
+            /// <summary>
             /// Returns an array containing all elements in the current list.
             /// </summary>
             /// <returns>An array containing elements copied from the current list.</returns>

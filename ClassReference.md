@@ -580,6 +580,71 @@ Removes all elements matching the specified predicate and immediately calls [`Ic
 `match` is `null`.
 
 --------------------------------------------------
+## Method: `public UIconEdit.IconFrame Find(System.Predicate<UIconEdit.IconFrame> match)`
+
+Searches for an element which matches the specified predicate, and returns the first matching icon frame in the list.
+* `match`: A predicate used to define the element to search for.
+
+**Returns:** Type [`IconFrame`](#type-public-class-uiconediticonframe): An icon frame matching the specified predicate, or `null` if no such icon frame was found.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
+
+--------------------------------------------------
+## Method: `public System.Int32 FindIndex(System.Predicate<UIconEdit.IconFrame> match)`
+
+Searches for an element which matches the specified predicate, and returns the index of the first matching icon frame in the list.
+* `match`: A predicate used to define the element to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of the icon frame matching the specified predicate, or -1 if no such icon frame was found.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
+
+--------------------------------------------------
+## Method: `public System.Boolean Exists(System.Predicate<UIconEdit.IconFrame> match)`
+
+Determines whether any element matching the specified predicate exists in the list.
+* `match`: A predicate used to define the elements to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if at least one element matches the specified predicate; `false` otherwise.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
+
+--------------------------------------------------
+## Method: `public System.Boolean TrueForAll(System.Predicate<UIconEdit.IconFrame> match)`
+
+Determines whether every element in the list matches the specified predicate.
+* `match`: A predicate used to define the elements to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if every element in the list matches the specified predicate; `false` otherwise.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
+
+--------------------------------------------------
+## Method: `public System.Collections.Generic.List<T> FindAll(System.Predicate<UIconEdit.IconFrame> match)`
+
+Returns a list containing all icon frames which match the specified predicate.
+* `match`: A predicate used to define the elements to search for.
+
+**Returns:** Type [`List`](https://msdn.microsoft.com/en-us/library/6sh2ey19.aspx): A list containing all elements matching `match`.
+
+
+--------------------------------------------------
 ## Method: `public void Sort()`
 
 Sorts all elements in the list according to their [`IconFrame.FrameKey`](#property-public-uiconeditframekey-framekey--get-) value.
@@ -1561,6 +1626,16 @@ Determines inequality of two [`FrameKey`](#type-public-struct-uiconeditframekey)
 
 
 --------------------------------------------------
+## Property: `public System.Boolean IsEmpty { get; }`
+
+Gets a value indicating whether [`FrameKey.Width`](#field-public-systemint16-width), [`FrameKey.Height`](#field-public-systemint16-height), and [`FrameKey.BitDepth`](#field-public-uiconeditbitdepth-bitdepth) are all 0.
+
+--------------------------------------------------
+## Property: `public System.Boolean IsValid { get; }`
+
+Gets a value indicating whether the current instance contains valid values which would actually occur in an [`IconFrame`](#type-public-class-uiconediticonframe).
+
+--------------------------------------------------
 # Type: `public enum UIconEdit.BitDepth`
 
 Indicates the bit depth of an icon frame.
@@ -2304,6 +2379,71 @@ Removes all elements matching the specified predicate and immediately calls [`Ic
 
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 `match` is `null`.
+
+--------------------------------------------------
+## Method: `public UIconEdit.CursorFrame Find(System.Predicate<UIconEdit.CursorFrame> match)`
+
+Searches for an element which matches the specified predicate, and returns the first matching cursor frame in the list.
+* `match`: A predicate used to define the element to search for.
+
+**Returns:** Type [`CursorFrame`](#type-public-class-uiconeditcursorframe): A cursor frame matching the specified predicate, or `null` if no such cursor frame was found.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
+
+--------------------------------------------------
+## Method: `public System.Int32 FindIndex(System.Predicate<UIconEdit.CursorFrame> match)`
+
+Searches for an element which matches the specified predicate, and returns the index of the first matching cursor frame in the list.
+* `match`: A predicate used to define the element to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of the cursor frame matching the specified predicate, or -1 if no such cursor frame was found.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
+
+--------------------------------------------------
+## Method: `public System.Boolean Exists(System.Predicate<UIconEdit.CursorFrame> match)`
+
+Determines whether any element matching the specified predicate exists in the list.
+* `match`: A predicate used to define the elements to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if at least one element matches the specified predicate; `false` otherwise.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
+
+--------------------------------------------------
+## Method: `public System.Boolean TrueForAll(System.Predicate<UIconEdit.CursorFrame> match)`
+
+Determines whether every element in the list matches the specified predicate.
+* `match`: A predicate used to define the elements to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if every element in the list matches the specified predicate; `false` otherwise.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`match` is `null`.
+
+--------------------------------------------------
+## Method: `public System.Collections.Generic.List<T> FindAll(System.Predicate<UIconEdit.CursorFrame> match)`
+
+Returns a list containing all cursor frames which match the specified predicate.
+* `match`: A predicate used to define the elements to search for.
+
+**Returns:** Type [`List<T>`](https://msdn.microsoft.com/en-us/library/6sh2ey19.aspx): A list containing all elements matching `match`.
+
 
 --------------------------------------------------
 ## Method: `public UIconEdit.CursorFrame[] ToArray()`

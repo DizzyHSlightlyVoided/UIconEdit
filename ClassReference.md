@@ -337,9 +337,29 @@ Removes the specified icon frame from the list and immediately callse [`IconFram
 ## Method: `public System.Boolean RemoveSimilar(UIconEdit.IconFrame item)`
 
 Removes an icon frame similar to the specified value from the list.
-* `item`: The icon frame compare.
+* `item`: The icon frame to compare.
 
 **Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean RemoveSimilar(UIconEdit.FrameKey key)`
+
+Removes an icon frame similar to the specified value from the list.
+* `key`: The frame key to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` was successfully found and removed; `false` if no such icon frame was found in the list.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean RemoveSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Removes an icon frame similar to the specified values from the list.
+* `width`: The width of the icon frame to search for.
+* `height`: The height of the icon frame to search for.
+* `bitDepth`: The bit depth of the icon frame to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was successfully found and removed;`false` if no such icon frame was found in the list.
 
 
 --------------------------------------------------
@@ -349,6 +369,26 @@ Removes an icon frame similar to the specified value from the list and immediate
 * `item`: The icon frame to search for.
 
 **Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean RemoveAndDisposeSimilar(UIconEdit.FrameKey key)`
+
+Removes an icon frame similar to the specified value from the list and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
+* `key`: The frame key to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` was successfully found and removed; `false` if no such icon frame was found in the list.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean RemoveAndDisposeSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Removes an icon frame similar to the specified value from the list and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
+* `width`: The width of the icon frame to search for.
+* `height`: The height of the icon frame to search for.
+* `bitDepth`: The bit depth of the icon frame to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was successfully found and removed;`false` if no such icon frame was found in the list.
 
 
 --------------------------------------------------
@@ -380,6 +420,26 @@ Determines if an element similar to the specified icon frame exists in the list.
 
 
 --------------------------------------------------
+## Method: `public System.Boolean ContainsSimilar(UIconEdit.FrameKey key)`
+
+Determines if an element similar to the specified value exists in the list.
+* `key`: The frame key to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` exists in the list; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean ContainsSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Determines if an element similar to the specified values exists in the list.
+* `width`: The width of the icon frame to search for.
+* `height`: The height of the icon frame to search for.
+* `bitDepth`: The bit depth of the icon frame to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was found;`false` if no such icon frame was found in the list.
+
+
+--------------------------------------------------
 ## Method: `public virtual System.Int32 IndexOf(UIconEdit.IconFrame item)`
 
 Gets the index of the specified item.
@@ -395,6 +455,26 @@ Gets the index of an element similar to the specified item.
 * `item`: The icon frame to compare.
 
 **Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item`, if found; otherwise, -1.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 IndexOfSimilar(UIconEdit.FrameKey key)`
+
+Gets the index of an element similar to the specified value.
+* `key`: The frame key to compare.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key`, if found; otherwise, -1.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 IndexOfSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Gets the index of an element similar to the specified values.
+* `width`: The width of the icon frame to search for.
+* `height`: The height of the icon frame to search for.
+* `bitDepth`: The bit depth of the icon frame to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -1757,7 +1837,7 @@ An I/O error occurred.
 
 Loads a [`CursorFile`](#type-public-class-uiconeditcursorfile) from the specified stream.
 * `input`: A stream containing an cursor file.
-* `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual icon frames, or `null` to throw an exception in those cases.
+* `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual cursor frames, or `null` to throw an exception in those cases.
 
 **Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): A [`CursorFile`](#type-public-class-uiconeditcursorfile) loaded from `input`.
 
@@ -1784,7 +1864,7 @@ An I/O error occurred.
 
 Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
 * `path`: The path to a cursor file.
-* `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual icon frames, or `null` to throw an exception in those cases.
+* `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual cursor frames, or `null` to throw an exception in those cases.
 
 **Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): An [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation loaded from `path`.
 
@@ -1872,7 +1952,7 @@ An I/O error occurred.
 ## Method: `protected virtual System.Boolean IsValid(UIconEdit.IconFrame frame)`
 
 Gets a valid indicating whether the specified instance is a valid [`CursorFrame`](#type-public-class-uiconeditcursorframe) object.
-* `frame`: The icon frame to test.
+* `frame`: The cursor frame to test.
 
 **Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `frame` is a [`CursorFrame`](#type-public-class-uiconeditcursorframe) instance; `false` otherwise.
 
@@ -1882,7 +1962,7 @@ Gets a valid indicating whether the specified instance is a valid [`CursorFrame`
 
 Returns a duplicate of the current instance.
 
-**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon frame and clones of each frame's [`IconFrame.BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-) in [`CursorFile.Frames`](#property-public-uiconeditcursorfilecursorframelist-frames--get-).
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every cursor frame and clones of each frame's [`IconFrame.BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-) in [`CursorFile.Frames`](#property-public-uiconeditcursorfileframelist-frames--get-).
 
 
 --------------------------------------------------
@@ -1909,12 +1989,12 @@ Gets the vertical offset of the hotspot in the specified frame from the top of t
 Gets the 16-bit type code for the current instance.
 
 --------------------------------------------------
-## Property: `public UIconEdit.CursorFile.CursorFrameList Frames { get; }`
+## Property: `public UIconEdit.CursorFile.FrameList Frames { get; }`
 
 Gets a collection containing all frames in the cursor file.
 
 --------------------------------------------------
-# Type: `class UIconEdit.CursorFile.CursorFrameList`
+# Type: `class UIconEdit.CursorFile.FrameList`
 
 Represents a list of cursor frames.
 
@@ -1931,7 +2011,7 @@ Sets the value at the specified index.
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` is less than 0 or is greater than [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1).
+`index` is less than 0 or is greater than [`FrameList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
 ## Method: `public System.Boolean Add(UIconEdit.CursorFrame item)`
@@ -1939,7 +2019,7 @@ Sets the value at the specified index.
 Adds the specified cursor frame to the list.
 * `item`: The cursor frame to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`FrameList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
 
 
 --------------------------------------------------
@@ -1949,25 +2029,25 @@ Inserts the specified cursor frame into the list at the specified index.
 * `index`: The index at which the cursor frame will be inserted.
 * `item`: The cursor frame to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`FrameList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
 
 
 --------------------------------------------------
 ## Method: `public virtual void RemoveAt(System.Int32 index)`
 
 Removes the element at the specified index.
-* `index`: The index of the icon frame to remove.
+* `index`: The index of the cursor frame to remove.
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` is less than 0 or is greater than or equal to [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1).
+`index` is less than 0 or is greater than or equal to [`FrameList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
 ## Method: `public void RemoveAndDisposeAt(System.Int32 index)`
 
 Removes the element at the specified index and, if it does not exist elsewhere in the file, immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
-* `index`: The index of the icon frame to remove.
+* `index`: The index of the cursor frame to remove.
 
 --------------------------------------------------
 ## Method: `public virtual System.Boolean Remove(UIconEdit.CursorFrame item)`
@@ -1993,7 +2073,27 @@ Removes the specified cursor frame from the list and immediately calls [`IconFra
 Removes an element similar to the specified cursor frame from the list.
 * `item`: The cursor frame to to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor frame with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such cursor frame was found in the list.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean RemoveSimilar(UIconEdit.FrameKey key)`
+
+Removes a cursor frame similar to the specified value from the list.
+* `key`: The frame key to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor frame with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` was successfully found and removed; `false` if no such cursor frame was found in the list.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean RemoveSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Removes a cursor frame similar to the specified values from the list.
+* `width`: The width of the cursor frame to search for.
+* `height`: The height of the cursor frame to search for.
+* `bitDepth`: The bit depth of the cursor frame to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was successfully found and removed;`false` if no such cursor frame was found in the list.
 
 
 --------------------------------------------------
@@ -2002,7 +2102,27 @@ Removes an element similar to the specified cursor frame from the list.
 Removes the specified cursor frame from the list, immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
 * `item`: The cursor frame to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon frame with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon frame was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor frame with the same [`CursorFrame.Width`](#property-public-override-systemint16-width--get-set-), [`CursorFrame.Height`](#property-public-override-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such cursor frame was found in the list.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean RemoveAndDisposeSimilar(UIconEdit.FrameKey key)`
+
+Removes a cursor frame similar to the specified value from the list and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
+* `key`: The frame key to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` was successfully found and removed; `false` if no such cursor frame was found in the list.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean RemoveAndDisposeSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Removes a cursor frame similar to the specified value from the list and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1).
+* `width`: The width of the cursor frame to search for.
+* `height`: The height of the cursor frame to search for.
+* `bitDepth`: The bit depth of the cursor frame to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was successfully found and removed;`false` if no such cursor frame was found in the list.
 
 
 --------------------------------------------------
@@ -2017,7 +2137,7 @@ Copies all elements in the list to the specified array.
 `array` is `null`.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The length of `array` is less than [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1).
+The length of `array` is less than [`FrameList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
 ## Method: `public virtual void CopyTo(UIconEdit.CursorFrame[] array, System.Int32 arrayIndex)`
@@ -2035,7 +2155,7 @@ Copies all elements in the list to the specified array, starting at the specifie
 `arrayIndex` is less than 0.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The length of `array` minus `arrayIndex` is less than [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1).
+The length of `array` minus `arrayIndex` is less than [`FrameList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
 ## Method: `public void CopyTo(System.Int32 index, UIconEdit.CursorFrame[] array, System.Int32 arrayIndex, System.Int32 count)`
@@ -2092,6 +2212,26 @@ Determines if an element similar to the specified cursor frame exists in the lis
 
 
 --------------------------------------------------
+## Method: `public System.Boolean ContainsSimilar(UIconEdit.FrameKey key)`
+
+Determines if an element similar to the specified value exists in the list.
+* `key`: The frame key to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor frame with the same with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` exists in the list; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean ContainsSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Determines if an element similar to the specified values exists in the list.
+* `width`: The width of the cursor frame to search for.
+* `height`: The height of the cursor frame to search for.
+* `bitDepth`: The bit depth of the cursor frame to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was found;`false` if no such cursor frame was found in the list.
+
+
+--------------------------------------------------
 ## Method: `public virtual System.Int32 IndexOf(UIconEdit.CursorFrame item)`
 
 Gets the index of the specified cursor frame.
@@ -2110,11 +2250,31 @@ Gets the index of an element similar to the specified cursor frame.
 
 
 --------------------------------------------------
-## Method: `public UIconEdit.CursorFile.CursorFrameList.Enumerator GetEnumerator()`
+## Method: `public System.Int32 IndexOfSimilar(UIconEdit.FrameKey key)`
+
+Gets the index of an element similar to the specified value.
+* `key`: The frame key to compare.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key`, if found; otherwise, -1.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 IndexOfSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Gets the index of an element similar to the specified values.
+* `width`: The width of the cursor frame to search for.
+* `height`: The height of the cursor frame to search for.
+* `bitDepth`: The bit depth of the cursor frame to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor frame with the same [`IconFrame.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconFrame.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconFrame.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth`, if found; otherwise, -1.
+
+
+--------------------------------------------------
+## Method: `public UIconEdit.CursorFile.FrameList.Enumerator GetEnumerator()`
 
 Returns an enumerator which iterates through the list.
 
-**Returns:** Type [`Enumerator`](#type-struct-uiconeditcursorfilecursorframelistenumerator): An enumerator which iterates through the list.
+**Returns:** Type [`Enumerator`](#type-struct-uiconeditcursorfileframelistenumerator): An enumerator which iterates through the list.
 
 
 --------------------------------------------------
@@ -2189,7 +2349,7 @@ The implementation of `comparison` caused an error during the sort. For example,
 Gets the number of frames contained in the list.
 
 --------------------------------------------------
-## Property: `CursorFile.CursorFrameList.Item(System.Int32 index)`
+## Property: `CursorFile.FrameList.Item(System.Int32 index)`
 
 Gets and sets the cursor frame at the specified index.
 * `index`: The cursor frame at the specified index.
@@ -2198,7 +2358,7 @@ Gets and sets the cursor frame at the specified index.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
 
-`index` is less than 0 or is greater than or equal to [`CursorFrameList.Count`](#property-public-virtual-systemint32-count--get--1).
+`index` is less than 0 or is greater than or equal to [`FrameList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 -OR-
 
@@ -2209,7 +2369,7 @@ In a set operation, the specified value is `null`.
 In a set operation, the specified value is `null` or is already associated with a different cursor file.
 
 --------------------------------------------------
-# Type: `struct UIconEdit.CursorFile.CursorFrameList.Enumerator`
+# Type: `struct UIconEdit.CursorFile.FrameList.Enumerator`
 
 An enumerator which iterates through the list.
 

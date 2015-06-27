@@ -822,14 +822,14 @@ namespace UIconEdit
             , IReadOnlyList<IconFrame>
 #endif
         {
-            private HashSet<IconFrame> _set;
+            private HashSet<FrameKey> _set;
             private List<IconFrame> _items;
             private IconFileBase _file;
 
             internal FrameList(IconFileBase file)
             {
                 _file = file;
-                _set = new HashSet<IconFrame>(new IconFrameComparer());
+                _set = new HashSet<FrameKey>();
                 _items = new List<IconFrame>();
             }
 
@@ -914,7 +914,7 @@ namespace UIconEdit
             public bool Insert(int index, IconFrame item)
             {
                 if (index < 0 || index > _items.Count) throw new ArgumentOutOfRangeException("index");
-                if (_items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item)) return false;
+                if (_items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item.FrameKey)) return false;
                 _items.Insert(index, item);
                 item.File = _file;
                 return true;
@@ -935,10 +935,8 @@ namespace UIconEdit
                 if (setter && index == _items.Count)
                     return Add(value);
                 var oldItem = _items[index];
-                if (value == null || value.File != null || !_file.IsValid(value) || (_set.Contains(value) && !_set.Comparer.Equals(oldItem, value)))
+                if (value == null || value.File != null || !_file.IsValid(value) || (_set.Contains(value.FrameKey) && oldItem.FrameKey != value.FrameKey))
                     return false;
-                _set.Remove(oldItem);
-                _set.Add(value);
                 _items[index] = value;
                 oldItem.File = null;
                 value.File = _file;
@@ -962,7 +960,7 @@ namespace UIconEdit
             {
                 IconFrame item = _items[index];
                 _items.RemoveAt(index);
-                _set.Remove(item);
+                _set.Remove(item.FrameKey);
                 item.File = null;
                 if (disposing)
                     item.Dispose();
@@ -995,7 +993,7 @@ namespace UIconEdit
             private bool _remove(IconFrame item, bool disposing)
             {
                 if (!_items.Remove(item)) return false;
-                _set.Remove(item);
+                _set.Remove(item.FrameKey);
                 item.File = null;
                 if (disposing)
                     item.Dispose();
@@ -1027,11 +1025,29 @@ namespace UIconEdit
                 return _remove(item, true);
             }
 
-            private bool _removeSimilar(IconFrame item, bool disposing)
+            private bool _invalidateItems(short width, short height, BitDepth bitDepth)
+            {
+                if (width < IconFrame.MinDimension || width > IconFrame.MaxDimension ||
+                    height < IconFrame.MinDimension || height > IconFrame.MaxDimension)
+                    return true;
+                switch (bitDepth)
+                {
+                    case BitDepth.Depth1BitPerPixel:
+                    case BitDepth.Depth4BitsPerPixel:
+                    case BitDepth.Depth8BitsPerPixel:
+                    case BitDepth.Depth24BitsPerPixel:
+                    case BitDepth.Depth32BitsPerPixel:
+                        return false;
+                    default:
+                        return true;
+                }
+            }
+
+            private bool _removeSimilar(FrameKey key, bool disposing)
             {
                 for (int i = 0; i < _items.Count; i++)
                 {
-                    if (_set.Comparer.Equals(item, _items[i]))
+                    if (key == _items[i].FrameKey)
                     {
                         _removeAt(i, disposing);
                         return true;
@@ -1043,12 +1059,41 @@ namespace UIconEdit
             /// <summary>
             /// Removes an icon frame similar to the specified value from the list.
             /// </summary>
-            /// <param name="item">The icon frame compare.</param>
+            /// <param name="item">The icon frame to compare.</param>
             /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
             /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
             public bool RemoveSimilar(IconFrame item)
             {
-                return _removeSimilar(item, false);
+                if (item == null) return false;
+                return _removeSimilar(item.FrameKey, false);
+            }
+
+            /// <summary>
+            /// Removes an icon frame similar to the specified value from the list.
+            /// </summary>
+            /// <param name="key">The frame key to compare.</param>
+            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
+            public bool RemoveSimilar(FrameKey key)
+            {
+                return _removeSimilar(key, false);
+            }
+
+            /// <summary>
+            /// Removes an icon frame similar to the specified values from the list.
+            /// </summary>
+            /// <param name="width">The width of the icon frame to search for.</param>
+            /// <param name="height">The height of the icon frame to search for.</param>
+            /// <param name="bitDepth">The bit depth of the icon frame to search for.</param>
+            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
+            /// <c>false</c> if no such icon frame was found in the list.</returns>
+            public bool RemoveSimilar(short width, short height, BitDepth bitDepth)
+            {
+                if (_invalidateItems(width, height, bitDepth))
+                    return false;
+
+                return _removeSimilar(new FrameKey(width, height, bitDepth), false);
             }
 
             /// <summary>
@@ -1060,7 +1105,37 @@ namespace UIconEdit
             /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
             public bool RemoveAndDisposeSimilar(IconFrame item)
             {
-                return _removeSimilar(item, true);
+                if (item == null) return false;
+                return _removeSimilar(item.FrameKey, true);
+            }
+
+            /// <summary>
+            /// Removes an icon frame similar to the specified value from the list
+            /// and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// </summary>
+            /// <param name="key">The frame key to search for.</param>
+            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon frame was found in the list.</returns>
+            public bool RemoveAndDisposeSimilar(FrameKey key)
+            {
+                return _removeSimilar(key, true);
+            }
+
+            /// <summary>
+            /// Removes an icon frame similar to the specified value from the list
+            /// and immediately calls <see cref="IconFrame.Dispose()"/>.
+            /// </summary>
+            /// <param name="width">The width of the icon frame to search for.</param>
+            /// <param name="height">The height of the icon frame to search for.</param>
+            /// <param name="bitDepth">The bit depth of the icon frame to search for.</param>
+            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
+            /// <c>false</c> if no such icon frame was found in the list.</returns>
+            public bool RemoveAndDisposeSimilar(short width, short height, BitDepth bitDepth)
+            {
+                if (_invalidateItems(width, height, bitDepth))
+                    return false;
+                return _removeSimilar(new FrameKey(width, height, bitDepth), true);
             }
 
             private void _clear(bool disposing)
@@ -1114,7 +1189,32 @@ namespace UIconEdit
             /// as <paramref name="item"/> exists in the list; <c>false</c> otherwise.</returns>
             public bool ContainsSimilar(IconFrame item)
             {
-                return item != null && _set.Contains(item);
+                return item != null && _set.Contains(item.FrameKey);
+            }
+
+            /// <summary>
+            /// Determines if an element similar to the specified value exists in the list.
+            /// </summary>
+            /// <param name="key">The frame key to compare.</param>
+            /// <returns><c>true</c> if an icon frame with the same with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="key"/> exists in the list; <c>false</c> otherwise.</returns>
+            public bool ContainsSimilar(FrameKey key)
+            {
+                return _set.Contains(key);
+            }
+
+            /// <summary>
+            /// Determines if an element similar to the specified values exists in the list.
+            /// </summary>
+            /// <param name="width">The width of the icon frame to search for.</param>
+            /// <param name="height">The height of the icon frame to search for.</param>
+            /// <param name="bitDepth">The bit depth of the icon frame to search for.</param>
+            /// <returns><c>true</c> if an icon frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>  was found;
+            /// <c>false</c> if no such icon frame was found in the list.</returns>
+            public bool ContainsSimilar(short width, short height, BitDepth bitDepth)
+            {
+                return _set.Contains(new FrameKey(width, height, bitDepth));
             }
 
             /// <summary>
@@ -1142,9 +1242,35 @@ namespace UIconEdit
             public int IndexOfSimilar(IconFrame item)
             {
                 if (item == null) return -1;
+                return IndexOfSimilar(item.FrameKey);
+            }
+
+            /// <summary>
+            /// Gets the index of an element similar to the specified value.
+            /// </summary>
+            /// <param name="key">The frame key to compare.</param>
+            /// <returns>The index of an icon frame with the same <see cref="IconFrame.Width"/>, <see cref="IconFrame.Height"/>, and <see cref="IconFrame.BitDepth"/>
+            /// as <paramref name="key"/>, if found; otherwise, -1.</returns>
+            public int IndexOfSimilar(FrameKey key)
+            {
                 for (int i = 0; i < _items.Count; i++)
-                    if (_set.Comparer.Equals(item, _items[i])) return i;
+                    if (key == _items[i].FrameKey) return i;
                 return -1;
+            }
+
+            /// <summary>
+            /// Gets the index of an element similar to the specified values.
+            /// </summary>
+            /// <param name="width">The width of the icon frame to search for.</param>
+            /// <param name="height">The height of the icon frame to search for.</param>
+            /// <param name="bitDepth">The bit depth of the icon frame to search for.</param>
+            /// <returns>The index of an icon frame with the same <see cref="IconFrame.Width"/> as <paramref name="width"/>, the same <see cref="IconFrame.Height"/>
+            /// as <paramref name="height"/>, and the same <see cref="IconFrame.BitDepth"/> as <paramref name="bitDepth"/>, if found; otherwise, -1.</returns>
+            public int IndexOfSimilar(short width, short height, BitDepth bitDepth)
+            {
+                if (_invalidateItems(width, height, bitDepth))
+                    return -1;
+                return IndexOfSimilar(new FrameKey(width, height, bitDepth));
             }
 
             /// <summary>
@@ -1242,7 +1368,7 @@ namespace UIconEdit
                     {
                         removed++;
                         IconFrame oldItem = _items[i];
-                        _set.Remove(oldItem);
+                        _set.Remove(oldItem.FrameKey);
                         _items.RemoveAt(i);
                         if (disposing)
                             oldItem.Dispose();

@@ -669,6 +669,38 @@ namespace UIconEdit
             }
 
             /// <summary>
+            /// Removes a range of elements from the list.
+            /// </summary>
+            /// <param name="index">The zero-based starting index of the elements to remove.</param>
+            /// <param name="count">The number of elements to remove.</param>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
+            /// </exception>
+            public void RemoveRange(int index, int count)
+            {
+                _frames.RemoveRange(index, count);
+            }
+
+            /// <summary>
+            /// Removes a range of elements from the list and immediately calls <see cref="IconFrame.Dispose()"/> on each one.
+            /// </summary>
+            /// <param name="index">The zero-based starting index of the elements to remove.</param>
+            /// <param name="count">The number of elements to remove.</param>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
+            /// </exception>
+            public void RemoveAndDisposeRange(int index, int count)
+            {
+                _frames.RemoveAndDisposeRange(index, count);
+            }
+
+            /// <summary>
             /// Removes all elements matching the specified predicate.
             /// </summary>
             /// <param name="match">A predicate used to define the elements to remove.</param>

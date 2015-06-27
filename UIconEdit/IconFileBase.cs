@@ -1335,6 +1335,50 @@ namespace UIconEdit
                 return GetEnumerator();
             }
 
+            private void _removeRange(int index, int count, bool disposing)
+            {
+                var items = _items.GetRange(index, count);
+                _items.RemoveRange(index, count);
+                foreach (var curItem in items)
+                {
+                    _set.Remove(curItem.FrameKey);
+                    if (disposing)
+                        curItem.Dispose();
+                }
+            }
+
+            /// <summary>
+            /// Removes a range of elements from the list.
+            /// </summary>
+            /// <param name="index">The zero-based starting index of the elements to remove.</param>
+            /// <param name="count">The number of elements to remove.</param>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
+            /// </exception>
+            public void RemoveRange(int index, int count)
+            {
+                _removeRange(index, count, false);
+            }
+
+            /// <summary>
+            /// Removes a range of elements from the list and immediately calls <see cref="IconFrame.Dispose()"/> on each one.
+            /// </summary>
+            /// <param name="index">The zero-based starting index of the elements to remove.</param>
+            /// <param name="count">The number of elements to remove.</param>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
+            /// </exception>
+            public void RemoveAndDisposeRange(int index, int count)
+            {
+                _removeRange(index, count, true);
+            }
+
             private int _removeWhere(Predicate<IconFrame> match, bool disposing)
             {
                 if (match == null) throw new ArgumentNullException("match");

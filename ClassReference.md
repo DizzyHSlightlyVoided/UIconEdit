@@ -552,6 +552,36 @@ Returns an array containing all elements in the current list.
 
 
 --------------------------------------------------
+## Method: `public void RemoveRange(System.Int32 index, System.Int32 count)`
+
+Removes a range of elements from the list.
+* `index`: The zero-based starting index of the elements to remove.
+* `count`: The number of elements to remove.
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` or `count` is less than 0.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`index` and `count` do not indicate a valid range of elements in the list.
+
+--------------------------------------------------
+## Method: `public void RemoveAndDisposeRange(System.Int32 index, System.Int32 count)`
+
+Removes a range of elements from the list and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1) on each one.
+* `index`: The zero-based starting index of the elements to remove.
+* `count`: The number of elements to remove.
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` or `count` is less than 0.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`index` and `count` do not indicate a valid range of elements in the list.
+
+--------------------------------------------------
 ## Method: `public System.Int32 RemoveWhere(System.Predicate<UIconEdit.IconFrame> match)`
 
 Removes all elements matching the specified predicate.
@@ -2351,6 +2381,36 @@ Returns an enumerator which iterates through the list.
 
 **Returns:** Type [`Enumerator`](#type-struct-uiconeditcursorfileframelistenumerator): An enumerator which iterates through the list.
 
+
+--------------------------------------------------
+## Method: `public void RemoveRange(System.Int32 index, System.Int32 count)`
+
+Removes a range of elements from the list.
+* `index`: The zero-based starting index of the elements to remove.
+* `count`: The number of elements to remove.
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` or `count` is less than 0.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`index` and `count` do not indicate a valid range of elements in the list.
+
+--------------------------------------------------
+## Method: `public void RemoveAndDisposeRange(System.Int32 index, System.Int32 count)`
+
+Removes a range of elements from the list and immediately calls [`IconFrame.Dispose()`](#method-public-virtual-void-dispose-1) on each one.
+* `index`: The zero-based starting index of the elements to remove.
+* `count`: The number of elements to remove.
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` or `count` is less than 0.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`index` and `count` do not indicate a valid range of elements in the list.
 
 --------------------------------------------------
 ## Method: `public System.Int32 RemoveWhere(System.Predicate<UIconEdit.CursorFrame> match)`

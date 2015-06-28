@@ -36,6 +36,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
+using System.Windows.Media.Imaging;
 
 namespace UIconEdit
 {
@@ -706,7 +707,18 @@ namespace UIconEdit
             writeStream = new MemoryStream();
             if (isPng)
             {
-                quantized.Save(writeStream, ImageFormat.Png);
+                BitmapData bmpData = quantized.LockBits(new Rectangle(0, 0, quantized.Width, quantized.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+                BitmapSource bmpSource = BitmapSource.Create(quantized.Width, quantized.Height, 0, 0, System.Windows.Media.PixelFormats.Bgra32,
+                    null, bmpData.Scan0, (quantized.Width * quantized.Height * 4), bmpData.Stride);
+
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Interlace = PngInterlaceOption.Off;
+                encoder.Frames.Add(BitmapFrame.Create(bmpSource));
+
+                encoder.Save(writeStream);
+
+                quantized.UnlockBits(bmpData);
             }
             else
             {

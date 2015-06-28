@@ -1,6 +1,6 @@
 ﻿UIconEdit
 =========
-A .Net library for reading and editing Windows cursor and animation files. Specifically, it is used to take one or more images, and resize and combine them to form a single icon or cursor file; and may also be used to extract images from an icon. (There is currently no functionality for animated cursors; however, this is planned for future updates.)
+A .Net library for reading and editing Windows cursor and icon files. Specifically, it is used to take one or more images, and resize and combine them to form a single icon or cursor file; and may also be used to extract images from an icon. (There is currently no functionality for animated cursors; however, this is planned for future updates.)
 
 This is a basic form of creating an icon:
 ```C#

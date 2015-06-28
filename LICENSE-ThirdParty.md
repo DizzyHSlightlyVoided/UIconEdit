@@ -6,7 +6,7 @@ Apache License, Version 2.0
 Applies to:
 * nQuant
 
-Copyright 2010-2025 KimikoMuffin, Phillipecp, and mwrock
+Copyright 2010-2015 KimikoMuffin, Phillipecp, and mwrock
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

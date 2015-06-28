@@ -7,6 +7,8 @@ UIconBuilder.exe /cur "C:\Path\To\Output.cur" "C:\Path\To\Input.txt"
 UIconBuilder.exe /ico "C:\Path\To\Output.ico" /i [enry info] /i [enry info] ...
 ```
 
+By default, it asks the user to press a key when it is finished. To bypass this behavior, use the parameter `/nowait` immediately after `/cur` or `/ico`.
+
 Each line of a text file contains information for a different entry; lines preceded by a pound sign (`#`) are comments, which are ignored. In command line form, the information for each entry is separated by an `/i` argument.
 
 The image data consists of the following:

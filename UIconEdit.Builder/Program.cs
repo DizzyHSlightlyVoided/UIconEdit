@@ -181,7 +181,7 @@ namespace UIconEdit.Builder
                             if (seen.HasFlag(Seen.Alpha))
                                 throw new ArgumentException("Alpha parameter given twice: " + curWord);
 
-                            getWord = getWord.Substring(getWord.IndexOf('='));
+                            getWord = getWord.Substring(getWord.IndexOf('=') + 1);
 
                             byte alpha;
                             if (!byte.TryParse(getWord, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out alpha))

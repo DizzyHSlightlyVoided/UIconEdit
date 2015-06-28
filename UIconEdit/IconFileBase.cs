@@ -660,7 +660,7 @@ namespace UIconEdit
         {
             var entries = Entries;
             if (entries.Count == 0) throw new InvalidOperationException("At least one entry is needed.");
-            using (FileStream fs = File.OpenWrite(path))
+            using (FileStream fs = File.Open(path, FileMode.Create))
                 try
                 {
                     Save(fs, entries);

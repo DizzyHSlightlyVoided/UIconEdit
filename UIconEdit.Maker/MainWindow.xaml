@@ -1,0 +1,53 @@
+﻿<Window x:Class="UIconEdit.Maker.MainWindow" x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UIconEdit"
+        mc:Ignorable="d" x:Name="window"
+        Title="UIconEdit" Height="480" Width="640" Loaded="window_Loaded">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" IsMainMenu="True" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+            <MenuItem Header="_File">
+                <MenuItem Command="ApplicationCommands.Open">
+                    <MenuItem.Icon>
+                        <Image Source="Open-icon.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <ToolBar DockPanel.Dock="Top" Height="Auto">
+            <Button>
+                <Image Source="Open-icon.png" Height="22" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </Button>
+            <Separator/>
+            <ComboBox SelectedValue="100" Width="100" IsEditable="True">
+                <ComboBoxItem>2000</ComboBoxItem>
+                <ComboBoxItem>1800</ComboBoxItem>
+                <ComboBoxItem>1600</ComboBoxItem>
+                <ComboBoxItem>1500</ComboBoxItem>
+                <ComboBoxItem>1200</ComboBoxItem>
+                <ComboBoxItem>1000</ComboBoxItem>
+                <ComboBoxItem>900</ComboBoxItem>
+                <ComboBoxItem>800</ComboBoxItem>
+                <ComboBoxItem>700</ComboBoxItem>
+                <ComboBoxItem>600</ComboBoxItem>
+                <ComboBoxItem>500</ComboBoxItem>
+                <ComboBoxItem>400</ComboBoxItem>
+                <ComboBoxItem>300</ComboBoxItem>
+                <ComboBoxItem>200</ComboBoxItem>
+                <ComboBoxItem>100</ComboBoxItem>
+                <ComboBoxItem>50</ComboBoxItem>
+                <ComboBoxItem>25</ComboBoxItem>
+            </ComboBox>
+            <TextBlock VerticalAlignment="Center">%</TextBlock>
+            <Separator/>
+        </ToolBar>
+        <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">
+            <ScrollViewer Width="144"/>
+        </Border>
+        <Border BorderThickness="0,1,1,1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
+            <Grid/>
+        </Border>
+    </DockPanel>
+</Window>

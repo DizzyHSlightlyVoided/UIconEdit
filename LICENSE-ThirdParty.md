@@ -1,6 +1,10 @@
 ﻿Third-Party Licenses
 ====================
 
+Icons
+-----
+Open Folder icon is from [VisualPharm's Must Have Icon Set](http://www.visualpharm.com/must_have_icon_set/).
+
 Apache License, Version 2.0
 ---------------------------
 Applies to:

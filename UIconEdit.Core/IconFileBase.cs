@@ -37,6 +37,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Windows.Media.Imaging;
+using Size = System.Windows.Size;
 
 namespace UIconEdit
 {
@@ -251,7 +252,7 @@ namespace UIconEdit
                         while (gapLength > 0)
                             gapLength -= input.Read(curBuffer, 0, (int)Math.Min(gapLength, bufferSize));
 
-                        Bitmap loadedImage;
+                        BitmapSource loadedImage;
 
                         int dibSize = reader.ReadInt32();
                         if (dibSize < MinDibSize) throw new IconLoadException(IconErrorCode.InvalidEntryType, i);
@@ -304,30 +305,16 @@ namespace UIconEdit
                                 }
                             }
                             using (OffsetStream os = new OffsetStream(input, new byte[] { 0x89, 0x50, 0x4e, 0x47 }, entry.ResourceLength - 4, true))
-                            using (MemoryStream ms = new MemoryStream())
                             {
+                                MemoryStream ms = new MemoryStream();
                                 os.CopyTo(ms);
                                 try
                                 {
-                                    using (Image img = Image.FromStream(ms, false))
-                                    {
-                                        if (img.Width > IconEntry.MaxDimension || img.Height > IconEntry.MaxDimension ||
-                                            img.Width < IconEntry.MinDimension || img.Height < IconEntry.MinDimension)
-                                            throw new IconLoadException(IconErrorCode.InvalidPngSize, img.Size, i);
+                                    PngBitmapDecoder decoder = new PngBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
 
-                                        if ((entry.BWidth != 0 && entry.BWidth != img.Width) ||
-                                            (entry.BHeight != 0 && entry.BHeight != img.Height))
-                                        {
-                                            throw new IconLoadException(IconErrorCode.PngSizeMismatch,
-                                                new Tuple<Size, Size>(new Size(entry.BWidth, entry.BHeight), img.Size), i);
-                                        }
-
-                                        loadedImage = new Bitmap(img.Width, img.Height, PixelFormat.Format32bppArgb);
-                                        using (Graphics g = Graphics.FromImage(loadedImage))
-                                            g.DrawImage(img, 0, 0, img.Width, img.Height);
-                                    }
+                                    loadedImage = decoder.Frames[0];
                                 }
-                                catch (ArgumentException e)
+                                catch (FileFormatException e)
                                 {
                                     throw new IconLoadException(e.Message, IconErrorCode.InvalidPngFile, i, e);
                                 }
@@ -429,14 +416,10 @@ namespace UIconEdit
                                 bufferStream.Seek(0, SeekOrigin.Begin);
                                 try
                                 {
-                                    using (Icon icon = new Icon(bufferStream))
-                                    {
-                                        loadedImage = new Bitmap(icon.Width, icon.Height, PixelFormat.Format32bppArgb);
-                                        using (Graphics g = Graphics.FromImage(loadedImage))
-                                            g.DrawIcon(icon, new Rectangle(0, 0, icon.Width, icon.Height));
-                                    }
+                                    IconBitmapDecoder decoder = new IconBitmapDecoder(bufferStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+                                    loadedImage = decoder.Frames[0].Clone();
                                 }
-                                catch (ArgumentException e)
+                                catch (FileFormatException e)
                                 {
                                     throw new IconLoadException(e.Message, IconErrorCode.InvalidBmpFile, i, e);
                                 }
@@ -444,15 +427,27 @@ namespace UIconEdit
                             #endregion
                         }
                         else throw new IconLoadException(IconErrorCode.InvalidEntryType, i);
+
+                        if (loadedImage.PixelWidth > IconEntry.MaxDimension || loadedImage.PixelHeight > IconEntry.MaxDimension ||
+                            loadedImage.PixelWidth < IconEntry.MinDimension || loadedImage.PixelHeight < IconEntry.MinDimension)
+                            throw new IconLoadException(IconErrorCode.InvalidPngSize, new Size(loadedImage.PixelWidth, loadedImage.PixelHeight), i);
+
+                        if ((entry.BWidth != 0 && entry.BWidth != loadedImage.PixelWidth) ||
+                            (entry.BHeight != 0 && entry.BHeight != loadedImage.PixelHeight))
+                        {
+                            throw new IconLoadException(IconErrorCode.PngSizeMismatch,
+                                new Tuple<Size, Size>(new Size(entry.BWidth, entry.BHeight), new Size(loadedImage.PixelWidth, loadedImage.PixelHeight)), i);
+                        }
+
                         Debug.WriteLine("Reading type {0}, width:{1}, height:{2}, bit depth:{3}",
-                            isPng ? "PNG" : "BMP", loadedImage.Width, loadedImage.Height, bitDepth);
+                            isPng ? "PNG" : "BMP", loadedImage.PixelWidth, loadedImage.PixelHeight, bitDepth);
 
                         IconEntry resultEntry;
 
                         if (loadedId == IconTypeCode.Cursor)
-                            resultEntry = new CursorEntry(bitDepth, loadedImage, entry.XPlanes, entry.YBitsPerpixel);
+                            resultEntry = new CursorEntry(loadedImage, bitDepth, entry.XPlanes, entry.YBitsPerpixel);
                         else
-                            resultEntry = new IconEntry(bitDepth, loadedImage);
+                            resultEntry = new IconEntry(loadedImage, bitDepth);
 
                         if (!returner.Entries.Add(resultEntry))
                         {
@@ -632,7 +627,7 @@ namespace UIconEdit
             }
             catch (ObjectDisposedException) { throw; }
             catch (IOException) { throw; }
-            catch (Exception e) { throw new IOException(e.Message, e); }
+            //catch (Exception e) { throw new IOException(e.Message, e); }
         }
 
         /// <summary>
@@ -668,7 +663,7 @@ namespace UIconEdit
                 }
                 catch (ObjectDisposedException) { throw; }
                 catch (IOException) { throw; }
-                catch (Exception e) { throw new IOException(e.Message, e); }
+                //catch (Exception e) { throw new IOException(e.Message, e); }
         }
 
         const int MinDibSize = 40;
@@ -678,9 +673,6 @@ namespace UIconEdit
             var image = entry.BaseImage;
 
             bool isPng = (entry.Width > byte.MaxValue || entry.Height > byte.MaxValue);
-
-            Debug.WriteLine("Writing type {0} - width:{1}, height:{2}, bit depth:{3} computed bits per pixel:{4}",
-                isPng ? "PNG" : "BMP", entry.Width, entry.Height, entry.BitDepth, GetImgY(entry));
 
             if (isPng)
                 writer.Write(ushort.MinValue); //2
@@ -781,7 +773,9 @@ namespace UIconEdit
 #endif
             }
 
-            if (quantized != image) quantized.Dispose();
+            Debug.WriteLine("Writing type {0} - width:{1}, height:{2}, bit depth:{3}, computed bits per pixel:{4}, length:{5}",
+                isPng ? "PNG" : "BMP", entry.Width, entry.Height, entry.BitDepth, GetImgY(entry), writeStream.Length);
+
             if (alphaMask != null) alphaMask.Dispose();
 
             length = (uint)writeStream.Length;
@@ -1654,7 +1648,7 @@ namespace UIconEdit
     /// <summary>
     /// The exception that is thrown when an icon file contains invalid data.
     /// </summary>
-    public sealed class IconLoadException : Exception
+    public sealed class IconLoadException : FileFormatException
     {
         private static string DefaultMessage { get { return new InvalidDataException().Message; } }
 
@@ -1876,7 +1870,7 @@ namespace UIconEdit
         InvalidPngFile = 0x1100,
         /// <summary>
         /// Code 0x1102: the width or height of a PNG entry is less than <see cref="IconEntry.MinDimension"/> or greater than <see cref="IconEntry.MaxDimension"/>.
-        /// <see cref="IconLoadException.Value"/> contains the <see cref="Image.Size"/> of the image.
+        /// <see cref="IconLoadException.Value"/> contains the size of the image.
         /// </summary>
         InvalidPngSize = 0x1102,
         /// <summary>
@@ -1886,7 +1880,7 @@ namespace UIconEdit
         /// <summary>
         /// Code 0x1204: an error occurred when attempting to process a BMP entry. The inner exception may contain more information.
         /// <see cref="IconLoadException.Value"/> contains a <see cref="Tuple{T1, T2}"/> in which the <see cref="Tuple{T1, T2}.Item1"/> is the 
-        /// <see cref="Image.Size"/> listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the actual size.
+        /// size listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the actual size.
         /// </summary>
         InvalidBmpFile = 0x1200,
         /// <summary>
@@ -1897,13 +1891,13 @@ namespace UIconEdit
         /// <summary>
         /// Code 0x1202: the width or height of a BMP entry is less than <see cref="IconEntry.MinDimension"/> or greater than <see cref="IconEntry.MaxDimension"/>.
         /// The maximum height is doubled in images with a bit depth less than 32.
-        /// <see cref="IconLoadException.Value"/> contains the <see cref="Image.Size"/> of the image.
+        /// <see cref="IconLoadException.Value"/> contains the size of the image.
         /// </summary>
         InvalidBmpSize = 0x1202,
         /// <summary>
         /// Code 0x1203: the width or height of a BMP entry does not match the width or height listed in the icon directory entry.
         /// <see cref="IconLoadException.Value"/> contains a <see cref="Tuple{T1, T2}"/> in which the <see cref="Tuple{T1, T2}.Item1"/> is the 
-        /// <see cref="Image.Size"/> listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the actual size.
+        /// size listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the actual size.
         /// </summary>
         BmpHeightMismatch = 0x1203,
         /// <summary>

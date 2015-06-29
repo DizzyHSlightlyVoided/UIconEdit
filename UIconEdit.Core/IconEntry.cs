@@ -37,6 +37,11 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using WPFPixelFormat = System.Windows.Media.PixelFormat;
+
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 using nQuant;
 
@@ -70,10 +75,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public IconEntry(Image baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
+        public IconEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
         {
             _setImage(baseImage, "baseImage");
             _setDepth(bitDepth, "bitDepth");
@@ -98,10 +100,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public IconEntry(Image baseImage, short width, short height, BitDepth bitDepth)
+        public IconEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth)
             : this(baseImage, width, height, bitDepth, DefaultAlphaThreshold)
         {
         }
@@ -122,16 +121,13 @@ namespace UIconEdit
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public IconEntry(Image baseImage, BitDepth bitDepth, byte alphaThreshold)
+        public IconEntry(BitmapSource baseImage, BitDepth bitDepth, byte alphaThreshold)
         {
             _setImage(baseImage, "baseImage");
-            if (baseImage.Width < MinDimension || baseImage.Width > MaxDimension || baseImage.Height < MinDimension || baseImage.Height > MaxDimension)
+            if (baseImage.PixelWidth < MinDimension || baseImage.PixelWidth > MaxDimension || baseImage.PixelHeight < MinDimension || baseImage.PixelHeight > MaxDimension)
                 throw new ArgumentException("The image size is out of the supported range.", "baseImage");
-            _width = (short)baseImage.Width;
-            _height = (short)baseImage.Height;
+            _width = (short)baseImage.PixelWidth;
+            _height = (short)baseImage.PixelHeight;
             _setDepth(bitDepth, "bitDepth");
             _alphaThreshold = alphaThreshold;
         }
@@ -150,18 +146,9 @@ namespace UIconEdit
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public IconEntry(Image baseImage, BitDepth bitDepth)
+        public IconEntry(BitmapSource baseImage, BitDepth bitDepth)
             : this(baseImage, bitDepth, DefaultAlphaThreshold)
         {
-        }
-
-        internal IconEntry(BitDepth bitDepth, Bitmap baseImage)
-            : this(baseImage, bitDepth, DefaultAlphaThreshold)
-        {
-            _ownedImage = true;
         }
 
         /// <summary>
@@ -173,39 +160,20 @@ namespace UIconEdit
         /// </summary>
         public const int MaxDimension = 768;
 
-        private void _setImage(Image image, string paramName)
+        private void _setImage(BitmapSource image, string paramName)
         {
             if (image == null) throw new ArgumentNullException(paramName);
-            int width, height;
-            try
-            {
-                width = image.Width;
-                height = image.Height;
-            }
-            catch (ObjectDisposedException)
-            {
-                throw;
-            }
-            catch
-            {
-                throw new ObjectDisposedException(paramName);
-            }
             _image = image;
-            _ownedImage = false;
         }
 
-        private bool _ownedImage;
-        private Image _image;
+        private BitmapSource _image;
         /// <summary>
         /// Gets and sets the image associated with the current instance.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// In a set operation, the specified value is <c>null</c>.
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// In a set operation, the specified value is disposed.
-        /// </exception>
-        public Image BaseImage
+        public BitmapSource BaseImage
         {
             get { return _image; }
             set { _setImage(value, null); }
@@ -417,7 +385,7 @@ namespace UIconEdit
             }
         }
 
-        private Graphics GraphicsFromImage(Image image)
+        private Graphics GraphicsFromImage(Bitmap image)
         {
             Graphics g = Graphics.FromImage(image);
             g.InterpolationMode = _lerpMode;
@@ -432,8 +400,7 @@ namespace UIconEdit
         public virtual IconEntry Clone()
         {
             IconEntry copy = (IconEntry)MemberwiseClone();
-            copy._image = (Image)this._image.Clone();
-            copy._ownedImage = true;
+            copy._image = _image.Clone();
             copy.File = null;
             return copy;
         }
@@ -444,19 +411,22 @@ namespace UIconEdit
 
             bool isPng = _width > byte.MaxValue || _height > byte.MaxValue;
 
-            if (_image is Bitmap && isPng && _depth == BitDepth.Depth32BitsPerPixel && _image.PixelFormat == PixelFormat.Format32bppArgb
-                && _image.Width == _width && _image.Height == _height)
-            {
-                paletteCount = 0;
-                alphaMask = null;
-                return (Bitmap)_image;
-            }
-
             Bitmap fullColor = new Bitmap(_width, _height, formatFull);
 
-            using (Graphics g = GraphicsFromImage(fullColor))
-                g.DrawImage(_image, 0, 0, _width, _height);
+            using (Bitmap smallBitmap = new Bitmap(_image.PixelWidth, _image.PixelHeight, formatFull))
+            {
+                FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(_image, PixelFormats.Bgr32, null, 0);
 
+                BitmapData smallData = smallBitmap.LockBits(new Rectangle(Point.Empty, smallBitmap.Size), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+                formatBmp.CopyPixels(new System.Windows.Int32Rect(0, 0, smallData.Width, smallData.Height), smallData.Scan0,
+                    Math.Abs(smallData.Height * smallData.Stride), smallData.Stride);
+
+                smallBitmap.UnlockBits(smallData);
+
+                using (Graphics g = GraphicsFromImage(fullColor))
+                    g.DrawImage(smallBitmap, 0, 0, _width, _height);
+            }
             Rectangle fullRect = new Rectangle(0, 0, _width, _height);
             const uint opaqueAlpha = 0xFF000000u;
 
@@ -827,8 +797,6 @@ namespace UIconEdit
         protected virtual void Dispose(bool disposing)
         {
             if (isDisposed) return;
-            if (_ownedImage)
-                _image.Dispose();
             GC.SuppressFinalize(this);
             isDisposed = true;
         }
@@ -872,10 +840,7 @@ namespace UIconEdit
         /// <para>-OR-</para>
         /// <para><paramref name="hotspotY"/> is greater than <paramref name="height"/>.</para>
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public CursorEntry(Image baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
+        public CursorEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
             : base(baseImage, width, height, bitDepth, alphaThreshold)
         {
             _setX(hotspotX, "hotspotX");
@@ -905,10 +870,7 @@ namespace UIconEdit
         /// <para>-OR-</para>
         /// <para><paramref name="hotspotY"/> is greater than <paramref name="height"/>.</para>
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public CursorEntry(Image baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+        public CursorEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
             : this(baseImage, width, height, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
         }
@@ -931,10 +893,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public CursorEntry(Image baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
+        public CursorEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
             : base(baseImage, width, height, bitDepth, alphaThreshold)
         {
         }
@@ -955,10 +914,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public CursorEntry(Image baseImage, short width, short height, BitDepth bitDepth)
+        public CursorEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth)
             : base(baseImage, width, height, bitDepth)
         {
         }
@@ -987,10 +943,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public CursorEntry(Image baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
+        public CursorEntry(BitmapSource baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
             : base(baseImage, bitDepth, alphaThreshold)
         {
             _setX(hotspotX, "hotspotX");
@@ -1019,10 +972,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public CursorEntry(Image baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+        public CursorEntry(BitmapSource baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
             : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
         }
@@ -1043,10 +993,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public CursorEntry(Image baseImage, BitDepth bitDepth, byte alphaThreshold)
+        public CursorEntry(BitmapSource baseImage, BitDepth bitDepth, byte alphaThreshold)
             : base(baseImage, bitDepth, alphaThreshold)
         {
         }
@@ -1065,19 +1012,9 @@ namespace UIconEdit
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        /// <paramref name="baseImage"/> is disposed.
-        /// </exception>
-        public CursorEntry(Image baseImage, BitDepth bitDepth)
+        public CursorEntry(BitmapSource baseImage, BitDepth bitDepth)
             : base(baseImage, bitDepth)
         {
-        }
-
-        internal CursorEntry(BitDepth bitDepth, Bitmap baseImage, ushort hotspotX, ushort hotspotY)
-            : base(baseImage, bitDepth)
-        {
-            _setX(hotspotX, "hotspotX");
-            _setY(hotspotY, "hotspotY");
         }
 
         /// <summary>

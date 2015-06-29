@@ -29,7 +29,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
-using System.Drawing.Imaging;
+using System.IO;
+using System.Windows.Media.Imaging;
 
 namespace UIconEdit.Builder
 {
@@ -63,9 +64,7 @@ namespace UIconEdit.Builder
                 for (int i = 0; i < entries.Length; i++)
                 {
                     var entry = entries[i];
-                    string filename = string.Format("Gradient{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height);
-                    Console.WriteLine("Saving {0} ...", filename);
-                    entry.BaseImage.Save(filename, ImageFormat.Png);
+                    Save(entry, string.Format("Gradient{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height));
                 }
                 Console.WriteLine("Saving GradientOut.ico ...");
                 iconFile.Save("GradientOut.ico");
@@ -78,9 +77,7 @@ namespace UIconEdit.Builder
                 for (int i = 0; i < cursorEntries.Length; i++)
                 {
                     var entry = cursorEntries[i];
-                    string filename = string.Format("Crosshair{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height);
-                    Console.WriteLine("Saving {0} ...", filename);
-                    entry.BaseImage.Save(filename, ImageFormat.Png);
+                    Save(entry, string.Format("Crosshair{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height));
                 }
 
                 Console.WriteLine("Saving CrosshairOut.cur ...");
@@ -89,6 +86,15 @@ namespace UIconEdit.Builder
             Console.WriteLine("Completed!");
             Console.WriteLine("Press any key to continue ...");
             Console.ReadKey();
+        }
+
+        private static void Save(IconEntry entry, string filename)
+        {
+            Console.WriteLine("Saving {0} ...", filename);
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(entry.BaseImage));
+            using (FileStream fs = File.Open(filename, FileMode.Create))
+                encoder.Save(fs);
         }
     }
 }

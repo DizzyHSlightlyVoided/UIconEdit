@@ -34,6 +34,7 @@ using System.Drawing;
 using System.Linq;
 using System.IO;
 using System.Globalization;
+using System.Windows.Media.Imaging;
 
 namespace UIconEdit.Builder
 {
@@ -129,7 +130,7 @@ namespace UIconEdit.Builder
                     throw new ArgumentException("Missing parameters!");
 
                 EntryItem item = new EntryItem(IconEntry.DefaultAlphaThreshold);
-                _images = new Dictionary<string, Image>();
+                _images = new Dictionary<string, BitmapSource>();
 
                 foreach (string[] curLine in imageParams.Select(s => s.Trim().Split(default(string[]), StringSplitOptions.RemoveEmptyEntries)))
                 {
@@ -153,10 +154,10 @@ namespace UIconEdit.Builder
 
                             string curPath = Path.GetFullPath(curWord);
 
-                            Image img;
+                            BitmapSource img;
                             if (!_images.TryGetValue(curPath, out img))
                             {
-                                img = (Image)Image.FromFile(curPath).Clone();
+                                img = BitmapFrame.Create(new Uri(curPath));
                                 _images[curPath] = img;
                             }
                             item.Img = img;
@@ -304,7 +305,7 @@ namespace UIconEdit.Builder
             {
             }
 
-            public EntryItem(Image img, short width, short height, BitDepth depth, ushort x, ushort y, byte alpha)
+            public EntryItem(BitmapSource img, short width, short height, BitDepth depth, ushort x, ushort y, byte alpha)
             {
                 Img = img;
                 Width = width;
@@ -316,12 +317,12 @@ namespace UIconEdit.Builder
                 SeenHotspot = false;
             }
 
-            public EntryItem(Image img, short width, short height, BitDepth depth, byte alpha)
+            public EntryItem(BitmapSource img, short width, short height, BitDepth depth, byte alpha)
                 : this(img, width, height, depth, 0, 0, alpha)
             {
             }
 
-            public Image Img;
+            public BitmapSource Img;
             public ushort X, Y;
             public byte Alpha;
             public short Width, Height;
@@ -340,19 +341,13 @@ namespace UIconEdit.Builder
         }
 
         static IconFileBase file;
-        static Dictionary<string, Image> _images;
+        static Dictionary<string, BitmapSource> _images;
         static IList<string> imageParams;
         static string outputFile;
 
         static bool nowait;
         static int Finisher(int result)
         {
-            if (_images != null)
-            {
-                foreach (Image img in _images.Values)
-                    img.Dispose();
-            }
-
             if (!nowait)
                 Wait();
             return result;

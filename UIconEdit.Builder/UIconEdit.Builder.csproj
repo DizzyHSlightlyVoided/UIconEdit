@@ -44,9 +44,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UIconEdit\UIconEdit.Net45.csproj">
+    <ProjectReference Include="..\UIconEdit.Core\UIconEdit.Core.Net45.csproj">
       <Project>{40ce58b0-4500-42c0-92a7-5314279b916e}</Project>
-      <Name>UIconEdit.Net45</Name>
+      <Name>UIconEdit.Core.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

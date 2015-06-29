@@ -824,7 +824,7 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Represents a hash list of entries. This collection treats <see cref="IconEntry"/> objects with the same
+        /// Represents a list of entries. This collection treats <see cref="IconEntry"/> objects with the same
         /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> as though they were equal.
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]

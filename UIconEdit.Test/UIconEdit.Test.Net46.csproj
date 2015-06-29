@@ -59,9 +59,9 @@
       <Project>{a59307ea-fcb0-4110-bc42-0417871c24c4}</Project>
       <Name>nQuant.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UIconEdit\UIconEdit.Net46.csproj">
+    <ProjectReference Include="..\UIconEdit.Core\UIconEdit.Core.Net46.csproj">
       <Project>{40ce58b0-4600-42c0-92a7-5314279b916e}</Project>
-      <Name>UIconEdit.Net46</Name>
+      <Name>UIconEdit.Core.Net46</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

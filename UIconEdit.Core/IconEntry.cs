@@ -36,6 +36,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
@@ -450,6 +451,10 @@ namespace UIconEdit
             return g;
         }
 
+        private static readonly Dictionary<string, DependencyPropertyKey> propertyKeys =
+            typeof(IconEntry).GetFields(BindingFlags.Static | BindingFlags.NonPublic).Where(i => i.FieldType == typeof(DependencyPropertyKey))
+            .ToDictionary(k => k.Name, v => (DependencyPropertyKey)v.GetValue(null));
+
         /// <summary>
         /// Returns a duplicate of the current instance.
         /// </summary>
@@ -457,7 +462,23 @@ namespace UIconEdit
         public virtual IconEntry Clone()
         {
             IconEntry copy = (IconEntry)MemberwiseClone();
-            copy.BaseImage = BaseImage.Clone();
+
+            LocalValueEnumerator enumerator = GetLocalValueEnumerator();
+            while (enumerator.MoveNext())
+            {
+                LocalValueEntry curEntry = enumerator.Current;
+
+                object value = curEntry.Value;
+                ICloneable cloneable = value as ICloneable;
+                if (cloneable != null) value = cloneable.Clone();
+
+                DependencyPropertyKey key;
+                if (propertyKeys.TryGetValue(curEntry.Property.Name + "PropertyKey", out key))
+                    copy.SetValue(key, value);
+                else
+                    copy.SetValue(curEntry.Property, value);
+            }
+
             copy.File = null;
             return copy;
         }

@@ -41,6 +41,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Size = System.Windows.Size;
 
 namespace UIconEdit
@@ -48,7 +49,7 @@ namespace UIconEdit
     /// <summary>
     /// Base class for icon and cursor files.
     /// </summary>
-    public abstract class IconFileBase : ICloneable
+    public abstract class IconFileBase : DispatcherObject, ICloneable
     {
         /// <summary>
         /// Initializes a new instance.
@@ -538,6 +539,7 @@ namespace UIconEdit
         /// <summary>
         /// Gets a collection containing all entries in the icon file. 
         /// </summary>
+        [Bindable(true)]
         public EntryList Entries { get { return _entries; } }
 
         /// <summary>

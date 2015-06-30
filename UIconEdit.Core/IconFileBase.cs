@@ -662,10 +662,13 @@ namespace UIconEdit
         {
             var entries = Entries;
             if (entries.Count == 0) throw new InvalidOperationException("At least one entry is needed.");
-            using (FileStream fs = File.Open(path, FileMode.Create))
+            using (MemoryStream ms = new MemoryStream())
                 try
                 {
-                    Save(fs, entries);
+                    Save(ms, entries);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    using (FileStream fs = File.Open(path, FileMode.Create))
+                        ms.CopyTo(fs);
                 }
                 catch (ObjectDisposedException) { throw; }
                 catch (IOException) { throw; }

@@ -1,4 +1,4 @@
-﻿#region
+﻿#region BSD License
 /*
 Copyright © 2015, KimikoMuffin.
 All rights reserved.
@@ -58,8 +58,8 @@ namespace UIconEdit.Builder
                 Console.ReadKey();
             }
             Console.WriteLine("Loading file Gradient.ico ...");
-            using (IconFile iconFile = IconFile.Load("Gradient.ico"))
             {
+                IconFile iconFile = IconFile.Load("Gradient.ico");
                 IconEntry[] entries = iconFile.Entries.ToArray();
                 for (int i = 0; i < entries.Length; i++)
                 {
@@ -71,8 +71,8 @@ namespace UIconEdit.Builder
             }
             Console.WriteLine("Completed!");
             Console.WriteLine("Loading file Crosshair.cur ...");
-            using (CursorFile cursorFile = CursorFile.Load("Crosshair.cur"))
             {
+                CursorFile cursorFile = CursorFile.Load("Crosshair.cur");
                 CursorEntry[] cursorEntries = cursorFile.Entries.ToArray();
                 for (int i = 0; i < cursorEntries.Length; i++)
                 {

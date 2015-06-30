@@ -44,7 +44,7 @@ namespace UIconEdit
     /// <summary>
     /// Base class for icon and cursor files.
     /// </summary>
-    public abstract class IconFileBase : IDisposable, ICloneable
+    public abstract class IconFileBase : ICloneable
     {
         /// <summary>
         /// Initializes a new instance.
@@ -451,7 +451,7 @@ namespace UIconEdit
 
                         if (!returner.Entries.Add(resultEntry))
                         {
-                            returner.Entries.RemoveAndDisposeSimilar(resultEntry);
+                            returner.Entries.RemoveSimilar(resultEntry);
                             returner.Entries.Add(resultEntry);
                         }
                     }
@@ -472,10 +472,7 @@ namespace UIconEdit
                 }
 
                 if (returner.Entries.Count == 0)
-                {
-                    returner.Dispose();
                     throw new IconLoadException(IconErrorCode.ZeroValidEntries);
-                }
 
                 return returner;
             }
@@ -627,7 +624,7 @@ namespace UIconEdit
             }
             catch (ObjectDisposedException) { throw; }
             catch (IOException) { throw; }
-            //catch (Exception e) { throw new IOException(e.Message, e); }
+            catch (Exception e) { throw new IOException(e.Message, e); }
         }
 
         /// <summary>
@@ -663,7 +660,7 @@ namespace UIconEdit
                 }
                 catch (ObjectDisposedException) { throw; }
                 catch (IOException) { throw; }
-                //catch (Exception e) { throw new IOException(e.Message, e); }
+                catch (Exception e) { throw new IOException(e.Message, e); }
         }
 
         const int MinDibSize = 40;
@@ -785,38 +782,6 @@ namespace UIconEdit
         }
         #endregion
 
-        private bool isDisposed = false;
-        /// <summary>
-        /// Immediately releases all resources used by the current instance.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases all unmanaged resources used by the current instance, and optionally releases all managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (isDisposed)
-                return;
-
-            Entries.ClearAndDispose();
-
-            isDisposed = true;
-        }
-
-        /// <summary>
-        /// Destructor.
-        /// </summary>
-        ~IconFileBase()
-        {
-            Dispose(false);
-        }
-
         /// <summary>
         /// Represents a list of entries. This collection treats <see cref="IconEntry"/> objects with the same
         /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> as though they were equal.
@@ -865,7 +830,6 @@ namespace UIconEdit
                 get { return _items[index]; }
                 set
                 {
-                    if (_file.isDisposed) throw new ObjectDisposedException(null);
                     if (value == null) throw new ArgumentOutOfRangeException(null, new ArgumentNullException().Message);
                     if (!_setValue(index, value, true))
                         throw new NotSupportedException("Could not set the specified value in the list.");
@@ -962,16 +926,6 @@ namespace UIconEdit
                 return _setValue(index, item, false);
             }
 
-            private void _removeAt(int index, bool disposing)
-            {
-                IconEntry item = _items[index];
-                _items.RemoveAt(index);
-                _set.Remove(item.EntryKey);
-                item.File = null;
-                if (disposing)
-                    item.Dispose();
-            }
-
             /// <summary>
             /// Removes the element at the specified index.
             /// </summary>
@@ -981,29 +935,10 @@ namespace UIconEdit
             /// </exception>
             public void RemoveAt(int index)
             {
-                _removeAt(index, false);
-            }
-
-            /// <summary>
-            /// Removes the element at the specified index and immediately calls <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="index">The element at the specified index.</param>
-            /// <exception cref="ArgumentOutOfRangeException">
-            /// <paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.
-            /// </exception>
-            public void RemoveAndDisposeAt(int index)
-            {
-                _removeAt(index, true);
-            }
-
-            private bool _remove(IconEntry item, bool disposing)
-            {
-                if (!_items.Remove(item)) return false;
+                IconEntry item = _items[index];
+                _items.RemoveAt(index);
                 _set.Remove(item.EntryKey);
                 item.File = null;
-                if (disposing)
-                    item.Dispose();
-                return true;
             }
 
             /// <summary>
@@ -1013,36 +948,15 @@ namespace UIconEdit
             /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
             public bool Remove(IconEntry item)
             {
-                return _remove(item, false);
+                if (!_items.Remove(item)) return false;
+                _set.Remove(item.EntryKey);
+                item.File = null;
+                return true;
             }
 
             void IList.Remove(object value)
             {
                 Remove(value as IconEntry);
-            }
-
-            /// <summary>
-            /// Removes the specified icon entry from the list and immediately callse <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="item">The icon entry to remove from the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
-            public bool RemoveAndDispose(IconEntry item)
-            {
-                return _remove(item, true);
-            }
-
-            private bool _removeSimilar(EntryKey key, bool disposing)
-            {
-                if (!key.IsValid) return false;
-                for (int i = 0; i < _items.Count; i++)
-                {
-                    if (key == _items[i].EntryKey)
-                    {
-                        _removeAt(i, disposing);
-                        return true;
-                    }
-                }
-                return false;
             }
 
             /// <summary>
@@ -1054,7 +968,7 @@ namespace UIconEdit
             public bool RemoveSimilar(IconEntry item)
             {
                 if (item == null) return false;
-                return _removeSimilar(item.EntryKey, false);
+                return RemoveSimilar(item.EntryKey);
             }
 
             /// <summary>
@@ -1065,7 +979,16 @@ namespace UIconEdit
             /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
             public bool RemoveSimilar(EntryKey key)
             {
-                return _removeSimilar(key, false);
+                if (!key.IsValid) return false;
+                for (int i = 0; i < _items.Count; i++)
+                {
+                    if (key == _items[i].EntryKey)
+                    {
+                        RemoveAt(i);
+                        return true;
+                    }
+                }
+                return false;
             }
 
             /// <summary>
@@ -1079,59 +1002,7 @@ namespace UIconEdit
             /// <c>false</c> if no such icon entry was found in the list.</returns>
             public bool RemoveSimilar(short width, short height, BitDepth bitDepth)
             {
-                return _removeSimilar(new EntryKey(width, height, bitDepth), false);
-            }
-
-            /// <summary>
-            /// Removes an icon entry similar to the specified value from the list
-            /// and immediately calls <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="item">The icon entry to search for.</param>
-            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
-            public bool RemoveAndDisposeSimilar(IconEntry item)
-            {
-                if (item == null) return false;
-                return _removeSimilar(item.EntryKey, true);
-            }
-
-            /// <summary>
-            /// Removes an icon entry similar to the specified value from the list
-            /// and immediately calls <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="key">The entry key to search for.</param>
-            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
-            public bool RemoveAndDisposeSimilar(EntryKey key)
-            {
-                return _removeSimilar(key, true);
-            }
-
-            /// <summary>
-            /// Removes an icon entry similar to the specified value from the list
-            /// and immediately calls <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="width">The width of the icon entry to search for.</param>
-            /// <param name="height">The height of the icon entry to search for.</param>
-            /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
-            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
-            /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
-            /// <c>false</c> if no such icon entry was found in the list.</returns>
-            public bool RemoveAndDisposeSimilar(short width, short height, BitDepth bitDepth)
-            {
-                return _removeSimilar(new EntryKey(width, height, bitDepth), true);
-            }
-
-            private void _clear(bool disposing)
-            {
-                foreach (IconEntry item in _items)
-                {
-                    item.File = null;
-                    if (disposing)
-                        item.Dispose();
-                }
-                _set.Clear();
-                _items.Clear();
+                return RemoveSimilar(new EntryKey(width, height, bitDepth));
             }
 
             /// <summary>
@@ -1139,15 +1010,10 @@ namespace UIconEdit
             /// </summary>
             public void Clear()
             {
-                _clear(false);
-            }
-
-            /// <summary>
-            /// Removes all elements from the list and immediately calls <see cref="IconEntry.Dispose()"/> on each one.
-            /// </summary>
-            public void ClearAndDispose()
-            {
-                _clear(true);
+                foreach (IconEntry item in _items)
+                    item.File = null;
+                _set.Clear();
+                _items.Clear();
             }
 
             /// <summary>
@@ -1341,18 +1207,6 @@ namespace UIconEdit
                 return GetEnumerator();
             }
 
-            private void _removeRange(int index, int count, bool disposing)
-            {
-                var items = _items.GetRange(index, count);
-                _items.RemoveRange(index, count);
-                foreach (var curItem in items)
-                {
-                    _set.Remove(curItem.EntryKey);
-                    if (disposing)
-                        curItem.Dispose();
-                }
-            }
-
             /// <summary>
             /// Removes a range of elements from the list.
             /// </summary>
@@ -1366,42 +1220,10 @@ namespace UIconEdit
             /// </exception>
             public void RemoveRange(int index, int count)
             {
-                _removeRange(index, count, false);
-            }
-
-            /// <summary>
-            /// Removes a range of elements from the list and immediately calls <see cref="IconEntry.Dispose()"/> on each one.
-            /// </summary>
-            /// <param name="index">The zero-based starting index of the elements to remove.</param>
-            /// <param name="count">The number of elements to remove.</param>
-            /// <exception cref="ArgumentOutOfRangeException">
-            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
-            /// </exception>
-            /// <exception cref="ArgumentException">
-            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
-            /// </exception>
-            public void RemoveAndDisposeRange(int index, int count)
-            {
-                _removeRange(index, count, true);
-            }
-
-            private int _removeWhere(Predicate<IconEntry> match, bool disposing)
-            {
-                if (match == null) throw new ArgumentNullException("match");
-                int removed = 0;
-                for (int i = 0; i < _items.Count; i++)
-                {
-                    while (i < _items.Count && match(_items[i]))
-                    {
-                        removed++;
-                        IconEntry oldItem = _items[i];
-                        _set.Remove(oldItem.EntryKey);
-                        _items.RemoveAt(i);
-                        if (disposing)
-                            oldItem.Dispose();
-                    }
-                }
-                return removed;
+                var items = _items.GetRange(index, count);
+                _items.RemoveRange(index, count);
+                foreach (var curItem in items)
+                    _set.Remove(curItem.EntryKey);
             }
 
             /// <summary>
@@ -1414,20 +1236,19 @@ namespace UIconEdit
             /// </exception>
             public int RemoveWhere(Predicate<IconEntry> match)
             {
-                return _removeWhere(match, false);
-            }
-
-            /// <summary>
-            /// Removes all elements matching the specified predicate and immediately calls <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="match">A predicate used to define the elements to remove.</param>
-            /// <returns>The number of elements which were removed.</returns>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="match"/> is <c>null</c>.
-            /// </exception>
-            public int RemoveAndDisposeWhere(Predicate<IconEntry> match)
-            {
-                return _removeWhere(match, true);
+                if (match == null) throw new ArgumentNullException("match");
+                int removed = 0;
+                for (int i = 0; i < _items.Count; i++)
+                {
+                    while (i < _items.Count && match(_items[i]))
+                    {
+                        removed++;
+                        IconEntry oldItem = _items[i];
+                        _set.Remove(oldItem.EntryKey);
+                        _items.RemoveAt(i);
+                    }
+                }
+                return removed;
             }
 
             /// <summary>

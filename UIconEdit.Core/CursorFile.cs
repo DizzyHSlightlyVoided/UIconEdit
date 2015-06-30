@@ -1,4 +1,4 @@
-﻿#region
+﻿#region BSD License
 /*
 Copyright © 2015, KimikoMuffin.
 All rights reserved.
@@ -295,7 +295,7 @@ namespace UIconEdit
             /// <param name="index">The index of the value to set.</param>
             /// <param name="item">The value to set.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c>,
-            /// is already associated with a different icon file, or if an element with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>,
+            /// is already associated with a different icon file, or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
             /// and <see cref="IconEntry.BitDepth"/> already exists in the list at a different index.</returns>
             /// <exception cref="ArgumentOutOfRangeException">
             /// <paramref name="index"/> is less than 0 or is greater than <see cref="Count"/>.
@@ -311,7 +311,7 @@ namespace UIconEdit
             /// <param name="item">The cursor entry to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
-            /// <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
+            /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
             public bool Add(CursorEntry item)
             {
                 return _entries.Add(item);
@@ -334,7 +334,7 @@ namespace UIconEdit
             /// <param name="item">The cursor entry to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
-            /// <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
+            /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
             public bool Insert(int index, CursorEntry item)
             {
                 return _entries.Insert(index, item);
@@ -363,15 +363,6 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes the element at the specified index and, if it does not exist elsewhere in the file, immediately calls <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="index">The index of the cursor entry to remove.</param>
-            public void RemoveAndDisposeAt(int index)
-            {
-                _entries.RemoveAndDisposeAt(index);
-            }
-
-            /// <summary>
             /// Removes the specified cursor entry from the list.
             /// </summary>
             /// <param name="item">The cursor entry to to remove from the list.</param>
@@ -387,20 +378,10 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes the specified cursor entry from the list and immediately calls <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="item">The cursor entry to to remove from the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
-            public bool RemoveAndDispose(CursorEntry item)
-            {
-                return _entries.RemoveAndDispose(item);
-            }
-
-            /// <summary>
             /// Removes an element similar to the specified cursor entry from the list.
             /// </summary>
             /// <param name="item">The cursor entry to to compare.</param>
-            /// <returns><c>true</c> if a cursor entry with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// <returns><c>true</c> if a cursor entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such cursor entry was found in the list.</returns>
             public bool RemoveSimilar(CursorEntry item)
             {
@@ -411,7 +392,7 @@ namespace UIconEdit
             /// Removes a cursor entry similar to the specified value from the list.
             /// </summary>
             /// <param name="key">The entry key to compare.</param>
-            /// <returns><c>true</c> if a cursor entry with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// <returns><c>true</c> if a cursor entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such cursor entry was found in the list.</returns>
             public bool RemoveSimilar(EntryKey key)
             {
@@ -430,44 +411,6 @@ namespace UIconEdit
             public bool RemoveSimilar(short width, short height, BitDepth bitDepth)
             {
                 return _entries.RemoveSimilar(width, height, bitDepth);
-            }
-
-            /// <summary>
-            /// Removes the specified cursor entry from the list, immediately calls <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="item">The cursor entry to compare.</param>
-            /// <returns><c>true</c> if a cursor entry with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such cursor entry was found in the list.</returns>
-            public bool RemoveAndDisposeSimilar(CursorEntry item)
-            {
-                return _entries.RemoveAndDisposeSimilar(item);
-            }
-
-            /// <summary>
-            /// Removes a cursor entry similar to the specified value from the list
-            /// and immediately calls <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="key">The entry key to search for.</param>
-            /// <returns><c>true</c> if a cursor entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such cursor entry was found in the list.</returns>
-            public bool RemoveAndDisposeSimilar(EntryKey key)
-            {
-                return _entries.RemoveAndDisposeSimilar(key);
-            }
-
-            /// <summary>
-            /// Removes a cursor entry similar to the specified value from the list
-            /// and immediately calls <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="width">The width of the cursor entry to search for.</param>
-            /// <param name="height">The height of the cursor entry to search for.</param>
-            /// <param name="bitDepth">The bit depth of the cursor entry to search for.</param>
-            /// <returns><c>true</c> if a cursor entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
-            /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
-            /// <c>false</c> if no such cursor entry was found in the list.</returns>
-            public bool RemoveAndDisposeSimilar(short width, short height, BitDepth bitDepth)
-            {
-                return _entries.RemoveAndDisposeSimilar(width, height, bitDepth);
             }
 
             /// <summary>
@@ -541,14 +484,6 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes all elements from the collection and immediately calls <see cref="IconEntry.Dispose()"/> on each one.
-            /// </summary>
-            public void ClearAndDispose()
-            {
-                _entries.Clear();
-            }
-
-            /// <summary>
             /// Determines if the specified cursor entry exists in the list.
             /// </summary>
             /// <param name="item">The cursor entry to search for in the list.</param>
@@ -567,7 +502,7 @@ namespace UIconEdit
             /// Determines if an element similar to the specified cursor entry exists in the list.
             /// </summary>
             /// <param name="item">The cursor entry to compare.</param>
-            /// <returns><c>true</c> if a cursor entry with the same with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// <returns><c>true</c> if a cursor entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="item"/> exists in the list; <c>false</c> otherwise.</returns>
             public bool ContainsSimilar(CursorEntry item)
             {
@@ -618,7 +553,7 @@ namespace UIconEdit
             /// Gets the index of an element similar to the specified cursor entry.
             /// </summary>
             /// <param name="item">The cursor entry to compare.</param>
-            /// <returns>The index of a cursor entry with the same <see cref="CursorEntry.Width"/>, <see cref="CursorEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// <returns>The index of a cursor entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="item"/>, if found; otherwise, -1.</returns>
             public int IndexOfSimilar(CursorEntry item)
             {
@@ -685,22 +620,6 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes a range of elements from the list and immediately calls <see cref="IconEntry.Dispose()"/> on each one.
-            /// </summary>
-            /// <param name="index">The zero-based starting index of the elements to remove.</param>
-            /// <param name="count">The number of elements to remove.</param>
-            /// <exception cref="ArgumentOutOfRangeException">
-            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
-            /// </exception>
-            /// <exception cref="ArgumentException">
-            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
-            /// </exception>
-            public void RemoveAndDisposeRange(int index, int count)
-            {
-                _entries.RemoveAndDisposeRange(index, count);
-            }
-
-            /// <summary>
             /// Removes all elements matching the specified predicate.
             /// </summary>
             /// <param name="match">A predicate used to define the elements to remove.</param>
@@ -712,20 +631,6 @@ namespace UIconEdit
             {
                 if (match == null) throw new ArgumentNullException("match");
                 return _entries.RemoveWhere(i => match((CursorEntry)i));
-            }
-
-            /// <summary>
-            /// Removes all elements matching the specified predicate and immediately calls <see cref="IconEntry.Dispose()"/>.
-            /// </summary>
-            /// <param name="match">A predicate used to define the elements to remove.</param>
-            /// <returns>The number of elements which were removed.</returns>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="match"/> is <c>null</c>.
-            /// </exception>
-            public int RemoveAndDisposeWhere(Predicate<CursorEntry> match)
-            {
-                if (match == null) throw new ArgumentNullException("match");
-                return _entries.RemoveAndDisposeWhere(i => match((CursorEntry)i));
             }
 
             /// <summary>

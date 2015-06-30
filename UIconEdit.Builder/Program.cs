@@ -260,7 +260,7 @@ namespace UIconEdit.Builder
 
                     if (!file.Entries.Add(entry))
                     {
-                        file.Entries.RemoveAndDisposeSimilar(entry);
+                        file.Entries.RemoveSimilar(entry);
                         file.Entries.Add(entry);
                     }
                 }
@@ -278,11 +278,6 @@ namespace UIconEdit.Builder
                 Console.Error.WriteLine();
                 HelpMessage();
                 resultCode = e.HResult;
-            }
-            finally
-            {
-                file.Dispose();
-                file = null;
             }
 
             return Finisher(resultCode);

@@ -154,7 +154,7 @@ An I/O error occurred.
 
 Returns a duplicate of the current instance.
 
-**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-) in [`IconFileBase.Entries`](#property-public-uiconediticonfilebaseentrylist-entries--get-).
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) in [`IconFileBase.Entries`](#property-public-uiconediticonfilebaseentrylist-entries--get-).
 
 
 --------------------------------------------------
@@ -244,20 +244,9 @@ The specified path is invalid.
 An I/O error occurred.
 
 --------------------------------------------------
-## Method: `public virtual void Dispose()`
-
-Immediately releases all resources used by the current instance.
-
---------------------------------------------------
-## Method: `protected virtual void Dispose(System.Boolean disposing)`
-
-Releases all unmanaged resources used by the current instance, and optionally releases all managed resources.
-* `disposing`: `true` to release both managed and unmanaged resources; `false` to release only unmanaged resources.
-
---------------------------------------------------
 # Type: `class UIconEdit.IconFileBase.EntryList`
 
-Represents a list of entries. This collection treats [`IconEntry`](#type-public-class-uiconediticonentry) objects with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as though they were equal.
+Represents a list of entries. This collection treats [`IconEntry`](#type-public-class-uiconediticonentry) objects with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as though they were equal.
 
 --------------------------------------------------
 ## Property: `IconFileBase.EntryList.Item(System.Int32 index)`
@@ -277,7 +266,7 @@ In a set operation, the specified value is `null`.
 
 
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
-In a set operation, an element with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list at a different index, or the specified value is already associated with a different icon file.
+In a set operation, an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list at a different index, or the specified value is already associated with a different icon file.
 
 --------------------------------------------------
 ## Property: `public virtual System.Int32 Count { get; }`
@@ -290,7 +279,7 @@ Gets the number of elements in the list.
 Adds the specified icon entry to the list.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list.
 
 
 --------------------------------------------------
@@ -300,7 +289,7 @@ Adds the specified icon entry to the list at the specified index.
 * `index`: The index at which to insert the icon entry.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list.
 
 
 ### Exceptions
@@ -315,24 +304,13 @@ Sets the value at the specified index.
 * `index`: The index of the value to set.
 * `item`: The item to set at the specified index.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists at a different index.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists at a different index.
 
 
 --------------------------------------------------
 ## Method: `public virtual void RemoveAt(System.Int32 index)`
 
 Removes the element at the specified index.
-* `index`: The element at the specified index.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` is less than 0 or is greater than or equal to [`EntryList.Count`](#property-public-virtual-systemint32-count--get-).
-
---------------------------------------------------
-## Method: `public void RemoveAndDisposeAt(System.Int32 index)`
-
-Removes the element at the specified index and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
 * `index`: The element at the specified index.
 
 ### Exceptions
@@ -350,21 +328,12 @@ Removes the specified icon entry from the list.
 
 
 --------------------------------------------------
-## Method: `public System.Boolean RemoveAndDispose(UIconEdit.IconEntry item)`
-
-Removes the specified icon entry from the list and immediately callse [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
-* `item`: The icon entry to remove from the list.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found and successfully removed; `false` otherwise.
-
-
---------------------------------------------------
 ## Method: `public System.Boolean RemoveSimilar(UIconEdit.IconEntry item)`
 
 Removes an icon entry similar to the specified value from the list.
 * `item`: The icon entry to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `item` was successfully found and removed; `false` if no such icon entry was found in the list.
 
 
 --------------------------------------------------
@@ -373,7 +342,7 @@ Removes an icon entry similar to the specified value from the list.
 Removes an icon entry similar to the specified value from the list.
 * `key`: The entry key to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` was successfully found and removed; `false` if no such icon entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `key` was successfully found and removed; `false` if no such icon entry was found in the list.
 
 
 --------------------------------------------------
@@ -384,47 +353,13 @@ Removes an icon entry similar to the specified values from the list.
 * `height`: The height of the icon entry to search for.
 * `bitDepth`: The bit depth of the icon entry to search for.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was successfully found and removed;`false` if no such icon entry was found in the list.
-
-
---------------------------------------------------
-## Method: `public System.Boolean RemoveAndDisposeSimilar(UIconEdit.IconEntry item)`
-
-Removes an icon entry similar to the specified value from the list and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
-* `item`: The icon entry to search for.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such icon entry was found in the list.
-
-
---------------------------------------------------
-## Method: `public System.Boolean RemoveAndDisposeSimilar(UIconEdit.EntryKey key)`
-
-Removes an icon entry similar to the specified value from the list and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
-* `key`: The entry key to search for.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` was successfully found and removed; `false` if no such icon entry was found in the list.
-
-
---------------------------------------------------
-## Method: `public System.Boolean RemoveAndDisposeSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
-
-Removes an icon entry similar to the specified value from the list and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
-* `width`: The width of the icon entry to search for.
-* `height`: The height of the icon entry to search for.
-* `bitDepth`: The bit depth of the icon entry to search for.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was successfully found and removed;`false` if no such icon entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `bitDepth` was successfully found and removed;`false` if no such icon entry was found in the list.
 
 
 --------------------------------------------------
 ## Method: `public virtual void Clear()`
 
 Removes all elements from the list.
-
---------------------------------------------------
-## Method: `public void ClearAndDispose()`
-
-Removes all elements from the list and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1) on each one.
 
 --------------------------------------------------
 ## Method: `public virtual System.Boolean Contains(UIconEdit.IconEntry item)`
@@ -441,7 +376,7 @@ Determines if the specified element exists in the list.
 Determines if an element similar to the specified icon entry exists in the list.
 * `item`: The icon entry to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` exists in the list; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `item` exists in the list; `false` otherwise.
 
 
 --------------------------------------------------
@@ -450,7 +385,7 @@ Determines if an element similar to the specified icon entry exists in the list.
 Determines if an element similar to the specified value exists in the list.
 * `key`: The entry key to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` exists in the list; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `key` exists in the list; `false` otherwise.
 
 
 --------------------------------------------------
@@ -461,7 +396,7 @@ Determines if an element similar to the specified values exists in the list.
 * `height`: The height of the icon entry to search for.
 * `bitDepth`: The bit depth of the icon entry to search for.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was found;`false` if no such icon entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `bitDepth` was found;`false` if no such icon entry was found in the list.
 
 
 --------------------------------------------------
@@ -479,7 +414,7 @@ Gets the index of the specified item.
 Gets the index of an element similar to the specified item.
 * `item`: The icon entry to compare.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `item`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -488,7 +423,7 @@ Gets the index of an element similar to the specified item.
 Gets the index of an element similar to the specified value.
 * `key`: The entry key to compare.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `key`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -499,7 +434,7 @@ Gets the index of an element similar to the specified values.
 * `height`: The height of the icon entry to search for.
 * `bitDepth`: The bit depth of the icon entry to search for.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `bitDepth`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -592,38 +527,9 @@ Removes a range of elements from the list.
 `index` and `count` do not indicate a valid range of elements in the list.
 
 --------------------------------------------------
-## Method: `public void RemoveAndDisposeRange(System.Int32 index, System.Int32 count)`
-
-Removes a range of elements from the list and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1) on each one.
-* `index`: The zero-based starting index of the elements to remove.
-* `count`: The number of elements to remove.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` or `count` is less than 0.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`index` and `count` do not indicate a valid range of elements in the list.
-
---------------------------------------------------
 ## Method: `public System.Int32 RemoveWhere(System.Predicate<UIconEdit.IconEntry> match)`
 
 Removes all elements matching the specified predicate.
-* `match`: A predicate used to define the elements to remove.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`match` is `null`.
-
---------------------------------------------------
-## Method: `public System.Int32 RemoveAndDisposeWhere(System.Predicate<UIconEdit.IconEntry> match)`
-
-Removes all elements matching the specified predicate and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
 * `match`: A predicate used to define the elements to remove.
 
 **Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
@@ -911,7 +817,7 @@ Code 0x1100: an error occurred when attempting to load a PNG entry. The inner ex
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidPngSize = 4354`
 
-Code 0x1102: the width or height of a PNG entry is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768). [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
+Code 0x1102: the width or height of a PNG entry is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768). [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the size of the image.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.PngSizeMismatch = 4355`
@@ -921,7 +827,7 @@ Code 0x1105: the width or height of a PNG entry does not match the width or heig
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpFile = 4608`
 
-Code 0x1204: an error occurred when attempting to process a BMP entry. The inner exception may contain more information. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
+Code 0x1204: an error occurred when attempting to process a BMP entry. The inner exception may contain more information. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the size listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpBitDepth = 4609`
@@ -931,12 +837,12 @@ Code 0x1201 the bit depth of a BMP entry is not supported. [`IconLoadException.V
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpSize = 4610`
 
-Code 0x1202: the width or height of a BMP entry is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768). The maximum height is doubled in images with a bit depth less than 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) of the image.
+Code 0x1202: the width or height of a BMP entry is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768). The maximum height is doubled in images with a bit depth less than 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the size of the image.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.BmpHeightMismatch = 4611`
 
-Code 0x1203: the width or height of a BMP entry does not match the width or height listed in the icon directory entry. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the [`Image.Size`](https://msdn.microsoft.com/en-us/library/system.drawing.image.size.aspx) listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
+Code 0x1203: the width or height of a BMP entry does not match the width or height listed in the icon directory entry. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the size listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpHeightOdd = 4612`
@@ -1130,7 +1036,7 @@ Gets a valid indicating whether the specified instance is a valid [`CursorEntry`
 
 Returns a duplicate of the current instance.
 
-**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every cursor entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-) in [`CursorFile.Entries`](#property-public-uiconeditcursorfileentrylist-entries--get-).
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every cursor entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) in [`CursorFile.Entries`](#property-public-uiconeditcursorfileentrylist-entries--get-).
 
 
 --------------------------------------------------
@@ -1188,7 +1094,7 @@ Sets the value at the specified index.
 * `index`: The index of the value to set.
 * `item`: The value to set.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`CursorEntry.Width`](#property-public-override-systemint16-width--get-set-), [`CursorEntry.Height`](#property-public-override-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list at a different index.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list at a different index.
 
 
 ### Exceptions
@@ -1202,7 +1108,7 @@ Sets the value at the specified index.
 Adds the specified cursor entry to the list.
 * `item`: The cursor entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`CursorEntry.Width`](#property-public-override-systemint16-width--get-set-), [`CursorEntry.Height`](#property-public-override-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list.
 
 
 --------------------------------------------------
@@ -1212,7 +1118,7 @@ Inserts the specified cursor entry into the list at the specified index.
 * `index`: The index at which the cursor entry will be inserted.
 * `item`: The cursor entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`CursorEntry.Width`](#property-public-override-systemint16-width--get-set-), [`CursorEntry.Height`](#property-public-override-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list.
 
 
 --------------------------------------------------
@@ -1227,24 +1133,9 @@ Removes the element at the specified index.
 `index` is less than 0 or is greater than or equal to [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
-## Method: `public void RemoveAndDisposeAt(System.Int32 index)`
-
-Removes the element at the specified index and, if it does not exist elsewhere in the file, immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
-* `index`: The index of the cursor entry to remove.
-
---------------------------------------------------
 ## Method: `public virtual System.Boolean Remove(UIconEdit.CursorEntry item)`
 
 Removes the specified cursor entry from the list.
-* `item`: The cursor entry to to remove from the list.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found and successfully removed; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `public System.Boolean RemoveAndDispose(UIconEdit.CursorEntry item)`
-
-Removes the specified cursor entry from the list and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
 * `item`: The cursor entry to to remove from the list.
 
 **Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found and successfully removed; `false` otherwise.
@@ -1256,7 +1147,7 @@ Removes the specified cursor entry from the list and immediately calls [`IconEnt
 Removes an element similar to the specified cursor entry from the list.
 * `item`: The cursor entry to to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`CursorEntry.Width`](#property-public-override-systemint16-width--get-set-), [`CursorEntry.Height`](#property-public-override-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such cursor entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `item` was successfully found and removed; `false` if no such cursor entry was found in the list.
 
 
 --------------------------------------------------
@@ -1265,7 +1156,7 @@ Removes an element similar to the specified cursor entry from the list.
 Removes a cursor entry similar to the specified value from the list.
 * `key`: The entry key to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`CursorEntry.Width`](#property-public-override-systemint16-width--get-set-), [`CursorEntry.Height`](#property-public-override-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` was successfully found and removed; `false` if no such cursor entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `key` was successfully found and removed; `false` if no such cursor entry was found in the list.
 
 
 --------------------------------------------------
@@ -1276,36 +1167,7 @@ Removes a cursor entry similar to the specified values from the list.
 * `height`: The height of the cursor entry to search for.
 * `bitDepth`: The bit depth of the cursor entry to search for.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was successfully found and removed;`false` if no such cursor entry was found in the list.
-
-
---------------------------------------------------
-## Method: `public System.Boolean RemoveAndDisposeSimilar(UIconEdit.CursorEntry item)`
-
-Removes the specified cursor entry from the list, immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
-* `item`: The cursor entry to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`CursorEntry.Width`](#property-public-override-systemint16-width--get-set-), [`CursorEntry.Height`](#property-public-override-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` was successfully found and removed; `false` if no such cursor entry was found in the list.
-
-
---------------------------------------------------
-## Method: `public System.Boolean RemoveAndDisposeSimilar(UIconEdit.EntryKey key)`
-
-Removes a cursor entry similar to the specified value from the list and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
-* `key`: The entry key to search for.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` was successfully found and removed; `false` if no such cursor entry was found in the list.
-
-
---------------------------------------------------
-## Method: `public System.Boolean RemoveAndDisposeSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
-
-Removes a cursor entry similar to the specified value from the list and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
-* `width`: The width of the cursor entry to search for.
-* `height`: The height of the cursor entry to search for.
-* `bitDepth`: The bit depth of the cursor entry to search for.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was successfully found and removed;`false` if no such cursor entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `bitDepth` was successfully found and removed;`false` if no such cursor entry was found in the list.
 
 
 --------------------------------------------------
@@ -1372,11 +1234,6 @@ Copies a range of elements in the list to the specified array.
 Removes all elements from the collection.
 
 --------------------------------------------------
-## Method: `public void ClearAndDispose()`
-
-Removes all elements from the collection and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1) on each one.
-
---------------------------------------------------
 ## Method: `public virtual System.Boolean Contains(UIconEdit.CursorEntry item)`
 
 Determines if the specified cursor entry exists in the list.
@@ -1391,7 +1248,7 @@ Determines if the specified cursor entry exists in the list.
 Determines if an element similar to the specified cursor entry exists in the list.
 * `item`: The cursor entry to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same with the same [`CursorEntry.Width`](#property-public-override-systemint16-width--get-set-), [`CursorEntry.Height`](#property-public-override-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item` exists in the list; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `item` exists in the list; `false` otherwise.
 
 
 --------------------------------------------------
@@ -1400,7 +1257,7 @@ Determines if an element similar to the specified cursor entry exists in the lis
 Determines if an element similar to the specified value exists in the list.
 * `key`: The entry key to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key` exists in the list; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `key` exists in the list; `false` otherwise.
 
 
 --------------------------------------------------
@@ -1411,7 +1268,7 @@ Determines if an element similar to the specified values exists in the list.
 * `height`: The height of the cursor entry to search for.
 * `bitDepth`: The bit depth of the cursor entry to search for.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth` was found;`false` if no such cursor entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `bitDepth` was found;`false` if no such cursor entry was found in the list.
 
 
 --------------------------------------------------
@@ -1429,7 +1286,7 @@ Gets the index of the specified cursor entry.
 Gets the index of an element similar to the specified cursor entry.
 * `item`: The cursor entry to compare.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor entry with the same [`CursorEntry.Width`](#property-public-override-systemint16-width--get-set-), [`CursorEntry.Height`](#property-public-override-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `item`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `item`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -1438,7 +1295,7 @@ Gets the index of an element similar to the specified cursor entry.
 Gets the index of an element similar to the specified value.
 * `key`: The entry key to compare.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-), [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `key`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `key`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -1449,7 +1306,7 @@ Gets the index of an element similar to the specified values.
 * `height`: The height of the cursor entry to search for.
 * `bitDepth`: The bit depth of the cursor entry to search for.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor entry with the same [`IconEntry.Width`](#property-public-virtual-systemint16-width--get-set-) as `width`, the same [`IconEntry.Height`](#property-public-virtual-systemint16-height--get-set-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) as `bitDepth`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `bitDepth`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -1476,38 +1333,9 @@ Removes a range of elements from the list.
 `index` and `count` do not indicate a valid range of elements in the list.
 
 --------------------------------------------------
-## Method: `public void RemoveAndDisposeRange(System.Int32 index, System.Int32 count)`
-
-Removes a range of elements from the list and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1) on each one.
-* `index`: The zero-based starting index of the elements to remove.
-* `count`: The number of elements to remove.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` or `count` is less than 0.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`index` and `count` do not indicate a valid range of elements in the list.
-
---------------------------------------------------
 ## Method: `public System.Int32 RemoveWhere(System.Predicate<UIconEdit.CursorEntry> match)`
 
 Removes all elements matching the specified predicate.
-* `match`: A predicate used to define the elements to remove.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`match` is `null`.
-
---------------------------------------------------
-## Method: `public System.Int32 RemoveAndDisposeWhere(System.Predicate<UIconEdit.CursorEntry> match)`
-
-Removes all elements matching the specified predicate and immediately calls [`IconEntry.Dispose()`](#method-public-virtual-void-dispose-1).
 * `match`: A predicate used to define the elements to remove.
 
 **Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
@@ -1841,7 +1669,7 @@ Represents a single entry in an icon.
 The default [`IconEntry.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-) value.
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.Byte height)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.Byte height)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -1859,13 +1687,10 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
+`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -1882,13 +1707,10 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
+`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth, System.Byte alphaThreshold)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth, System.Byte alphaThreshold)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -1904,13 +1726,10 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
+The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -1925,23 +1744,25 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
+The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Field: `public const System.Int32 MinDimension = 1`
+## Field: `public const System.Int16 MinDimension = 1`
 
 The minimum dimensions of an icon. 1 pixel in size.
 
 --------------------------------------------------
-## Field: `public const System.Int32 MaxDimension = 768`
+## Field: `public const System.Int16 MaxDimension = 768`
 
 The maximum dimensions of an icon. 768 as of Windows 10.
 
 --------------------------------------------------
-## Property: `public System.Drawing.Image BaseImage { get; set; }`
+## Field: `public static readonly System.Windows.DependencyProperty BaseImageProperty`
+
+The dependency property for the [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) property.
+
+--------------------------------------------------
+## Property: `public System.Windows.Media.Imaging.BitmapSource BaseImage { get; set; }`
 
 Gets and sets the image associated with the current instance.
 
@@ -1950,8 +1771,10 @@ Gets and sets the image associated with the current instance.
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 In a set operation, the specified value is `null`.
 
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-In a set operation, the specified value is disposed.
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty KeyProperty`
+
+The dependency property for the read-only [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) property.
 
 --------------------------------------------------
 ## Property: `public UIconEdit.EntryKey EntryKey { get; }`
@@ -1959,54 +1782,74 @@ In a set operation, the specified value is disposed.
 Gets a key for the icon entry.
 
 --------------------------------------------------
-## Property: `public virtual System.Int16 Width { get; set; }`
+## Field: `public static readonly System.Windows.DependencyProperty WidthProperty`
 
-Gets and sets the resampled width of the icon.
+The dependency property for the read-only [`IconEntry.Width`](#property-public-systemint16-width--get-) property.
+
+--------------------------------------------------
+## Property: `public System.Int16 Width { get; }`
+
+Gets the resampled width of the icon.
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Property: `public virtual System.Int16 Height { get; set; }`
+## Field: `public static readonly System.Windows.DependencyProperty HeightProperty`
 
-Gets and sets the resampled height of the icon.
+The dependency property for the read-only [`IconEntry.Height`](#property-public-systemint16-height--get-) property.
+
+--------------------------------------------------
+## Property: `public System.Int16 Height { get; }`
+
+Gets the resampled height of the icon.
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Property: `public UIconEdit.BitDepth BitDepth { get; set; }`
+## Field: `public static readonly System.Windows.DependencyProperty BitDepthProperty`
 
-Gets and sets the bit depth of the current instance. This property is ignored if the width or height of the image is greater than 255.
-
-### Exceptions
-
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-In a set operation, the specified value is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+The dependency property for the read-only [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) property.
 
 --------------------------------------------------
-## Property: `public System.Drawing.Imaging.PixelFormat PixelFormat { get; }`
+## Property: `public UIconEdit.BitDepth BitDepth { get; }`
 
-Gets the pixel format of the resulting image file.
-
---------------------------------------------------
-## Property: `public System.UInt16 BitsPerPixel { get; }`
-
-Gets the number of bits per pixel specified by [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-).
+Gets the bit depth of the current instance.
 
 --------------------------------------------------
-## Property: `public System.Int64 ColorCount { get; }`
+## Field: `public static readonly System.Windows.DependencyProperty AlphaThresholdProperty`
 
-Gets the maximum color count specified by [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-).
+The dependency property for the [`IconEntry.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-) property.
 
 --------------------------------------------------
 ## Property: `public System.Byte AlphaThreshold { get; set; }`
 
-Gets and sets a value indicating the threshold of alpha values at [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-)s below [`BitDepth.Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0). Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
+Gets and sets a value indicating the threshold of alpha values at [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-)s below [`BitDepth.Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0). Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty BitsPerPixelProperty`
+
+The dependency-property for the read-only [`IconEntry.BitsPerPixel`](#property-public-systemuint16-bitsperpixel--get-) property.
+
+--------------------------------------------------
+## Property: `public System.UInt16 BitsPerPixel { get; }`
+
+Gets the number of bits per pixel specified by [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-).
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty ColorCountProperty`
+
+The dependency property for the read-only [`IconEntry.ColorCount`](#property-public-systemint64-colorcount--get-) property.
+
+--------------------------------------------------
+## Property: `public System.Int64 ColorCount { get; }`
+
+Gets the maximum color count specified by [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-).
 
 --------------------------------------------------
 ## Property: `public System.Drawing.Drawing2D.InterpolationMode DrawInterpolationMode { get; set; }`
@@ -2033,7 +1876,7 @@ In a set operation, the specified value is not a valid [`PixelOffsetMode`](https
 
 Returns a duplicate of the current instance.
 
-**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A duplicate of the current instance, with its own clone of [`IconEntry.BaseImage`](#property-public-systemdrawingimage-baseimage--get-set-).
+**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A duplicate of the current instance, with its own clone of [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-).
 
 
 --------------------------------------------------
@@ -2128,23 +1971,12 @@ else Console.WriteLine("Failed");
 
 
 --------------------------------------------------
-## Method: `public virtual void Dispose()`
-
-Releases all resources used by the current instance.
-
---------------------------------------------------
-## Method: `protected virtual void Dispose(System.Boolean disposing)`
-
-Releases all unmanaged resources used by the current instance, and optionally releases all managed resources.
-* `disposing`: `true` to release both managed and unmanaged resources; `false` to release only unmanaged resources.
-
---------------------------------------------------
 # Type: `public class UIconEdit.CursorEntry`
 
 Represents a single entry of a cursor.
 
 --------------------------------------------------
-## Constructor: `public CursorEntry(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.UInt16 height, System.UInt16 hotspotX, System.Byte hotspotY)`
+## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.UInt16 height, System.UInt16 hotspotX, System.Byte hotspotY)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -2165,7 +1997,7 @@ Creates a new instance with the specified image.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
 
-`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 -OR-
 
@@ -2176,11 +2008,8 @@ Creates a new instance with the specified image.
 `hotspotY` is greater than `height`.
 
 
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
-
 --------------------------------------------------
-## Constructor: `public CursorEntry(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height, System.UInt16 hotspotX, System.UInt16 hotspotY)`
+## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height, System.UInt16 hotspotX, System.UInt16 hotspotY)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -2200,7 +2029,7 @@ Creates a new instance with the specified image.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
 
-`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 -OR-
 
@@ -2211,11 +2040,8 @@ Creates a new instance with the specified image.
 `hotspotY` is greater than `height`.
 
 
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
-
 --------------------------------------------------
-## Constructor: `public CursorEntry(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.Byte height)`
+## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.Byte height)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -2233,13 +2059,10 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
+`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public CursorEntry(System.Drawing.Image baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height)`
+## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -2256,13 +2079,10 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
+`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public CursorEntry(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth, System.UInt16 alphaThreshold, System.UInt16 hotspotX, System.Byte hotspotY)`
+## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth, System.UInt16 alphaThreshold, System.UInt16 hotspotX, System.Byte hotspotY)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -2291,13 +2111,10 @@ Creates a new instance with the specified image.
 
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
+The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public CursorEntry(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY)`
+## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -2325,13 +2142,10 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
+The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public CursorEntry(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth, System.Byte alphaThreshold)`
+## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth, System.Byte alphaThreshold)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -2347,13 +2161,10 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
+The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public CursorEntry(System.Drawing.Image baseImage, UIconEdit.BitDepth bitDepth)`
+## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -2368,43 +2179,40 @@ Creates a new instance with the specified image.
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-`baseImage` is disposed.
+The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Property: `public override System.Int16 Width { get; set; }`
+## Field: `public static readonly System.Windows.DependencyProperty HotspotXProperty`
 
-Gets and sets the resampled width of the icon. In a set operation, if the specified value is less than [`CursorEntry.HotspotX`](#property-public-systemuint16-hotspotx--get-set-), [`CursorEntry.HotspotX`](#property-public-systemuint16-hotspotx--get-set-) is automatically resized to this value.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
-
---------------------------------------------------
-## Property: `public override System.Int16 Height { get; set; }`
-
-Gets and sets the resampled height of the icon. In a set operation, if the specified value is less than [`CursorEntry.HotspotY`](#property-public-systemuint16-hotspoty--get-set-), [`CursorEntry.HotspotY`](#property-public-systemuint16-hotspoty--get-set-) is automatically resized to this value.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint32-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint32-maxdimension--768).
+The dependency property for the [`CursorEntry.HotspotX`](#property-public-systemuint16-hotspotx--get-set-) property.
 
 --------------------------------------------------
 ## Property: `public System.UInt16 HotspotX { get; set; }`
 
 Gets and sets the horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
 
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is greater than [`IconEntry.Width`](#property-public-systemint16-width--get-).
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty HotspotYProperty`
+
+The dependency property for the [`CursorEntry.HotspotY`](#property-public-systemuint16-hotspoty--get-set-) property.
+
 --------------------------------------------------
 ## Property: `public System.UInt16 HotspotY { get; set; }`
 
 Gets and sets the vertical offset of the cursor's hotspot from the top of the cursor in pixels.
 
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is greater than [`IconEntry.Height`](#property-public-systemint16-height--get-).
+
 --------------------------------------------------
-## Property: `public System.Drawing.Point Hotspot { get; }`
+## Property: `public System.Windows.Point Hotspot { get; }`
 
 Gets the offset of the cursor's hotspot from the upper-left corner of the cursor in pixels.
 

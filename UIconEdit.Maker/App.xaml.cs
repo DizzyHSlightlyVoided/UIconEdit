@@ -1,4 +1,4 @@
-﻿#region
+﻿#region BSD License
 /*
 Copyright © 2015, KimikoMuffin.
 All rights reserved.

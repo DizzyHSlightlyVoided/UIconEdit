@@ -1,4 +1,4 @@
-﻿#region
+﻿#region BSD License
 /*
 Copyright © 2015, KimikoMuffin.
 All rights reserved.
@@ -37,25 +37,52 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
-using WPFPixelFormat = System.Windows.Media.PixelFormat;
-
-using System.Windows.Media.Imaging;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 using nQuant;
+
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using Point = System.Windows.Point;
 
 namespace UIconEdit
 {
     /// <summary>
     /// Represents a single entry in an icon.
     /// </summary>
-    public class IconEntry : IDisposable
+    public class IconEntry : DependencyObject
     {
         /// <summary>
         /// The default <see cref="AlphaThreshold"/> value.
         /// </summary>
         public const byte DefaultAlphaThreshold = 96;
+
+        private void _initValues(short width, short height, BitDepth bitDepth)
+        {
+            if (width < MinDimension || width > MaxDimension)
+                throw new ArgumentOutOfRangeException("width");
+
+            if (height < MinDimension || height > MaxDimension)
+                throw new ArgumentOutOfRangeException("height");
+
+            if (!_validateBitDepth(bitDepth))
+                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
+        }
+
+        private static bool _validateBitDepth(BitDepth value)
+        {
+            switch (value)
+            {
+                case BitDepth.Depth1BitsPerPixel:
+                case BitDepth.Depth4BitsPerPixel:
+                case BitDepth.Depth8BitsPerPixel:
+                case BitDepth.Depth24BitsPerPixel:
+                case BitDepth.Depth32BitsPerPixel:
+                    return true;
+            }
+            return false;
+        }
 
         /// <summary>
         /// Creates a new instance with the specified image.
@@ -77,11 +104,14 @@ namespace UIconEdit
         /// </exception>
         public IconEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
         {
-            _setImage(baseImage, "baseImage");
-            _setDepth(bitDepth, "bitDepth");
-            _setSize(ref _width, width, "width");
-            _setSize(ref _height, height, "height");
-            _alphaThreshold = alphaThreshold;
+            if (baseImage == null) throw new ArgumentNullException("baseImage");
+            _initValues(width, height, bitDepth);
+            SetValue(BitDepthPropertyKey, bitDepth);
+            SetValue(WidthPropertyKey, width);
+            SetValue(HeightPropertyKey, height);
+            SetBPS();
+            BaseImage = baseImage;
+            AlphaThreshold = alphaThreshold;
         }
 
         /// <summary>
@@ -123,13 +153,17 @@ namespace UIconEdit
         /// </exception>
         public IconEntry(BitmapSource baseImage, BitDepth bitDepth, byte alphaThreshold)
         {
-            _setImage(baseImage, "baseImage");
+            if (baseImage == null) throw new ArgumentNullException("baseImage");
             if (baseImage.PixelWidth < MinDimension || baseImage.PixelWidth > MaxDimension || baseImage.PixelHeight < MinDimension || baseImage.PixelHeight > MaxDimension)
                 throw new ArgumentException("The image size is out of the supported range.", "baseImage");
-            _width = (short)baseImage.PixelWidth;
-            _height = (short)baseImage.PixelHeight;
-            _setDepth(bitDepth, "bitDepth");
-            _alphaThreshold = alphaThreshold;
+            if (!_validateBitDepth(bitDepth))
+                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
+            BaseImage = baseImage;
+            SetValue(WidthPropertyKey, (short)baseImage.PixelWidth);
+            SetValue(HeightPropertyKey, (short)baseImage.PixelHeight);
+            SetValue(BitDepthPropertyKey, bitDepth);
+            SetBPS();
+            AlphaThreshold = alphaThreshold;
         }
 
         /// <summary>
@@ -154,19 +188,19 @@ namespace UIconEdit
         /// <summary>
         /// The minimum dimensions of an icon. 1 pixel in size.
         /// </summary>
-        public const int MinDimension = 1;
+        public const short MinDimension = 1;
         /// <summary>
         /// The maximum dimensions of an icon. 768 as of Windows 10.
         /// </summary>
-        public const int MaxDimension = 768;
+        public const short MaxDimension = 768;
 
-        private void _setImage(BitmapSource image, string paramName)
-        {
-            if (image == null) throw new ArgumentNullException(paramName);
-            _image = image;
-        }
+        #region BaseImage
+        /// <summary>
+        /// The dependency property for the <see cref="BaseImage"/> property.
+        /// </summary>
+        public static readonly DependencyProperty BaseImageProperty = DependencyProperty.Register("BaseImage", typeof(BitmapSource), typeof(IconEntry),
+            new PropertyMetadata(null));
 
-        private BitmapSource _image;
         /// <summary>
         /// Gets and sets the image associated with the current instance.
         /// </summary>
@@ -175,221 +209,244 @@ namespace UIconEdit
         /// </exception>
         public BitmapSource BaseImage
         {
-            get { return _image; }
-            set { _setImage(value, null); }
+            get { return (BitmapSource)GetValue(BaseImageProperty); }
+            set { SetValue(BaseImageProperty, value); }
+        }
+        #endregion
+
+        private void SetBPS()
+        {
+            ushort bps;
+            long colorCount;
+            switch (BitDepth)
+            {
+                case BitDepth.Depth1BitPerPixel:
+                    bps = 1;
+                    colorCount = 2;
+                    break;
+                case BitDepth.Depth4BitsPerPixel:
+                    bps = 4;
+                    colorCount = 16;
+                    break;
+                case BitDepth.Depth8BitsPerPixel:
+                    bps = 8;
+                    colorCount = 256;
+                    break;
+                case BitDepth.Depth24BitsPerPixel:
+                    bps = 24;
+                    colorCount = 0x1000000;
+                    break;
+                default: //Depth32BitsPerPixel
+                    bps = 32;
+                    colorCount = uint.MaxValue + 1L;
+                    break;
+            }
+            SetValue(BitsPerPixelPropertyKey, bps);
+            SetValue(ColorCountPropertyKey, colorCount);
         }
 
-        private void _setSize(ref short dim, short value, string paramName)
-        {
-            if (value < MinDimension || value > MaxDimension)
-                throw new ArgumentOutOfRangeException(paramName);
-            dim = value;
-        }
+        #region Key
+        private static readonly DependencyPropertyKey KeyPropertyKey = DependencyProperty.RegisterReadOnly("Key", typeof(EntryKey),
+            typeof(IconEntry), new PropertyMetadata(default(EntryKey)));
+        /// <summary>
+        /// The dependency property for the read-only <see cref="EntryKey"/> property.
+        /// </summary>
+        public static readonly DependencyProperty KeyProperty = KeyPropertyKey.DependencyProperty;
 
         /// <summary>
         /// Gets a key for the icon entry.
         /// </summary>
-        public EntryKey EntryKey { get { return new EntryKey(_width, _height, _depth); } }
+        public EntryKey EntryKey { get { return (EntryKey)GetValue(KeyProperty); } }
+        #endregion
 
-        private short _width;
+        #region Width
+        private static readonly DependencyPropertyKey WidthPropertyKey = DependencyProperty.RegisterReadOnly("Width", typeof(short), typeof(IconEntry),
+            new PropertyMetadata(MinDimension));
         /// <summary>
-        /// Gets and sets the resampled width of the icon.
+        /// The dependency property for the read-only <see cref="Width"/> property.
+        /// </summary>
+        public static readonly DependencyProperty WidthProperty = WidthPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets the resampled width of the icon.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
         /// In a set operation, the specified value is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public virtual short Width
+        public short Width
         {
-            get { return _width; }
-            set { _setSize(ref _width, value, null); }
+            get { return (short)GetValue(WidthProperty); }
         }
+        #endregion
 
-        internal IconFileBase File;
-
-        private short _height;
+        #region Height
+        private static readonly DependencyPropertyKey HeightPropertyKey = DependencyProperty.RegisterReadOnly("Height", typeof(short), typeof(IconEntry),
+            new PropertyMetadata(MinDimension));
         /// <summary>
-        /// Gets and sets the resampled height of the icon.
+        /// The dependency property for the read-only <see cref="Height"/> property.
+        /// </summary>
+        public static readonly DependencyProperty HeightProperty = HeightPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets the resampled height of the icon.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
         /// In a set operation, the specified value is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public virtual short Height
+        public short Height
         {
-            get { return _height; }
-            set { _setSize(ref _height, value, null); }
+            get { return (short)GetValue(HeightProperty); }
         }
+        #endregion
 
-        private void _setDepth(BitDepth depth, string paramName)
-        {
-            switch (depth)
-            {
-                case BitDepth.Depth24BitsPerPixel:
-                case BitDepth.Depth32BitsPerPixel:
-                case BitDepth.Depth2Color:
-                case BitDepth.Depth16Color:
-                case BitDepth.Depth256Color:
-                    break;
-                default:
-                    throw new InvalidEnumArgumentException(null, (int)depth, typeof(BitDepth));
-            }
-            _depth = depth;
-        }
-
-        private BitDepth _depth;
+        #region BitDepth
+        private static readonly DependencyPropertyKey BitDepthPropertyKey = DependencyProperty.RegisterReadOnly("BitDepth", typeof(BitDepth), typeof(IconEntry),
+            new PropertyMetadata(BitDepth.Depth32BitsPerPixel));
         /// <summary>
-        /// Gets and sets the bit depth of the current instance. This property is ignored if the width or height of the image is greater than 255.
+        /// The dependency property for the read-only <see cref="BitDepth"/> property.
         /// </summary>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// In a set operation, the specified value is not a valid <see cref="UIconEdit.BitDepth"/> value.
-        /// </exception>
+        public static readonly DependencyProperty BitDepthProperty = BitDepthPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets the bit depth of the current instance.
+        /// </summary>
         public BitDepth BitDepth
         {
-            get { return _depth; }
-            set { _setDepth(value, null); }
+            get { return (BitDepth)GetValue(BitDepthProperty); }
         }
+        #endregion
 
+        #region AlphaThreshold
         /// <summary>
-        /// Gets the pixel format of the resulting image file.
+        /// The dependency property for the <see cref="AlphaThreshold"/> property.
         /// </summary>
-        public PixelFormat PixelFormat
-        {
-            get
-            {
-                switch (_depth)
-                {
-                    case BitDepth.Depth2Color:
-                        return PixelFormat.Format1bppIndexed;
-                    case BitDepth.Depth16Color:
-                        return PixelFormat.Format4bppIndexed;
-                    case BitDepth.Depth256Color:
-                        return PixelFormat.Format8bppIndexed;
-                    case BitDepth.Depth24BitsPerPixel:
-                        return PixelFormat.Format24bppRgb;
-                    default:
-                        return PixelFormat.Format32bppArgb;
-                }
-            }
-        }
+        public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register("AlphaThreshold", typeof(byte), typeof(BitmapImage));
 
-        /// <summary>
-        /// Gets the number of bits per pixel specified by <see cref="BitDepth"/>.
-        /// </summary>
-        public ushort BitsPerPixel
-        {
-            get
-            {
-                switch (_depth)
-                {
-                    default: //32-bit
-                        return 32;
-                    case BitDepth.Depth24BitsPerPixel:
-                        return 24;
-                    case BitDepth.Depth2Color:
-                        return 1;
-                    case BitDepth.Depth16Color:
-                        return 4;
-                    case BitDepth.Depth256Color:
-                        return 8;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the maximum color count specified by <see cref="BitDepth"/>.
-        /// </summary>
-        public long ColorCount
-        {
-            get
-            {
-                switch (_depth)
-                {
-                    default: //32-bit
-                        return uint.MaxValue + 1L;
-                    case BitDepth.Depth24BitsPerPixel:
-                        return 0x1000000;
-                    case BitDepth.Depth256Color:
-                        return 256;
-                    case BitDepth.Depth16Color:
-                        return 16;
-                    case BitDepth.Depth2Color:
-                        return 2;
-                }
-            }
-        }
-
-        private byte _alphaThreshold;
         /// <summary>
         /// Gets and sets a value indicating the threshold of alpha values at <see cref="BitDepth"/>s below <see cref="UIconEdit.BitDepth.Depth32BitsPerPixel"/>.
         /// Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
         /// </summary>
         public byte AlphaThreshold
         {
-            get { return _alphaThreshold; }
-            set { _alphaThreshold = value; }
+            get { return (byte)GetValue(AlphaThresholdProperty); }
+            set { SetValue(AlphaThresholdProperty, value); }
+        }
+        #endregion
+
+        #region BitsPerPixel
+        private static readonly DependencyPropertyKey BitsPerPixelPropertyKey = DependencyProperty.RegisterReadOnly("BitsPerPixel", typeof(ushort), typeof(IconEntry),
+            new PropertyMetadata((ushort)32));
+        /// <summary>
+        /// The dependency-property for the read-only <see cref="BitsPerPixel"/> property.
+        /// </summary>
+        public static readonly DependencyProperty BitsPerPixelProperty = BitsPerPixelPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets the number of bits per pixel specified by <see cref="BitDepth"/>.
+        /// </summary>
+        public ushort BitsPerPixel
+        {
+            get { return (ushort)GetValue(BitsPerPixelProperty); }
+        }
+        #endregion
+
+        #region ColorCount
+        private static readonly DependencyPropertyKey ColorCountPropertyKey = DependencyProperty.RegisterReadOnly("ColorCount", typeof(long), typeof(IconEntry),
+            new PropertyMetadata(uint.MaxValue + 1L));
+        /// <summary>
+        /// The dependency property for the read-only <see cref="ColorCount"/> property.
+        /// </summary>
+        public static readonly DependencyProperty ColorCountProperty = ColorCountPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets the maximum color count specified by <see cref="BitDepth"/>.
+        /// </summary>
+        public long ColorCount
+        {
+            get { return (long)GetValue(ColorCountProperty); }
+        }
+        #endregion
+
+        #region DrawInterpolationMode
+        /// <summary>
+        /// The dependency property for the <see cref="DrawInterpolationMode"/> property.
+        /// </summary>
+        public static readonly DependencyProperty DrawInterpolationModeProperty = DependencyProperty.Register("DrawInterpolationMode", typeof(InterpolationMode),
+            typeof(IconEntry), new PropertyMetadata(InterpolationMode.Default), DrawInterpolationModeValidate);
+
+        private static bool DrawInterpolationModeValidate(object value)
+        {
+            switch ((InterpolationMode)value)
+            {
+                case InterpolationMode.Bicubic:
+                case InterpolationMode.Bilinear:
+                case InterpolationMode.Default:
+                case InterpolationMode.High:
+                case InterpolationMode.HighQualityBicubic:
+                case InterpolationMode.HighQualityBilinear:
+                case InterpolationMode.Low:
+                case InterpolationMode.NearestNeighbor:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
-        private InterpolationMode _lerpMode;
         /// <summary>
         /// Gets and sets the interpolation mode used by graphics objects when scaling.
         /// </summary>
-        /// <exception cref="InvalidEnumArgumentException">
+        /// <exception cref="ArgumentException">
         /// In a set operation, the specified value is not a valid <see cref="InterpolationMode"/> value.
         /// </exception>
         public InterpolationMode DrawInterpolationMode
         {
-            get { return _lerpMode; }
-            set
+            get { return (InterpolationMode)GetValue(DrawInterpolationModeProperty); }
+            set { SetValue(DrawInterpolationModeProperty, value); }
+        }
+        #endregion
+
+        #region DrawPixelOffsetMode
+        /// <summary>
+        /// The dependency property for the <see cref="DrawPixelOffsetMode"/> property.
+        /// </summary>
+        public static DependencyProperty DrawPixelOffsetModeProperty = DependencyProperty.Register("DrawPixelOffsetMode", typeof(PixelOffsetMode), typeof(IconEntry),
+            new PropertyMetadata(PixelOffsetMode.Default), DrawPixelOffsetModeValidate);
+
+        private static bool DrawPixelOffsetModeValidate(object value)
+        {
+            switch ((PixelOffsetMode)value)
             {
-                switch (value)
-                {
-                    case InterpolationMode.Bicubic:
-                    case InterpolationMode.Bilinear:
-                    case InterpolationMode.Default:
-                    case InterpolationMode.High:
-                    case InterpolationMode.HighQualityBicubic:
-                    case InterpolationMode.HighQualityBilinear:
-                    case InterpolationMode.Low:
-                    case InterpolationMode.NearestNeighbor:
-                        break;
-                    default:
-                        throw new InvalidEnumArgumentException(null, (int)value, typeof(InterpolationMode));
-                }
-                _lerpMode = value;
+                case PixelOffsetMode.Default:
+                case PixelOffsetMode.Half:
+                case PixelOffsetMode.HighQuality:
+                case PixelOffsetMode.HighSpeed:
+                case PixelOffsetMode.None:
+                    return true;
+                default:
+                    return false;
             }
         }
 
-        private PixelOffsetMode _offMode;
         /// <summary>
         /// Gets and sets the pixel offset mode used by graphics objects when rescaling the image.
         /// </summary>
-        /// <exception cref="InvalidEnumArgumentException">
+        /// <exception cref="ArgumentException">
         /// In a set operation, the specified value is not a valid <see cref="PixelOffsetMode"/> value.
         /// </exception>
         public PixelOffsetMode DrawPixelOffsetMode
         {
-            get { return _offMode; }
-            set
-            {
-                switch (value)
-                {
-                    case PixelOffsetMode.Default:
-                    case PixelOffsetMode.Half:
-                    case PixelOffsetMode.HighQuality:
-                    case PixelOffsetMode.HighSpeed:
-                    case PixelOffsetMode.None:
-                        break;
-                    default:
-                        throw new InvalidEnumArgumentException(null, (int)value, typeof(PixelOffsetMode));
-                }
-                _offMode = value;
-            }
+            get { return (PixelOffsetMode)GetValue(DrawPixelOffsetModeProperty); }
+            set { SetValue(DrawPixelOffsetModeProperty, value); }
         }
+        #endregion
+
+        internal IconFileBase File;
 
         private Graphics GraphicsFromImage(Bitmap image)
         {
             Graphics g = Graphics.FromImage(image);
-            g.InterpolationMode = _lerpMode;
-            g.PixelOffsetMode = _offMode;
+            g.InterpolationMode = DrawInterpolationMode;
+            g.PixelOffsetMode = DrawPixelOffsetMode;
             return g;
         }
 
@@ -400,7 +457,7 @@ namespace UIconEdit
         public virtual IconEntry Clone()
         {
             IconEntry copy = (IconEntry)MemberwiseClone();
-            copy._image = _image.Clone();
+            copy.BaseImage = BaseImage.Clone();
             copy.File = null;
             return copy;
         }
@@ -408,27 +465,33 @@ namespace UIconEdit
         internal unsafe Bitmap GetQuantized(out Bitmap alphaMask, out int paletteCount)
         {
             const PixelFormat formatFull = PixelFormat.Format32bppArgb, formatAlpha = PixelFormat.Format1bppIndexed;
+            short _width = Width, _height = Height;
+            var _depth = BitDepth;
 
             bool isPng = _width > byte.MaxValue || _height > byte.MaxValue;
 
             Bitmap fullColor = new Bitmap(_width, _height, formatFull);
 
-            using (Bitmap smallBitmap = new Bitmap(_image.PixelWidth, _image.PixelHeight, formatFull))
+            var image = BaseImage;
+
+            using (Bitmap smallBmp = new Bitmap(image.PixelWidth, image.PixelHeight, formatFull))
             {
-                FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(_image, PixelFormats.Bgr32, null, 0);
+                FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgr32, null, 0);
 
-                BitmapData smallData = smallBitmap.LockBits(new Rectangle(Point.Empty, smallBitmap.Size), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                BitmapData smallData = smallBmp.LockBits(new Rectangle(0, 0, smallBmp.Width, smallBmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-                formatBmp.CopyPixels(new System.Windows.Int32Rect(0, 0, smallData.Width, smallData.Height), smallData.Scan0,
+                formatBmp.CopyPixels(new Int32Rect(0, 0, smallData.Width, smallData.Height), smallData.Scan0,
                     Math.Abs(smallData.Height * smallData.Stride), smallData.Stride);
 
-                smallBitmap.UnlockBits(smallData);
+                smallBmp.UnlockBits(smallData);
 
                 using (Graphics g = GraphicsFromImage(fullColor))
-                    g.DrawImage(smallBitmap, 0, 0, _width, _height);
+                    g.DrawImage(smallBmp, 0, 0, _width, _height);
             }
             Rectangle fullRect = new Rectangle(0, 0, _width, _height);
             const uint opaqueAlpha = 0xFF000000u;
+
+            byte _alphaThreshold = AlphaThreshold;
 
             using (Bitmap alphaTemp = new Bitmap(_width, _height, formatFull))
             {
@@ -780,34 +843,6 @@ namespace UIconEdit
 
             return false;
         }
-
-        private bool isDisposed;
-        /// <summary>
-        /// Releases all resources used by the current instance.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        /// <summary>
-        /// Releases all unmanaged resources used by the current instance, and optionally releases all managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (isDisposed) return;
-            GC.SuppressFinalize(this);
-            isDisposed = true;
-        }
-
-        /// <summary>
-        /// Disposes of the current instance.
-        /// </summary>
-        ~IconEntry()
-        {
-            Dispose(false);
-        }
     }
 
     /// <summary>
@@ -843,8 +878,8 @@ namespace UIconEdit
         public CursorEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
             : base(baseImage, width, height, bitDepth, alphaThreshold)
         {
-            _setX(hotspotX, "hotspotX");
-            _setY(hotspotY, "hotspotY");
+            HotspotX = hotspotX;
+            HotspotY = hotspotY;
         }
 
         /// <summary>
@@ -946,8 +981,8 @@ namespace UIconEdit
         public CursorEntry(BitmapSource baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
             : base(baseImage, bitDepth, alphaThreshold)
         {
-            _setX(hotspotX, "hotspotX");
-            _setY(hotspotY, "hotspotY");
+            HotspotX = hotspotX;
+            HotspotY = hotspotY;
         }
 
         /// <summary>
@@ -1017,77 +1052,72 @@ namespace UIconEdit
         {
         }
 
+        #region HotspotX
         /// <summary>
-        /// Gets and sets the resampled width of the icon.
-        /// In a set operation, if the specified value is less than <see cref="HotspotX"/>,
-        /// <see cref="HotspotX"/> is automatically resized to this value.
+        /// The dependency property for the <see cref="HotspotX"/> property.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
-        /// </exception>
-        public override short Width
+        public static readonly DependencyProperty HotspotXProperty = DependencyProperty.Register("HotspotX", typeof(ushort), typeof(CursorEntry),
+            new PropertyMetadata(ushort.MinValue, HotspotXChanged));
+
+        private static void HotspotXChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            set
+            CursorEntry c = (CursorEntry)d;
+            if ((ushort)e.NewValue > c.Width)
             {
-                base.Width = value;
-                _x = (ushort)Math.Min(value, _x);
+                c.SetValue(HotspotXProperty, e.OldValue);
+                throw new ArgumentOutOfRangeException(null, e.NewValue, "The hotspot X position is greater than the width of the image.");
             }
         }
 
-        /// <summary>
-        /// Gets and sets the resampled height of the icon.
-        /// In a set operation, if the specified value is less than <see cref="HotspotY"/>,
-        /// <see cref="HotspotY"/> is automatically resized to this value.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
-        /// </exception>
-        public override short Height
-        {
-            set
-            {
-                base.Height = value;
-                _y = (ushort)Math.Min(value, _y);
-            }
-        }
-
-        private void _setX(ushort value, string paramName)
-        {
-            if (value > Width) throw new ArgumentOutOfRangeException(paramName, value, "The hotspot X position is greater than the width of the image.");
-            _x = value;
-        }
-
-        private ushort _x;
         /// <summary>
         /// Gets and sets the horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// In a set operation, the specified value is greater than <see cref="IconEntry.Width"/>.
+        /// </exception>
         public ushort HotspotX
         {
-            get { return _x; }
-            set { _setX(value, null); }
+            get { return (ushort)GetValue(HotspotXProperty); }
+            set { SetValue(HotspotXProperty, value); }
         }
+        #endregion
 
-        private void _setY(ushort value, string paramName)
+        #region HotspotY
+        /// <summary>
+        /// The dependency property for the <see cref="HotspotY"/> property.
+        /// </summary>
+        public static readonly DependencyProperty HotspotYProperty = DependencyProperty.Register("HotspotY", typeof(ushort), typeof(CursorEntry),
+            new PropertyMetadata(ushort.MinValue, HotspotYChanged));
+
+        private static void HotspotYChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (value > Height) throw new ArgumentOutOfRangeException(paramName, value, "The hotspot Y position is greater than the height of the image.");
+            CursorEntry c = (CursorEntry)d;
+            if ((ushort)e.NewValue > c.Height)
+            {
+                c.SetValue(HotspotXProperty, e.OldValue);
+                throw new ArgumentOutOfRangeException(null, e.NewValue, "The hotspot X position is greater than the width of the image.");
+            }
         }
 
-        private ushort _y;
         /// <summary>
         /// Gets and sets the vertical offset of the cursor's hotspot from the top of the cursor in pixels.
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// In a set operation, the specified value is greater than <see cref="IconEntry.Height"/>.
+        /// </exception>
         public ushort HotspotY
         {
-            get { return _y; }
-            set { _setY(value, null); }
+            get { return (ushort)GetValue(HotspotYProperty); }
+            set { SetValue(HotspotYProperty, value); }
         }
+        #endregion
 
         /// <summary>
         /// Gets the offset of the cursor's hotspot from the upper-left corner of the cursor in pixels.
         /// </summary>
         public Point Hotspot
         {
-            get { return new Point(_x, _y); }
+            get { return new Point(Width, Height); }
         }
     }
 

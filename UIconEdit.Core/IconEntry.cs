@@ -656,6 +656,15 @@ namespace UIconEdit
             return quant2;
         }
 
+        /// <summary>
+        /// Returns a string representation of the current instance.
+        /// </summary>
+        /// <returns>A string representation of the current instance.</returns>
+        public override string ToString()
+        {
+            return string.Format("{0}, BaseImage:{1}", EntryKey, BaseImage);
+        }
+
 
         /// <summary>
         /// Parses the specified string as a <see cref="UIconEdit.BitDepth"/> value.
@@ -1140,6 +1149,15 @@ namespace UIconEdit
         public Point Hotspot
         {
             get { return new Point(Width, Height); }
+        }
+
+        /// <summary>
+        /// Returns a string representation of the current instance.
+        /// </summary>
+        /// <returns>A string representation of the current instance.</returns>
+        public override string ToString()
+        {
+            return string.Format("{0}, Hotspot: {1}", base.ToString(), Hotspot);
         }
     }
 

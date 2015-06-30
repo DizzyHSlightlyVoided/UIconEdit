@@ -1734,6 +1734,14 @@ Returns a duplicate of the current instance.
 
 
 --------------------------------------------------
+## Method: `public virtual System.String ToString()`
+
+Returns a string representation of the current instance.
+
+**Returns:** Type [`String`](https://msdn.microsoft.com/en-us/library/system.string.aspx): A string representation of the current instance.
+
+
+--------------------------------------------------
 ## Method: `public static UIconEdit.BitDepth ParseBitDepth(System.String value)`
 
 Parses the specified string as a [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
@@ -2069,6 +2077,14 @@ In a set operation, the specified value is greater than [`IconEntry.Height`](#pr
 ## Property: `public System.Windows.Point Hotspot { get; }`
 
 Gets the offset of the cursor's hotspot from the upper-left corner of the cursor in pixels.
+
+--------------------------------------------------
+## Method: `public virtual System.String ToString()`
+
+Returns a string representation of the current instance.
+
+**Returns:** Type [`String`](https://msdn.microsoft.com/en-us/library/system.string.aspx): A string representation of the current instance.
+
 
 --------------------------------------------------
 # Type: `public struct UIconEdit.EntryKey`

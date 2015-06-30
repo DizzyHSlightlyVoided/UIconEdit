@@ -242,22 +242,23 @@ namespace UIconEdit
                     colorCount = uint.MaxValue + 1L;
                     break;
             }
+            SetValue(EntryKeyPropertyKey, new EntryKey(Width, Height, BitDepth));
             SetValue(BitsPerPixelPropertyKey, bps);
             SetValue(ColorCountPropertyKey, colorCount);
         }
 
         #region Key
-        private static readonly DependencyPropertyKey KeyPropertyKey = DependencyProperty.RegisterReadOnly("Key", typeof(EntryKey),
+        private static readonly DependencyPropertyKey EntryKeyPropertyKey = DependencyProperty.RegisterReadOnly("Key", typeof(EntryKey),
             typeof(IconEntry), new PropertyMetadata(default(EntryKey)));
         /// <summary>
         /// The dependency property for the read-only <see cref="EntryKey"/> property.
         /// </summary>
-        public static readonly DependencyProperty KeyProperty = KeyPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty EntryKeyProperty = EntryKeyPropertyKey.DependencyProperty;
 
         /// <summary>
         /// Gets a key for the icon entry.
         /// </summary>
-        public EntryKey EntryKey { get { return (EntryKey)GetValue(KeyProperty); } }
+        public EntryKey EntryKey { get { return (EntryKey)GetValue(EntryKeyProperty); } }
         #endregion
 
         #region Width
@@ -459,7 +460,7 @@ namespace UIconEdit
         /// Returns a duplicate of the current instance.
         /// </summary>
         /// <returns>A duplicate of the current instance, with its own clone of <see cref="BaseImage"/>.</returns>
-        public virtual IconEntry Clone()
+        public IconEntry Clone()
         {
             IconEntry copy = (IconEntry)MemberwiseClone();
 
@@ -497,7 +498,7 @@ namespace UIconEdit
 
             using (Bitmap smallBmp = new Bitmap(image.PixelWidth, image.PixelHeight, formatFull))
             {
-                FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgr32, null, 0);
+                FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
 
                 BitmapData smallData = smallBmp.LockBits(new Rectangle(0, 0, smallBmp.Width, smallBmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
@@ -1221,6 +1222,20 @@ namespace UIconEdit
                 return other.Height.CompareTo(Height);
 
             return other.Width.CompareTo(Width);
+        }
+
+        /// <summary>
+        /// An <see cref="EntryKey"/> with <see cref="IsEmpty"/> set to <c>true</c>.
+        /// </summary>
+        public static readonly EntryKey Empty;
+
+        /// <summary>
+        /// Returns a string representation of the current value.
+        /// </summary>
+        /// <returns>A string representation of the current value.</returns>
+        public override string ToString()
+        {
+            return string.Format("Width:{0}, Height:{1}, BitDepth:{2}", Width, Height, BitDepth);
         }
 
         /// <summary>

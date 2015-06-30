@@ -1772,7 +1772,7 @@ Gets and sets the image associated with the current instance.
 In a set operation, the specified value is `null`.
 
 --------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty KeyProperty`
+## Field: `public static readonly System.Windows.DependencyProperty EntryKeyProperty`
 
 The dependency property for the read-only [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) property.
 
@@ -1852,14 +1852,24 @@ The dependency property for the read-only [`IconEntry.ColorCount`](#property-pub
 Gets the maximum color count specified by [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-).
 
 --------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty DrawInterpolationModeProperty`
+
+The dependency property for the [`IconEntry.DrawInterpolationMode`](#property-public-systemdrawingdrawing2dinterpolationmode-drawinterpolationmode--get-set-) property.
+
+--------------------------------------------------
 ## Property: `public System.Drawing.Drawing2D.InterpolationMode DrawInterpolationMode { get; set; }`
 
 Gets and sets the interpolation mode used by graphics objects when scaling.
 
 ### Exceptions
 
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
 In a set operation, the specified value is not a valid [`InterpolationMode`](https://msdn.microsoft.com/en-us/library/system.drawing.drawing2d.interpolationmode.aspx) value.
+
+--------------------------------------------------
+## Field: `public static System.Windows.DependencyProperty DrawPixelOffsetModeProperty`
+
+The dependency property for the [`IconEntry.DrawPixelOffsetMode`](#property-public-systemdrawingdrawing2dpixeloffsetmode-drawpixeloffsetmode--get-set-) property.
 
 --------------------------------------------------
 ## Property: `public System.Drawing.Drawing2D.PixelOffsetMode DrawPixelOffsetMode { get; set; }`
@@ -1868,11 +1878,11 @@ Gets and sets the pixel offset mode used by graphics objects when rescaling the 
 
 ### Exceptions
 
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
 In a set operation, the specified value is not a valid [`PixelOffsetMode`](https://msdn.microsoft.com/en-us/library/system.drawing.drawing2d.pixeloffsetmode.aspx) value.
 
 --------------------------------------------------
-## Method: `public virtual UIconEdit.IconEntry Clone()`
+## Method: `public UIconEdit.IconEntry Clone()`
 
 Returns a duplicate of the current instance.
 

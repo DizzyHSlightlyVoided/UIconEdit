@@ -245,7 +245,9 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Represents a list of cursor entries.
+        /// Represents a list of cursor entries. Entries with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and
+        /// <see cref="IconEntry.BitDepth"/> cannot be added to the list; however, there may be duplicates if a cursor loaded from an
+        /// external cursor file contained them.
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(DebugView))]

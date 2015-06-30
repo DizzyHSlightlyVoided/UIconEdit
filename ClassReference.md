@@ -246,7 +246,7 @@ An I/O error occurred.
 --------------------------------------------------
 # Type: `class UIconEdit.IconFileBase.EntryList`
 
-Represents a list of entries. This collection treats [`IconEntry`](#type-public-class-uiconediticonentry) objects with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as though they were equal.
+Represents a list of icon entries. Entries with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) cannot be added to the list; however, there may be duplicates if an icon loaded from an external icon file contained them.
 
 --------------------------------------------------
 ## CollectionChanged`
@@ -986,7 +986,7 @@ Gets the vertical offset of the hotspot in the specified entry from the top of t
 --------------------------------------------------
 # Type: `class UIconEdit.CursorFile.EntryList`
 
-Represents a list of cursor entries.
+Represents a list of cursor entries. Entries with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) cannot be added to the list; however, there may be duplicates if a cursor loaded from an external cursor file contained them.
 
 --------------------------------------------------
 ## CollectionChanged`

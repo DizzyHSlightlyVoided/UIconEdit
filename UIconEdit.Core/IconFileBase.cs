@@ -245,6 +245,9 @@ namespace UIconEdit
                 Array.Sort(entryList);
 
                 const int bufferSize = 8192;
+
+                List<IconEntry> entries = new List<IconEntry>();
+
                 for (int i = 0; i < entryList.Length; i++)
                 {
                     IconDirEntry entry = entryList[i];
@@ -453,11 +456,9 @@ namespace UIconEdit
                         else
                             resultEntry = new IconEntry(loadedImage, bitDepth);
 
-                        if (!returner.Entries.Add(resultEntry))
-                        {
-                            returner.Entries.RemoveSimilar(resultEntry);
-                            returner.Entries.Add(resultEntry);
-                        }
+                        int dex = entries.BinarySearch(resultEntry, new IconEntryComparer());
+
+                        entries.Insert(dex < 0 ? ~dex : dex, resultEntry);
                     }
                     catch (IconLoadException e)
                     {
@@ -475,8 +476,10 @@ namespace UIconEdit
                     }
                 }
 
-                if (returner.Entries.Count == 0)
+                if (entries.Count == 0)
                     throw new IconLoadException(IconErrorCode.ZeroValidEntries);
+
+                returner.Entries.AddBulk(entries);
 
                 return returner;
             }
@@ -787,8 +790,9 @@ namespace UIconEdit
         #endregion
 
         /// <summary>
-        /// Represents a list of entries. This collection treats <see cref="IconEntry"/> objects with the same
-        /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> as though they were equal.
+        /// Represents a list of icon entries. Entries with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and
+        /// <see cref="IconEntry.BitDepth"/> cannot be added to the list; however, there may be duplicates if an icon loaded from an
+        /// external icon file contained them.
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(DebugView))]
@@ -800,6 +804,7 @@ namespace UIconEdit
             private HashSet<EntryKey> _set;
             private ObservableCollection<IconEntry> _items;
             private IconFileBase _file;
+            private bool _noDups;
 
             internal EntryList(IconFileBase file)
             {
@@ -808,6 +813,7 @@ namespace UIconEdit
                 _items = new ObservableCollection<IconEntry>();
                 _items.CollectionChanged += _items_CollectionChanged;
                 ((INotifyPropertyChanged)_items).PropertyChanged += _items_PropertyChanged;
+                _noDups = true;
             }
 
             private void _items_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -879,6 +885,15 @@ namespace UIconEdit
             /// Gets the number of elements in the list.
             /// </summary>
             public int Count { get { return _items.Count; } }
+
+            internal void AddBulk(IList<IconEntry> entries)
+            {
+                foreach (IconEntry entry in entries)
+                {
+                    _noDups &= _set.Add(entry.EntryKey);
+                    _items.Add(entry);
+                }
+            }
 
             /// <summary>
             /// Adds the specified icon entry to the list.
@@ -969,9 +984,14 @@ namespace UIconEdit
             public void RemoveAt(int index)
             {
                 IconEntry item = _items[index];
-                _set.Remove(item.EntryKey);
+
+                bool remove = _noDups || _items.Where(i => i != item && i.EntryKey == item.EntryKey).FirstOrDefault() != null;
+                if (remove)
+                    _set.Remove(item.EntryKey);
                 item.File = null;
                 _items.RemoveAt(index);
+                if (remove && !_noDups)
+                    _noDups = _set.Count == _items.Count;
             }
 
             /// <summary>
@@ -1047,6 +1067,7 @@ namespace UIconEdit
                     item.File = null;
                 _set.Clear();
                 _items.Clear();
+                _noDups = true;
             }
 
             /// <summary>

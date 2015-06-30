@@ -31,6 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -197,6 +199,7 @@ namespace UIconEdit
         /// <summary>
         /// Gets a collection containing all entries in the cursor file.
         /// </summary>
+        [Bindable(true)]
         public new EntryList Entries { get { return _entries; } }
 
         /// <summary>
@@ -246,7 +249,7 @@ namespace UIconEdit
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(DebugView))]
-        public new class EntryList : IList<CursorEntry>, IList
+        public new class EntryList : IList<CursorEntry>, IList, INotifyCollectionChanged, INotifyPropertyChanged
 #if IREADONLY
             , IReadOnlyList<CursorEntry>
 #endif
@@ -255,10 +258,38 @@ namespace UIconEdit
             {
                 _file = file;
                 _entries = ((IconFileBase)file).Entries;
+                _entries.CollectionChanged += _entries_CollectionChanged;
+                ((INotifyPropertyChanged)_entries).PropertyChanged += _entries_PropertyChanged;
             }
 
             private IconFileBase _file;
             private IconFileBase.EntryList _entries;
+
+            /// <summary>
+            /// Raised when elements are added to or removed from the list.
+            /// </summary>
+            public event NotifyCollectionChangedEventHandler CollectionChanged;
+            /// <summary>
+            /// Raised when a property on the current instance changes.
+            /// </summary>
+            protected event PropertyChangedEventHandler PropertyChanged;
+            event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+            {
+                add { PropertyChanged += value; }
+                remove { PropertyChanged -= value; }
+            }
+
+            private void _entries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+            {
+                if (CollectionChanged != null)
+                    CollectionChanged(this, e);
+            }
+
+            private void _entries_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                if (PropertyChanged != null)
+                    PropertyChanged(this, e);
+            }
 
             /// <summary>
             /// Gets the number of entries contained in the list.
@@ -414,21 +445,6 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Copies all elements in the list to the specified array.
-            /// </summary>
-            /// <param name="array">The array to which all elements in the list will be copied.</param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="array"/> is <c>null</c>.
-            /// </exception>
-            /// <exception cref="ArgumentException">
-            /// The length of <paramref name="array"/> is less than <see cref="Count"/>.
-            /// </exception>
-            public void CopyTo(CursorEntry[] array)
-            {
-                _entries.CopyTo(array);
-            }
-
-            /// <summary>
             /// Copies all elements in the list to the specified array, starting at the specified index.
             /// </summary>
             /// <param name="array">The array to which all elements in the list will be copied.</param>
@@ -445,29 +461,6 @@ namespace UIconEdit
             public void CopyTo(CursorEntry[] array, int arrayIndex)
             {
                 _entries.CopyTo(array, arrayIndex);
-            }
-
-            /// <summary>
-            /// Copies a range of elements in the list to the specified array.
-            /// </summary>
-            /// <param name="index">The index of the first item to copy.</param>
-            /// <param name="array">The array to which all elements in the list will be copied.</param>
-            /// <param name="arrayIndex">The index in <paramref name="array"/> at which copying begins.</param>
-            /// <param name="count">The number of elements to copy.</param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="array"/> is <c>null</c>.
-            /// </exception>
-            /// <exception cref="ArgumentOutOfRangeException">
-            /// <paramref name="index"/>, <paramref name="arrayIndex"/>, or <paramref name="count"/> is less than 0.
-            /// </exception>
-            /// <exception cref="ArgumentException">
-            /// <para><paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the current instance.</para>
-            /// <para>-OR-</para>
-            /// <para><paramref name="arrayIndex"/> and <paramref name="count"/> do not indicate a valid range of elements in <paramref name="array"/>.</para>
-            /// </exception>
-            public void CopyTo(int index, CursorEntry[] array, int arrayIndex, int count)
-            {
-                _entries.CopyTo(index, array, arrayIndex, count);
             }
 
             void ICollection.CopyTo(Array array, int index)
@@ -604,33 +597,13 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes a range of elements from the list.
+            /// Moves an element from one index to another.
             /// </summary>
-            /// <param name="index">The zero-based starting index of the elements to remove.</param>
-            /// <param name="count">The number of elements to remove.</param>
-            /// <exception cref="ArgumentOutOfRangeException">
-            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
-            /// </exception>
-            /// <exception cref="ArgumentException">
-            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
-            /// </exception>
-            public void RemoveRange(int index, int count)
+            /// <param name="oldIndex">The index of the element to move.</param>
+            /// <param name="newIndex">The destination index.</param>
+            public void Move(int oldIndex, int newIndex)
             {
-                _entries.RemoveRange(index, count);
-            }
-
-            /// <summary>
-            /// Removes all elements matching the specified predicate.
-            /// </summary>
-            /// <param name="match">A predicate used to define the elements to remove.</param>
-            /// <returns>The number of elements which were removed.</returns>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="match"/> is <c>null</c>.
-            /// </exception>
-            public int RemoveWhere(Predicate<CursorEntry> match)
-            {
-                if (match == null) throw new ArgumentNullException("match");
-                return _entries.RemoveWhere(i => match((CursorEntry)i));
+                _entries.Move(oldIndex, newIndex);
             }
 
             /// <summary>
@@ -707,53 +680,6 @@ namespace UIconEdit
             public CursorEntry[] ToArray()
             {
                 return this.ToArray<CursorEntry>();
-            }
-
-            /// <summary>
-            /// Sorts all elements in the list according to their <see cref="IconEntry.EntryKey"/> value.
-            /// </summary>
-            public void Sort()
-            {
-                _entries.Sort();
-            }
-
-            /// <summary>
-            /// Sorts all elements in the list according to the specified comparer.
-            /// </summary>
-            /// <param name="comparer">The comparer used to compare each <see cref="CursorEntry"/>, or <c>null</c> to use their <see cref="IconEntry.EntryKey"/> value.</param>
-            /// <exception cref="ArgumentException">
-            /// The implementation of <paramref name="comparer"/> caused an error during the sort. For example, <paramref name="comparer"/> might not return 0
-            /// when comparing an item with itself.
-            /// </exception>
-            public void Sort(IComparer<CursorEntry> comparer)
-            {
-                _entries.Sort(new EntryComparer(comparer));
-            }
-
-            /// <summary>
-            /// Sorts all elements in the list according to the specified delegate.
-            /// </summary>
-            /// <param name="comparison">The delegate used to compare each <see cref="IconEntry"/>.</param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="comparison"/> is <c>null</c>.
-            /// </exception>
-            /// <exception cref="ArgumentException">
-            /// The implementation of <paramref name="comparison"/> caused an error during the sort. For example, <paramref name="comparison"/> might not return 0
-            /// when comparing an item with itself.
-            /// </exception>
-            public void Sort(Comparison<CursorEntry> comparison)
-            {
-                if (comparison == null) throw new ArgumentNullException("comparison");
-                _entries.Sort((x, y) => comparison((CursorEntry)x, (CursorEntry)y));
-            }
-
-            private class EntryComparer : IComparer<IconEntry>
-            {
-                private IComparer<CursorEntry> _comparer;
-
-                public EntryComparer(IComparer<CursorEntry> comparer) { _comparer = comparer ?? new IconEntryComparer(); }
-
-                public int Compare(IconEntry x, IconEntry y) { return _comparer.Compare((CursorEntry)x, (CursorEntry)y); }
             }
 
             bool ICollection<CursorEntry>.IsReadOnly

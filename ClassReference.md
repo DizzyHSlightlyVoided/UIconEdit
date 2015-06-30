@@ -249,6 +249,16 @@ An I/O error occurred.
 Represents a list of entries. This collection treats [`IconEntry`](#type-public-class-uiconediticonentry) objects with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as though they were equal.
 
 --------------------------------------------------
+## CollectionChanged`
+
+Raised when elements are added to or removed from the list.
+
+--------------------------------------------------
+## PropertyChanged`
+
+Raised when a property changes in the current instance.
+
+--------------------------------------------------
 ## Property: `IconFileBase.EntryList.Item(System.Int32 index)`
 
 Gets and sets the element at the specified index.
@@ -438,20 +448,6 @@ Gets the index of an element similar to the specified values.
 
 
 --------------------------------------------------
-## Method: `public void CopyTo(UIconEdit.IconEntry[] array)`
-
-Copies all elements in the list to the specified array.
-* `array`: The array to which all elements in the list will be copied.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`array` is `null`.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The length of `array` is less than [`EntryList.Count`](#property-public-virtual-systemint32-count--get-).
-
---------------------------------------------------
 ## Method: `public virtual void CopyTo(UIconEdit.IconEntry[] array, System.Int32 arrayIndex)`
 
 Copies all elements in the list to the specified array, starting at the specified index.
@@ -470,32 +466,6 @@ Copies all elements in the list to the specified array, starting at the specifie
 The length of `array` minus `arrayIndex` is less than [`EntryList.Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
-## Method: `public void CopyTo(System.Int32 index, UIconEdit.IconEntry[] array, System.Int32 arrayIndex, System.Int32 count)`
-
-Copies a range of elements in the list to the specified array.
-* `index`: The index of the first item to copy.
-* `array`: The array to which all elements in the list will be copied.
-* `arrayIndex`: The index in `array` at which copying begins.
-* `count`: The number of elements to copy.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`array` is `null`.
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index`, `arrayIndex`, or `count` is less than 0.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-
-`index` and `count` do not indicate a valid range of elements in the current instance.
-
--OR-
-
-`arrayIndex` and `count` do not indicate a valid range of elements in `array`.
-
-
---------------------------------------------------
 ## Method: `public UIconEdit.IconFileBase.EntryList.Enumerator GetEnumerator()`
 
 Returns an enumerator which iterates through the list.
@@ -504,41 +474,19 @@ Returns an enumerator which iterates through the list.
 
 
 --------------------------------------------------
+## Method: `public void Move(System.Int32 oldIndex, System.Int32 newIndex)`
+
+Moves an element from one index to another.
+* `oldIndex`: The index of the element to move.
+* `newIndex`: The destination index.
+
+--------------------------------------------------
 ## Method: `public UIconEdit.IconEntry[] ToArray()`
 
 Returns an array containing all elements in the current list.
 
 **Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`IconEntry`](#type-public-class-uiconediticonentry): An array containing elements copied from the current list.
 
-
---------------------------------------------------
-## Method: `public void RemoveRange(System.Int32 index, System.Int32 count)`
-
-Removes a range of elements from the list.
-* `index`: The zero-based starting index of the elements to remove.
-* `count`: The number of elements to remove.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` or `count` is less than 0.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`index` and `count` do not indicate a valid range of elements in the list.
-
---------------------------------------------------
-## Method: `public System.Int32 RemoveWhere(System.Predicate<UIconEdit.IconEntry> match)`
-
-Removes all elements matching the specified predicate.
-* `match`: A predicate used to define the elements to remove.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`match` is `null`.
 
 --------------------------------------------------
 ## Method: `public UIconEdit.IconEntry Find(System.Predicate<UIconEdit.IconEntry> match)`
@@ -604,28 +552,6 @@ Returns a list containing all icon entries which match the specified predicate.
 
 **Returns:** Type [`List`](https://msdn.microsoft.com/en-us/library/6sh2ey19.aspx): A list containing all elements matching `match`.
 
-
---------------------------------------------------
-## Method: `public void Sort()`
-
-Sorts all elements in the list according to their [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
-
---------------------------------------------------
-## Method: `public void Sort(System.Collections.Generic.IComparer<UIconEdit.IconEntry> comparer)`
-
-Sorts all elements in the list according to the specified comparer.
-* `comparer`: The comparer used to compare each [`IconEntry`](#type-public-class-uiconediticonentry), or `null` to their [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
-
---------------------------------------------------
-## Method: `public void Sort(System.Comparison<UIconEdit.IconEntry> comparison)`
-
-Sorts all elements in the list according to the specified delegate.
-* `comparison`: The delegate used to compare each [`IconEntry`](#type-public-class-uiconediticonentry).
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`comparison` is `null`.
 
 --------------------------------------------------
 # Type: `struct UIconEdit.IconFileBase.EntryList.Enumerator`
@@ -1063,6 +989,16 @@ Gets the vertical offset of the hotspot in the specified entry from the top of t
 Represents a list of cursor entries.
 
 --------------------------------------------------
+## CollectionChanged`
+
+Raised when elements are added to or removed from the list.
+
+--------------------------------------------------
+## PropertyChanged`
+
+Raised when a property on the current instance changes.
+
+--------------------------------------------------
 ## Property: `public virtual System.Int32 Count { get; }`
 
 Gets the number of entries contained in the list.
@@ -1171,20 +1107,6 @@ Removes a cursor entry similar to the specified values from the list.
 
 
 --------------------------------------------------
-## Method: `public void CopyTo(UIconEdit.CursorEntry[] array)`
-
-Copies all elements in the list to the specified array.
-* `array`: The array to which all elements in the list will be copied.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`array` is `null`.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The length of `array` is less than [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
-
---------------------------------------------------
 ## Method: `public virtual void CopyTo(UIconEdit.CursorEntry[] array, System.Int32 arrayIndex)`
 
 Copies all elements in the list to the specified array, starting at the specified index.
@@ -1201,32 +1123,6 @@ Copies all elements in the list to the specified array, starting at the specifie
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
 The length of `array` minus `arrayIndex` is less than [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
-
---------------------------------------------------
-## Method: `public void CopyTo(System.Int32 index, UIconEdit.CursorEntry[] array, System.Int32 arrayIndex, System.Int32 count)`
-
-Copies a range of elements in the list to the specified array.
-* `index`: The index of the first item to copy.
-* `array`: The array to which all elements in the list will be copied.
-* `arrayIndex`: The index in `array` at which copying begins.
-* `count`: The number of elements to copy.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`array` is `null`.
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index`, `arrayIndex`, or `count` is less than 0.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-
-`index` and `count` do not indicate a valid range of elements in the current instance.
-
--OR-
-
-`arrayIndex` and `count` do not indicate a valid range of elements in `array`.
-
 
 --------------------------------------------------
 ## Method: `public virtual void Clear()`
@@ -1318,33 +1214,11 @@ Returns an enumerator which iterates through the list.
 
 
 --------------------------------------------------
-## Method: `public void RemoveRange(System.Int32 index, System.Int32 count)`
+## Method: `public void Move(System.Int32 oldIndex, System.Int32 newIndex)`
 
-Removes a range of elements from the list.
-* `index`: The zero-based starting index of the elements to remove.
-* `count`: The number of elements to remove.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` or `count` is less than 0.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`index` and `count` do not indicate a valid range of elements in the list.
-
---------------------------------------------------
-## Method: `public System.Int32 RemoveWhere(System.Predicate<UIconEdit.CursorEntry> match)`
-
-Removes all elements matching the specified predicate.
-* `match`: A predicate used to define the elements to remove.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of elements which were removed.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`match` is `null`.
+Moves an element from one index to another.
+* `oldIndex`: The index of the element to move.
+* `newIndex`: The destination index.
 
 --------------------------------------------------
 ## Method: `public UIconEdit.CursorEntry Find(System.Predicate<UIconEdit.CursorEntry> match)`
@@ -1418,36 +1292,6 @@ Returns an array containing all elements in the current list.
 
 **Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`CursorEntry`](#type-public-class-uiconeditcursorentry): An array containing elements copied from the current list.
 
-
---------------------------------------------------
-## Method: `public void Sort()`
-
-Sorts all elements in the list according to their [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
-
---------------------------------------------------
-## Method: `public void Sort(System.Collections.Generic.IComparer<UIconEdit.CursorEntry> comparer)`
-
-Sorts all elements in the list according to the specified comparer.
-* `comparer`: The comparer used to compare each [`CursorEntry`](#type-public-class-uiconeditcursorentry), or `null` to use their [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
-
-### Exceptions
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The implementation of `comparer` caused an error during the sort. For example, `comparer` might not return 0 when comparing an item with itself.
-
---------------------------------------------------
-## Method: `public void Sort(System.Comparison<UIconEdit.CursorEntry> comparison)`
-
-Sorts all elements in the list according to the specified delegate.
-* `comparison`: The delegate used to compare each [`IconEntry`](#type-public-class-uiconediticonentry).
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`comparison` is `null`.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The implementation of `comparison` caused an error during the sort. For example, `comparison` might not return 0 when comparing an item with itself.
 
 --------------------------------------------------
 # Type: `struct UIconEdit.CursorFile.EntryList.Enumerator`
@@ -2271,6 +2115,19 @@ Compares the current instance to the specified other [`EntryKey`](#type-public-s
 * `other`: The other [`EntryKey`](#type-public-struct-uiconeditentrykey) to compare.
 
 **Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): A value less than 0 if the current value comes before `other`; a value greater than 0 if the current value comes after `other`; or 0 if the current instance is equal to `other`.
+
+
+--------------------------------------------------
+## Field: `public static readonly UIconEdit.EntryKey Empty`
+
+An [`EntryKey`](#type-public-struct-uiconeditentrykey) with [`EntryKey.IsEmpty`](#property-public-systemboolean-isempty--get-) set to `true`.
+
+--------------------------------------------------
+## Method: `public System.String ToString()`
+
+Returns a string representation of the current value.
+
+**Returns:** Type [`String`](https://msdn.microsoft.com/en-us/library/system.string.aspx): A string representation of the current value.
 
 
 --------------------------------------------------

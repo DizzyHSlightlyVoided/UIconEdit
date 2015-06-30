@@ -31,10 +31,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
 using Size = System.Windows.Size;
@@ -788,20 +792,49 @@ namespace UIconEdit
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(DebugView))]
-        public class EntryList : IList<IconEntry>, IList
+        public class EntryList : IList<IconEntry>, IList, INotifyCollectionChanged, INotifyPropertyChanged
 #if IREADONLY
             , IReadOnlyList<IconEntry>
 #endif
         {
             private HashSet<EntryKey> _set;
-            private List<IconEntry> _items;
+            private ObservableCollection<IconEntry> _items;
             private IconFileBase _file;
 
             internal EntryList(IconFileBase file)
             {
                 _file = file;
                 _set = new HashSet<EntryKey>();
-                _items = new List<IconEntry>();
+                _items = new ObservableCollection<IconEntry>();
+                _items.CollectionChanged += _items_CollectionChanged;
+                ((INotifyPropertyChanged)_items).PropertyChanged += _items_PropertyChanged;
+            }
+
+            private void _items_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                if (PropertyChanged != null)
+                    PropertyChanged(this, e);
+            }
+
+            private void _items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+            {
+                if (CollectionChanged != null)
+                    CollectionChanged(this, e);
+            }
+
+            /// <summary>
+            /// Raised when elements are added to or removed from the list.
+            /// </summary>
+            public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+            /// <summary>
+            /// Raised when a property changes in the current instance.
+            /// </summary>
+            protected event PropertyChangedEventHandler PropertyChanged;
+            event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+            {
+                add { PropertyChanged += value; }
+                remove { PropertyChanged -= value; }
             }
 
             private IconEntry _checkAdd(object value, string paramName)
@@ -867,7 +900,7 @@ namespace UIconEdit
             int IList.Add(object value)
             {
                 if (Add(_checkAdd(value, "value"))) return _items.Count;
-                throw new NotSupportedException();
+                throw new NotSupportedException("Could not add the specified value!");
             }
 
             /// <summary>
@@ -885,8 +918,8 @@ namespace UIconEdit
             {
                 if (index < 0 || index > _items.Count) throw new ArgumentOutOfRangeException("index");
                 if (_items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item.EntryKey)) return false;
-                _items.Insert(index, item);
                 item.File = _file;
+                _items.Insert(index, item);
                 return true;
             }
 
@@ -907,9 +940,9 @@ namespace UIconEdit
                 var oldItem = _items[index];
                 if (value == null || value.File != null || !_file.IsValid(value) || (_set.Contains(value.EntryKey) && oldItem.EntryKey != value.EntryKey))
                     return false;
-                _items[index] = value;
                 oldItem.File = null;
                 value.File = _file;
+                _items[index] = value;
                 return true;
             }
 
@@ -936,9 +969,9 @@ namespace UIconEdit
             public void RemoveAt(int index)
             {
                 IconEntry item = _items[index];
-                _items.RemoveAt(index);
                 _set.Remove(item.EntryKey);
                 item.File = null;
+                _items.RemoveAt(index);
             }
 
             /// <summary>
@@ -948,9 +981,9 @@ namespace UIconEdit
             /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
             public bool Remove(IconEntry item)
             {
-                if (!_items.Remove(item)) return false;
-                _set.Remove(item.EntryKey);
-                item.File = null;
+                int index = _items.IndexOf(item);
+                if (index < 0) return false;
+                RemoveAt(index);
                 return true;
             }
 
@@ -1123,21 +1156,6 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Copies all elements in the list to the specified array.
-            /// </summary>
-            /// <param name="array">The array to which all elements in the list will be copied.</param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="array"/> is <c>null</c>.
-            /// </exception>
-            /// <exception cref="ArgumentException">
-            /// The length of <paramref name="array"/> is less than <see cref="Count"/>.
-            /// </exception>
-            public void CopyTo(IconEntry[] array)
-            {
-                _items.CopyTo(array);
-            }
-
-            /// <summary>
             /// Copies all elements in the list to the specified array, starting at the specified index.
             /// </summary>
             /// <param name="array">The array to which all elements in the list will be copied.</param>
@@ -1157,44 +1175,12 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Copies a range of elements in the list to the specified array.
-            /// </summary>
-            /// <param name="index">The index of the first item to copy.</param>
-            /// <param name="array">The array to which all elements in the list will be copied.</param>
-            /// <param name="arrayIndex">The index in <paramref name="array"/> at which copying begins.</param>
-            /// <param name="count">The number of elements to copy.</param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="array"/> is <c>null</c>.
-            /// </exception>
-            /// <exception cref="ArgumentOutOfRangeException">
-            /// <paramref name="index"/>, <paramref name="arrayIndex"/>, or <paramref name="count"/> is less than 0.
-            /// </exception>
-            /// <exception cref="ArgumentException">
-            /// <para><paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the current instance.</para>
-            /// <para>-OR-</para>
-            /// <para><paramref name="arrayIndex"/> and <paramref name="count"/> do not indicate a valid range of elements in <paramref name="array"/>.</para>
-            /// </exception>
-            public void CopyTo(int index, IconEntry[] array, int arrayIndex, int count)
-            {
-                _items.CopyTo(index, array, arrayIndex, count);
-            }
-
-            /// <summary>
             /// Returns an enumerator which iterates through the list.
             /// </summary>
             /// <returns>An enumerator which iterates through the list.</returns>
             public Enumerator GetEnumerator()
             {
                 return new Enumerator(this);
-            }
-
-            /// <summary>
-            /// Returns an array containing all elements in the current list.
-            /// </summary>
-            /// <returns>An array containing elements copied from the current list.</returns>
-            public IconEntry[] ToArray()
-            {
-                return _items.ToArray();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -1208,47 +1194,22 @@ namespace UIconEdit
             }
 
             /// <summary>
-            /// Removes a range of elements from the list.
+            /// Moves an element from one index to another.
             /// </summary>
-            /// <param name="index">The zero-based starting index of the elements to remove.</param>
-            /// <param name="count">The number of elements to remove.</param>
-            /// <exception cref="ArgumentOutOfRangeException">
-            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
-            /// </exception>
-            /// <exception cref="ArgumentException">
-            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
-            /// </exception>
-            public void RemoveRange(int index, int count)
+            /// <param name="oldIndex">The index of the element to move.</param>
+            /// <param name="newIndex">The destination index.</param>
+            public void Move(int oldIndex, int newIndex)
             {
-                var items = _items.GetRange(index, count);
-                _items.RemoveRange(index, count);
-                foreach (var curItem in items)
-                    _set.Remove(curItem.EntryKey);
+                _items.Move(oldIndex, newIndex);
             }
 
             /// <summary>
-            /// Removes all elements matching the specified predicate.
+            /// Returns an array containing all elements in the current list.
             /// </summary>
-            /// <param name="match">A predicate used to define the elements to remove.</param>
-            /// <returns>The number of elements which were removed.</returns>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="match"/> is <c>null</c>.
-            /// </exception>
-            public int RemoveWhere(Predicate<IconEntry> match)
+            /// <returns>An array containing elements copied from the current list.</returns>
+            public IconEntry[] ToArray()
             {
-                if (match == null) throw new ArgumentNullException("match");
-                int removed = 0;
-                for (int i = 0; i < _items.Count; i++)
-                {
-                    while (i < _items.Count && match(_items[i]))
-                    {
-                        removed++;
-                        IconEntry oldItem = _items[i];
-                        _set.Remove(oldItem.EntryKey);
-                        _items.RemoveAt(i);
-                    }
-                }
-                return removed;
+                return _items.ToArray();
             }
 
             /// <summary>
@@ -1261,7 +1222,10 @@ namespace UIconEdit
             /// </exception>
             public IconEntry Find(Predicate<IconEntry> match)
             {
-                return _items.Find(match);
+                if (match == null) throw new ArgumentNullException("match");
+                foreach (IconEntry entry in _items)
+                    if (match(entry)) return entry;
+                return null;
             }
 
             /// <summary>
@@ -1274,7 +1238,10 @@ namespace UIconEdit
             /// </exception>
             public int FindIndex(Predicate<IconEntry> match)
             {
-                return _items.FindIndex(match);
+                if (match == null) throw new ArgumentNullException("match");
+                for (int i = 0; i < _items.Count; i++)
+                    if (match(_items[i])) return i;
+                return -1;
             }
 
             /// <summary>
@@ -1287,7 +1254,7 @@ namespace UIconEdit
             /// </exception>
             public bool Exists(Predicate<IconEntry> match)
             {
-                return _items.Exists(match);
+                return FindIndex(match) >= 0;
             }
 
             /// <summary>
@@ -1300,7 +1267,10 @@ namespace UIconEdit
             /// </exception>
             public bool TrueForAll(Predicate<IconEntry> match)
             {
-                return _items.TrueForAll(match);
+                if (match == null) throw new ArgumentNullException("match");
+                for (int i = 0; i < _items.Count; i++)
+                    if (!match(_items[i])) return false;
+                return true;
             }
 
             /// <summary>
@@ -1310,36 +1280,11 @@ namespace UIconEdit
             /// <returns>A list containing all elements matching <paramref name="match"/>.</returns>
             public List<IconEntry> FindAll(Predicate<IconEntry> match)
             {
-                return _items.FindAll(match);
-            }
-
-            /// <summary>
-            /// Sorts all elements in the list according to their <see cref="IconEntry.EntryKey"/> value.
-            /// </summary>
-            public void Sort()
-            {
-                _items.Sort(new IconEntryComparer());
-            }
-
-            /// <summary>
-            /// Sorts all elements in the list according to the specified comparer.
-            /// </summary>
-            /// <param name="comparer">The comparer used to compare each <see cref="IconEntry"/>, or <c>null</c> to their <see cref="IconEntry.EntryKey"/> value.</param>
-            public void Sort(IComparer<IconEntry> comparer)
-            {
-                _items.Sort(comparer ?? new IconEntryComparer());
-            }
-
-            /// <summary>
-            /// Sorts all elements in the list according to the specified delegate.
-            /// </summary>
-            /// <param name="comparison">The delegate used to compare each <see cref="IconEntry"/>.</param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="comparison"/> is <c>null</c>.
-            /// </exception>
-            public void Sort(Comparison<IconEntry> comparison)
-            {
-                _items.Sort(comparison);
+                if (match == null) throw new ArgumentNullException("match");
+                List<IconEntry> found = new List<IconEntry>();
+                foreach (IconEntry curEntry in _items)
+                    if (match(curEntry)) found.Add(curEntry);
+                return found;
             }
 
             bool ICollection<IconEntry>.IsReadOnly
@@ -1371,7 +1316,6 @@ namespace UIconEdit
             {
                 ((ICollection)_items).CopyTo(array, index);
             }
-
 
             /// <summary>
             /// An enumerator which iterates through the list.

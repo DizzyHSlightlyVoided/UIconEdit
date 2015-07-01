@@ -1616,49 +1616,19 @@ Gets and sets the image associated with the current instance.
 In a set operation, the specified value is `null`.
 
 --------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty EntryKeyProperty`
-
-The dependency property for the read-only [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) property.
-
---------------------------------------------------
 ## Property: `public UIconEdit.EntryKey EntryKey { get; }`
 
 Gets a key for the icon entry.
-
---------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty WidthProperty`
-
-The dependency property for the read-only [`IconEntry.Width`](#property-public-systemint16-width--get-) property.
 
 --------------------------------------------------
 ## Property: `public System.Int16 Width { get; }`
 
 Gets the resampled width of the icon.
 
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
-
---------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty HeightProperty`
-
-The dependency property for the read-only [`IconEntry.Height`](#property-public-systemint16-height--get-) property.
-
 --------------------------------------------------
 ## Property: `public System.Int16 Height { get; }`
 
 Gets the resampled height of the icon.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
-
---------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty BitDepthProperty`
-
-The dependency property for the read-only [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) property.
 
 --------------------------------------------------
 ## Property: `public UIconEdit.BitDepth BitDepth { get; }`
@@ -1676,19 +1646,9 @@ The dependency property for the [`IconEntry.AlphaThreshold`](#property-public-sy
 Gets and sets a value indicating the threshold of alpha values at [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-)s below [`BitDepth.Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0). Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
 
 --------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty BitsPerPixelProperty`
-
-The dependency-property for the read-only [`IconEntry.BitsPerPixel`](#property-public-systemuint16-bitsperpixel--get-) property.
-
---------------------------------------------------
 ## Property: `public System.UInt16 BitsPerPixel { get; }`
 
 Gets the number of bits per pixel specified by [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-).
-
---------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty ColorCountProperty`
-
-The dependency property for the read-only [`IconEntry.ColorCount`](#property-public-systemint64-colorcount--get-) property.
 
 --------------------------------------------------
 ## Property: `public System.Int64 ColorCount { get; }`

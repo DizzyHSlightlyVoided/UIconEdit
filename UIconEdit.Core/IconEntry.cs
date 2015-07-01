@@ -107,10 +107,9 @@ namespace UIconEdit
         {
             if (baseImage == null) throw new ArgumentNullException("baseImage");
             _initValues(width, height, bitDepth);
-            SetValue(BitDepthPropertyKey, bitDepth);
-            SetValue(WidthPropertyKey, width);
-            SetValue(HeightPropertyKey, height);
-            SetBPS();
+            _depth = bitDepth;
+            _width = width;
+            _height = height;
             BaseImage = baseImage;
             AlphaThreshold = alphaThreshold;
         }
@@ -160,10 +159,9 @@ namespace UIconEdit
             if (!_validateBitDepth(bitDepth))
                 throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
             BaseImage = baseImage;
-            SetValue(WidthPropertyKey, (short)baseImage.PixelWidth);
-            SetValue(HeightPropertyKey, (short)baseImage.PixelHeight);
-            SetValue(BitDepthPropertyKey, bitDepth);
-            SetBPS();
+            _depth = bitDepth;
+            _width = (short)baseImage.PixelWidth;
+            _height = (short)baseImage.PixelHeight;
             AlphaThreshold = alphaThreshold;
         }
 
@@ -215,106 +213,41 @@ namespace UIconEdit
         }
         #endregion
 
-        private void SetBPS()
-        {
-            ushort bps;
-            long colorCount;
-            switch (BitDepth)
-            {
-                case BitDepth.Depth1BitPerPixel:
-                    bps = 1;
-                    colorCount = 2;
-                    break;
-                case BitDepth.Depth4BitsPerPixel:
-                    bps = 4;
-                    colorCount = 16;
-                    break;
-                case BitDepth.Depth8BitsPerPixel:
-                    bps = 8;
-                    colorCount = 256;
-                    break;
-                case BitDepth.Depth24BitsPerPixel:
-                    bps = 24;
-                    colorCount = 0x1000000;
-                    break;
-                default: //Depth32BitsPerPixel
-                    bps = 32;
-                    colorCount = uint.MaxValue + 1L;
-                    break;
-            }
-            SetValue(EntryKeyPropertyKey, new EntryKey(Width, Height, BitDepth));
-            SetValue(BitsPerPixelPropertyKey, bps);
-            SetValue(ColorCountPropertyKey, colorCount);
-        }
-
-        #region Key
-        private static readonly DependencyPropertyKey EntryKeyPropertyKey = DependencyProperty.RegisterReadOnly("Key", typeof(EntryKey),
-            typeof(IconEntry), new PropertyMetadata(default(EntryKey)));
-        /// <summary>
-        /// The dependency property for the read-only <see cref="EntryKey"/> property.
-        /// </summary>
-        public static readonly DependencyProperty EntryKeyProperty = EntryKeyPropertyKey.DependencyProperty;
-
         /// <summary>
         /// Gets a key for the icon entry.
         /// </summary>
-        public EntryKey EntryKey { get { return (EntryKey)GetValue(EntryKeyProperty); } }
-        #endregion
+        [Bindable(true, BindingDirection.OneWay)]
+        public EntryKey EntryKey { get { return new EntryKey(_width, _height, _depth); } }
 
-        #region Width
-        private static readonly DependencyPropertyKey WidthPropertyKey = DependencyProperty.RegisterReadOnly("Width", typeof(short), typeof(IconEntry),
-            new PropertyMetadata(MinDimension));
-        /// <summary>
-        /// The dependency property for the read-only <see cref="Width"/> property.
-        /// </summary>
-        public static readonly DependencyProperty WidthProperty = WidthPropertyKey.DependencyProperty;
-
+        private readonly short _width;
         /// <summary>
         /// Gets the resampled width of the icon.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
-        /// </exception>
+        [Bindable(true, BindingDirection.OneWay)]
         public short Width
         {
-            get { return (short)GetValue(WidthProperty); }
+            get { return _width; }
         }
-        #endregion
 
-        #region Height
-        private static readonly DependencyPropertyKey HeightPropertyKey = DependencyProperty.RegisterReadOnly("Height", typeof(short), typeof(IconEntry),
-            new PropertyMetadata(MinDimension));
-        /// <summary>
-        /// The dependency property for the read-only <see cref="Height"/> property.
-        /// </summary>
-        public static readonly DependencyProperty HeightProperty = HeightPropertyKey.DependencyProperty;
-
+        private readonly short _height;
         /// <summary>
         /// Gets the resampled height of the icon.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
-        /// </exception>
+        [Bindable(true, BindingDirection.OneWay)]
         public short Height
         {
-            get { return (short)GetValue(HeightProperty); }
+            get { return _height; }
         }
-        #endregion
 
         #region BitDepth
-        private static readonly DependencyPropertyKey BitDepthPropertyKey = DependencyProperty.RegisterReadOnly("BitDepth", typeof(BitDepth), typeof(IconEntry),
-            new PropertyMetadata(BitDepth.Depth32BitsPerPixel));
-        /// <summary>
-        /// The dependency property for the read-only <see cref="BitDepth"/> property.
-        /// </summary>
-        public static readonly DependencyProperty BitDepthProperty = BitDepthPropertyKey.DependencyProperty;
-
+        private readonly BitDepth _depth;
         /// <summary>
         /// Gets the bit depth of the current instance.
         /// </summary>
+        [Bindable(true, BindingDirection.OneWay)]
         public BitDepth BitDepth
         {
-            get { return (BitDepth)GetValue(BitDepthProperty); }
+            get { return _depth; }
         }
         #endregion
 
@@ -335,39 +268,53 @@ namespace UIconEdit
         }
         #endregion
 
-        #region BitsPerPixel
-        private static readonly DependencyPropertyKey BitsPerPixelPropertyKey = DependencyProperty.RegisterReadOnly("BitsPerPixel", typeof(ushort), typeof(IconEntry),
-            new PropertyMetadata((ushort)32));
-        /// <summary>
-        /// The dependency-property for the read-only <see cref="BitsPerPixel"/> property.
-        /// </summary>
-        public static readonly DependencyProperty BitsPerPixelProperty = BitsPerPixelPropertyKey.DependencyProperty;
-
         /// <summary>
         /// Gets the number of bits per pixel specified by <see cref="BitDepth"/>.
         /// </summary>
+        [Bindable(true, BindingDirection.OneWay)]
         public ushort BitsPerPixel
         {
-            get { return (ushort)GetValue(BitsPerPixelProperty); }
+            get
+            {
+                switch (_depth)
+                {
+                    case BitDepth.Depth1BitPerPixel:
+                        return 1;
+                    case BitDepth.Depth4BitsPerPixel:
+                        return 4;
+                    case BitDepth.Depth8BitsPerPixel:
+                        return 8;
+                    case BitDepth.Depth24BitsPerPixel:
+                        return 24;
+                    default:
+                        return 32;
+                }
+            }
         }
-        #endregion
-
-        #region ColorCount
-        private static readonly DependencyPropertyKey ColorCountPropertyKey = DependencyProperty.RegisterReadOnly("ColorCount", typeof(long), typeof(IconEntry),
-            new PropertyMetadata(uint.MaxValue + 1L));
-        /// <summary>
-        /// The dependency property for the read-only <see cref="ColorCount"/> property.
-        /// </summary>
-        public static readonly DependencyProperty ColorCountProperty = ColorCountPropertyKey.DependencyProperty;
 
         /// <summary>
         /// Gets the maximum color count specified by <see cref="BitDepth"/>.
         /// </summary>
+        [Bindable(true, BindingDirection.OneWay)]
         public long ColorCount
         {
-            get { return (long)GetValue(ColorCountProperty); }
+            get
+            {
+                switch (_depth)
+                {
+                    case BitDepth.Depth2Color:
+                        return 2;
+                    case BitDepth.Depth16Color:
+                        return 16;
+                    case BitDepth.Depth256Color:
+                        return 256;
+                    case BitDepth.Depth24BitsPerPixel:
+                        return 0x1000000;
+                    default:
+                        return uint.MaxValue + 1L;
+                }
+            }
         }
-        #endregion
 
         #region DrawInterpolationMode
         /// <summary>
@@ -487,8 +434,6 @@ namespace UIconEdit
         internal unsafe Bitmap GetQuantized(out Bitmap alphaMask, out int paletteCount)
         {
             const PixelFormat formatFull = PixelFormat.Format32bppArgb, formatAlpha = PixelFormat.Format1bppIndexed;
-            short _width = Width, _height = Height;
-            var _depth = BitDepth;
 
             bool isPng = _width > byte.MaxValue || _height > byte.MaxValue;
 

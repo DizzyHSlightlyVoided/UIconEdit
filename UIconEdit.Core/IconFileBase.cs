@@ -260,7 +260,7 @@ namespace UIconEdit
                         while (gapLength > 0)
                             gapLength -= input.Read(curBuffer, 0, (int)Math.Min(gapLength, bufferSize));
 
-                        BitmapSource loadedImage;
+                        WriteableBitmap loadedImage;
 
                         int dibSize = reader.ReadInt32();
                         if (dibSize < MinDibSize) throw new IconLoadException(IconErrorCode.InvalidEntryType, i);
@@ -313,14 +313,15 @@ namespace UIconEdit
                                 }
                             }
                             using (OffsetStream os = new OffsetStream(input, new byte[] { 0x89, 0x50, 0x4e, 0x47 }, entry.ResourceLength - 4, true))
+                            using (MemoryStream ms = new MemoryStream())
                             {
-                                MemoryStream ms = new MemoryStream();
                                 os.CopyTo(ms);
+                                ms.Seek(0, SeekOrigin.Begin);
                                 try
                                 {
                                     PngBitmapDecoder decoder = new PngBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
 
-                                    loadedImage = decoder.Frames[0];
+                                    loadedImage = new WriteableBitmap(decoder.Frames[0]);
                                 }
                                 catch (FileFormatException e)
                                 {
@@ -391,45 +392,46 @@ namespace UIconEdit
                                         new Tuple<Size, Size>(new Size(entry.BWidth, entry.BHeight), new Size(width, testHeight)), i);
                                 }
 
-                                MemoryStream bufferStream = new MemoryStream();
+                                using (MemoryStream bufferStream = new MemoryStream())
+                                {
 #if LEAVEOPEN
-                                using (BinaryWriter bufferWriter = new BinaryWriter(bufferStream, new UTF8Encoding(), true))
+                                    using (BinaryWriter bufferWriter = new BinaryWriter(bufferStream, new UTF8Encoding(), true))
 #else
-                                BinaryWriter bufferWriter = new BinaryWriter(bufferStream, new UTF8Encoding());
+                                    BinaryWriter bufferWriter = new BinaryWriter(bufferStream, new UTF8Encoding());
 #endif
-                                {
-                                    bufferWriter.Write(ushort.MinValue); //2
-                                    bufferWriter.Write((ushort)IconTypeCode.Icon); //4
-                                    bufferWriter.Write((short)1); //6
-                                    bufferWriter.Write(entry.BWidth); //7
-                                    bufferWriter.Write(entry.BHeight); //8
-                                    bufferWriter.Write(entry.ColorCount); //9
-                                    bufferWriter.Write(byte.MinValue); //10
-                                    bufferWriter.Write((short)1); //12
-                                    bufferWriter.Write(bitsPerPixel); //14
-                                    bufferWriter.Write(entry.ResourceLength); //18
-                                    bufferWriter.Write(22); //22
+                                    {
+                                        bufferWriter.Write(ushort.MinValue); //2
+                                        bufferWriter.Write((ushort)IconTypeCode.Icon); //4
+                                        bufferWriter.Write((short)1); //6
+                                        bufferWriter.Write(entry.BWidth); //7
+                                        bufferWriter.Write(entry.BHeight); //8
+                                        bufferWriter.Write(entry.ColorCount); //9
+                                        bufferWriter.Write(byte.MinValue); //10
+                                        bufferWriter.Write((short)1); //12
+                                        bufferWriter.Write(bitsPerPixel); //14
+                                        bufferWriter.Write(entry.ResourceLength); //18
+                                        bufferWriter.Write(22); //22
 
-                                    bufferWriter.Write(dibSize); //26
-                                    bufferWriter.Write(width); //30
-                                    bufferWriter.Write(height); //34
-                                    height /= 2;
-                                    bufferWriter.Write(colorPanes); //36
-                                    bufferWriter.Write(bitsPerPixel); //38
-                                }
+                                        bufferWriter.Write(dibSize); //26
+                                        bufferWriter.Write(width); //30
+                                        bufferWriter.Write(height); //34
+                                        bufferWriter.Write(colorPanes); //36
+                                        bufferWriter.Write(bitsPerPixel); //38
+                                    }
 #if !LEAVEOPEN
-                                bufferWriter.Flush();
+                                    bufferWriter.Flush();
 #endif
-                                ms.CopyTo(bufferStream);
-                                bufferStream.Seek(0, SeekOrigin.Begin);
-                                try
-                                {
-                                    IconBitmapDecoder decoder = new IconBitmapDecoder(bufferStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-                                    loadedImage = decoder.Frames[0].Clone();
-                                }
-                                catch (FileFormatException e)
-                                {
-                                    throw new IconLoadException(e.Message, IconErrorCode.InvalidBmpFile, i, e);
+                                    ms.CopyTo(bufferStream);
+                                    bufferStream.Seek(0, SeekOrigin.Begin);
+                                    try
+                                    {
+                                        IconBitmapDecoder decoder = new IconBitmapDecoder(bufferStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+                                        loadedImage = new WriteableBitmap(decoder.Frames[0].Clone());
+                                    }
+                                    catch (FileFormatException e)
+                                    {
+                                        throw new IconLoadException(e.Message, IconErrorCode.InvalidBmpFile, i, e);
+                                    }
                                 }
                             }
                             #endregion
@@ -575,7 +577,8 @@ namespace UIconEdit
             BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding());
 #endif
             {
-                SortedSet<IconEntry> entries = new SortedSet<IconEntry>(entryCollection, new IconEntryComparer());
+                List<IconEntry> entries = new List<IconEntry>(entryCollection);
+                entries.Sort(new IconEntryComparer());
 
                 writer.Write(ushort.MinValue);
                 writer.Write((short)ID);

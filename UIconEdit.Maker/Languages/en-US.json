@@ -3,6 +3,8 @@
   "Title": "UIconEdit",
 
   "Error": "Error",
+  "LanguageLoadError": "An error occurred while attempting to load the language \"{0}\".",
+  "SettingsLoadError": "An error occurred while attempting to load the settings file.",
 
   "BitsPerPixelFormat": "{0}BPP",
   "SizeFormat": "{0}x{1}"

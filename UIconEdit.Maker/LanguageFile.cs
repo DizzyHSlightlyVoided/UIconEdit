@@ -55,6 +55,7 @@ namespace UIconEdit.Maker
         {
             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Resources.en_US)))
                 Load(ms, true);
+            _shortName = string.Empty;
         }
 
         /// <summary>
@@ -72,6 +73,7 @@ namespace UIconEdit.Maker
                     Load(shortPath);
             }
             Load(GetPath(langName));
+            _shortName = langName;
         }
 
         private static string GetPath(string langName)
@@ -101,6 +103,8 @@ namespace UIconEdit.Maker
                 if (_text == null) _text = new Dictionary<string, string>(_default._text, StringComparer.OrdinalIgnoreCase);
                 foreach (XElement curNode in xml.Elements().FirstOrDefault().Elements())
                 {
+                    if (curNode.HasElements) throw new InvalidDataException();
+
                     if (_text.ContainsKey(curNode.Name.LocalName))
                         _text[curNode.Name.LocalName] = curNode.Value;
                 }
@@ -114,9 +118,16 @@ namespace UIconEdit.Maker
         /// </summary>
         public ReadOnlyDictionary<string, string> Text { get { return _textRO; } }
 
+        private string _shortName;
+        public string ShortName { get { return _shortName; } }
+
         public string LangName { get { return _text["LangName"]; } }
         public string Title { get { return _text["Title"]; } }
+
         public string Error { get { return _text["Error"]; } }
+        public string LanguageLoadError { get { return _text["LanguageLoadError"]; } }
+        public string SettingsLoadError { get { return _text["SettingsLoadError"]; } }
+
         public string BitsPerPixelFormat { get { return _text["BitsPerPixelFormat"]; } }
         public string SizeFormat { get { return _text["SizeFormat"]; } }
     }

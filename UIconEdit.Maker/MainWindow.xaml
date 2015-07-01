@@ -6,22 +6,31 @@
         xmlns:local="clr-namespace:UIconEdit"
         mc:Ignorable="d" x:Name="window"
         Title="UIconEdit" Height="480" Width="640" Loaded="window_Loaded">
+    <Window.Resources>
+        <Style x:Key="imgEnabled" TargetType="Image">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Opacity" Value="0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <DockPanel>
         <Menu DockPanel.Dock="Top" IsMainMenu="True" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
             <MenuItem Header="_File">
                 <MenuItem Command="ApplicationCommands.Open">
                     <MenuItem.Icon>
-                        <Image Source="Open-icon.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <Image Source="Open-icon.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
         </Menu>
         <ToolBar DockPanel.Dock="Top" Height="Auto">
-            <Button>
-                <Image Source="Open-icon.png" Height="22" RenderOptions.BitmapScalingMode="HighQuality"/>
+            <Button Command="ApplicationCommands.Open">
+                <Image Source="Open-icon.png" Height="22" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Separator/>
-            <ComboBox SelectedValue="100" Width="100" IsEditable="True">
+            <ComboBox SelectedValue="100" Width="100" IsEditable="True" IsEnabled="{Binding IsFileLoaded, ElementName=window}">
                 <ComboBoxItem>2000</ComboBoxItem>
                 <ComboBoxItem>1800</ComboBoxItem>
                 <ComboBoxItem>1600</ComboBoxItem>
@@ -40,7 +49,7 @@
                 <ComboBoxItem>50</ComboBoxItem>
                 <ComboBoxItem>25</ComboBoxItem>
             </ComboBox>
-            <TextBlock VerticalAlignment="Center">%</TextBlock>
+            <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsFileLoaded, ElementName=window}">%</TextBlock>
             <Separator/>
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">

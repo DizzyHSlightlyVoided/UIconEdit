@@ -29,6 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -43,15 +44,34 @@ namespace UIconEdit.Maker
         public MainWindow()
         {
             InitializeComponent();
+
+            _settings = new SettingsFile();
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                _settings.Load();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(this, _settings.LanguageFile.SettingsLoadError, _settings.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
+
+        private SettingsFile _settings;
+        [Bindable(true)]
+        public SettingsFile SettingsFile { get { return _settings; } }
 
         private void window_Loaded(object sender, RoutedEventArgs e)
         {
             string[] args = Environment.GetCommandLineArgs();
             args = new ArraySegment<string>(args, 1, args.Length - 1).ToArray();
 
-            Mouse.OverrideCursor = Cursors.Wait;
             if (args.Length == 0) return;
+            Mouse.OverrideCursor = Cursors.Wait;
             try
             {
                 LoadedFile = IconFileBase.Load(args[0]);
@@ -62,7 +82,17 @@ namespace UIconEdit.Maker
             }
         }
 
-        public static DependencyProperty LoadedFileProperty = DependencyProperty.Register("LoadedFile", typeof(IconFileBase), typeof(MainWindow));
+        #region LoadedFileProperty
+        public static DependencyProperty LoadedFileProperty = DependencyProperty.Register("LoadedFile", typeof(IconFileBase), typeof(MainWindow),
+            new PropertyMetadata(null, LoadedFileChanged));
+
+        private static void LoadedFileChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            d.SetValue(IsFileLoadedPropertyKey, e.NewValue != null);
+        }
+        #endregion
+
+        #region LoadedFile
         /// <summary>
         /// Gets and sets the currently-loaded icon file.
         /// </summary>
@@ -71,5 +101,12 @@ namespace UIconEdit.Maker
             get { return (IconFileBase)GetValue(LoadedFileProperty); }
             set { SetValue(LoadedFileProperty, value); }
         }
+
+        private static readonly DependencyPropertyKey IsFileLoadedPropertyKey = DependencyProperty.RegisterReadOnly("IsFileLoaded", typeof(bool), typeof(MainWindow),
+            new PropertyMetadata());
+        public static readonly DependencyProperty IsFileLoadedProperty = IsFileLoadedPropertyKey.DependencyProperty;
+
+        public bool IsFileLoaded { get { return (bool)GetValue(IsFileLoadedProperty); } }
+        #endregion
     }
 }

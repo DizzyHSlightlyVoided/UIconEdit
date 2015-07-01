@@ -56,8 +56,7 @@ namespace UIconEdit.Maker
         private LanguageFile()
         {
             _shortName = string.Empty;
-            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Resources.en_US)))
-                Load(ms, true);
+            Load(Resources.en_US, true);
             _textRO = new ReadOnlyDictionary<string, string>(_text);
         }
 
@@ -92,14 +91,14 @@ namespace UIconEdit.Maker
 
         private void Load(string path)
         {
-            using (FileStream fs = File.OpenRead(path))
-                Load(fs, false);
+            Load(File.ReadAllText(path), false);
         }
 
-        private void Load(Stream stream, bool initial)
+        private void Load(string allText, bool initial)
         {
             XDocument xml;
-            using (XmlDictionaryReader reader = JsonReaderWriterFactory.CreateJsonReader(stream, new XmlDictionaryReaderQuotas()))
+            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(allText)))
+            using (XmlDictionaryReader reader = JsonReaderWriterFactory.CreateJsonReader(ms, Encoding.UTF8, new XmlDictionaryReaderQuotas(), null))
                 xml = XDocument.Load(reader);
             if (initial)
             {
@@ -167,6 +166,9 @@ namespace UIconEdit.Maker
         public string LanguageLoadError { get { return _text["LanguageLoadError"]; } }
         public string SettingsSaveError { get { return _text["SettingsSaveError"]; } }
         public string ImageLoadError { get { return _text["ImageLoadError"]; } }
+
+        public string MenuFile { get { return _text["MenuFile"]; } }
+        public string MenuFileOpen { get { return _text["MenuFileOpen"]; } }
 
         public string BitsPerPixelFormat { get { return _text["BitsPerPixelFormat"]; } }
         public string SizeFormat { get { return _text["SizeFormat"]; } }

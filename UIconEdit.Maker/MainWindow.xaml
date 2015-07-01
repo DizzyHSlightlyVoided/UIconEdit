@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UIconEdit"
         mc:Ignorable="d" x:Name="window"
-        Title="UIconEdit" Height="480" Width="640" Loaded="window_Loaded" Closed="window_Closed">
+        Title="{Binding SettingsFile.LanguageFile.Title, ElementName=window, FallbackValue=UIconEdit}"
+        Height="480" Width="640" Loaded="window_Loaded" Closed="window_Closed">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open" CanExecute="CommandBinding_CanExecute" Executed="Open_Executed"/>
     </Window.CommandBindings>
@@ -20,8 +21,8 @@
     </Window.Resources>
     <DockPanel>
         <Menu DockPanel.Dock="Top" IsMainMenu="True" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
-            <MenuItem Header="_File">
-                <MenuItem Command="ApplicationCommands.Open">
+            <MenuItem Header="{Binding SettingsFile.LanguageFile.MenuFile, ElementName=window, FallbackValue=_File}">
+                <MenuItem Command="ApplicationCommands.Open" Header="{Binding SettingsFile.LanguageFile.MenuFileOpen, ElementName=window, FallbackValue=_Open}">
                     <MenuItem.Icon>
                         <Image Source="Open-icon.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
                     </MenuItem.Icon>

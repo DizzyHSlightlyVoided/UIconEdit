@@ -44,7 +44,31 @@
             <Separator/>
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">
-            <ScrollViewer Width="144"/>
+            <ScrollViewer>
+                <ListBox SelectionMode="Single" x:Name="listbox" ItemsSource="{Binding LoadedFile.Entries, ElementName=window}" Width="76">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="1" HorizontalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Image Source="{Binding BaseImage}" Width="64" Margin="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                <TextBlock Grid.Row="1" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding BitsPerPixel}"/>
+                                    <TextBlock Text="BPS"/>
+                                </TextBlock>
+                                <TextBlock Grid.Row="2" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Width}"/>
+                                    <TextBlock Text="&#xd7;"/>
+                                    <TextBlock Text="{Binding Width}"/>
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
         </Border>
         <Border BorderThickness="0,1,1,1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
             <Grid/>

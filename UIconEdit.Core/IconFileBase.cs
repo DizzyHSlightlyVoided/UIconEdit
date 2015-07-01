@@ -694,8 +694,7 @@ namespace UIconEdit
                 writer.Write((byte)entry.Height);
             }
 
-            int paletteCount;
-            Bitmap alphaMask, quantized = entry.GetQuantized(out alphaMask, out paletteCount);
+            Bitmap alphaMask, quantized = entry.GetQuantized(isPng, out alphaMask);
 
             if (alphaMask == null || quantized.Palette == null || quantized.Palette.Entries.Length > byte.MaxValue)
                 writer.Write(byte.MinValue);

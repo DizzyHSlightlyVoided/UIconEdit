@@ -431,11 +431,9 @@ namespace UIconEdit
             return copy;
         }
 
-        internal unsafe Bitmap GetQuantized(out Bitmap alphaMask, out int paletteCount)
+        internal unsafe Bitmap GetQuantized(bool isPng, out Bitmap alphaMask)
         {
             const PixelFormat formatFull = PixelFormat.Format32bppArgb, formatAlpha = PixelFormat.Format1bppIndexed;
-
-            bool isPng = _width > byte.MaxValue || _height > byte.MaxValue;
 
             Bitmap fullColor = new Bitmap(_width, _height, formatFull);
 
@@ -487,10 +485,7 @@ namespace UIconEdit
             }
 
             if (_depth == BitDepth.Depth32BitsPerPixel)
-            {
-                paletteCount = 0;
                 return fullColor;
-            }
 
             BitmapData bmpData = fullColor.LockBits(fullRect, ImageLockMode.ReadWrite, formatFull);
 
@@ -512,8 +507,6 @@ namespace UIconEdit
 
             if (_depth == BitDepth.Depth24BitsPerPixel)
             {
-                paletteCount = 0;
-
                 if (isPng)
                     return fullColor;
 
@@ -525,6 +518,7 @@ namespace UIconEdit
                 return full24;
             }
 
+            int paletteCount;
             switch (_depth)
             {
                 case BitDepth.Depth2Color:

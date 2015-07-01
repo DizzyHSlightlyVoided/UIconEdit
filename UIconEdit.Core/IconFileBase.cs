@@ -35,14 +35,12 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Size = System.Windows.Size;
 
 namespace UIconEdit
 {
@@ -694,12 +692,13 @@ namespace UIconEdit
                 writer.Write((byte)entry.Height);
             }
 
-            Bitmap alphaMask, quantized = entry.GetQuantized(isPng, out alphaMask);
+            BitmapSource alphaMask;
+            WriteableBitmap quantized = entry.GetQuantized(isPng, out alphaMask);
 
-            if (alphaMask == null || quantized.Palette == null || quantized.Palette.Entries.Length > byte.MaxValue)
+            if (alphaMask == null || quantized.Palette == null || quantized.Palette.Colors.Count > byte.MaxValue)
                 writer.Write(byte.MinValue);
             else
-                writer.Write((byte)(quantized.Palette.Entries.Length - 1)); //3
+                writer.Write((byte)quantized.Palette.Colors.Count); //3
 
             writer.Write(byte.MinValue); //4
 
@@ -710,18 +709,9 @@ namespace UIconEdit
             writeStream = new MemoryStream();
             if (isPng)
             {
-                BitmapData bmpData = quantized.LockBits(new Rectangle(0, 0, quantized.Width, quantized.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-                BitmapSource bmpSource = BitmapSource.Create(quantized.Width, quantized.Height, 0, 0, System.Windows.Media.PixelFormats.Bgra32,
-                    null, bmpData.Scan0, (quantized.Width * quantized.Height * 4), bmpData.Stride);
-
                 PngBitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Interlace = PngInterlaceOption.Off;
-                encoder.Frames.Add(BitmapFrame.Create(bmpSource));
-
+                encoder.Frames.Add(BitmapFrame.Create(quantized.Clone()));
                 encoder.Save(writeStream);
-
-                quantized.UnlockBits(bmpData);
             }
             else
             {
@@ -732,10 +722,10 @@ namespace UIconEdit
 #endif
                 {
                     ushort bitsPerPixel = entry.BitsPerPixel;
-                    int height = quantized.Height;
-                    if (alphaMask != null) height += alphaMask.Height; //Only if bit depth != 32
+                    int height = quantized.PixelHeight;
+                    if (alphaMask != null) height += alphaMask.PixelHeight; //Only if bit depth != 32
                     msWriter.Write(MinDibSize);
-                    msWriter.Write(quantized.Width);
+                    msWriter.Write(quantized.PixelWidth);
                     msWriter.Write(height);
                     msWriter.Write((short)1);
                     msWriter.Write(bitsPerPixel); //1, 4, 8, 24, or 32
@@ -748,21 +738,32 @@ namespace UIconEdit
                     using (MemoryStream bmpStream = new MemoryStream())
                     using (BinaryReader bmpReader = new BinaryReader(bmpStream))
                     {
-                        quantized.Save(bmpStream, ImageFormat.Bmp);
+                        BmpBitmapEncoder encoder = new BmpBitmapEncoder();
+                        encoder.Frames.Add(BitmapFrame.Create(quantized));
+                        encoder.Save(bmpStream);
+
                         bmpStream.Seek(10, SeekOrigin.Begin);
                         uint streamOffset = bmpReader.ReadUInt32();
-                        bmpStream.Seek(54, SeekOrigin.Begin);
+                        bmpStream.Seek(28, SeekOrigin.Begin);
+                        ushort bitDepth = bmpReader.ReadUInt16();
 
-                        for (int i = 0; i < quantized.Palette.Entries.Length; i++)
+                        long colorCount = entry.ColorCount;
+                        if (colorCount <= 256 && quantized.Palette != null)
                         {
-                            uint color = bmpReader.ReadUInt32();
-                            msWriter.Write(color);
+                            bmpStream.Seek(54, SeekOrigin.Begin);
+
+                            for (int i = 0; i < colorCount; i++)
+                            {
+                                uint color = bmpReader.ReadUInt32();
+                                msWriter.Write(color);
+                            }
                         }
 
-                        int dataLength = quantized.Height * 4 * (((bitsPerPixel * quantized.Width) + 31) / 32);
+                        bmpStream.Seek(streamOffset, SeekOrigin.Begin);
+
+                        int dataLength = quantized.PixelHeight * 4 * (((bitsPerPixel * quantized.PixelWidth) + 31) / 32);
 
                         byte[] buffer = bmpReader.ReadBytes(dataLength);
-
                         msWriter.Write(buffer);
                     }
 
@@ -771,7 +772,10 @@ namespace UIconEdit
                         using (MemoryStream alphaStream = new MemoryStream())
                         using (BinaryReader alphaReader = new BinaryReader(alphaStream))
                         {
-                            alphaMask.Save(alphaStream, ImageFormat.Bmp);
+                            BmpBitmapEncoder encoder = new BmpBitmapEncoder();
+                            encoder.Frames.Add(BitmapFrame.Create(alphaMask));
+                            encoder.Save(alphaStream);
+
                             alphaStream.Seek(10, SeekOrigin.Begin);
                             uint streamOffset = alphaReader.ReadUInt32();
                             alphaStream.Seek(streamOffset, SeekOrigin.Begin);
@@ -786,9 +790,6 @@ namespace UIconEdit
 
             Debug.WriteLine("Writing type {0} - width:{1}, height:{2}, bit depth:{3}, computed bits per pixel:{4}, length:{5}",
                 isPng ? "PNG" : "BMP", entry.Width, entry.Height, entry.BitDepth, GetImgY(entry), writeStream.Length);
-
-            quantized.Dispose();
-            if (alphaMask != null) alphaMask.Dispose();
 
             length = (uint)writeStream.Length;
             writer.Write(length); //12
@@ -1696,7 +1697,7 @@ namespace UIconEdit
         BmpHeightMismatch = 0x1203,
         /// <summary>
         /// Code 0x1204: the height of a BMP entry is an odd number, indicating that there is no AND (transparency) mask.
-        /// <see cref="IconLoadException.Value"/> contains the <see cref="Image.Height"/> of the image.
+        /// <see cref="IconLoadException.Value"/> contains the <see cref="BitmapSource.PixelHeight"/> of the image.
         /// </summary>
         InvalidBmpHeightOdd = 0x1204,
         /// <summary>

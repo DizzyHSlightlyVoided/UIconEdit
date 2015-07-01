@@ -31,9 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -42,10 +39,11 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-using nQuant;
-
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
-using Point = System.Windows.Point;
+using BitmapData = System.Drawing.Imaging.BitmapData;
+using DBitmap = System.Drawing.Bitmap;
+using DPixelFormat = System.Drawing.Imaging.PixelFormat;
+using DRectangle = System.Drawing.Rectangle;
+using ImageLockMode = System.Drawing.Imaging.ImageLockMode;
 
 namespace UIconEdit
 {
@@ -316,88 +314,7 @@ namespace UIconEdit
             }
         }
 
-        #region DrawInterpolationMode
-        /// <summary>
-        /// The dependency property for the <see cref="DrawInterpolationMode"/> property.
-        /// </summary>
-        public static readonly DependencyProperty DrawInterpolationModeProperty = DependencyProperty.Register("DrawInterpolationMode", typeof(InterpolationMode),
-            typeof(IconEntry), new PropertyMetadata(InterpolationMode.Default), DrawInterpolationModeValidate);
-
-        private static bool DrawInterpolationModeValidate(object value)
-        {
-            switch ((InterpolationMode)value)
-            {
-                case InterpolationMode.Bicubic:
-                case InterpolationMode.Bilinear:
-                case InterpolationMode.Default:
-                case InterpolationMode.High:
-                case InterpolationMode.HighQualityBicubic:
-                case InterpolationMode.HighQualityBilinear:
-                case InterpolationMode.Low:
-                case InterpolationMode.NearestNeighbor:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Gets and sets the interpolation mode used by graphics objects when scaling.
-        /// </summary>
-        /// <exception cref="ArgumentException">
-        /// In a set operation, the specified value is not a valid <see cref="InterpolationMode"/> value.
-        /// </exception>
-        public InterpolationMode DrawInterpolationMode
-        {
-            get { return (InterpolationMode)GetValue(DrawInterpolationModeProperty); }
-            set { SetValue(DrawInterpolationModeProperty, value); }
-        }
-        #endregion
-
-        #region DrawPixelOffsetMode
-        /// <summary>
-        /// The dependency property for the <see cref="DrawPixelOffsetMode"/> property.
-        /// </summary>
-        public static DependencyProperty DrawPixelOffsetModeProperty = DependencyProperty.Register("DrawPixelOffsetMode", typeof(PixelOffsetMode), typeof(IconEntry),
-            new PropertyMetadata(PixelOffsetMode.Default), DrawPixelOffsetModeValidate);
-
-        private static bool DrawPixelOffsetModeValidate(object value)
-        {
-            switch ((PixelOffsetMode)value)
-            {
-                case PixelOffsetMode.Default:
-                case PixelOffsetMode.Half:
-                case PixelOffsetMode.HighQuality:
-                case PixelOffsetMode.HighSpeed:
-                case PixelOffsetMode.None:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Gets and sets the pixel offset mode used by graphics objects when rescaling the image.
-        /// </summary>
-        /// <exception cref="ArgumentException">
-        /// In a set operation, the specified value is not a valid <see cref="PixelOffsetMode"/> value.
-        /// </exception>
-        public PixelOffsetMode DrawPixelOffsetMode
-        {
-            get { return (PixelOffsetMode)GetValue(DrawPixelOffsetModeProperty); }
-            set { SetValue(DrawPixelOffsetModeProperty, value); }
-        }
-        #endregion
-
         internal IconFileBase File;
-
-        private Graphics GraphicsFromImage(Bitmap image)
-        {
-            Graphics g = Graphics.FromImage(image);
-            g.InterpolationMode = DrawInterpolationMode;
-            g.PixelOffsetMode = DrawPixelOffsetMode;
-            return g;
-        }
 
         private static readonly Dictionary<string, DependencyPropertyKey> propertyKeys =
             typeof(IconEntry).GetFields(BindingFlags.Static | BindingFlags.NonPublic).Where(i => i.FieldType == typeof(DependencyPropertyKey))
@@ -431,168 +348,213 @@ namespace UIconEdit
             return copy;
         }
 
-        internal unsafe Bitmap GetQuantized(bool isPng, out Bitmap alphaMask)
+        private static BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.Black, Colors.White });
+
+        internal WriteableBitmap GetQuantized(bool isPng, out BitmapSource alphaMask)
         {
-            const PixelFormat formatFull = PixelFormat.Format32bppArgb, formatAlpha = PixelFormat.Format1bppIndexed;
+            uint[] pixels;
 
-            Bitmap fullColor = new Bitmap(_width, _height, formatFull);
-
-            var image = BaseImage;
-
-            using (Bitmap smallBmp = new Bitmap(image.PixelWidth, image.PixelHeight, formatFull))
             {
+                var image = BaseImage;
+                pixels = new uint[_width * _height];
+                BitmapSource copier;
                 FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
-
-                BitmapData smallData = smallBmp.LockBits(new Rectangle(0, 0, smallBmp.Width, smallBmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-                formatBmp.CopyPixels(new Int32Rect(0, 0, smallData.Width, smallData.Height), smallData.Scan0,
-                    Math.Abs(smallData.Height * smallData.Stride), smallData.Stride);
-
-                smallBmp.UnlockBits(smallData);
-
-                using (Graphics g = GraphicsFromImage(fullColor))
-                    g.DrawImage(smallBmp, 0, 0, _width, _height);
+                if (formatBmp.PixelWidth == _width && formatBmp.PixelHeight == _height)
+                    copier = formatBmp;
+                else
+                {
+                    TransformedBitmap transBmp = new TransformedBitmap(formatBmp, new ScaleTransform((double)_width / formatBmp.PixelWidth,
+                        (double)_height / formatBmp.PixelHeight));
+                    copier = transBmp;
+                }
+                copier.CopyPixels(pixels, _width * sizeof(uint), 0);
             }
-            Rectangle fullRect = new Rectangle(0, 0, _width, _height);
             const uint opaqueAlpha = 0xFF000000u;
 
             byte _alphaThreshold = AlphaThreshold;
 
-            using (Bitmap alphaTemp = new Bitmap(_width, _height, formatFull))
+            if (isPng) alphaMask = null;
+            else
             {
-                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadOnly, formatFull);
-                BitmapData alphaData = alphaTemp.LockBits(fullRect, ImageLockMode.WriteOnly, formatFull);
-                int offWidth = fullRect.Width / 8;
+                uint[] alphaPixels = new uint[pixels.Length];
 
-                for (int y = 0; y < _height; y++)
+                for (int i = 0; i < pixels.Length; i++)
                 {
-                    uint* pFull = (uint*)(fullData.Scan0 + (y * fullData.Stride));
-                    uint* pAlpha = (uint*)(alphaData.Scan0 + (y * alphaData.Stride));
-
-                    for (int x = 0; x < _width; x++)
-                    {
-                        uint value = pFull[x] >> 24;
-                        if (value < _alphaThreshold)
-                            pAlpha[x] = uint.MaxValue;
-                        else
-                            pAlpha[x] = opaqueAlpha;
-                    }
+                    uint curVal = pixels[i] >> 24;
+                    if (curVal < _alphaThreshold)
+                        alphaPixels[i] = uint.MaxValue;
+                    else
+                        alphaPixels[i] = opaqueAlpha;
                 }
-                fullColor.UnlockBits(fullData);
-                alphaTemp.UnlockBits(alphaData);
 
-                alphaMask = alphaTemp.Clone(fullRect, formatAlpha);
+                alphaMask = new FormatConvertedBitmap(GetBitmap(_width, _height, alphaPixels), PixelFormats.Indexed1, AlphaPalette, 0);
             }
 
             if (_depth == BitDepth.Depth32BitsPerPixel)
-                return fullColor;
+                return GetBitmap(_width, _height, pixels);
 
-            BitmapData bmpData = fullColor.LockBits(fullRect, ImageLockMode.ReadWrite, formatFull);
-
-            for (int y = 0; y < _height; y++)
+            for (int i = 0; i < pixels.Length; i++)
             {
-                uint* pFull = (uint*)(bmpData.Scan0 + (y * bmpData.Stride));
-
-                for (int x = 0; x < _width; x++)
-                {
-                    uint value = pFull[x] >> 24;
-                    if (value < _alphaThreshold)
-                        pFull[x] = isPng ? (pFull[x] & ~opaqueAlpha) : opaqueAlpha;
-                    else
-                        pFull[x] |= opaqueAlpha;
-                }
+                uint value = pixels[i] >> 24;
+                if (value < _alphaThreshold)
+                    pixels[i] = isPng ? (pixels[i] & ~opaqueAlpha) : opaqueAlpha;
+                else
+                    pixels[i] |= opaqueAlpha;
             }
 
-            fullColor.UnlockBits(bmpData);
-
-            if (_depth == BitDepth.Depth24BitsPerPixel)
-            {
-                if (isPng)
-                    return fullColor;
-
-                Bitmap full24 = new Bitmap(_width, _height, PixelFormat.Format24bppRgb);
-                using (Graphics g = GraphicsFromImage(full24))
-                    g.DrawImage(fullColor, 0, 0, _width, _height);
-
-                fullColor.Dispose();
-                return full24;
-            }
-
-            int paletteCount;
+            DPixelFormat pFormat;
+            ushort paletteCount;
             switch (_depth)
             {
+                case BitDepth.Depth24BitsPerPixel:
+                    if (isPng) return GetBitmap(_width, _height, pixels);
+                    return GetBitmap(_width, _height, pixels, DPixelFormat.Format24bppRgb);
                 case BitDepth.Depth2Color:
                     paletteCount = 2;
+                    pFormat = isPng ? DPixelFormat.Format8bppIndexed : DPixelFormat.Format1bppIndexed;
                     break;
                 case BitDepth.Depth16Color:
                     paletteCount = 16;
+                    pFormat = isPng ? DPixelFormat.Format8bppIndexed : DPixelFormat.Format4bppIndexed;
                     break;
-                default:
+                default: //Depth256Color
                     paletteCount = 256;
+                    pFormat = DPixelFormat.Format8bppIndexed;
                     break;
             }
 
-            WuQuantizer quant = new WuQuantizer();
+            WriteableBitmap quantized = GetBitmap(_width, _height, pixels, pFormat, paletteCount);
 
-            Bitmap quantized = (Bitmap)quant.QuantizeImage(fullColor, 10, 70, ref paletteCount);
-            const PixelFormat format8 = PixelFormat.Format8bppIndexed;
+            if (!isPng) return quantized;
 
-            if (isPng)
+            byte[] quantBytes = new byte[pixels.Length];
+            quantized.CopyPixels(quantBytes, _width, 0);
+
+            for (int i = 0; i < pixels.Length; i++)
             {
-                BitmapData quantData = quantized.LockBits(fullRect, ImageLockMode.ReadOnly, format8);
-                BitmapData fullData = fullColor.LockBits(fullRect, ImageLockMode.ReadWrite, formatFull);
+                Color curColor = quantized.Palette.Colors[quantBytes[i]];
 
-                for (int y = 0; y < _height; y++)
-                {
-                    byte* pQuant = (byte*)(quantData.Scan0 + (y * quantData.Stride));
-                    uint* pData = (uint*)(fullData.Scan0 + (y * fullData.Stride));
+                uint bgra = curColor.B | ((uint)curColor.G << 8) | ((uint)curColor.R << 16);
 
-                    for (int x = 0; x < _width; x++)
-                        pData[x] = (pData[x] & opaqueAlpha) | (unchecked((uint)quantized.Palette.Entries[pQuant[x]].ToArgb()) & ~opaqueAlpha);
-                }
-                quantized.UnlockBits(quantData);
-                fullColor.UnlockBits(fullData);
-                return fullColor;
+                pixels[i] = (pixels[i] & opaqueAlpha) | bgra;
             }
 
-            fullColor.Dispose();
+            return GetBitmap(_width, _height, pixels);
+        }
 
-            if (_depth == BitDepth.Depth256Color)
-                return quantized;
-
-            Bitmap quant2;
-
-            BitmapData quant256data = quantized.LockBits(fullRect, ImageLockMode.ReadOnly, format8);
-
-            if (_depth == BitDepth.Depth2Color)
+        internal unsafe WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, uint[] pixels, DPixelFormat format, ushort maxColors)
+        {
+            var fullRect = new DRectangle(0, 0, pixelWidth, pixelHeight);
+            DBitmap resultBmp;
             {
-                quant2 = quantized.Clone(fullRect, PixelFormat.Format1bppIndexed);
-            }
-            else
-            {
-                const PixelFormat format4 = PixelFormat.Format4bppIndexed;
-                quant2 = new Bitmap(_width, _height, format4);
-                var palette = quant2.Palette;
-                for (int i = 0; i < paletteCount; i++)
-                    palette.Entries[i] = quantized.Palette.Entries[i];
-                quant2.Palette = palette;
+                DBitmap baseBmp = new DBitmap(pixelWidth, pixelHeight, DPixelFormat.Format32bppArgb);
 
-                BitmapData quant16data = quant2.LockBits(fullRect, ImageLockMode.ReadOnly, format4);
+                BitmapData bData = baseBmp.LockBits(fullRect, ImageLockMode.WriteOnly, DPixelFormat.Format32bppArgb);
 
-                for (int y = 0; y < _height; y++)
+                uint* pData = (uint*)bData.Scan0;
+
+                for (int i = 0; i < pixels.Length; i++)
+                    pData[i] = pixels[i];
+
+                baseBmp.UnlockBits(bData);
+
+                if (maxColors > 256)
                 {
-                    byte* p256 = (byte*)(quant256data.Scan0 + (quant256data.Stride * y));
-                    byte* p16 = (byte*)(quant16data.Scan0 + (quant16data.Stride * y));
-
-                    for (int x = 0; x < quant16data.Stride; x++)
+                    if (format == DPixelFormat.Format32bppArgb)
+                        resultBmp = baseBmp;
+                    else
                     {
-                        int x2 = x * 2;
-                        p16[x] = (byte)((p256[x2] << 4) | p256[x2 + 1]);
+                        resultBmp = baseBmp.Clone(fullRect, format);
+                        baseBmp.Dispose();
                     }
                 }
+                else
+                {
+                    nQuant.WuQuantizer quant = new nQuant.WuQuantizer();
+                    resultBmp = (DBitmap)quant.QuantizeImage(baseBmp, 0, 0, maxColors);
+                    baseBmp.Dispose();
+                }
             }
-            quantized.Dispose();
-            return quant2;
+
+            BitmapPalette palette = null;
+            if (resultBmp.Palette != null && resultBmp.Palette.Entries.Length != 0)
+            {
+                var palCollection = resultBmp.Palette.Entries.Select(c => Color.FromArgb(c.A, c.R, c.G, c.B));
+
+                switch (format)
+                {
+                    case DPixelFormat.Format32bppArgb:
+                    case DPixelFormat.Format24bppRgb:
+                    case DPixelFormat.Format8bppIndexed:
+                        break;
+                    default:
+                        palCollection = palCollection.Take(maxColors);
+                        break;
+                }
+
+                palette = new BitmapPalette(palCollection.ToArray());
+            }
+
+            PixelFormat rFormat;
+
+            switch (resultBmp.PixelFormat)
+            {
+                default: //DPixelFormat.Format32bppArgb:
+                    rFormat = PixelFormats.Bgra32;
+                    break;
+                case DPixelFormat.Format24bppRgb:
+                    rFormat = PixelFormats.Bgr24;
+                    break;
+                case DPixelFormat.Format8bppIndexed:
+                    rFormat = PixelFormats.Indexed8;
+                    break;
+                case DPixelFormat.Format4bppIndexed:
+                    rFormat = PixelFormats.Indexed4;
+                    break;
+                case DPixelFormat.Format1bppIndexed:
+                    rFormat = PixelFormats.Indexed1;
+                    break;
+            }
+
+            BitmapData rData = resultBmp.LockBits(fullRect, ImageLockMode.ReadOnly, resultBmp.PixelFormat);
+
+            BitmapSource source = BitmapSource.Create(pixelWidth, pixelHeight, 0, 0, rFormat, palette, rData.Scan0, rData.Stride * rData.Height, rData.Stride);
+
+            switch (format)
+            {
+                default: //DPixelFormat.Format32bppArgb:
+                    rFormat = PixelFormats.Bgra32;
+                    break;
+                case DPixelFormat.Format24bppRgb:
+                    rFormat = PixelFormats.Bgr24;
+                    break;
+                case DPixelFormat.Format8bppIndexed:
+                    rFormat = PixelFormats.Indexed8;
+                    break;
+                case DPixelFormat.Format4bppIndexed:
+                    rFormat = PixelFormats.Indexed4;
+                    break;
+                case DPixelFormat.Format1bppIndexed:
+                    rFormat = PixelFormats.Indexed1;
+                    break;
+            }
+
+            WriteableBitmap result = new WriteableBitmap(new FormatConvertedBitmap(source, rFormat, source.Palette, 0));
+
+            resultBmp.UnlockBits(rData);
+            resultBmp.Dispose();
+
+            return result;
+        }
+
+        internal WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, uint[] pixels, DPixelFormat format)
+        {
+            return GetBitmap(pixelWidth, pixelHeight, pixels, format, ushort.MaxValue);
+        }
+
+        internal WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, uint[] pixels)
+        {
+            return GetBitmap(pixelWidth, pixelHeight, pixels, DPixelFormat.Format32bppArgb, ushort.MaxValue);
         }
 
         /// <summary>

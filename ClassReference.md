@@ -773,7 +773,7 @@ Code 0x1203: the width or height of a BMP entry does not match the width or heig
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpHeightOdd = 4612`
 
-Code 0x1204: the height of a BMP entry is an odd number, indicating that there is no AND (transparency) mask. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the [`Image.Height`](https://msdn.microsoft.com/en-us/library/system.drawing.image.height.aspx) of the image.
+Code 0x1204: the height of a BMP entry is an odd number, indicating that there is no AND (transparency) mask. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the [`BitmapSource.PixelHeight`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.pixelheight.aspx) of the image.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.BmpBitDepthMismatch = 4613`
@@ -1656,41 +1656,28 @@ Gets the number of bits per pixel specified by [`IconEntry.BitDepth`](#property-
 Gets the maximum color count specified by [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-).
 
 --------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty DrawInterpolationModeProperty`
-
-The dependency property for the [`IconEntry.DrawInterpolationMode`](#property-public-systemdrawingdrawing2dinterpolationmode-drawinterpolationmode--get-set-) property.
-
---------------------------------------------------
-## Property: `public System.Drawing.Drawing2D.InterpolationMode DrawInterpolationMode { get; set; }`
-
-Gets and sets the interpolation mode used by graphics objects when scaling.
-
-### Exceptions
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-In a set operation, the specified value is not a valid [`InterpolationMode`](https://msdn.microsoft.com/en-us/library/system.drawing.drawing2d.interpolationmode.aspx) value.
-
---------------------------------------------------
-## Field: `public static System.Windows.DependencyProperty DrawPixelOffsetModeProperty`
-
-The dependency property for the [`IconEntry.DrawPixelOffsetMode`](#property-public-systemdrawingdrawing2dpixeloffsetmode-drawpixeloffsetmode--get-set-) property.
-
---------------------------------------------------
-## Property: `public System.Drawing.Drawing2D.PixelOffsetMode DrawPixelOffsetMode { get; set; }`
-
-Gets and sets the pixel offset mode used by graphics objects when rescaling the image.
-
-### Exceptions
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-In a set operation, the specified value is not a valid [`PixelOffsetMode`](https://msdn.microsoft.com/en-us/library/system.drawing.drawing2d.pixeloffsetmode.aspx) value.
-
---------------------------------------------------
 ## Method: `public UIconEdit.IconEntry Clone()`
 
 Returns a duplicate of the current instance.
 
 **Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A duplicate of the current instance, with its own clone of [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-).
+
+
+--------------------------------------------------
+## Method: `public System.Windows.Media.Imaging.BitmapSource GetQuantizedPng()`
+
+Returns color quantization of the current instance as it would appear for a PNG entry.
+
+**Returns:** Type [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx): A [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx) containing the quantized image.
+
+
+--------------------------------------------------
+## Method: `IconEntry.GetQuantized(out System.Windows.Media.Imaging.BitmapSource alphaMask)`
+
+Returns color quantization of the current instance as it would appear for a BMP entry.
+* `alphaMask`: When this method returns, contains the quantized alpha mask generated using [`IconEntry.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-). This parameter is passed uninitialized.
+
+**Returns:** A [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx) containing the quantized image without the alpha mask.
 
 
 --------------------------------------------------
@@ -1754,7 +1741,7 @@ else Console.WriteLine("Failed");
 
 
 --------------------------------------------------
-## Method: `IconEntry.TryParseBitDepth(System.String value, UIconEdit.BitDepth@ result)`
+## Method: `IconEntry.TryParseBitDepth(System.String value, out UIconEdit.BitDepth result)`
 
 Parses the specified string as a [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 * `value`: The value to parse.

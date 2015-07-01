@@ -348,6 +348,27 @@ namespace UIconEdit
             return copy;
         }
 
+        /// <summary>
+        /// Returns color quantization of the current instance as it would appear for a PNG entry.
+        /// </summary>
+        /// <returns>A <see cref="BitmapSource"/> containing the quantized image.</returns>
+        public BitmapSource GetQuantizedPng()
+        {
+            BitmapSource alphaMask;
+            return GetQuantized(true, out alphaMask);
+        }
+
+        /// <summary>
+        /// Returns color quantization of the current instance as it would appear for a BMP entry.
+        /// </summary>
+        /// <param name="alphaMask">When this method returns, contains the quantized alpha mask generated using <see cref="AlphaThreshold"/>.
+        /// This parameter is passed uninitialized.</param>
+        /// <returns>A <see cref="BitmapSource"/> containing the quantized image without the alpha mask.</returns>
+        public BitmapSource GetQuantized(out BitmapSource alphaMask)
+        {
+            return GetQuantized(false, out alphaMask);
+        }
+
         private static BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.Black, Colors.White });
 
         internal WriteableBitmap GetQuantized(bool isPng, out BitmapSource alphaMask)

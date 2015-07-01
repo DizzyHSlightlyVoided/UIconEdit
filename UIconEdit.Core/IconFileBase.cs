@@ -788,6 +788,7 @@ namespace UIconEdit
             Debug.WriteLine("Writing type {0} - width:{1}, height:{2}, bit depth:{3}, computed bits per pixel:{4}, length:{5}",
                 isPng ? "PNG" : "BMP", entry.Width, entry.Height, entry.BitDepth, GetImgY(entry), writeStream.Length);
 
+            quantized.Dispose();
             if (alphaMask != null) alphaMask.Dispose();
 
             length = (uint)writeStream.Length;

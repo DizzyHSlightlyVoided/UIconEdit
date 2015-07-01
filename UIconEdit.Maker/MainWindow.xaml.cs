@@ -34,6 +34,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
+using Microsoft.Win32;
+
 namespace UIconEdit.Maker
 {
     /// <summary>
@@ -45,20 +47,16 @@ namespace UIconEdit.Maker
         {
             InitializeComponent();
 
-            _settings = new SettingsFile();
-            try
-            {
-                Mouse.OverrideCursor = Cursors.Wait;
-                _settings.Load();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(this, _settings.LanguageFile.SettingsLoadError, _settings.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
-            }
+            _settings = new SettingsFile(this);
+
+            Mouse.OverrideCursor = Cursors.Wait;
+            _settings.Load();
+
+            if (_settings.LanguageName == "")
+                _settings.LanguageName = LanguageFile.DefaultShortName;
+
+            _settings.Save();
+            Mouse.OverrideCursor = null;
         }
 
         private SettingsFile _settings;
@@ -71,10 +69,23 @@ namespace UIconEdit.Maker
             args = new ArraySegment<string>(args, 1, args.Length - 1).ToArray();
 
             if (args.Length == 0) return;
+            _load(args[0]);
+        }
+
+        private void _load(string path)
+        {
             Mouse.OverrideCursor = Cursors.Wait;
             try
             {
-                LoadedFile = IconFileBase.Load(args[0]);
+                LoadedFile = IconFileBase.Load(path, _errorHandler);
+            }
+            catch (IconLoadException e)
+            {
+                _errorHandler(e);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(this, string.Format(_settings.LanguageFile.ImageLoadError, path), _settings.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -82,7 +93,13 @@ namespace UIconEdit.Maker
             }
         }
 
-        #region LoadedFileProperty
+        private void _errorHandler(IconLoadException e)
+        {
+            //TODO: List error codes.
+            MessageBox.Show(this, _settings.LanguageFile.ImageLoadError, _settings.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        #region LoadedFile
         public static DependencyProperty LoadedFileProperty = DependencyProperty.Register("LoadedFile", typeof(IconFileBase), typeof(MainWindow),
             new PropertyMetadata(null, LoadedFileChanged));
 
@@ -90,9 +107,7 @@ namespace UIconEdit.Maker
         {
             d.SetValue(IsFileLoadedPropertyKey, e.NewValue != null);
         }
-        #endregion
 
-        #region LoadedFile
         /// <summary>
         /// Gets and sets the currently-loaded icon file.
         /// </summary>
@@ -101,12 +116,29 @@ namespace UIconEdit.Maker
             get { return (IconFileBase)GetValue(LoadedFileProperty); }
             set { SetValue(LoadedFileProperty, value); }
         }
+        #endregion
 
+        #region IsFileLoaded
         private static readonly DependencyPropertyKey IsFileLoadedPropertyKey = DependencyProperty.RegisterReadOnly("IsFileLoaded", typeof(bool), typeof(MainWindow),
             new PropertyMetadata());
         public static readonly DependencyProperty IsFileLoadedProperty = IsFileLoadedPropertyKey.DependencyProperty;
 
         public bool IsFileLoaded { get { return (bool)GetValue(IsFileLoadedProperty); } }
         #endregion
+
+        private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+            e.Handled = true;
+        }
+
+        private void Open_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+        }
+
+        private void window_Closed(object sender, EventArgs e)
+        {
+        }
     }
 }

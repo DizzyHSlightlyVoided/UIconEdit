@@ -4,7 +4,8 @@
 
   "Error": "Error",
   "LanguageLoadError": "An error occurred while attempting to load the language \"{0}\".",
-  "SettingsLoadError": "An error occurred while attempting to load the settings file.",
+  "SettingsSaveError": "An error occurred while attempting to save the settings file.",
+  "ImageLoadError": "An error occurred while attempting to load the file \"{0}\".",
 
   "BitsPerPixelFormat": "{0}BPP",
   "SizeFormat": "{0}x{1}"

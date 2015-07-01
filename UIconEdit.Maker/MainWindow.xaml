@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UIconEdit"
         mc:Ignorable="d" x:Name="window"
-        Title="UIconEdit" Height="480" Width="640" Loaded="window_Loaded">
+        Title="UIconEdit" Height="480" Width="640" Loaded="window_Loaded" Closed="window_Closed">
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Open" CanExecute="CommandBinding_CanExecute" Executed="Open_Executed"/>
+    </Window.CommandBindings>
     <Window.Resources>
         <Style x:Key="imgEnabled" TargetType="Image">
             <Style.Triggers>

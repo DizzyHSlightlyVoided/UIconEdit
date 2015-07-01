@@ -41,7 +41,7 @@ using UIconEdit.Maker.Properties;
 
 namespace UIconEdit.Maker
 {
-    internal class LanguageFile
+    internal class LanguageFile : IEquatable<LanguageFile>
     {
         private static LanguageFile _default = new LanguageFile();
         /// <summary>
@@ -51,29 +51,38 @@ namespace UIconEdit.Maker
 
         private Dictionary<string, string> _text;
 
+        private static Dictionary<string, Dictionary<string, string>> _cache = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
+
         private LanguageFile()
         {
+            _shortName = string.Empty;
             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Resources.en_US)))
                 Load(ms, true);
-            _shortName = string.Empty;
+            _textRO = new ReadOnlyDictionary<string, string>(_text);
         }
 
         /// <summary>
         /// Creates a new instance with the specified language name.
         /// </summary>
         /// <param name="langName">The short language name to load.</param>
-        public LanguageFile(string langName)
+        /// <param name="useCache"><c>true</c> to use the cache; <c>false</c> to load from the file no matter what.</param>
+        public LanguageFile(string langName, bool useCache)
         {
-            _text = new Dictionary<string, string>(_default._text, StringComparer.OrdinalIgnoreCase);
+            langName = langName.Trim();
             int dex = langName.IndexOf('-');
-            if (dex > 0)
+            if (!useCache || !_cache.TryGetValue(langName, out _text))
             {
-                string shortPath = GetPath(langName.Substring(0, dex));
-                if (File.Exists(shortPath))
-                    Load(shortPath);
+                if (dex > 0)
+                {
+                    string shortPath = GetPath(langName.Substring(0, dex));
+                    if (File.Exists(shortPath))
+                        Load(shortPath);
+                }
+                Load(GetPath(langName));
+                _shortName = langName;
+                _cache[langName] = _text;
             }
-            Load(GetPath(langName));
-            _shortName = langName;
+            _textRO = new ReadOnlyDictionary<string, string>(_text);
         }
 
         private static string GetPath(string langName)
@@ -95,21 +104,49 @@ namespace UIconEdit.Maker
             if (initial)
             {
                 _text = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                foreach (XElement curNode in xml.Elements().FirstOrDefault().Elements())
+                foreach (XElement curNode in xml.Root.Elements())
                     _text.Add(curNode.Name.LocalName, curNode.Value);
             }
             else
             {
                 if (_text == null) _text = new Dictionary<string, string>(_default._text, StringComparer.OrdinalIgnoreCase);
-                foreach (XElement curNode in xml.Elements().FirstOrDefault().Elements())
+                foreach (XElement curNode in xml.Root.Elements())
                 {
-                    if (curNode.HasElements) throw new InvalidDataException();
+                    if (curNode.Attribute("type").Value != "string") throw new InvalidDataException();
 
                     if (_text.ContainsKey(curNode.Name.LocalName))
                         _text[curNode.Name.LocalName] = curNode.Value;
                 }
             }
-            _textRO = new ReadOnlyDictionary<string, string>(_text);
+        }
+
+        public bool Equals(LanguageFile other)
+        {
+            return other != null && other.ShortName.Equals(ShortName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as LanguageFile);
+        }
+
+        public override int GetHashCode()
+        {
+            if (_shortName == null) return 0;
+            return _shortName.ToUpper().GetHashCode();
+        }
+
+        public static bool operator ==(LanguageFile l1, LanguageFile l2)
+        {
+            if (ReferenceEquals(l1, l2)) return true;
+            if (ReferenceEquals(l1, null) ^ ReferenceEquals(l2, null)) return false;
+
+            return l1.Equals(l2);
+        }
+
+        public static bool operator !=(LanguageFile l1, LanguageFile l2)
+        {
+            return !(l1 == l2);
         }
 
         private ReadOnlyDictionary<string, string> _textRO;
@@ -121,12 +158,15 @@ namespace UIconEdit.Maker
         private string _shortName;
         public string ShortName { get { return _shortName; } }
 
+        public const string DefaultShortName = "en-US";
+
         public string LangName { get { return _text["LangName"]; } }
         public string Title { get { return _text["Title"]; } }
 
         public string Error { get { return _text["Error"]; } }
         public string LanguageLoadError { get { return _text["LanguageLoadError"]; } }
-        public string SettingsLoadError { get { return _text["SettingsLoadError"]; } }
+        public string SettingsSaveError { get { return _text["SettingsSaveError"]; } }
+        public string ImageLoadError { get { return _text["ImageLoadError"]; } }
 
         public string BitsPerPixelFormat { get { return _text["BitsPerPixelFormat"]; } }
         public string SizeFormat { get { return _text["SizeFormat"]; } }

@@ -30,6 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -45,38 +47,66 @@ namespace UIconEdit.Maker
         private static string SettingsPath =
             Path.Combine(Path.GetDirectoryName(typeof(SettingsFile).Assembly.Location), "settings.json");
 
+        public SettingsFile(MainWindow owner)
+        {
+            _owner = owner;
+        }
+
         public void Load()
         {
-            if (!File.Exists(SettingsPath))
-                return;
+            try
+            {
+                if (!File.Exists(SettingsPath))
+                    return;
 
-            XDocument doc;
-            using (FileStream fs = File.OpenRead(SettingsPath))
-            using (var reader = JsonReaderWriterFactory.CreateJsonReader(fs, new XmlDictionaryReaderQuotas()))
-                doc = XDocument.Load(reader);
+                XDocument xml;
+                using (FileStream fs = File.OpenRead(SettingsPath))
+                using (var reader = JsonReaderWriterFactory.CreateJsonReader(fs, new XmlDictionaryReaderQuotas()))
+                    xml = XDocument.Load(reader);
 
-            var langName = doc.Descendants(LanguageNameName).FirstOrDefault();
-            if (langName != null)
-                LanguageName = langName.Value;
-            else
-                LanguageName = "en-US";
+                XElement root = xml.Root;
 
-            _loaded = true;
-            Save();
+                var langName = root.Elements(LanguageNameName).FirstOrDefault();
+                if (langName != null)
+                    LanguageName = langName.Value;
+                else
+                    LanguageName = "en-US";
+            }
+            finally
+            {
+                _loaded = true;
+            }
         }
+
+        private MainWindow _owner;
+        [Bindable(true, BindingDirection.OneWay)]
+        public MainWindow Owner { get { return _owner; } }
 
         private bool _loaded;
 
         public void Save()
         {
             if (!_loaded) return;
-
-            using (FileStream fs = File.Open(SettingsPath, FileMode.Create))
-            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(fs, Encoding.UTF8))
+            try
             {
-                writer.WriteStartDocument();
-                writer.WriteElementString(LanguageNameName, LanguageName);
-                writer.WriteEndDocument();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, false))
+                    {
+                        writer.WriteStartDocument();
+                        writer.WriteStartElement("root");
+                        writer.WriteAttributeString("type", "object");
+                        writer.WriteElementString(LanguageNameName, LanguageName);
+                        writer.WriteEndDocument();
+                    }
+                    ms.Seek(0, SeekOrigin.Begin);
+                    using (FileStream fs = File.Open(SettingsPath, FileMode.Create))
+                        ms.CopyTo(fs);
+                }
+            }
+            catch
+            {
+                MessageBox.Show(_owner, LanguageFile.SettingsSaveError, LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -92,29 +122,22 @@ namespace UIconEdit.Maker
 
         private static void LanguageNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (e.OldValue != null && e.NewValue == null)
-            {
-                d.SetValue(LanguageNameProperty, e.OldValue);
-                throw new ArgumentNullException();
-            }
-
             SettingsFile s = (SettingsFile)d;
-            if (s._loaded && !s._dirty.ContainsKey(e.Property))
-                s._dirty.Add(e.Property, e.OldValue);
 
             try
             {
-                if (e.NewValue == null) return;
                 if ((string)e.NewValue == string.Empty)
-                    d.SetValue(LanguageFilePropertyKey, LanguageFile.Default);
+                    s.LanguageFile = LanguageFile.Default;
                 else
-                    d.SetValue(LanguageFilePropertyKey, new LanguageFile((string)e.NewValue));
+                    s.LanguageFile = new LanguageFile((string)e.NewValue, true);
 
+                if (s._loaded && !s._dirty.ContainsKey(e.Property))
+                    s._dirty.Add(e.Property, e.OldValue);
             }
             catch
             {
                 d.SetValue(LanguageNameProperty, e.OldValue);
-                throw;
+                MessageBox.Show(s._owner, string.Format(s.LanguageFile.LanguageLoadError, e.NewValue), s.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -127,7 +150,7 @@ namespace UIconEdit.Maker
 
         #region LanguageFile
         const string LanguageFileName = "LanguageFile";
-        private static readonly DependencyPropertyKey LanguageFilePropertyKey = DependencyProperty.RegisterReadOnly(LanguageFileName, typeof(LanguageFile),
+        public static readonly DependencyProperty LanguageFileProperty = DependencyProperty.Register(LanguageFileName, typeof(LanguageFile),
             typeof(SettingsFile), new PropertyMetadata(LanguageFile.Default, LanguageFileChanged));
 
         private static void LanguageFileChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -135,12 +158,14 @@ namespace UIconEdit.Maker
             if (e.NewValue == null)
                 d.SetValue(LanguageNameProperty, null);
             else
-                d.SetValue(LanguageNameProperty, ((LanguageFile)e.NewValue).LangName);
+                d.SetValue(LanguageNameProperty, ((LanguageFile)e.NewValue).ShortName);
         }
 
-        public static readonly DependencyProperty LanguageFileProperty = LanguageFilePropertyKey.DependencyProperty;
-
-        public LanguageFile LanguageFile { get { return (LanguageFile)GetValue(LanguageFileProperty); } }
+        public LanguageFile LanguageFile
+        {
+            get { return (LanguageFile)GetValue(LanguageFileProperty); }
+            set { SetValue(LanguageFileProperty, value); }
+        }
         #endregion
 
         private Dictionary<DependencyProperty, object> _dirty = new Dictionary<DependencyProperty, object>();

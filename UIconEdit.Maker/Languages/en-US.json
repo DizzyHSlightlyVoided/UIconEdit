@@ -6,9 +6,13 @@
   "LanguageLoadError": "An error occurred while attempting to load the language \"{0}\".",
   "SettingsSaveError": "An error occurred while attempting to save the settings file.",
   "ImageLoadError": "An error occurred while attempting to load the file \"{0}\".",
+  "ImageSaveError": "Could not save file \"{0}\".",
 
   "MenuFile": "_File",
   "MenuFileOpen": "_Open",
+  "MenuFileSave": "_Save",
+  "MenuFileSaveAs": "Save _As",
+  "MenuFileQuit": "E_xit",
 
   "BitsPerPixelFormat": "{0}BPP", //{0} = number of bits per pixel
   "SizeFormat": "{0}x{1}", //{0} = width, {1} = height
@@ -22,9 +26,10 @@
   "IconError1000icon": "Invalid icon entry.",
   "IconError1000cursor": "Invalid cursor entry.",
   "IconError1001": "{0}-bit images are not allowed!", //{0} = number of bits per pixel.
-  "IconError1102": "An icon frame size {0}x{1} is out of bounds!", //{0} = width, {1} = height
+  "IconError1102": "An icon frame of size {0}x{1} is out of bounds!", //{0} = width, {1} = height
 
   "TypeIco": "Icon files",
   "TypeCur": "Cursor files",
-  "TypeIcoCur": "Icon or cursor files"
+  "TypeIcoCur": "Icon or cursor files",
+  "TypeAll": "All files"
 }

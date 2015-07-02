@@ -82,12 +82,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Open-icon.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="Add.ico" />
+    <Resource Include="Delete.ico" />
     <Content Include="Languages\en-US.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Open.ico" />
+    <Resource Include="Zoom.ico" />
+    <Resource Include="Save.ico" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

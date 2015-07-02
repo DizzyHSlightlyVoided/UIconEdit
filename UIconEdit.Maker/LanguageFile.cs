@@ -166,9 +166,13 @@ namespace UIconEdit.Maker
         public string LanguageLoadError { get { return _text["LanguageLoadError"]; } }
         public string SettingsSaveError { get { return _text["SettingsSaveError"]; } }
         public string ImageLoadError { get { return _text["ImageLoadError"]; } }
+        public string ImageSaveError { get { return _text["ImageSaveError"]; } }
 
         public string MenuFile { get { return _text["MenuFile"]; } }
         public string MenuFileOpen { get { return _text["MenuFileOpen"]; } }
+        public string MenuFileSave { get { return _text["MenuFileSave"]; } }
+        public string MenuFileSaveAs { get { return _text["MenuFileSaveAs"]; } }
+        public string MenuFileQuit { get { return _text["MenuFileQuit"]; } }
 
         public string BitsPerPixelFormat { get { return _text["BitsPerPixelFormat"]; } }
         public string SizeFormat { get { return _text["SizeFormat"]; } }
@@ -176,6 +180,7 @@ namespace UIconEdit.Maker
         public string TypeIco { get { return _text["TypeIco"]; } }
         public string TypeCur { get { return _text["TypeCur"]; } }
         public string TypeIcoCur { get { return _text["TypeIcoCur"]; } }
+        public string TypeAll { get { return _text["TypeAll"]; } }
 
         public string GetErrorMessage(IconLoadException e)
         {

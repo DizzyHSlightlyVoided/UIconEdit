@@ -79,6 +79,7 @@ namespace UIconEdit.Maker
             try
             {
                 LoadedFile = IconFileBase.Load(path, _errorHandler);
+                FilePath = path;
             }
             catch (IconLoadException e)
             {
@@ -90,7 +91,6 @@ namespace UIconEdit.Maker
                     else
                         LoadedFile = new IconFile();
                 }
-                FilePath = path;
             }
             catch (Exception)
             {
@@ -136,6 +136,14 @@ namespace UIconEdit.Maker
         public bool IsFileLoaded { get { return (bool)GetValue(IsFileLoadedProperty); } }
         #endregion
 
+        #region IsModified
+        private static readonly DependencyPropertyKey IsModifiedPropertyKey = DependencyProperty.RegisterReadOnly("IsModified", typeof(bool), typeof(MainWindow),
+            new PropertyMetadata());
+        public static readonly DependencyProperty IsModifiedProperty = IsModifiedPropertyKey.DependencyProperty;
+
+        public bool IsModified { get { return (bool)GetValue(IsModifiedProperty); } }
+        #endregion
+
         #region FilePath
         public static readonly DependencyProperty FilePathProperty = DependencyProperty.Register("FilePath", typeof(string), typeof(MainWindow));
 
@@ -162,8 +170,8 @@ namespace UIconEdit.Maker
                 dialog.FileName = Path.GetFileName(filePath);
             }
 
-            dialog.Filter = string.Format("{0} (*.ico)|*.ico|{1} (*.cur)|*.cur|{2} (*.ico, *.cur)|*.ico;*.cur",
-                _settings.LanguageFile.TypeIco, _settings.LanguageFile.TypeCur, _settings.LanguageFile.TypeIcoCur);
+            dialog.Filter = string.Format("{0} (*.ico)|*.ico|{1} (*.cur)|*.cur|{2} (*.ico, *.cur)|*.ico;*.cur|{3} (*.*)|*",
+                _settings.LanguageFile.TypeIco, _settings.LanguageFile.TypeCur, _settings.LanguageFile.TypeIcoCur, _settings.LanguageFile.TypeAll);
 
             var result = dialog.ShowDialog(this);
             if (!result.HasValue || !result.Value) return;
@@ -177,6 +185,70 @@ namespace UIconEdit.Maker
         private void window_Closed(object sender, EventArgs e)
         {
             _settings.Save();
+        }
+
+        private void _save(bool saveAs)
+        {
+            IconFileBase loadedFile = LoadedFile;
+            if (loadedFile == null) return;
+            string filePath = FilePath;
+            if (saveAs)
+            {
+                SaveFileDialog dialog = new SaveFileDialog();
+                if (!string.IsNullOrWhiteSpace(filePath))
+                {
+                    dialog.InitialDirectory = Path.GetDirectoryName(filePath);
+                    dialog.FileName = Path.GetFileName(filePath);
+                }
+                dialog.Filter = string.Format("{0} (*.ico)|*.ico|{1} (*.cur)|*.cur", _settings.LanguageFile.TypeIco, _settings.LanguageFile.TypeCur);
+
+                if (loadedFile.ID == IconTypeCode.Cursor)
+                    dialog.FilterIndex = 2;
+
+                var result = dialog.ShowDialog(this);
+                if (!result.HasValue || !result.Value) return;
+
+                if (loadedFile.ID == IconTypeCode.Cursor && dialog.FilterIndex == 1)
+                    loadedFile = loadedFile.CloneAsCursorFile();
+                else if (loadedFile.ID == IconTypeCode.Icon && dialog.FilterIndex == 2)
+                    loadedFile = loadedFile.CloneAsIconFile();
+                filePath = dialog.FileName;
+            }
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                loadedFile.Save(filePath);
+                System.Threading.Thread.Sleep(250);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(this, string.Format(_settings.LanguageFile.ImageSaveError, filePath),
+                    _settings.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
+        }
+
+        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsModified && LoadedFile != null && LoadedFile.Entries.Count > 0 && LoadedFile.Entries.Count <= ushort.MaxValue;
+        }
+
+        private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            _save(string.IsNullOrWhiteSpace(FilePath));
+        }
+
+        private void SaveAs_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = LoadedFile != null && LoadedFile.Entries.Count > 0 && LoadedFile.Entries.Count <= ushort.MaxValue;
+        }
+
+        private void SaveAs_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            _save(true);
         }
     }
 }

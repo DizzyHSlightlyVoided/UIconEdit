@@ -9,7 +9,12 @@
         Height="480" Width="640" Loaded="window_Loaded" Closed="window_Closed">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open" CanExecute="CommandBinding_CanExecute" Executed="Open_Executed"/>
+        <CommandBinding Command="ApplicationCommands.Save" CanExecute="Save_CanExecute" Executed="Save_Executed"/>
+        <CommandBinding Command="ApplicationCommands.SaveAs" CanExecute="SaveAs_CanExecute" Executed="SaveAs_Executed"/>
     </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="S" Modifiers="Shift" Command="ApplicationCommands.SaveAs"/>
+    </Window.InputBindings>
     <Window.Resources>
         <Style x:Key="imgEnabled" TargetType="Image">
             <Style.Triggers>
@@ -24,16 +29,27 @@
             <MenuItem Header="{Binding SettingsFile.LanguageFile.MenuFile, ElementName=window, FallbackValue=_File}">
                 <MenuItem Command="ApplicationCommands.Open" Header="{Binding SettingsFile.LanguageFile.MenuFileOpen, ElementName=window, FallbackValue=_Open}">
                     <MenuItem.Icon>
-                        <Image Source="Open-icon.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                        <Image Source="Open.ico" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem Command="ApplicationCommands.Save" Header="{Binding SettingsFile.LanguageFile.MenuFileSave, ElementName=window, FallbackValue=_Save}">
+                    <MenuItem.Icon>
+                        <Image Source="Save.ico" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="ApplicationCommands.SaveAs" Header="{Binding SettingsFile.LanguageFile.MenuFileSaveAs, ElementName=window, FallbackValue=Save _As}"/>
             </MenuItem>
         </Menu>
         <ToolBar DockPanel.Dock="Top" Height="Auto">
             <Button Command="ApplicationCommands.Open">
-                <Image Source="Open-icon.png" Height="22" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Open.ico" Height="22" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+            </Button>
+            <Button Command="ApplicationCommands.Save">
+                <Image Source="Save.ico" Height="22" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Separator/>
+            <Image Source="Zoom.ico" Height="22" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"
+                   IsEnabled="{Binding IsFileLoaded, ElementName=window}"/>
             <ComboBox SelectedValue="100" Width="100" IsEditable="True" IsEnabled="{Binding IsFileLoaded, ElementName=window}">
                 <ComboBoxItem>2000</ComboBoxItem>
                 <ComboBoxItem>1800</ComboBoxItem>

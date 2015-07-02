@@ -152,9 +152,25 @@ An I/O error occurred.
 --------------------------------------------------
 ## Method: `public virtual UIconEdit.IconFileBase Clone()`
 
-Returns a duplicate of the current instance.
+When overridden in a derived class, returns a duplicate of the current instance.
 
 **Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) in [`IconFileBase.Entries`](#property-public-uiconediticonfilebaseentrylist-entries--get-).
+
+
+--------------------------------------------------
+## Method: `public virtual UIconEdit.IconFile CloneAsIconFile()`
+
+Returns a duplicate of the current instance as an [`IconFile`](#type-public-class-uiconediticonfile)
+
+**Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): An [`IconFile`](#type-public-class-uiconediticonfile) containing copies of every icon entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) in [`IconFileBase.Entries`](#property-public-uiconediticonfilebaseentrylist-entries--get-), and with each entry's [`IconEntry.HotspotX`](#property-public-systemuint16-hotspotx--get-set-) and [`IconEntry.HotspotY`](#property-public-systemuint16-hotspoty--get-set-) values set to 0.
+
+
+--------------------------------------------------
+## Method: `public virtual UIconEdit.CursorFile CloneAsCursorFile()`
+
+Returns a duplicate of the current instance as an [`IconFile`](#type-public-class-uiconediticonfile)
+
+**Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): An [`IconFile`](#type-public-class-uiconediticonfile) containing copies of every icon entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) in [`IconFileBase.Entries`](#property-public-uiconediticonfilebaseentrylist-entries--get-).
 
 
 --------------------------------------------------
@@ -940,349 +956,11 @@ An I/O error occurred.
 Gets the 16-bit type code for the current instance.
 
 --------------------------------------------------
-## Property: `public UIconEdit.CursorFile.EntryList Entries { get; }`
-
-Gets a collection containing all entries in the cursor file.
-
---------------------------------------------------
 ## Method: `public virtual UIconEdit.IconFileBase Clone()`
 
 Returns a duplicate of the current instance.
 
-**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every cursor entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) in [`CursorFile.Entries`](#property-public-uiconeditcursorfileentrylist-entries--get-).
-
-
---------------------------------------------------
-# Type: `class UIconEdit.CursorFile.EntryList`
-
-Represents a list of cursor entries. Entries with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) cannot be added to the list; however, there may be duplicates if a cursor loaded from an external cursor file contained them.
-
---------------------------------------------------
-## CollectionChanged`
-
-Raised when elements are added to or removed from the list.
-
---------------------------------------------------
-## PropertyChanged`
-
-Raised when a property on the current instance changes.
-
---------------------------------------------------
-## Property: `public virtual System.Int32 Count { get; }`
-
-Gets the number of entries contained in the list.
-
---------------------------------------------------
-## Property: `CursorFile.EntryList.Item(System.Int32 index)`
-
-Gets and sets the cursor entry at the specified index.
-* `index`: The cursor entry at the specified index.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-
-`index` is less than 0 or is greater than or equal to [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
-
--OR-
-
-In a set operation, the specified value is `null`.
-
-
-##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
-In a set operation, the specified value is `null` or is already associated with a different cursor file.
-
---------------------------------------------------
-## Method: `public System.Boolean SetValue(System.Int32 index, UIconEdit.CursorEntry item)`
-
-Sets the value at the specified index.
-* `index`: The index of the value to set.
-* `item`: The value to set.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list at a different index.
-
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` is less than 0 or is greater than [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
-
---------------------------------------------------
-## Method: `public System.Boolean Add(UIconEdit.CursorEntry item)`
-
-Adds the specified cursor entry to the list.
-* `item`: The cursor entry to add to the list.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list.
-
-
---------------------------------------------------
-## Method: `public System.Boolean Insert(System.Int32 index, UIconEdit.CursorEntry item)`
-
-Inserts the specified cursor entry into the list at the specified index.
-* `index`: The index at which the cursor entry will be inserted.
-* `item`: The cursor entry to add to the list.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list.
-
-
---------------------------------------------------
-## Method: `public virtual void RemoveAt(System.Int32 index)`
-
-Removes the element at the specified index.
-* `index`: The index of the cursor entry to remove.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` is less than 0 or is greater than or equal to [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
-
---------------------------------------------------
-## Method: `public virtual System.Boolean Remove(UIconEdit.CursorEntry item)`
-
-Removes the specified cursor entry from the list.
-* `item`: The cursor entry to to remove from the list.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found and successfully removed; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `public System.Boolean RemoveSimilar(UIconEdit.CursorEntry item)`
-
-Removes an element similar to the specified cursor entry from the list.
-* `item`: The cursor entry to to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `item` was successfully found and removed; `false` if no such cursor entry was found in the list.
-
-
---------------------------------------------------
-## Method: `public System.Boolean RemoveSimilar(UIconEdit.EntryKey key)`
-
-Removes a cursor entry similar to the specified value from the list.
-* `key`: The entry key to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `key` was successfully found and removed; `false` if no such cursor entry was found in the list.
-
-
---------------------------------------------------
-## Method: `public System.Boolean RemoveSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
-
-Removes a cursor entry similar to the specified values from the list.
-* `width`: The width of the cursor entry to search for.
-* `height`: The height of the cursor entry to search for.
-* `bitDepth`: The bit depth of the cursor entry to search for.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `bitDepth` was successfully found and removed;`false` if no such cursor entry was found in the list.
-
-
---------------------------------------------------
-## Method: `public virtual void CopyTo(UIconEdit.CursorEntry[] array, System.Int32 arrayIndex)`
-
-Copies all elements in the list to the specified array, starting at the specified index.
-* `array`: The array to which all elements in the list will be copied.
-* `arrayIndex`: The index in `array` at which copying begins.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`array` is `null`.
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`arrayIndex` is less than 0.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The length of `array` minus `arrayIndex` is less than [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
-
---------------------------------------------------
-## Method: `public virtual void Clear()`
-
-Removes all elements from the collection.
-
---------------------------------------------------
-## Method: `public virtual System.Boolean Contains(UIconEdit.CursorEntry item)`
-
-Determines if the specified cursor entry exists in the list.
-* `item`: The cursor entry to search for in the list.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `public System.Boolean ContainsSimilar(UIconEdit.CursorEntry item)`
-
-Determines if an element similar to the specified cursor entry exists in the list.
-* `item`: The cursor entry to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `item` exists in the list; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `public System.Boolean ContainsSimilar(UIconEdit.EntryKey key)`
-
-Determines if an element similar to the specified value exists in the list.
-* `key`: The entry key to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `key` exists in the list; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `public System.Boolean ContainsSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
-
-Determines if an element similar to the specified values exists in the list.
-* `width`: The width of the cursor entry to search for.
-* `height`: The height of the cursor entry to search for.
-* `bitDepth`: The bit depth of the cursor entry to search for.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `bitDepth` was found;`false` if no such cursor entry was found in the list.
-
-
---------------------------------------------------
-## Method: `public virtual System.Int32 IndexOf(UIconEdit.CursorEntry item)`
-
-Gets the index of the specified cursor entry.
-* `item`: The cursor entry to search for in the list.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): `true` if `item` was found; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `public System.Int32 IndexOfSimilar(UIconEdit.CursorEntry item)`
-
-Gets the index of an element similar to the specified cursor entry.
-* `item`: The cursor entry to compare.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `item`, if found; otherwise, -1.
-
-
---------------------------------------------------
-## Method: `public System.Int32 IndexOfSimilar(UIconEdit.EntryKey key)`
-
-Gets the index of an element similar to the specified value.
-* `key`: The entry key to compare.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `key`, if found; otherwise, -1.
-
-
---------------------------------------------------
-## Method: `public System.Int32 IndexOfSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
-
-Gets the index of an element similar to the specified values.
-* `width`: The width of the cursor entry to search for.
-* `height`: The height of the cursor entry to search for.
-* `bitDepth`: The bit depth of the cursor entry to search for.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of a cursor entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `bitDepth`, if found; otherwise, -1.
-
-
---------------------------------------------------
-## Method: `public UIconEdit.CursorFile.EntryList.Enumerator GetEnumerator()`
-
-Returns an enumerator which iterates through the list.
-
-**Returns:** Type [`Enumerator`](#type-struct-uiconeditcursorfileentrylistenumerator): An enumerator which iterates through the list.
-
-
---------------------------------------------------
-## Method: `public void Move(System.Int32 oldIndex, System.Int32 newIndex)`
-
-Moves an element from one index to another.
-* `oldIndex`: The index of the element to move.
-* `newIndex`: The destination index.
-
---------------------------------------------------
-## Method: `public UIconEdit.CursorEntry Find(System.Predicate<UIconEdit.CursorEntry> match)`
-
-Searches for an element which matches the specified predicate, and returns the first matching cursor entry in the list.
-* `match`: A predicate used to define the element to search for.
-
-**Returns:** Type [`CursorEntry`](#type-public-class-uiconeditcursorentry): A cursor entry matching the specified predicate, or `null` if no such cursor entry was found.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`match` is `null`.
-
---------------------------------------------------
-## Method: `public System.Int32 FindIndex(System.Predicate<UIconEdit.CursorEntry> match)`
-
-Searches for an element which matches the specified predicate, and returns the index of the first matching cursor entry in the list.
-* `match`: A predicate used to define the element to search for.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of the cursor entry matching the specified predicate, or -1 if no such cursor entry was found.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`match` is `null`.
-
---------------------------------------------------
-## Method: `public System.Boolean Exists(System.Predicate<UIconEdit.CursorEntry> match)`
-
-Determines whether any element matching the specified predicate exists in the list.
-* `match`: A predicate used to define the elements to search for.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if at least one element matches the specified predicate; `false` otherwise.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`match` is `null`.
-
---------------------------------------------------
-## Method: `public System.Boolean TrueForAll(System.Predicate<UIconEdit.CursorEntry> match)`
-
-Determines whether every element in the list matches the specified predicate.
-* `match`: A predicate used to define the elements to search for.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if every element in the list matches the specified predicate; `false` otherwise.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`match` is `null`.
-
---------------------------------------------------
-## Method: `public System.Collections.Generic.List<T> FindAll(System.Predicate<UIconEdit.CursorEntry> match)`
-
-Returns a list containing all cursor entries which match the specified predicate.
-* `match`: A predicate used to define the elements to search for.
-
-**Returns:** Type [`List<T>`](https://msdn.microsoft.com/en-us/library/6sh2ey19.aspx): A list containing all elements matching `match`.
-
-
---------------------------------------------------
-## Method: `public UIconEdit.CursorEntry[] ToArray()`
-
-Returns an array containing all elements in the current list.
-
-**Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`CursorEntry`](#type-public-class-uiconeditcursorentry): An array containing elements copied from the current list.
-
-
---------------------------------------------------
-# Type: `struct UIconEdit.CursorFile.EntryList.Enumerator`
-
-An enumerator which iterates through the list.
-
---------------------------------------------------
-## Method: `public void Dispose()`
-
-Disposes of the current instance.
-
---------------------------------------------------
-## Property: `public UIconEdit.CursorEntry Current { get; }`
-
-Gets the element at the current position in the enumerator.
-
---------------------------------------------------
-## Method: `public System.Boolean MoveNext()`
-
-Advances the enumerator to the next position in the list.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the enumerator successfully advanced; `false` if the enumerator has passed the end of the list.
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) in [`IconFileBase.Entries`](#property-public-uiconediticonfilebaseentrylist-entries--get-).
 
 
 --------------------------------------------------
@@ -1457,6 +1135,14 @@ Gets an [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.as
 `entry` is `null`.
 
 --------------------------------------------------
+## Method: `public virtual UIconEdit.IconFileBase Clone()`
+
+Returns a duplicate of the current instance.
+
+**Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every icon entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) in [`IconFileBase.Entries`](#property-public-uiconediticonfilebaseentrylist-entries--get-).
+
+
+--------------------------------------------------
 # Type: `public class UIconEdit.IconEntry`
 
 Represents a single entry in an icon.
@@ -1467,14 +1153,16 @@ Represents a single entry in an icon.
 The default [`IconEntry.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-) value.
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.Byte height)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY, System.Byte alphaThreshold)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
-* `bitDepth`: Indicates the bit depth of the resulting image.
-* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
 * `width`: The width of the new image.
 * `height`: The height of the new image.
+* `bitDepth`: Indicates the bit depth of the resulting image.
+* `hotspotX`: In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the left side. Constrained to be less than `width`.
+* `hotspotY`: In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the top. Constrained to be less than `height`.
+* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
 
 ### Exceptions
 
@@ -1488,13 +1176,14 @@ Creates a new instance with the specified image.
 `width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth, System.Byte alphaThreshold)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
-* `bitDepth`: Indicates the bit depth of the resulting image.
 * `width`: The width of the new image.
 * `height`: The height of the new image.
+* `bitDepth`: Indicates the bit depth of the resulting image.
+* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
 
 ### Exceptions
 
@@ -1506,6 +1195,89 @@ Creates a new instance with the specified image.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
 `width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
+
+--------------------------------------------------
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY)`
+
+Creates a new instance with the specified image.
+* `baseImage`: The image associated with the current instance.
+* `width`: The width of the new image.
+* `height`: The height of the new image.
+* `bitDepth`: Indicates the bit depth of the resulting image.
+* `hotspotX`: In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the left side. Constrained to be less than `width`.
+* `hotspotY`: In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the top. Constrained to be less than `height`.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
+
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
+
+--------------------------------------------------
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Creates a new instance with the specified image.
+* `baseImage`: The image associated with the current instance.
+* `width`: The width of the new image.
+* `height`: The height of the new image.
+* `bitDepth`: Indicates the bit depth of the resulting image.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
+
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
+
+--------------------------------------------------
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY, System.Byte alphaThreshold)`
+
+Creates a new instance with the specified image.
+* `baseImage`: The image associated with the current instance.
+* `bitDepth`: Indicates the bit depth of the resulting image.
+* `hotspotX`: In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the left side. Constrained to be less than the width of `baseImage`.
+* `hotspotY`: In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the top. Constrained to be less than the height of `baseImage`.
+* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
+
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
+
+--------------------------------------------------
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY)`
+
+Creates a new instance with the specified image.
+* `baseImage`: The image associated with the current instance.
+* `bitDepth`: Indicates the bit depth of the resulting image.
+* `hotspotX`: In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the left side. Constrained to be less than the width of `baseImage`.
+* `hotspotY`: In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the top. Constrained to be less than the height of `baseImage`.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`baseImage` is `null`.
+
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
 ## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth, System.Byte alphaThreshold)`
@@ -1598,6 +1370,26 @@ The dependency property for the [`IconEntry.AlphaThreshold`](#property-public-sy
 ## Property: `public System.Byte AlphaThreshold { get; set; }`
 
 Gets and sets a value indicating the threshold of alpha values at [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-)s below [`BitDepth.Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0). Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty HotspotXProperty`
+
+The dependency property for the [`IconEntry.HotspotX`](#property-public-systemuint16-hotspotx--get-set-) property.
+
+--------------------------------------------------
+## Property: `public System.UInt16 HotspotX { get; set; }`
+
+In a cursor, gets the horizontal offset in pixels of the cursor's hotspot from the left side. Constrained to greater than or equal to 0 and less than or equal to [`IconEntry.Width`](#property-public-systemint16-width--get-).
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty HotspotYProperty`
+
+The dependency property for the [`IconEntry.HotspotY`](#property-public-systemuint16-hotspoty--get-set-) property.
+
+--------------------------------------------------
+## Property: `public System.UInt16 HotspotY { get; set; }`
+
+In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the top side. Constrained to greater than or equal to 0 and less than or equal to [`IconEntry.Height`](#property-public-systemint16-height--get-).
 
 --------------------------------------------------
 ## Property: `public System.UInt16 BitsPerPixel { get; }`
@@ -1731,260 +1523,6 @@ else Console.WriteLine("Failed");
 //Succeeded: BitDepth.Depth256Color
 ```
 
-
-
---------------------------------------------------
-# Type: `public class UIconEdit.CursorEntry`
-
-Represents a single entry of a cursor.
-
---------------------------------------------------
-## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.UInt16 height, System.UInt16 hotspotX, System.Byte hotspotY)`
-
-Creates a new instance with the specified image.
-* `baseImage`: The image associated with the current instance.
-* `bitDepth`: Indicates the bit depth of the resulting image.
-* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
-* `width`: The width of the new image.
-* `height`: The height of the new image.
-* `hotspotX`: The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
-* `hotspotY`: The vertical offset of the cursor's hotspot from the top of the cursor in pixels.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`baseImage` is `null`.
-
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-
-`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
-
--OR-
-
-`hotspotX` is greater than `width`.
-
--OR-
-
-`hotspotY` is greater than `height`.
-
-
---------------------------------------------------
-## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height, System.UInt16 hotspotX, System.UInt16 hotspotY)`
-
-Creates a new instance with the specified image.
-* `baseImage`: The image associated with the current instance.
-* `bitDepth`: Indicates the bit depth of the resulting image.
-* `width`: The width of the new image.
-* `height`: The height of the new image.
-* `hotspotX`: The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
-* `hotspotY`: The vertical offset of the cursor's hotspot from the top of the cursor in pixels.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`baseImage` is `null`.
-
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-
-`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
-
--OR-
-
-`hotspotX` is greater than `width`.
-
--OR-
-
-`hotspotY` is greater than `height`.
-
-
---------------------------------------------------
-## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 alphaThreshold, UIconEdit.BitDepth width, System.Byte height)`
-
-Creates a new instance with the specified image.
-* `baseImage`: The image associated with the current instance.
-* `bitDepth`: Indicates the bit depth of the resulting image.
-* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
-* `width`: The width of the new image.
-* `height`: The height of the new image.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`baseImage` is `null`.
-
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
-
---------------------------------------------------
-## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 bitDepth, System.Int16 width, UIconEdit.BitDepth height)`
-
-Creates a new instance with the specified image.
-* `baseImage`: The image associated with the current instance.
-* `bitDepth`: Indicates the bit depth of the resulting image.
-* `width`: The width of the new image.
-* `height`: The height of the new image.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`baseImage` is `null`.
-
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
-
---------------------------------------------------
-## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth, System.UInt16 alphaThreshold, System.UInt16 hotspotX, System.Byte hotspotY)`
-
-Creates a new instance with the specified image.
-* `baseImage`: The image associated with the current instance.
-* `bitDepth`: Indicates the bit depth of the resulting image.
-* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
-* `hotspotX`: The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
-* `hotspotY`: The vertical offset of the cursor's hotspot from the top of the cursor in pixels.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`baseImage` is `null`.
-
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-
--OR-
-
-`hotspotX` is greater than the width of `baseImage`.
-
--OR-
-
-`hotspotY` is greater than the height of `baseImage`.
-
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
-
---------------------------------------------------
-## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY)`
-
-Creates a new instance with the specified image.
-* `baseImage`: The image associated with the current instance.
-* `bitDepth`: Indicates the bit depth of the resulting image.
-* `hotspotX`: The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
-* `hotspotY`: The vertical offset of the cursor's hotspot from the top of the cursor in pixels.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`baseImage` is `null`.
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-
--OR-
-
-`hotspotX` is greater than the width of `baseImage`.
-
--OR-
-
-`hotspotY` is greater than the height of `baseImage`.
-
-
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
-
---------------------------------------------------
-## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth, System.Byte alphaThreshold)`
-
-Creates a new instance with the specified image.
-* `baseImage`: The image associated with the current instance.
-* `bitDepth`: Indicates the bit depth of the resulting image.
-* `alphaThreshold`: If the alpha value of a given pixel is below this value, that pixel will be fully transparent. If the alpha value is greater than or equal to this value, the pixel will be fully opaque.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`baseImage` is `null`.
-
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
-
---------------------------------------------------
-## Constructor: `public CursorEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.BitDepth bitDepth)`
-
-Creates a new instance with the specified image.
-* `baseImage`: The image associated with the current instance.
-* `bitDepth`: Indicates the bit depth of the resulting image.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`baseImage` is `null`.
-
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
-
---------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty HotspotXProperty`
-
-The dependency property for the [`CursorEntry.HotspotX`](#property-public-systemuint16-hotspotx--get-set-) property.
-
---------------------------------------------------
-## Property: `public System.UInt16 HotspotX { get; set; }`
-
-Gets and sets the horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is greater than [`IconEntry.Width`](#property-public-systemint16-width--get-).
-
---------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty HotspotYProperty`
-
-The dependency property for the [`CursorEntry.HotspotY`](#property-public-systemuint16-hotspoty--get-set-) property.
-
---------------------------------------------------
-## Property: `public System.UInt16 HotspotY { get; set; }`
-
-Gets and sets the vertical offset of the cursor's hotspot from the top of the cursor in pixels.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is greater than [`IconEntry.Height`](#property-public-systemint16-height--get-).
-
---------------------------------------------------
-## Property: `public System.Windows.Point Hotspot { get; }`
-
-Gets the offset of the cursor's hotspot from the upper-left corner of the cursor in pixels.
-
---------------------------------------------------
-## Method: `public virtual System.String ToString()`
-
-Returns a string representation of the current instance.
-
-**Returns:** Type [`String`](https://msdn.microsoft.com/en-us/library/system.string.aspx): A string representation of the current instance.
 
 
 --------------------------------------------------

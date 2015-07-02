@@ -201,13 +201,8 @@ namespace UIconEdit
         /// </summary>
         [Bindable(true)]
         public new EntryList Entries { get { return _entries; } }
-
-        /// <summary>
-        /// Gets a valid indicating whether the specified instance is a valid <see cref="CursorEntry"/> object.
-        /// </summary>
-        /// <param name="entry">The cursor entry to test.</param>
-        /// <returns><c>true</c> if <paramref name="entry"/> is a <see cref="CursorEntry"/> instance; <c>false</c> otherwise.</returns>
-        protected override bool IsValid(IconEntry entry)
+        
+        internal override bool IsValid(IconEntry entry)
         {
             return entry is CursorEntry;
         }
@@ -223,23 +218,13 @@ namespace UIconEdit
             copy._entries = new EntryList(copy);
             return copy;
         }
-
-        /// <summary>
-        /// Gets the horizontal offset of the hotspot in the specified entry from the left of the specified cursor entry.
-        /// </summary>
-        /// <param name="entry">The entry from which to get the horizontal offset.</param>
-        /// <returns>The horizontal offset of the hotspot from the left in pixels.</returns>
-        protected override ushort GetImgX(IconEntry entry)
+        
+        internal override ushort GetImgX(IconEntry entry)
         {
             return ((CursorEntry)entry).HotspotX;
         }
-
-        /// <summary>
-        /// Gets the vertical offset of the hotspot in the specified entry from the top of the specified cursor entry.
-        /// </summary>
-        /// <param name="entry">The entry from which to get the horizontal offset.</param>
-        /// <returns>The vertical offset of the hotspot from the top in pixels.</returns>
-        protected override ushort GetImgY(IconEntry entry)
+        
+        internal override ushort GetImgY(IconEntry entry)
         {
             return ((CursorEntry)entry).HotspotY;
         }

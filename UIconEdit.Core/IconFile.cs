@@ -210,22 +210,13 @@ namespace UIconEdit
                 return new Icon(ms);
             }
         }
-
-        /// <summary>
-        /// Returns the color panes.
-        /// </summary>
-        /// <param name="entry">This parameter is ignored.</param>
-        protected override ushort GetImgX(IconEntry entry)
+        
+        internal override ushort GetImgX(IconEntry entry)
         {
             return 1;
         }
-
-        /// <summary>
-        /// Returns the number of bits per pixel in the specified entry.
-        /// </summary>
-        /// <param name="entry">The entry for which to get the bits-per-pixel.</param>
-        /// <returns>The number of bits per pixel in <paramref name="entry"/>.</returns>
-        protected override ushort GetImgY(IconEntry entry)
+        
+        internal override ushort GetImgY(IconEntry entry)
         {
             switch (entry.BitDepth)
             {

@@ -548,30 +548,15 @@ namespace UIconEdit
         /// </summary>
         [Bindable(true)]
         public EntryList Entries { get { return _entries; } }
-
-        /// <summary>
-        /// When overridden in a derived class, gets a value indicating whether the specified value may be added to <see cref="Entries"/>.
-        /// </summary>
-        /// <param name="entry">The entry to check.</param>
-        /// <returns><c>true</c> if <paramref name="entry"/> is not <c>null</c>; <c>false</c> otherwise.</returns>
-        protected virtual bool IsValid(IconEntry entry)
+        
+        internal virtual bool IsValid(IconEntry entry)
         {
             return entry != null;
         }
-
-        /// <summary>
-        /// When overridden in a derived class, computes the 16-bit X component.
-        /// </summary>
-        /// <param name="entry">The image entry to calculate.</param>
-        /// <returns>In icon files, the color panes. In cursor files, the horizontal offset of the hotspot from the left in pixels.</returns>
-        protected abstract ushort GetImgX(IconEntry entry);
-
-        /// <summary>
-        /// When overridden in a derived class, computes the 16-bit Y component.
-        /// </summary>
-        /// <param name="entry">The image entry to calculate.</param>
-        /// <returns>In icon files, the number of bits per pixel. In cursor files, the vertical offset of the hotspot from the top, in pixels.</returns>
-        protected abstract ushort GetImgY(IconEntry entry);
+        
+        internal abstract ushort GetImgX(IconEntry entry);
+        
+        internal abstract ushort GetImgY(IconEntry entry);
 
         #region Save
         internal void Save(Stream output, IEnumerable<IconEntry> entryCollection)

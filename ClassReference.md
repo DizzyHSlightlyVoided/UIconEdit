@@ -1121,20 +1121,6 @@ An I/O error occurred.
 Gets the 16-bit type code for the current instance.
 
 --------------------------------------------------
-## Method: `public static System.Drawing.Icon GetIcon(UIconEdit.IconEntry entry)`
-
-Gets an [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx) from a single entry.
-* `entry`: The icon entry from which to get an [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx).
-
-**Returns:** Type [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx): An [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx) created from `entry`.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`entry` is `null`.
-
---------------------------------------------------
 ## Method: `public virtual UIconEdit.IconFileBase Clone()`
 
 Returns a duplicate of the current instance.

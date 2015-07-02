@@ -82,6 +82,13 @@ namespace UIconEdit.Maker
             catch (IconLoadException e)
             {
                 _errorHandler(e);
+                if (e.Code == IconErrorCode.ZeroValidEntries)
+                {
+                    if (e.TypeCode == IconTypeCode.Cursor)
+                        LoadedFile = new CursorFile();
+                    else
+                        LoadedFile = new IconFile();
+                }
             }
             catch (Exception)
             {
@@ -95,8 +102,9 @@ namespace UIconEdit.Maker
 
         private void _errorHandler(IconLoadException e)
         {
-            //TODO: List error codes.
-            MessageBox.Show(this, _settings.LanguageFile.ImageLoadError, _settings.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            string message = _settings.LanguageFile.GetErrorMessage(e);
+
+            MessageBox.Show(this, message, _settings.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         #region LoadedFile
@@ -139,6 +147,7 @@ namespace UIconEdit.Maker
 
         private void window_Closed(object sender, EventArgs e)
         {
+            _settings.Save();
         }
     }
 }

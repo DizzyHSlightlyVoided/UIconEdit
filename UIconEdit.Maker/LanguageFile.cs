@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -172,5 +173,61 @@ namespace UIconEdit.Maker
 
         public string BitsPerPixelFormat { get { return _text["BitsPerPixelFormat"]; } }
         public string SizeFormat { get { return _text["SizeFormat"]; } }
+
+        public string GetErrorMessage(IconLoadException e)
+        {
+            IconErrorCode eCode;
+
+            switch (e.Code)
+            {
+                case IconErrorCode.InvalidFormat:
+                case IconErrorCode.ResourceTooSmall:
+                case IconErrorCode.ResourceTooEarly:
+                case IconErrorCode.ResourceOverlap:
+                    eCode = IconErrorCode.InvalidFormat;
+                    break;
+                case IconErrorCode.ZeroEntries:
+                case IconErrorCode.ZeroValidEntries:
+                    eCode = IconErrorCode.ZeroEntries;
+                    break;
+                case IconErrorCode.WrongType:
+                    eCode = IconErrorCode.WrongType;
+                    break;
+                case IconErrorCode.InvalidEntryType:
+                case IconErrorCode.InvalidPngFile:
+                case IconErrorCode.PngSizeMismatch:
+                case IconErrorCode.InvalidBmpFile:
+                case IconErrorCode.BmpSizeMismatch:
+                case IconErrorCode.InvalidBmpHeightOdd:
+                case IconErrorCode.BmpBitDepthMismatch:
+                    eCode = IconErrorCode.InvalidEntryType;
+                    break;
+                case IconErrorCode.InvalidBitDepth:
+                case IconErrorCode.InvalidBmpBitDepth:
+                    eCode = IconErrorCode.InvalidBitDepth;
+                    break;
+                case IconErrorCode.InvalidBmpSize:
+                case IconErrorCode.InvalidPngSize:
+                    eCode = IconErrorCode.InvalidBmpSize;
+                    break;
+                default:
+                    eCode = IconErrorCode.Unknown;
+                    break;
+            }
+
+            string s = ((int)eCode).ToString("X", NumberFormatInfo.InvariantInfo);
+
+            const string errorPrefix = "IconError";
+
+            s = errorPrefix + s;
+
+            string message;
+            if (e.TypeCode == IconTypeCode.Cursor && _text.TryGetValue(s + "cursor", out message))
+                return message;
+            if (e.TypeCode == IconTypeCode.Icon && _text.TryGetValue(s + "icon", out message))
+                return message;
+
+            return _text[s];
+        }
     }
 }

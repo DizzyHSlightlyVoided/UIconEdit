@@ -14,13 +14,19 @@
   "MenuFileSaveAs": "Save _As",
   "MenuFileQuit": "E_xit",
 
+  "ButtonOK": "_OK",
+  "ButtonCancel": "_Cancel",
+  "ButtonYes": "_Yes",
+  "ButtonNo": "_No",
+  "ButtonNoSave": "Do_n't Save",
+
   "BitsPerPixelFormat": "{0}BPP", //{0} = number of bits per pixel
   "SizeFormat": "{0}x{1}", //{0} = width, {1} = height
 
   "IconError0": "An unknown error occurred.",
-  "IconError1": "The file is not a valid cursor or icon format.",
-  "IconError2icon": "The icon file contains 0 valid entries.",
-  "IconError2cursor": "The cursor file contains 0 valid entries.",
+  "IconError1": "The file is not a valid cursor or icon file.",
+  "IconError2icon": "The icon file does not contain any valid entries.",
+  "IconError2cursor": "The cursor file does not contain any valid valid entries.",
   "IconError6icon": "A cursor file was expected, but the file is an icon file.",
   "IconError6cursor": "An icon file was expected, but the file is a cursor file.",
   "IconError1000icon": "Invalid icon entry.",

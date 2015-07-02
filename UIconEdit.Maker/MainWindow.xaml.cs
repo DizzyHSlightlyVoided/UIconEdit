@@ -99,7 +99,7 @@ namespace UIconEdit.Maker
             }
             catch (Exception)
             {
-                MessageBox.Show(this, string.Format(_settings.LanguageFile.ImageLoadError, path), _settings.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageLoadError, path));
             }
             finally
             {
@@ -111,7 +111,7 @@ namespace UIconEdit.Maker
         {
             string message = _settings.LanguageFile.GetErrorMessage(e);
 
-            MessageBox.Show(this, message, _settings.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            ErrorWindow.Show(this, message);
         }
 
         #region LoadedFile
@@ -228,8 +228,7 @@ namespace UIconEdit.Maker
             }
             catch (Exception)
             {
-                MessageBox.Show(this, string.Format(_settings.LanguageFile.ImageSaveError, filePath),
-                    _settings.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageSaveError, filePath));
             }
             finally
             {

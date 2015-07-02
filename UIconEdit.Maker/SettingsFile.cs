@@ -107,7 +107,7 @@ namespace UIconEdit.Maker
             }
             catch
             {
-                MessageBox.Show(_owner, LanguageFile.SettingsSaveError, LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                ErrorWindow.Show(_owner, LanguageFile.SettingsSaveError);
             }
         }
 
@@ -138,7 +138,7 @@ namespace UIconEdit.Maker
             catch
             {
                 d.SetValue(LanguageNameProperty, e.OldValue);
-                MessageBox.Show(s._owner, string.Format(s.LanguageFile.LanguageLoadError, e.NewValue), s.LanguageFile.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                ErrorWindow.Show(s._owner, string.Format(s.LanguageFile.LanguageLoadError, e.NewValue));
             }
         }
 

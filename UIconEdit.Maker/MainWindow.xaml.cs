@@ -80,6 +80,8 @@ namespace UIconEdit.Maker
             {
                 LoadedFile = IconFileBase.Load(path, _errorHandler);
                 FilePath = path;
+                IsModified = false;
+                listbox.SelectedIndex = 0;
             }
             catch (IconLoadException e)
             {
@@ -90,6 +92,9 @@ namespace UIconEdit.Maker
                         LoadedFile = new CursorFile();
                     else
                         LoadedFile = new IconFile();
+                    FilePath = path;
+                    IsModified = false;
+                    listbox.Focus();
                 }
             }
             catch (Exception)
@@ -141,7 +146,11 @@ namespace UIconEdit.Maker
             new PropertyMetadata());
         public static readonly DependencyProperty IsModifiedProperty = IsModifiedPropertyKey.DependencyProperty;
 
-        public bool IsModified { get { return (bool)GetValue(IsModifiedProperty); } }
+        public bool IsModified
+        {
+            get { return (bool)GetValue(IsModifiedProperty); }
+            private set { SetValue(IsModifiedPropertyKey, value); }
+        }
         #endregion
 
         #region FilePath
@@ -176,10 +185,7 @@ namespace UIconEdit.Maker
             var result = dialog.ShowDialog(this);
             if (!result.HasValue || !result.Value) return;
 
-            if (IsFileLoaded && filePath != dialog.FileName)
-                System.Diagnostics.Process.Start(typeof(MainWindow).Assembly.Location, '"' + dialog.FileName + '"');
-            else
-                _load(dialog.FileName);
+            _load(dialog.FileName);
         }
 
         private void window_Closed(object sender, EventArgs e)
@@ -249,6 +255,11 @@ namespace UIconEdit.Maker
         private void SaveAs_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             _save(true);
+        }
+
+        private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

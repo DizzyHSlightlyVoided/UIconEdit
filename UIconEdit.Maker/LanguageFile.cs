@@ -33,11 +33,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
+
+using Newtonsoft.Json;
+
 using UIconEdit.Maker.Properties;
 
 namespace UIconEdit.Maker
@@ -57,7 +55,8 @@ namespace UIconEdit.Maker
         private LanguageFile()
         {
             _shortName = string.Empty;
-            Load(Resources.en_US, true);
+            using (StringReader sr = new StringReader(Resources.en_US))
+                Load(sr, true);
             _textRO = new ReadOnlyDictionary<string, string>(_text);
         }
 
@@ -92,30 +91,30 @@ namespace UIconEdit.Maker
 
         private void Load(string path)
         {
-            Load(File.ReadAllText(path), false);
+            using (StreamReader sr = new StreamReader(path, true))
+                Load(sr, false);
         }
 
-        private void Load(string allText, bool initial)
+        JsonSerializer jSer = new JsonSerializer();
+
+        private void Load(TextReader textReader, bool initial)
         {
-            XDocument xml;
-            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(allText)))
-            using (XmlDictionaryReader reader = JsonReaderWriterFactory.CreateJsonReader(ms, Encoding.UTF8, new XmlDictionaryReaderQuotas(), null))
-                xml = XDocument.Load(reader);
+            Dictionary<string, string> loadedText;
+            using (JsonTextReader reader = new JsonTextReader(textReader))
+                loadedText = jSer.Deserialize<Dictionary<string, string>>(reader);
+
             if (initial)
             {
-                _text = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                foreach (XElement curNode in xml.Root.Elements())
-                    _text.Add(curNode.Name.LocalName, curNode.Value);
+                _text = new Dictionary<string, string>(loadedText, StringComparer.OrdinalIgnoreCase);
+
             }
             else
             {
                 if (_text == null) _text = new Dictionary<string, string>(_default._text, StringComparer.OrdinalIgnoreCase);
-                foreach (XElement curNode in xml.Root.Elements())
+                foreach (var curKVP in loadedText)
                 {
-                    if (curNode.Attribute("type").Value != "string") throw new InvalidDataException();
-
-                    if (_text.ContainsKey(curNode.Name.LocalName))
-                        _text[curNode.Name.LocalName] = curNode.Value;
+                    if (_text.ContainsKey(curKVP.Key))
+                        _text[curKVP.Key] = curKVP.Value;
                 }
             }
         }

@@ -30,15 +30,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Windows;
-using System.Xml;
-using System.Xml.Linq;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace UIconEdit.Maker
 {
@@ -59,18 +57,20 @@ namespace UIconEdit.Maker
                 if (!File.Exists(SettingsPath))
                     return;
 
-                XDocument xml;
-                using (FileStream fs = File.OpenRead(SettingsPath))
-                using (var reader = JsonReaderWriterFactory.CreateJsonReader(fs, new XmlDictionaryReaderQuotas()))
-                    xml = XDocument.Load(reader);
+                JObject root;
+                using (StreamReader sr = new StreamReader(SettingsPath, Encoding.UTF8, true))
+                using (JsonTextReader reader = new JsonTextReader(sr))
+                    root = JToken.ReadFrom(reader) as JObject;
 
-                XElement root = xml.Root;
+                if (root == null) throw new InvalidDataException();
 
-                var langName = root.Elements(LanguageNameName).FirstOrDefault();
-                if (langName != null)
-                    LanguageName = langName.Value;
-                else
-                    LanguageName = "en-US";
+                var jLang = root.GetValue(LanguageNameName) as JValue;
+
+                if (jLang != null)
+                    LanguageName = jLang.Value.ToString();
+            }
+            catch (Exception)
+            {
             }
             finally
             {
@@ -91,13 +91,14 @@ namespace UIconEdit.Maker
             {
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, false))
+                    using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8, 4096, true))
+                    using (var writer = new JsonTextWriter(sw))
                     {
-                        writer.WriteStartDocument();
-                        writer.WriteStartElement("root");
-                        writer.WriteAttributeString("type", "object");
-                        writer.WriteElementString(LanguageNameName, LanguageName);
-                        writer.WriteEndDocument();
+                        writer.Formatting = Formatting.Indented;
+
+                        writer.WriteStartObject();
+                        writer.WritePropertyName(LanguageNameName); writer.WriteValue(LanguageName);
+                        writer.WriteEndObject();
                     }
                     ms.Seek(0, SeekOrigin.Begin);
                     using (FileStream fs = File.Open(SettingsPath, FileMode.Create))

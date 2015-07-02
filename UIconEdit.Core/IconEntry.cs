@@ -375,7 +375,7 @@ namespace UIconEdit
         /// The dependency property for the <see cref="HotspotX"/> property.
         /// </summary>
         public static readonly DependencyProperty HotspotXProperty = DependencyProperty.Register("HotspotX", typeof(ushort), typeof(IconEntry),
-            new PropertyMetadata(0, null, HotspotXCoerce));
+            new PropertyMetadata(ushort.MinValue, null, HotspotXCoerce));
 
         private static object HotspotXCoerce(DependencyObject d, object baseValue)
         {
@@ -403,7 +403,7 @@ namespace UIconEdit
         /// The dependency property for the <see cref="HotspotY"/> property.
         /// </summary>
         public static readonly DependencyProperty HotspotYProperty = DependencyProperty.Register("HotspotY", typeof(ushort), typeof(IconEntry),
-            new PropertyMetadata(0, null, HotspotYCoerce));
+            new PropertyMetadata(ushort.MinValue, null, HotspotYCoerce));
 
         private static object HotspotYCoerce(DependencyObject d, object baseValue)
         {

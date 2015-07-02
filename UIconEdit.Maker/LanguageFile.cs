@@ -173,6 +173,10 @@ namespace UIconEdit.Maker
         public string BitsPerPixelFormat { get { return _text["BitsPerPixelFormat"]; } }
         public string SizeFormat { get { return _text["SizeFormat"]; } }
 
+        public string TypeIco { get { return _text["TypeIco"]; } }
+        public string TypeCur { get { return _text["TypeCur"]; } }
+        public string TypeIcoCur { get { return _text["TypeIcoCur"]; } }
+
         public string GetErrorMessage(IconLoadException e)
         {
             IconErrorCode eCode;

@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
@@ -89,6 +90,7 @@ namespace UIconEdit.Maker
                     else
                         LoadedFile = new IconFile();
                 }
+                FilePath = path;
             }
             catch (Exception)
             {
@@ -134,6 +136,16 @@ namespace UIconEdit.Maker
         public bool IsFileLoaded { get { return (bool)GetValue(IsFileLoadedProperty); } }
         #endregion
 
+        #region FilePath
+        public static readonly DependencyProperty FilePathProperty = DependencyProperty.Register("FilePath", typeof(string), typeof(MainWindow));
+
+        public string FilePath
+        {
+            get { return (string)GetValue(FilePathProperty); }
+            set { SetValue(FilePathProperty, value); }
+        }
+        #endregion
+
         private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -143,6 +155,23 @@ namespace UIconEdit.Maker
         private void Open_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
+            string filePath = FilePath;
+            if (filePath != null)
+            {
+                dialog.InitialDirectory = Path.GetDirectoryName(filePath);
+                dialog.FileName = Path.GetFileName(filePath);
+            }
+
+            dialog.Filter = string.Format("{0} (*.ico)|*.ico|{1} (*.cur)|*.cur|{2} (*.ico, *.cur)|*.ico;*.cur",
+                _settings.LanguageFile.TypeIco, _settings.LanguageFile.TypeCur, _settings.LanguageFile.TypeIcoCur);
+
+            var result = dialog.ShowDialog(this);
+            if (!result.HasValue || !result.Value) return;
+
+            if (IsFileLoaded && filePath != dialog.FileName)
+                System.Diagnostics.Process.Start(typeof(MainWindow).Assembly.Location, '"' + dialog.FileName + '"');
+            else
+                _load(dialog.FileName);
         }
 
         private void window_Closed(object sender, EventArgs e)

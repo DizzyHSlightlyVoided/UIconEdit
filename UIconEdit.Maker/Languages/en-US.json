@@ -22,5 +22,9 @@
   "IconError1000icon": "Invalid icon entry.",
   "IconError1000cursor": "Invalid cursor entry.",
   "IconError1001": "{0}-bit images are not allowed!", //{0} = number of bits per pixel.
-  "IconError1102": "An icon frame size {0}x{1} is out of bounds!" //{0} = width, {1} = height
+  "IconError1102": "An icon frame size {0}x{1} is out of bounds!", //{0} = width, {1} = height
+
+  "TypeIco": "Icon files",
+  "TypeCur": "Cursor files",
+  "TypeIcoCur": "Icon or cursor files"
 }

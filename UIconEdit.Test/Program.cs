@@ -73,7 +73,7 @@ namespace UIconEdit.Builder
             Console.WriteLine("Loading file Crosshair.cur ...");
             {
                 CursorFile cursorFile = CursorFile.Load("Crosshair.cur");
-                CursorEntry[] cursorEntries = cursorFile.Entries.ToArray();
+                IconEntry[] cursorEntries = cursorFile.Entries.ToArray();
                 for (int i = 0; i < cursorEntries.Length; i++)
                 {
                     var entry = cursorEntries[i];

@@ -455,7 +455,7 @@ namespace UIconEdit
                         IconEntry resultEntry;
 
                         if (loadedId == IconTypeCode.Cursor)
-                            resultEntry = new CursorEntry(loadedImage, bitDepth, entry.XPlanes, entry.YBitsPerpixel);
+                            resultEntry = new IconEntry(loadedImage, bitDepth, entry.XPlanes, entry.YBitsPerpixel);
                         else
                             resultEntry = new IconEntry(loadedImage, bitDepth);
 

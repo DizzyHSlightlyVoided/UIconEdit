@@ -328,9 +328,9 @@ namespace UIconEdit.Builder
                 return new IconEntry(Img, Width, Height, Depth, Alpha);
             }
 
-            public CursorEntry GetCursorEntry()
+            public IconEntry GetCursorEntry()
             {
-                return new CursorEntry(Img, Width, Height, Depth, X, Y, Alpha);
+                return new IconEntry(Img, Width, Height, Depth, X, Y, Alpha);
             }
         }
 

@@ -87,11 +87,46 @@ namespace UIconEdit
         /// Creates a new instance with the specified image.
         /// </summary>
         /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="width">The width of the new image.</param>
+        /// <param name="height">The height of the new image.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="hotspotX">In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the left side.
+        /// Constrained to be less than <paramref name="width"/>.</param>
+        /// <param name="hotspotY">In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the top.
+        /// Constrained to be less than <paramref name="height"/>.</param>
+        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
+        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        public IconEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
+        {
+            if (baseImage == null) throw new ArgumentNullException("baseImage");
+            _initValues(width, height, bitDepth);
+            _depth = bitDepth;
+            _width = width;
+            _height = height;
+            BaseImage = baseImage;
+            AlphaThreshold = alphaThreshold;
+            HotspotX = hotspotX;
+            HotspotY = hotspotY;
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="width">The width of the new image.</param>
+        /// <param name="height">The height of the new image.</param>
         /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
         /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
         /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
-        /// <param name="width">The width of the new image.</param>
-        /// <param name="height">The height of the new image.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
@@ -102,23 +137,42 @@ namespace UIconEdit
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
         public IconEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
+            : this(baseImage, width, height, bitDepth, 0, 0, alphaThreshold)
         {
-            if (baseImage == null) throw new ArgumentNullException("baseImage");
-            _initValues(width, height, bitDepth);
-            _depth = bitDepth;
-            _width = width;
-            _height = height;
-            BaseImage = baseImage;
-            AlphaThreshold = alphaThreshold;
         }
 
         /// <summary>
         /// Creates a new instance with the specified image.
         /// </summary>
         /// <param name="baseImage">The image associated with the current instance.</param>
-        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
         /// <param name="width">The width of the new image.</param>
         /// <param name="height">The height of the new image.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="hotspotX">In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the left side.
+        /// Constrained to be less than <paramref name="width"/>.</param>
+        /// <param name="hotspotY">In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the top.
+        /// Constrained to be less than <paramref name="height"/>.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        public IconEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+            : this(baseImage, width, height, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="width">The width of the new image.</param>
+        /// <param name="height">The height of the new image.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
@@ -129,7 +183,7 @@ namespace UIconEdit
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
         public IconEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth)
-            : this(baseImage, width, height, bitDepth, DefaultAlphaThreshold)
+            : this(baseImage, width, height, bitDepth, 0, 0, DefaultAlphaThreshold)
         {
         }
 
@@ -138,6 +192,10 @@ namespace UIconEdit
         /// </summary>
         /// <param name="baseImage">The image associated with the current instance.</param>
         /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="hotspotX">In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the left side.
+        /// Constrained to be less than the width of <paramref name="baseImage"/>.</param>
+        /// <param name="hotspotY">In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the top.
+        /// Constrained to be less than the height of <paramref name="baseImage"/>.</param>
         /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
         /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
         /// <exception cref="ArgumentNullException">
@@ -149,7 +207,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, BitDepth bitDepth, byte alphaThreshold)
+        public IconEntry(BitmapSource baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
         {
             if (baseImage == null) throw new ArgumentNullException("baseImage");
             if (baseImage.PixelWidth < MinDimension || baseImage.PixelWidth > MaxDimension || baseImage.PixelHeight < MinDimension || baseImage.PixelHeight > MaxDimension)
@@ -168,6 +226,51 @@ namespace UIconEdit
         /// </summary>
         /// <param name="baseImage">The image associated with the current instance.</param>
         /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="hotspotX">In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the left side.
+        /// Constrained to be less than the width of <paramref name="baseImage"/>.</param>
+        /// <param name="hotspotY">In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the top.
+        /// Constrained to be less than the height of <paramref name="baseImage"/>.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        public IconEntry(BitmapSource baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+            : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
+        {
+        }
+
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
+        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
+        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        public IconEntry(BitmapSource baseImage, BitDepth bitDepth, byte alphaThreshold)
+            : this(baseImage, bitDepth, 0, 0, alphaThreshold)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified image.
+        /// </summary>
+        /// <param name="baseImage">The image associated with the current instance.</param>
+        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
@@ -178,9 +281,10 @@ namespace UIconEdit
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
         public IconEntry(BitmapSource baseImage, BitDepth bitDepth)
-            : this(baseImage, bitDepth, DefaultAlphaThreshold)
+            : this(baseImage, bitDepth, 0, 0, DefaultAlphaThreshold)
         {
         }
+
 
         /// <summary>
         /// The minimum dimensions of an icon. 1 pixel in size.
@@ -263,6 +367,62 @@ namespace UIconEdit
         {
             get { return (byte)GetValue(AlphaThresholdProperty); }
             set { SetValue(AlphaThresholdProperty, value); }
+        }
+        #endregion
+        
+        #region HotspotX
+        /// <summary>
+        /// The dependency property for the <see cref="HotspotX"/> property.
+        /// </summary>
+        public static readonly DependencyProperty HotspotXProperty = DependencyProperty.Register("HotspotX", typeof(ushort), typeof(IconEntry),
+            new PropertyMetadata(0, null, HotspotXCoerce));
+
+        private static object HotspotXCoerce(DependencyObject d, object baseValue)
+        {
+            IconEntry i = (IconEntry)d;
+
+            ushort value = (ushort)baseValue;
+            if (value > i._width) return (ushort)i._width;
+
+            return baseValue;
+        }
+
+        /// <summary>
+        /// In a cursor, gets the horizontal offset in pixels of the cursor's hotspot from the left side.
+        /// Constrained to greater than or equal to 0 and less than or equal to <see cref="Width"/>.
+        /// </summary>
+        public ushort HotspotX
+        {
+            get { return (ushort)GetValue(HotspotXProperty); }
+            set { SetValue(HotspotXProperty, value); }
+        }
+        #endregion
+
+        #region HotspotY
+        /// <summary>
+        /// The dependency property for the <see cref="HotspotY"/> property.
+        /// </summary>
+        public static readonly DependencyProperty HotspotYProperty = DependencyProperty.Register("HotspotY", typeof(ushort), typeof(IconEntry),
+            new PropertyMetadata(0, null, HotspotYCoerce));
+
+        private static object HotspotYCoerce(DependencyObject d, object baseValue)
+        {
+            IconEntry e = (IconEntry)d;
+
+            ushort value = (ushort)baseValue;
+            if (value > e._height) return (ushort)e._height;
+
+            return baseValue;
+        }
+
+        /// <summary>
+        /// In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the top side.
+        /// Constrained to greater than or equal to 0 and less than or equal to <see cref="Height"/>.
+        /// </summary>
+        public ushort HotspotY
+        {
+            get { return (ushort)GetValue(HotspotYProperty); }
+            set { SetValue(HotspotYProperty, value); }
         }
         #endregion
 
@@ -799,291 +959,6 @@ namespace UIconEdit
     }
 
     /// <summary>
-    /// Represents a single entry of a cursor.
-    /// </summary>
-    public class CursorEntry : IconEntry
-    {
-        /// <summary>
-        /// Creates a new instance with the specified image.
-        /// </summary>
-        /// <param name="baseImage">The image associated with the current instance.</param>
-        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
-        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
-        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
-        /// <param name="width">The width of the new image.</param>
-        /// <param name="height">The height of the new image.</param>
-        /// <param name="hotspotX">The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.</param>
-        /// <param name="hotspotY">The vertical offset of the cursor's hotspot from the top of the cursor in pixels.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
-        /// </exception>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
-        /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <para><paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than
-        ///  <see cref="IconEntry.MaxDimension"/>.</para>
-        /// <para>-OR-</para>
-        /// <para><paramref name="hotspotX"/> is greater than <paramref name="width"/>.</para>
-        /// <para>-OR-</para>
-        /// <para><paramref name="hotspotY"/> is greater than <paramref name="height"/>.</para>
-        /// </exception>
-        public CursorEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
-            : base(baseImage, width, height, bitDepth, alphaThreshold)
-        {
-            HotspotX = hotspotX;
-            HotspotY = hotspotY;
-        }
-
-        /// <summary>
-        /// Creates a new instance with the specified image.
-        /// </summary>
-        /// <param name="baseImage">The image associated with the current instance.</param>
-        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
-        /// <param name="width">The width of the new image.</param>
-        /// <param name="height">The height of the new image.</param>
-        /// <param name="hotspotX">The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.</param>
-        /// <param name="hotspotY">The vertical offset of the cursor's hotspot from the top of the cursor in pixels.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
-        /// </exception>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
-        /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <para><paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than
-        /// <see cref="IconEntry.MaxDimension"/>.</para>
-        /// <para>-OR-</para>
-        /// <para><paramref name="hotspotX"/> is greater than <paramref name="width"/>.</para>
-        /// <para>-OR-</para>
-        /// <para><paramref name="hotspotY"/> is greater than <paramref name="height"/>.</para>
-        /// </exception>
-        public CursorEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
-            : this(baseImage, width, height, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new instance with the specified image.
-        /// </summary>
-        /// <param name="baseImage">The image associated with the current instance.</param>
-        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
-        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
-        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
-        /// <param name="width">The width of the new image.</param>
-        /// <param name="height">The height of the new image.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
-        /// </exception>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
-        /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
-        /// </exception>
-        public CursorEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
-            : base(baseImage, width, height, bitDepth, alphaThreshold)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new instance with the specified image.
-        /// </summary>
-        /// <param name="baseImage">The image associated with the current instance.</param>
-        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
-        /// <param name="width">The width of the new image.</param>
-        /// <param name="height">The height of the new image.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
-        /// </exception>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
-        /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
-        /// </exception>
-        public CursorEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth)
-            : base(baseImage, width, height, bitDepth)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new instance with the specified image.
-        /// </summary>
-        /// <param name="baseImage">The image associated with the current instance.</param>
-        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
-        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
-        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
-        /// <param name="hotspotX">The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.</param>
-        /// <param name="hotspotY">The vertical offset of the cursor's hotspot from the top of the cursor in pixels.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
-        /// </exception>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
-        /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <para>-OR-</para>
-        /// <para><paramref name="hotspotX"/> is greater than the width of <paramref name="baseImage"/>.</para>
-        /// <para>-OR-</para>
-        /// <para><paramref name="hotspotY"/> is greater than the height of <paramref name="baseImage"/>.</para>
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
-        /// </exception>
-        public CursorEntry(BitmapSource baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
-            : base(baseImage, bitDepth, alphaThreshold)
-        {
-            HotspotX = hotspotX;
-            HotspotY = hotspotY;
-        }
-
-        /// <summary>
-        /// Creates a new instance with the specified image.
-        /// </summary>
-        /// <param name="baseImage">The image associated with the current instance.</param>
-        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
-        /// <param name="hotspotX">The horizontal offset of the cursor's hotspot from the left of the cursor in pixels.</param>
-        /// <param name="hotspotY">The vertical offset of the cursor's hotspot from the top of the cursor in pixels.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
-        /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <para>-OR-</para>
-        /// <para><paramref name="hotspotX"/> is greater than the width of <paramref name="baseImage"/>.</para>
-        /// <para>-OR-</para>
-        /// <para><paramref name="hotspotY"/> is greater than the height of <paramref name="baseImage"/>.</para>
-        /// </exception>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
-        /// </exception>
-        public CursorEntry(BitmapSource baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
-            : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new instance with the specified image.
-        /// </summary>
-        /// <param name="baseImage">The image associated with the current instance.</param>
-        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
-        /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
-        /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
-        /// </exception>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
-        /// </exception>
-        public CursorEntry(BitmapSource baseImage, BitDepth bitDepth, byte alphaThreshold)
-            : base(baseImage, bitDepth, alphaThreshold)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new instance with the specified image.
-        /// </summary>
-        /// <param name="baseImage">The image associated with the current instance.</param>
-        /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
-        /// </exception>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="BitDepth"/> value.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// The width or height of <paramref name="baseImage"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
-        /// </exception>
-        public CursorEntry(BitmapSource baseImage, BitDepth bitDepth)
-            : base(baseImage, bitDepth)
-        {
-        }
-
-        #region HotspotX
-        /// <summary>
-        /// The dependency property for the <see cref="HotspotX"/> property.
-        /// </summary>
-        public static readonly DependencyProperty HotspotXProperty = DependencyProperty.Register("HotspotX", typeof(ushort), typeof(CursorEntry),
-            new PropertyMetadata(ushort.MinValue, HotspotXChanged));
-
-        private static void HotspotXChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            CursorEntry c = (CursorEntry)d;
-            if ((ushort)e.NewValue > c.Width)
-            {
-                c.SetValue(HotspotXProperty, e.OldValue);
-                throw new ArgumentOutOfRangeException(null, e.NewValue, "The hotspot X position is greater than the width of the image.");
-            }
-        }
-
-        /// <summary>
-        /// Gets and sets the horizontal offset of the cursor's hotspot from the left of the cursor in pixels.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is greater than <see cref="IconEntry.Width"/>.
-        /// </exception>
-        public ushort HotspotX
-        {
-            get { return (ushort)GetValue(HotspotXProperty); }
-            set { SetValue(HotspotXProperty, value); }
-        }
-        #endregion
-
-        #region HotspotY
-        /// <summary>
-        /// The dependency property for the <see cref="HotspotY"/> property.
-        /// </summary>
-        public static readonly DependencyProperty HotspotYProperty = DependencyProperty.Register("HotspotY", typeof(ushort), typeof(CursorEntry),
-            new PropertyMetadata(ushort.MinValue, HotspotYChanged));
-
-        private static void HotspotYChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            CursorEntry c = (CursorEntry)d;
-            if ((ushort)e.NewValue > c.Height)
-            {
-                c.SetValue(HotspotXProperty, e.OldValue);
-                throw new ArgumentOutOfRangeException(null, e.NewValue, "The hotspot X position is greater than the width of the image.");
-            }
-        }
-
-        /// <summary>
-        /// Gets and sets the vertical offset of the cursor's hotspot from the top of the cursor in pixels.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is greater than <see cref="IconEntry.Height"/>.
-        /// </exception>
-        public ushort HotspotY
-        {
-            get { return (ushort)GetValue(HotspotYProperty); }
-            set { SetValue(HotspotYProperty, value); }
-        }
-        #endregion
-
-        /// <summary>
-        /// Gets the offset of the cursor's hotspot from the upper-left corner of the cursor in pixels.
-        /// </summary>
-        public Point Hotspot
-        {
-            get { return new Point(Width, Height); }
-        }
-
-        /// <summary>
-        /// Returns a string representation of the current instance.
-        /// </summary>
-        /// <returns>A string representation of the current instance.</returns>
-        public override string ToString()
-        {
-            return string.Format("{0}, Hotspot: {1}", base.ToString(), Hotspot);
-        }
-    }
-
-    /// <summary>
     /// Represents a simplified key for an icon entry.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
@@ -1275,13 +1150,8 @@ namespace UIconEdit
         }
     }
 
-    internal struct IconEntryComparer : IEqualityComparer<IconEntry>, IComparer<IconEntry>, IEqualityComparer<CursorEntry>, IComparer<CursorEntry>
+    internal struct IconEntryComparer : IEqualityComparer<IconEntry>, IComparer<IconEntry>
     {
-        public int Compare(CursorEntry x, CursorEntry y)
-        {
-            return Compare((IconEntry)x, y);
-        }
-
         public int Compare(IconEntry x, IconEntry y)
         {
             if (ReferenceEquals(x, y))
@@ -1293,21 +1163,11 @@ namespace UIconEdit
             return x.EntryKey.CompareTo(y.EntryKey);
         }
 
-        public bool Equals(CursorEntry x, CursorEntry y)
-        {
-            return Equals((IconEntry)x, y);
-        }
-
         public bool Equals(IconEntry x, IconEntry y)
         {
             if (ReferenceEquals(x, y)) return true;
             if (ReferenceEquals(x, null) ^ ReferenceEquals(y, null)) return false;
             return x.EntryKey == y.EntryKey;
-        }
-
-        public int GetHashCode(CursorEntry obj)
-        {
-            return GetHashCode((IconEntry)obj);
         }
 
         public int GetHashCode(IconEntry obj)

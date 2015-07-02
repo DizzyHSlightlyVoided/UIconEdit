@@ -168,33 +168,6 @@ When overridden in a derived class, gets the 16-bit identifier for the file type
 Gets a collection containing all entries in the icon file.
 
 --------------------------------------------------
-## Method: `protected virtual System.Boolean IsValid(UIconEdit.IconEntry entry)`
-
-When overridden in a derived class, gets a value indicating whether the specified value may be added to [`IconFileBase.Entries`](#property-public-uiconediticonfilebaseentrylist-entries--get-).
-* `entry`: The entry to check.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `entry` is not `null`; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `protected virtual System.UInt16 GetImgX(UIconEdit.IconEntry entry)`
-
-When overridden in a derived class, computes the 16-bit X component.
-* `entry`: The image entry to calculate.
-
-**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): In icon files, the color panes. In cursor files, the horizontal offset of the hotspot from the left in pixels.
-
-
---------------------------------------------------
-## Method: `protected virtual System.UInt16 GetImgY(UIconEdit.IconEntry entry)`
-
-When overridden in a derived class, computes the 16-bit Y component.
-* `entry`: The image entry to calculate.
-
-**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): In icon files, the number of bits per pixel. In cursor files, the vertical offset of the hotspot from the top, in pixels.
-
-
---------------------------------------------------
 ## Method: `public void Save(System.IO.Stream output)`
 
 Saves the file to the specified stream.
@@ -582,6 +555,11 @@ Advances the enumerator to the next position in the list.
 The type code for an icon file.
 
 --------------------------------------------------
+## Field: `IconTypeCode.Unknown = 0`
+
+Indicates an unknown or invalid file.
+
+--------------------------------------------------
 ## Field: `IconTypeCode.Icon = 1`
 
 Indicates an icon (.ICO) file.
@@ -597,66 +575,74 @@ Indicates a cursor (.CUR) file.
 The exception that is thrown when an icon file contains invalid data.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, System.Object value, System.Int32 index)`
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value, System.Int32 index)`
 
 Creates a new instance using a message which describes the error and the specified error code.
 * `message`: A message describing the error.
 * `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
 * `value`: The value which caused the error.
 * `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, System.Object value)`
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value)`
 
 Creates a new instance using a message which describes the error and the specified error code.
 * `message`: A message describing the error.
 * `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
 * `value`: The value which caused the error.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, System.Int32 index)`
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Int32 index)`
 
 Creates a new instance using a message which describes the error and the specified error code.
 * `message`: A message describing the error.
 * `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
 * `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, System.Object value, System.Int32 index)`
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value, System.Int32 index)`
 
 Creates a new instance with the default message and the specified error code.
 * `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
 * `value`: The value which caused the error.
 * `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, System.Int32 index)`
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Int32 index)`
 
 Creates a new instance with the default message and the specified error code.
 * `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
 * `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, System.Object value)`
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value)`
 
 Creates a new instance with the default message and the specified error code.
 * `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
 * `value`: The value which caused the error.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code)`
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode)`
 
 Creates a new instance with the default message and the specified error code.
 * `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, System.Int32 index, System.Exception innerException)`
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode index, System.Int32 innerException, System.Exception typeCode)`
 
 Creates a new instance with the specified message and error code and a reference to the exception which caused this error.
 * `message`: A message describing the error.
 * `code`: The error code used to identify the cause of the error.
 * `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
 * `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
+* `typeCode`: The type code of the file which caused the error.
 
 --------------------------------------------------
 ## Constructor: `public IconLoadException(System.String message, System.Exception innerException)`
@@ -684,6 +670,11 @@ Gets the index in the icon file of the icon entry which caused this exception, o
 ## Property: `public System.Object Value { get; }`
 
 Gets an object whose value caused the error, or `null` if there was no such value.
+
+--------------------------------------------------
+## Property: `public UIconEdit.IconTypeCode TypeCode { get; }`
+
+Gets a value indicating the type of the icon file.
 
 --------------------------------------------------
 # Type: `public enum UIconEdit.IconErrorCode`
@@ -721,6 +712,11 @@ Code 0x4: One of the icon directory entries has a starting offset which would ov
 Code 0x5: One or more of the icon directory entries have overlapping offset/length combinations. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
+## Field: `IconErrorCode.WrongType = 6`
+
+Code 0x6: An icon was expected but a cursor was loaded, or vice versa. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the expected value. This is a fatal error, and the icon file cannot continue processing when it occurs.
+
+--------------------------------------------------
 ## Field: `IconErrorCode.InvalidEntryType = 4096`
 
 Code 0x1000: the file type of an entry is invalid.
@@ -753,7 +749,7 @@ Code 0x1105: the width or height of a PNG entry does not match the width or heig
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpFile = 4608`
 
-Code 0x1204: an error occurred when attempting to process a BMP entry. The inner exception may contain more information. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the size listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
+Code 0x1200: an error occurred when attempting to process a BMP entry. The inner exception may contain more information. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the size listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpBitDepth = 4609`
@@ -766,7 +762,7 @@ Code 0x1201 the bit depth of a BMP entry is not supported. [`IconLoadException.V
 Code 0x1202: the width or height of a BMP entry is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768). The maximum height is doubled in images with a bit depth less than 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the size of the image.
 
 --------------------------------------------------
-## Field: `IconErrorCode.BmpHeightMismatch = 4611`
+## Field: `IconErrorCode.BmpSizeMismatch = 4611`
 
 Code 0x1203: the width or height of a BMP entry does not match the width or height listed in the icon directory entry. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the size listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
 
@@ -949,38 +945,11 @@ Gets the 16-bit type code for the current instance.
 Gets a collection containing all entries in the cursor file.
 
 --------------------------------------------------
-## Method: `protected virtual System.Boolean IsValid(UIconEdit.IconEntry entry)`
-
-Gets a valid indicating whether the specified instance is a valid [`CursorEntry`](#type-public-class-uiconeditcursorentry) object.
-* `entry`: The cursor entry to test.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `entry` is a [`CursorEntry`](#type-public-class-uiconeditcursorentry) instance; `false` otherwise.
-
-
---------------------------------------------------
 ## Method: `public virtual UIconEdit.IconFileBase Clone()`
 
 Returns a duplicate of the current instance.
 
 **Returns:** Type [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase): A duplicate of the current instance, with copies of every cursor entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) in [`CursorFile.Entries`](#property-public-uiconeditcursorfileentrylist-entries--get-).
-
-
---------------------------------------------------
-## Method: `protected virtual System.UInt16 GetImgX(UIconEdit.IconEntry entry)`
-
-Gets the horizontal offset of the hotspot in the specified entry from the left of the specified cursor entry.
-* `entry`: The entry from which to get the horizontal offset.
-
-**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): The horizontal offset of the hotspot from the left in pixels.
-
-
---------------------------------------------------
-## Method: `protected virtual System.UInt16 GetImgY(UIconEdit.IconEntry entry)`
-
-Gets the vertical offset of the hotspot in the specified entry from the top of the specified cursor entry.
-* `entry`: The entry from which to get the horizontal offset.
-
-**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): The vertical offset of the hotspot from the top in pixels.
 
 
 --------------------------------------------------
@@ -1486,21 +1455,6 @@ Gets an [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.as
 
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 `entry` is `null`.
-
---------------------------------------------------
-## Method: `protected virtual System.UInt16 GetImgX(UIconEdit.IconEntry entry)`
-
-Returns the color panes.
-* `entry`: This parameter is ignored.
-
---------------------------------------------------
-## Method: `protected virtual System.UInt16 GetImgY(UIconEdit.IconEntry entry)`
-
-Returns the number of bits per pixel in the specified entry.
-* `entry`: The entry for which to get the bits-per-pixel.
-
-**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): The number of bits per pixel in `entry`.
-
 
 --------------------------------------------------
 # Type: `public class UIconEdit.IconEntry`

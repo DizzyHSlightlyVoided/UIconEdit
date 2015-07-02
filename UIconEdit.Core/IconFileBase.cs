@@ -519,22 +519,48 @@ namespace UIconEdit
         #endregion
 
         /// <summary>
-        /// Returns a duplicate of the current instance.
+        /// When overridden in a derived class,
+        /// returns a duplicate of the current instance.
         /// </summary>
         /// <returns>A duplicate of the current instance, with copies of every icon entry and clones of each
         /// entry's <see cref="IconEntry.BaseImage"/> in <see cref="Entries"/>.</returns>
-        public virtual IconFileBase Clone()
-        {
-            IconFileBase copy = (IconFileBase)MemberwiseClone();
-            copy._entries = new EntryList(copy);
-            foreach (IconEntry curEntry in _entries)
-                copy._entries.Add(curEntry.Clone());
-            return copy;
-        }
+        public abstract IconFileBase Clone();
 
         object ICloneable.Clone()
         {
             return Clone();
+        }
+
+        /// <summary>
+        /// Returns a duplicate of the current instance as an <see cref="IconFile"/>
+        /// </summary>
+        /// <returns>An <see cref="IconFile"/> containing copies of every icon entry and clones of each
+        /// entry's <see cref="IconEntry.BaseImage"/> in <see cref="Entries"/>, and with each entry's
+        /// <see cref="IconEntry.HotspotX"/> and <see cref="IconEntry.HotspotY"/> values set to 0.</returns>
+        public virtual IconFile CloneAsIconFile()
+        {
+            IconFile copy = new IconFile();
+            foreach (IconEntry curEntry in _entries)
+            {
+                var newEntry = curEntry.Clone();
+                newEntry.HotspotX = 0;
+                newEntry.HotspotY = 0;
+                copy._entries.Add(newEntry);
+            }
+            return copy;
+        }
+
+        /// <summary>
+        /// Returns a duplicate of the current instance as an <see cref="IconFile"/>
+        /// </summary>
+        /// <returns>An <see cref="IconFile"/> containing copies of every icon entry and clones of each
+        /// entry's <see cref="IconEntry.BaseImage"/> in <see cref="Entries"/>.</returns>
+        public virtual CursorFile CloneAsCursorFile()
+        {
+            CursorFile copy = new CursorFile();
+            foreach (IconEntry curEntry in _entries)
+                copy._entries.Add(curEntry.Clone());
+            return copy;
         }
 
         /// <summary>
@@ -548,14 +574,14 @@ namespace UIconEdit
         /// </summary>
         [Bindable(true)]
         public EntryList Entries { get { return _entries; } }
-        
+
         internal virtual bool IsValid(IconEntry entry)
         {
             return entry != null;
         }
-        
+
         internal abstract ushort GetImgX(IconEntry entry);
-        
+
         internal abstract ushort GetImgY(IconEntry entry);
 
         #region Save

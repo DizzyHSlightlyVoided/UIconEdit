@@ -29,7 +29,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
-using System.Drawing;
 using System.IO;
 
 namespace UIconEdit
@@ -190,27 +189,15 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Gets an <see cref="Icon"/> from a single entry.
+        /// Returns a duplicate of the current instance.
         /// </summary>
-        /// <param name="entry">The icon entry from which to get an <see cref="Icon"/>.</param>
-        /// <returns>An <see cref="Icon"/> created from <paramref name="entry"/>.</returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="entry"/> is <c>null</c>.
-        /// </exception>
-        public static Icon GetIcon(IconEntry entry)
+        /// <returns>A duplicate of the current instance, with copies of every icon entry and clones of each
+        /// entry's <see cref="IconEntry.BaseImage"/> in <see cref="IconFileBase.Entries"/>.</returns>
+        public override IconFileBase Clone()
         {
-            if (entry == null) throw new ArgumentNullException("entry");
-
-            IconFile file = new IconFile();
-            file.Entries.Add(entry);
-            using (MemoryStream ms = new MemoryStream())
-            {
-                file.Save(ms);
-                ms.Seek(0, SeekOrigin.Begin);
-                return new Icon(ms);
-            }
+            return CloneAsIconFile();
         }
-        
+
         internal override ushort GetImgX(IconEntry entry)
         {
             return 1;

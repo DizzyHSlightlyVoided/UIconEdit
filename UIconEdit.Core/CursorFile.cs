@@ -208,5 +208,15 @@ namespace UIconEdit
         {
             return entry.HotspotY;
         }
+
+        /// <summary>
+        /// Returns a duplicate of the current instance.
+        /// </summary>
+        /// <returns>A duplicate of the current instance, with copies of every icon entry and clones of each
+        /// entry's <see cref="IconEntry.BaseImage"/> in <see cref="IconFileBase.Entries"/>.</returns>
+        public override IconFileBase Clone()
+        {
+            return CloneAsCursorFile();
+        }
     }
 }

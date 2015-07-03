@@ -165,13 +165,12 @@ namespace UIconEdit.Maker
         }
         #endregion
 
-        #region LoadedImageVisibility
-        private static readonly DependencyPropertyKey LoadedImageVisibilityPropertyKey = DependencyProperty.RegisterReadOnly("LoadedImageVisibility",
-            typeof(Visibility), typeof(MainWindow), new PropertyMetadata(Visibility.Collapsed));
+        #region IsLoadedAndSelected
+        public static readonly DependencyPropertyKey IsLoadedAndSelectedPropertyKey = DependencyProperty.RegisterReadOnly("IsLoadedAndSelected",
+            typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsLoadedAndSelectedProperty = IsLoadedAndSelectedPropertyKey.DependencyProperty;
 
-        public static readonly DependencyProperty LoadedImageVisibilityProperty = LoadedImageVisibilityPropertyKey.DependencyProperty;
-
-        public Visibility LoadedImageVisibility { get { return (Visibility)GetValue(LoadedImageVisibilityProperty); } }
+        public bool IsLoadedAndSelected { get { return (bool)GetValue(IsLoadedAndSelectedProperty); } }
         #endregion
 
         private void _zoomSet()
@@ -333,13 +332,32 @@ namespace UIconEdit.Maker
         {
             if (listbox.SelectedIndex < 0)
             {
-                SetValue(LoadedImageVisibilityPropertyKey, Visibility.Collapsed);
+                SetValue(IsLoadedAndSelectedPropertyKey, false);
                 return;
             }
 
-            SetValue(LoadedImageVisibilityPropertyKey, Visibility.Visible);
+            SetValue(IsLoadedAndSelectedPropertyKey, true);
             var image = ((IconEntry)listbox.SelectedItem).BaseImage;
-            _zoomSet();
+
+            const double padding = 26;
+
+            double multiplier;
+            double width = scrollImage.ActualWidth - padding, height = scrollImage.ActualHeight - padding;
+
+            if (image.PixelWidth > width || image.PixelHeight > height)
+            {
+                multiplier = Math.Min(width / image.PixelWidth, height / image.PixelHeight);
+            }
+            else
+            {
+                multiplier = Math.Floor(Math.Min(width / image.PixelWidth, height / image.PixelHeight));
+            }
+
+            int newZoom = (int)(multiplier * 100);
+            if (Zoom == newZoom)
+                _zoomSet();
+            else
+                Zoom = newZoom;
         }
 
         private void ComboBox_PreviewTextInput(object sender, TextCompositionEventArgs e)

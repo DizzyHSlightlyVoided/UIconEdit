@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:UIconEdit"
+        xmlns:local="clr-namespace:UIconEdit.Maker"
         mc:Ignorable="d" x:Name="window" Icon="GradientEdit.ico" SnapsToDevicePixels="True"
         Title="{Binding SettingsFile.LanguageFile.Title, ElementName=window, FallbackValue=UIconEdit}"
         MinHeight="622" MinWidth="650" Height="622" Width="650" Loaded="window_Loaded" Closed="window_Closed">
@@ -81,7 +81,7 @@
             <ScrollViewer>
                 <ListBox SelectionMode="Single" x:Name="listbox" ItemsSource="{Binding LoadedFile.Entries, ElementName=window}" Width="76"
                          SelectionChanged="listbox_SelectionChanged">
-                    <ItemsControl.ItemTemplate>
+                    <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="1" HorizontalAlignment="Center">
                                 <Grid.RowDefinitions>
@@ -101,17 +101,38 @@
                                 </TextBlock>
                             </Grid>
                         </DataTemplate>
-                    </ItemsControl.ItemTemplate>
+                    </ListBox.ItemTemplate>
                 </ListBox>
             </ScrollViewer>
         </Border>
         <Border BorderThickness="0,1,1,1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="scrollImage">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="scrollImage" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
                 <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" x:Name="frameImage"
-                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"
                         Visibility="{Binding IsLoadedAndSelected, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window, Mode=OneWay}">
+                    <Border.Background>
+                        <DrawingBrush Stretch="None" TileMode="Tile" Viewport="0,0,14,14" ViewportUnits="Absolute">
+                            <DrawingBrush.Drawing>
+                                <DrawingGroup>
+                                    <GeometryDrawing Brush="White">
+                                        <GeometryDrawing.Geometry>
+                                            <RectangleGeometry Rect="0,0,14,14"/>
+                                        </GeometryDrawing.Geometry>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Brush="#ffdddddd">
+                                        <GeometryDrawing.Geometry>
+                                            <GeometryGroup>
+                                                <RectangleGeometry Rect="0,0,7,7"/>
+                                                <RectangleGeometry Rect="7,7,7,7"/>
+                                            </GeometryGroup>
+                                        </GeometryDrawing.Geometry>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Border.Background>
                     <Image Source="{Binding SelectedItem.BaseImage, ElementName=listbox}" RenderOptions.BitmapScalingMode="{Binding ZoomScaleMode, ElementName=window}"
-                           Width="{Binding ZoomedWidth,ElementName=window}" Height="{Binding ZoomedHeight,ElementName=window}"/>
+                           Width="{Binding ZoomedWidth, ElementName=window}" Height="{Binding ZoomedHeight,ElementName=window}"/>
                 </Border>
             </ScrollViewer>
         </Border>

@@ -177,8 +177,8 @@ namespace UIconEdit.Maker
         {
             int val = Zoom;
             var image = ((IconEntry)listbox.SelectedItem).BaseImage;
-            SetValue(ZoomedWidthPropertyKey, image.PixelWidth * (val / 100.0));
-            SetValue(ZoomedHeightPropertyKey, image.PixelHeight * (val / 100.0));
+            SetValue(ZoomedWidthPropertyKey, Math.Floor(image.PixelWidth * (val / 100.0)));
+            SetValue(ZoomedHeightPropertyKey, Math.Floor(image.PixelHeight * (val / 100.0)));
             SetValue(ZoomScaleModePropertyKey, val >= 100 ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality);
         }
 
@@ -339,7 +339,7 @@ namespace UIconEdit.Maker
             SetValue(IsLoadedAndSelectedPropertyKey, true);
             var image = ((IconEntry)listbox.SelectedItem).BaseImage;
 
-            const double padding = 26;
+            const double padding = 24;
 
             double multiplier;
             double width = scrollImage.ActualWidth - padding, height = scrollImage.ActualHeight - padding;

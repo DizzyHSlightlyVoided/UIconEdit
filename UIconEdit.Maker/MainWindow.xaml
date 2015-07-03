@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UIconEdit.Maker"
         mc:Ignorable="d" x:Name="window" Icon="GradientEdit.ico" SnapsToDevicePixels="True"
         Title="{Binding SettingsFile.LanguageFile.Title, ElementName=window, FallbackValue=UIconEdit}"
-        MinHeight="622" MinWidth="650" Height="622" Width="650" Loaded="window_Loaded" Closed="window_Closed">
+        MinHeight="622" MinWidth="650" Height="622" Width="650" Loaded="window_Loaded" Closing="window_Closing" Closed="window_Closed">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open" CanExecute="CommandBinding_CanExecute" Executed="Open_Executed"/>
         <CommandBinding Command="ApplicationCommands.Save" CanExecute="Save_CanExecute" Executed="Save_Executed"/>

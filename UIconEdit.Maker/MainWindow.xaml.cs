@@ -82,7 +82,6 @@ namespace UIconEdit.Maker
             {
                 LoadedFile = IconFileBase.Load(path, _errorHandler);
                 FilePath = path;
-                IsModified = false;
                 listbox.SelectedIndex = 0;
             }
             catch (IconLoadException e)
@@ -95,12 +94,13 @@ namespace UIconEdit.Maker
                     else
                         LoadedFile = new IconFile();
                     FilePath = path;
-                    IsModified = false;
-                    listbox.Focus();
+                    listbox.SelectedIndex = 0;
                 }
+                else IsModified = false;
             }
             catch (Exception)
             {
+                IsModified = false;
                 ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageLoadError, path));
             }
             finally
@@ -112,8 +112,9 @@ namespace UIconEdit.Maker
         private void _errorHandler(IconLoadException e)
         {
             string message = _settings.LanguageFile.GetErrorMessage(e);
-
+            IsModified = true;
             ErrorWindow.Show(this, message);
+            Mouse.OverrideCursor = Cursors.Wait;
         }
 
         #region LoadedFile
@@ -122,7 +123,19 @@ namespace UIconEdit.Maker
 
         private static void LoadedFileChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            d.SetValue(IsFileLoadedPropertyKey, e.NewValue != null);
+            MainWindow m = (MainWindow)d;
+            m.SetValue(IsFileLoadedPropertyKey, e.NewValue != null);
+            m.SetValue(IsModifiedPropertyKey, false);
+            if (e.NewValue == null || ((IconFileBase)e.NewValue).Entries.Count == 0)
+            {
+                m.listbox.SelectedIndex = -1;
+                m.SetValue(IsLoadedAndSelectedPropertyKey, false);
+            }
+            else
+            {
+                m.listbox.SelectedIndex = 0;
+                m.listbox.Focus();
+            }
         }
 
         /// <summary>
@@ -264,7 +277,7 @@ namespace UIconEdit.Maker
             IconFileBase loadedFile = LoadedFile;
             if (loadedFile == null) return;
             string filePath = FilePath;
-            if (saveAs)
+            if (saveAs || string.IsNullOrWhiteSpace(filePath))
             {
                 SaveFileDialog dialog = new SaveFileDialog();
                 if (!string.IsNullOrWhiteSpace(filePath))
@@ -290,7 +303,7 @@ namespace UIconEdit.Maker
             {
                 Mouse.OverrideCursor = Cursors.Wait;
                 loadedFile.Save(filePath);
-                System.Threading.Thread.Sleep(250);
+                System.Threading.Thread.Sleep(100);
                 IsModified = false;
             }
             catch (Exception)
@@ -310,7 +323,7 @@ namespace UIconEdit.Maker
 
         private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _save(string.IsNullOrWhiteSpace(FilePath));
+            _save(false);
         }
 
         private void SaveAs_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -326,6 +339,20 @@ namespace UIconEdit.Maker
         private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Close();
+        }
+
+        private bool _checkModified()
+        {
+            if (!IsModified) return false;
+
+            ModificationWindow window = new ModificationWindow(this);
+            window.ShowDialog();
+            if (window.Result == MessageBoxResult.Cancel) return true;
+            else if (window.Result == MessageBoxResult.No) return false;
+
+            _save(window.Result == MessageBoxResult.OK);
+
+            return false;
         }
 
         private void listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -364,6 +391,11 @@ namespace UIconEdit.Maker
         {
             int val;
             e.Handled = !(int.TryParse(e.Text, out val) && val >= 0);
+        }
+
+        private void window_Closing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = _checkModified();
         }
     }
 }

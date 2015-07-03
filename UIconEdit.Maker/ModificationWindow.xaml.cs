@@ -30,9 +30,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,32 +46,45 @@ using System.Windows.Shapes;
 namespace UIconEdit.Maker
 {
     /// <summary>
-    /// Interaction logic for ErrorWindow.xaml
+    /// Interaction logic for ModificationWindow.xaml
     /// </summary>
-    partial class ErrorWindow
+    partial class ModificationWindow
     {
-        public ErrorWindow(MainWindow mainWindow, string message)
+        public ModificationWindow(MainWindow mainWindow)
         {
-            _errorIcon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(System.Drawing.SystemIcons.Error.Handle,
-               Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            _message = message;
             InitializeComponent();
             Owner = mainWindow;
         }
-        
-        private BitmapSource _errorIcon;
-        [Bindable(true)]
-        public BitmapSource ErrorIcon { get { return _errorIcon; } }
 
-        private string _message;
-        [Bindable(true)]
-        public string Message { get { return _message; } }
+        private static DependencyPropertyKey ResultPropertyKey = DependencyProperty.RegisterReadOnly("Result", typeof(MessageBoxResult), typeof(ModificationWindow),
+            new PropertyMetadata(MessageBoxResult.Cancel));
+        public static DependencyProperty ResultProperty = ResultPropertyKey.DependencyProperty;
 
-        public static bool? Show(MainWindow mainWindow, string message)
+        public MessageBoxResult Result
         {
-            Mouse.OverrideCursor = null;
-            ErrorWindow errorWindow = new ErrorWindow(mainWindow, message);
-            return errorWindow.ShowDialog();
+            get { return (MessageBoxResult)GetValue(ResultProperty); }
+            private set { SetValue(ResultPropertyKey, value); }
+        }
+
+        private void saveYes_Click(object sender, RoutedEventArgs e)
+        {
+            Result = MessageBoxResult.Yes;
+            DialogResult = true;
+            Close();
+        }
+
+        private void saveAs_Click(object sender, RoutedEventArgs e)
+        {
+            Result = MessageBoxResult.OK;
+            DialogResult = true;
+            Close();
+        }
+
+        private void saveNo_Click(object sender, RoutedEventArgs e)
+        {
+            Result = MessageBoxResult.No;
+            DialogResult = false;
+            Close();
         }
     }
 }

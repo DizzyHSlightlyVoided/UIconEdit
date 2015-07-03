@@ -174,6 +174,9 @@ namespace UIconEdit.Maker
         public string MenuFileSaveAs { get { return _text["MenuFileSaveAs"]; } }
         public string MenuFileQuit { get { return _text["MenuFileQuit"]; } }
 
+        public string ModifiedCaption { get { return _text["ModifiedCaption"]; } }
+        public string ModifiedMessage { get { return _text["ModifiedMessage"]; } }
+
         public string ButtonOK { get { return _text["ButtonOK"]; } }
         public string ButtonCancel { get { return _text["ButtonCancel"]; } }
         public string ButtonYes { get { return _text["ButtonYes"]; } }

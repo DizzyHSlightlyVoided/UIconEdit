@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UIconEdit.Maker"
         mc:Ignorable="d" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Icon="GradientEdit.ico"
-        Title="{Binding LanguageFile.Error, ElementName=window, FallbackValue=Error}" Height="300" Width="300" MinHeight="100" MinWidth="300">
+        Title="{Binding Owner.LanguageFile.Error, ElementName=window, FallbackValue=Error}" Height="300" Width="300" MinHeight="100" MinWidth="300">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -16,6 +16,6 @@
         <Label Grid.Column="1" Margin="2,8,10,42" HorizontalAlignment="Left" VerticalAlignment="Top"
                Content="{Binding Message, ElementName=window, Mode=OneTime}"/>
         <Button x:Name="button" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" MinWidth="75" IsDefault="True" IsCancel="true"
-                Content="{Binding LanguageFile.ButtonOK, ElementName=window, Mode=OneTime, FallbackValue=_OK}"/>
+                Content="{Binding Owner.LanguageFile.ButtonOK, ElementName=window, Mode=OneTime, FallbackValue=_OK}"/>
     </Grid>
 </Window>

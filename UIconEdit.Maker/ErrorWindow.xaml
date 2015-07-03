@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UIconEdit.Maker"
-        mc:Ignorable="d" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Icon="GradientEdit.ico"
+        mc:Ignorable="d" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Icon="GradientEdit.ico" Loaded="window_Loaded"
         Title="{Binding Owner.LanguageFile.Error, ElementName=window, FallbackValue=Error}" Height="300" Width="300" MinHeight="100" MinWidth="300">
     <Grid>
         <Grid.ColumnDefinitions>

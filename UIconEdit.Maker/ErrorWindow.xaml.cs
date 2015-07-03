@@ -28,20 +28,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
-using System.Threading.Tasks;
+using System.Media;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace UIconEdit.Maker
 {
@@ -72,6 +63,11 @@ namespace UIconEdit.Maker
             Mouse.OverrideCursor = null;
             ErrorWindow errorWindow = new ErrorWindow(mainWindow, message);
             return errorWindow.ShowDialog();
+        }
+
+        private void window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SystemSounds.Hand.Play();
         }
     }
 }

@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UIconEdit.Maker"
-        mc:Ignorable="d" Icon="GradientEdit.ico" ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+        mc:Ignorable="d" Icon="GradientEdit.ico" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Loaded="window_Loaded"
         Title="{Binding Owner.LanguageFile.ModifiedCaption, ElementName=window, FallbackValue=Save}" Height="200" Width="400">
     <DockPanel>
         <Label Margin="10" DockPanel.Dock="Top">

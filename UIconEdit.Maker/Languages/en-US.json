@@ -24,7 +24,7 @@
   "ButtonNoSave": "Do_n't Save",
 
   "BitsPerPixelFormat": "{0}BPP", //{0} = number of bits per pixel
-  "SizeFormat": "{0}x{1}", //{0} = width, {1} = height
+  "SizeFormat": "{0}×{1}", //{0} = width, {1} = height.
 
   "IconError0": "An unknown error occurred.",
   "IconError1": "The file is not a valid cursor or icon file.",

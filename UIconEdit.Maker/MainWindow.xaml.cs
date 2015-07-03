@@ -30,10 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.ComponentModel;
-using System.Linq;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -396,6 +398,36 @@ namespace UIconEdit.Maker
         private void window_Closing(object sender, CancelEventArgs e)
         {
             e.Cancel = _checkModified();
+        }
+    }
+
+    internal class SizeStringConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            string format = (string)values[0];
+            IconEntry entry = (IconEntry)values[1];
+            return string.Format(format, entry.Width, entry.Height);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    internal class BPSStringConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            string format = (string)values[0];
+            IconEntry entry = (IconEntry)values[1];
+            return string.Format(format, entry.BitsPerPixel);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
         }
     }
 }

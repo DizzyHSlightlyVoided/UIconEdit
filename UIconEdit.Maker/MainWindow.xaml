@@ -18,6 +18,8 @@
     </Window.InputBindings>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:BPSStringConverter x:Key="BPSStringConverter"/>
+        <local:SizeStringConverter x:Key="SizeStringConverter"/>
         <Style x:Key="imgEnabled" TargetType="{x:Type Image}">
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="false">
@@ -91,13 +93,20 @@
                                 </Grid.RowDefinitions>
                                 <Image Source="{Binding BaseImage}" Width="64" Margin="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                                 <TextBlock Grid.Row="1" HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding BitsPerPixel}"/>
-                                    <TextBlock Text="BPS"/>
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource BPSStringConverter}">
+                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.BitsPerPixelFormat"/>
+                                            <Binding />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
                                 </TextBlock>
                                 <TextBlock Grid.Row="2" HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding Width}"/>
-                                    <TextBlock Text="&#xd7;"/>
-                                    <TextBlock Text="{Binding Width}"/>
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource SizeStringConverter}">
+                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.SizeFormat"/>
+                                            <Binding />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
                                 </TextBlock>
                             </Grid>
                         </DataTemplate>

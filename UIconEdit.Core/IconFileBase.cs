@@ -247,7 +247,7 @@ namespace UIconEdit
 
                 const int bufferSize = 8192;
 
-                List<IconEntry> entries = new List<IconEntry>();
+                List<IconEntry> entries = new List<IconEntry>(entryList.Length);
 
                 for (int i = 0; i < entryList.Length; i++)
                 {
@@ -459,9 +459,7 @@ namespace UIconEdit
                         else
                             resultEntry = new IconEntry(loadedImage, bitDepth);
 
-                        int dex = entries.BinarySearch(resultEntry, new IconEntryComparer());
-
-                        entries.Insert(dex < 0 ? ~dex : dex, resultEntry);
+                        entries.Add(resultEntry);
                     }
                     catch (IconLoadException e)
                     {
@@ -481,6 +479,8 @@ namespace UIconEdit
 
                 if (entries.Count == 0)
                     throw new IconLoadException(IconErrorCode.ZeroValidEntries, loadedId);
+
+                entries.Sort(new IconEntryComparer());
 
                 returner.Entries.AddBulk(entries);
 
@@ -833,13 +833,24 @@ namespace UIconEdit
             private IconFileBase _file;
             private bool _noDups;
 
+            private void _setItems(ObservableCollection<IconEntry> collection)
+            {
+                var oldItems = _items;
+                _items = collection;
+                _items.CollectionChanged += _items_CollectionChanged;
+                ((INotifyPropertyChanged)_items).PropertyChanged += _items_PropertyChanged;
+                if (oldItems != null)
+                {
+                    oldItems.CollectionChanged -= _items_CollectionChanged;
+                    ((INotifyPropertyChanged)oldItems).PropertyChanged -= _items_PropertyChanged;
+                }
+            }
+
             internal EntryList(IconFileBase file)
             {
                 _file = file;
                 _set = new HashSet<EntryKey>();
-                _items = new ObservableCollection<IconEntry>();
-                _items.CollectionChanged += _items_CollectionChanged;
-                ((INotifyPropertyChanged)_items).PropertyChanged += _items_PropertyChanged;
+                _setItems(new ObservableCollection<IconEntry>());
                 _noDups = true;
             }
 
@@ -915,11 +926,7 @@ namespace UIconEdit
 
             internal void AddBulk(IList<IconEntry> entries)
             {
-                foreach (IconEntry entry in entries)
-                {
-                    _noDups &= _set.Add(entry.EntryKey);
-                    _items.Add(entry);
-                }
+                _setItems(new ObservableCollection<IconEntry>(entries));
             }
 
             /// <summary>
@@ -1220,6 +1227,220 @@ namespace UIconEdit
             public void CopyTo(IconEntry[] array, int arrayIndex)
             {
                 _items.CopyTo(array, arrayIndex);
+            }
+
+            private void _binarySearchCheck(int index, int count)
+            {
+                if (index < 0) throw new ArgumentOutOfRangeException("index");
+                if (count < 0) throw new ArgumentOutOfRangeException("count");
+                if (index + count > _items.Count) throw new ArgumentException();
+            }
+
+            private int _binarySearch(int index, int count, EntryKey key)
+            {
+                int low = index, high = index + count - 1;
+
+                while (low <= high)
+                {
+                    int i = low + (high - low) / 2;
+                    int comp = key.CompareTo(_items[i].EntryKey);
+                    if (comp == 0) return i;
+                    if (comp < 0)
+                        high = i - 1;
+                    else
+                        low = i + 1;
+                }
+                return ~low;
+            }
+
+            /// <summary>
+            /// Performs a binary search for the specified entry within the entire list.
+            /// This method presumes that the list is already sorted according to each <see cref="IconEntry.EntryKey"/> value.
+            /// </summary>
+            /// <param name="entry">The icon entry to search for.</param>
+            /// <returns>The index of <paramref name="entry"/>, if found; otherwise, the bitwise complement of the 
+            /// index where <paramref name="entry"/> would be.</returns>
+            public int BinarySearch(IconEntry entry)
+            {
+                return BinarySearch(0, _items.Count, entry);
+            }
+
+            /// <summary>
+            /// Performs a binary search for the specified entry within the specified range of elements.
+            /// This method presumes that the list is already sorted according to each <see cref="IconEntry.EntryKey"/> value.
+            /// </summary>
+            /// <param name="index">The index in the list at which the search begins.</param>
+            /// <param name="count">The number of elements to search.</param>
+            /// <param name="entry">The icon entry to search for.</param>
+            /// <returns>The index of <paramref name="entry"/>, if found; otherwise, the bitwise complement of the 
+            /// index where <paramref name="entry"/> would be.</returns>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
+            /// </exception>
+            public int BinarySearch(int index, int count, IconEntry entry)
+            {
+                int dex = BinarySearchSimilar(index, count, entry);
+                if (dex < 0 || _items[dex] == entry) return dex;
+                return ~dex;
+            }
+
+            /// <summary>
+            /// Performs a binary search for an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
+            /// and <see cref="IconEntry.BitDepth"/> as the specified entry within the entire list.
+            /// This method presumes that the list is already sorted according to each <see cref="IconEntry.EntryKey"/> value.
+            /// </summary>
+            /// <param name="entry">The icon entry to search for.</param>
+            /// <returns>The index of an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and
+            /// <see cref="IconEntry.BitDepth"/> as <paramref name="entry"/>, if found; otherwise, the bitwise complement of the
+            /// index where <paramref name="entry"/> would be.</returns>
+            public int BinarySearchSimilar(IconEntry entry)
+            {
+                return BinarySearchSimilar(0, _items.Count, entry);
+            }
+
+            /// <summary>
+            /// Performs a binary search for an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
+            /// and <see cref="IconEntry.BitDepth"/> as the specified entry within the specified range of elements.
+            /// This method presumes that the list is already sorted according to each <see cref="IconEntry.EntryKey"/> value.
+            /// </summary>
+            /// <param name="index">The index in the list at which the search begins.</param>
+            /// <param name="count">The number of elements to search.</param>
+            /// <param name="entry">The icon entry to search for.</param>
+            /// <returns>The index of an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and
+            /// <see cref="IconEntry.BitDepth"/> as <paramref name="entry"/>, if found; otherwise, the bitwise complement of the
+            /// index where <paramref name="entry"/> would be.</returns>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
+            /// </exception>
+            public int BinarySearchSimilar(int index, int count, IconEntry entry)
+            {
+                _binarySearchCheck(index, count);
+                if (entry == null) return ~index;
+                return _binarySearch(0, _items.Count, entry.EntryKey);
+            }
+
+            /// <summary>
+            /// Performs a binary search for an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
+            /// and <see cref="IconEntry.BitDepth"/> as the specified key within the entire list.
+            /// This method presumes that the list is already sorted according to each <see cref="IconEntry.EntryKey"/> value.
+            /// </summary>
+            /// <param name="key">The entry key to search for.</param>
+            /// <returns>The index of an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and
+            /// <see cref="IconEntry.BitDepth"/> as <paramref name="key"/>, if found; otherwise, the bitwise complement of the
+            /// index where <paramref name="key"/> would be.</returns>
+            public int BinarySearchSimilar(EntryKey key)
+            {
+                return _binarySearch(0, _items.Count, key);
+            }
+
+            /// <summary>
+            /// Performs a binary search for an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
+            /// and <see cref="IconEntry.BitDepth"/> as the specified key within the specified range of elements.
+            /// This method presumes that the list is already sorted according to each <see cref="IconEntry.EntryKey"/> value.
+            /// </summary>
+            /// <param name="index">The index in the list at which the search begins.</param>
+            /// <param name="count">The number of elements to search.</param>
+            /// <param name="key">The entry key to search for.</param>
+            /// <returns>The index of <paramref name="key"/>, if found; otherwise, the bitwise complement of the 
+            /// index where <paramref name="key"/> would be.</returns>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
+            /// </exception>
+            public int BinarySearchSimilar(int index, int count, EntryKey key)
+            {
+                _binarySearchCheck(index, count);
+                return _binarySearch(index, count, key);
+            }
+
+            /// <summary>
+            /// Performs a binary search for an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
+            /// and <see cref="IconEntry.BitDepth"/> as the specified key within the entire list.
+            /// This method presumes that the list is already sorted according to each <see cref="IconEntry.EntryKey"/> value.
+            /// </summary>
+            /// <param name="width">The width of the icon entry to search for.</param>
+            /// <param name="height">The height of the icon entry to search for.</param>
+            /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
+            /// <returns>The index of an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and
+            /// <see cref="IconEntry.BitDepth"/> as <paramref name="width"/>, <paramref name="height"/>, and <paramref name="bitDepth"/>,
+            /// if found; otherwise, the bitwise complement of the index of where <paramref name="width"/>, <paramref name="height"/>,
+            /// and <paramref name="bitDepth"/> would be.</returns>
+            public int BinarySearchSimilar(short width, short height, BitDepth bitDepth)
+            {
+                return BinarySearchSimilar(new EntryKey(width, height, bitDepth));
+            }
+
+            /// <summary>
+            /// Performs a binary search for an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
+            /// and <see cref="IconEntry.BitDepth"/> as the specified key within the entire list.
+            /// This method presumes that the list is already sorted according to each <see cref="IconEntry.EntryKey"/> value.
+            /// </summary>
+            /// <param name="index">The index in the list at which the search begins.</param>
+            /// <param name="count">The number of elements to search.</param>
+            /// <param name="width">The width of the icon entry to search for.</param>
+            /// <param name="height">The height of the icon entry to search for.</param>
+            /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
+            /// <returns>The index of an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and
+            /// <see cref="IconEntry.BitDepth"/> as <paramref name="width"/>, <paramref name="height"/>, and <paramref name="bitDepth"/>,
+            /// if found; otherwise, the bitwise complement of the index of where <paramref name="width"/>, <paramref name="height"/>,
+            /// and <paramref name="bitDepth"/> would be.</returns>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> or <paramref name="count"/> is less than 0.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
+            /// </exception>
+            public int BinarySearchSimilar(int index, int count, short width, short height, BitDepth bitDepth)
+            {
+                return BinarySearchSimilar(index, count, new EntryKey(width, height, bitDepth));
+            }
+
+            /// <summary>
+            /// Sorts all elements in the list according to their <see cref="IconEntry.EntryKey"/> value.
+            /// </summary>
+            /// <remarks>
+            /// This method raises the <see cref="CollectionChanged"/> event using <see cref="NotifyCollectionChangedAction.Reset"/>
+            /// if the list contains more than 2 elements.
+            /// </remarks>
+            public void Sort()
+            {
+                if (_items.Count < 2) return;
+
+                if (_items.Count == 2)
+                {
+                    if (_items[0].EntryKey < _items[1].EntryKey)
+                        return;
+                    _items.Move(1, 0);
+                    return;
+                }
+
+                var allItems = _items.ToArray();
+                Array.Sort(allItems, new IconEntryComparer());
+
+                bool allSame = true;
+                for (int i = 0; i < allItems.Length; i++)
+                {
+                    if (_items[i] != allItems[i])
+                    {
+                        allSame = false;
+                        break;
+                    }
+                }
+                if (allSame) return;
+
+                _setItems(new ObservableCollection<IconEntry>(allItems));
+                if (CollectionChanged != null)
+                    CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("Item[]"));
             }
 
             /// <summary>

@@ -33,7 +33,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 using Microsoft.Win32;
 
@@ -163,6 +165,71 @@ namespace UIconEdit.Maker
         }
         #endregion
 
+        #region LoadedImageVisibility
+        private static readonly DependencyPropertyKey LoadedImageVisibilityPropertyKey = DependencyProperty.RegisterReadOnly("LoadedImageVisibility",
+            typeof(Visibility), typeof(MainWindow), new PropertyMetadata(Visibility.Collapsed));
+
+        public static readonly DependencyProperty LoadedImageVisibilityProperty = LoadedImageVisibilityPropertyKey.DependencyProperty;
+
+        public Visibility LoadedImageVisibility { get { return (Visibility)GetValue(LoadedImageVisibilityProperty); } }
+        #endregion
+
+        private void _zoomSet()
+        {
+            int val = Zoom;
+            var image = ((IconEntry)listbox.SelectedItem).BaseImage;
+            SetValue(ZoomedWidthPropertyKey, image.PixelWidth * (val / 100.0));
+            SetValue(ZoomedHeightPropertyKey, image.PixelHeight * (val / 100.0));
+            SetValue(ZoomScaleModePropertyKey, val >= 100 ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality);
+        }
+
+        #region Zoom
+        public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(int), typeof(MainWindow),
+            new PropertyMetadata(100, ZoomChanged), ZoomValidate);
+
+        private static void ZoomChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            MainWindow m = (MainWindow)d;
+            int newVal = (int)e.NewValue;
+            m._zoomSet();
+        }
+
+        private static bool ZoomValidate(object value)
+        {
+            return (int)value > 0;
+        }
+
+        public int Zoom
+        {
+            get { return (int)GetValue(ZoomProperty); }
+            set { SetValue(ZoomProperty, value); }
+        }
+        #endregion
+
+        #region ZoomedWidth
+        private static readonly DependencyPropertyKey ZoomedWidthPropertyKey = DependencyProperty.RegisterReadOnly("ZoomedWidth", typeof(double),
+            typeof(MainWindow), new PropertyMetadata());
+        public static readonly DependencyProperty ZoomedWidthProperty = ZoomedWidthPropertyKey.DependencyProperty;
+
+        public double ZoomedWidth { get { return (double)GetValue(ZoomedWidthProperty); } }
+        #endregion
+
+        #region ZoomedHeight
+        private static readonly DependencyPropertyKey ZoomedHeightPropertyKey = DependencyProperty.RegisterReadOnly("ZoomedHeight", typeof(double),
+            typeof(MainWindow), new PropertyMetadata());
+        public static readonly DependencyProperty ZoomedHeightProperty = ZoomedHeightPropertyKey.DependencyProperty;
+
+        public double ZoomedHeight { get { return (double)GetValue(ZoomedHeightProperty); } }
+        #endregion
+
+        #region ZoomScaleMode
+        private static readonly DependencyPropertyKey ZoomScaleModePropertyKey = DependencyProperty.RegisterReadOnly("ZoomScaleMode",
+            typeof(BitmapScalingMode), typeof(MainWindow), new PropertyMetadata());
+        public static readonly DependencyProperty ZoomScaleModeProperty = ZoomScaleModePropertyKey.DependencyProperty;
+
+        public BitmapScalingMode ZoomScaleMode { get { return (BitmapScalingMode)GetValue(ZoomScaleModeProperty); } }
+        #endregion
+
         private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -225,6 +292,7 @@ namespace UIconEdit.Maker
                 Mouse.OverrideCursor = Cursors.Wait;
                 loadedFile.Save(filePath);
                 System.Threading.Thread.Sleep(250);
+                IsModified = false;
             }
             catch (Exception)
             {
@@ -259,6 +327,25 @@ namespace UIconEdit.Maker
         private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Close();
+        }
+
+        private void listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (listbox.SelectedIndex < 0)
+            {
+                SetValue(LoadedImageVisibilityPropertyKey, Visibility.Collapsed);
+                return;
+            }
+
+            SetValue(LoadedImageVisibilityPropertyKey, Visibility.Visible);
+            var image = ((IconEntry)listbox.SelectedItem).BaseImage;
+            _zoomSet();
+        }
+
+        private void ComboBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            int val;
+            e.Handled = !(int.TryParse(e.Text, out val) && val >= 0);
         }
     }
 }

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UIconEdit"
         mc:Ignorable="d" x:Name="window" Icon="GradientEdit.ico"
         Title="{Binding SettingsFile.LanguageFile.Title, ElementName=window, FallbackValue=UIconEdit}"
-        Height="480" Width="640" Loaded="window_Loaded" Closed="window_Closed">
+        Height="640" Width="640" Loaded="window_Loaded" Closed="window_Closed">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open" CanExecute="CommandBinding_CanExecute" Executed="Open_Executed"/>
         <CommandBinding Command="ApplicationCommands.Save" CanExecute="Save_CanExecute" Executed="Save_Executed"/>
@@ -55,7 +55,8 @@
             <Separator/>
             <Image Source="Zoom.ico" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"
                    IsEnabled="{Binding IsFileLoaded, ElementName=window}"/>
-            <ComboBox SelectedValue="100" Width="100" IsEditable="True" IsEnabled="{Binding IsFileLoaded, ElementName=window}">
+            <ComboBox x:Name="cmbZoom" Width="100" IsEditable="True" IsEnabled="{Binding IsFileLoaded, ElementName=window}"
+                      Text="{Binding Zoom, ElementName=window, Mode=TwoWay}" PreviewTextInput="ComboBox_PreviewTextInput">
                 <ComboBoxItem>2000</ComboBoxItem>
                 <ComboBoxItem>1800</ComboBoxItem>
                 <ComboBoxItem>1600</ComboBoxItem>
@@ -79,7 +80,8 @@
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">
             <ScrollViewer>
-                <ListBox SelectionMode="Single" x:Name="listbox" ItemsSource="{Binding LoadedFile.Entries, ElementName=window}" Width="76">
+                <ListBox SelectionMode="Single" x:Name="listbox" ItemsSource="{Binding LoadedFile.Entries, ElementName=window}" Width="76"
+                         SelectionChanged="listbox_SelectionChanged">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="1" HorizontalAlignment="Center">
@@ -105,7 +107,14 @@
             </ScrollViewer>
         </Border>
         <Border BorderThickness="0,1,1,1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
-            <Grid/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="scrollImage">
+                <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16"
+                        Visibility="{Binding LoadedImageVisibility, ElementName=window}">
+                    <Image Source="{Binding SelectedItem.BaseImage, ElementName=listbox}" RenderOptions.BitmapScalingMode="{Binding ZoomScaleMode, ElementName=window}"
+                           Width="{Binding ZoomedWidth,ElementName=window}" Height="{Binding ZoomedHeight,ElementName=window}"/>
+                </Border>
+            </ScrollViewer>
         </Border>
     </DockPanel>
 </Window>

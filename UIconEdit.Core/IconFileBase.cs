@@ -927,6 +927,8 @@ namespace UIconEdit
             internal void AddBulk(IList<IconEntry> entries)
             {
                 _setItems(new ObservableCollection<IconEntry>(entries));
+                foreach (var curItem in entries)
+                    _noDups &= _set.Add(curItem.EntryKey);
             }
 
             /// <summary>

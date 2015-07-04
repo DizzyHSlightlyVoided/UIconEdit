@@ -114,15 +114,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Zoom_24x24.png" />
-    <Resource Include="Save_24x24.png" />
-    <Resource Include="Open_24x24.png" />
-    <Resource Include="New_24x24.png" />
+    <Resource Include="Resources\Zoom_24x24.png" />
+    <Resource Include="Resources\Save_24x24.png" />
+    <Resource Include="Resources\Open_24x24.png" />
+    <Resource Include="Resources\New_24x24.png" />
     <Resource Include="GradientEdit.ico" />
-    <Resource Include="Add_24x24.png" />
-    <Resource Include="Delete_24x24.png" />
-    <Resource Include="Copy_24x24.png" />
-    <Resource Include="Download_24x24.png" />
+    <Resource Include="Resources\Add_24x24.png" />
+    <Resource Include="Resources\Delete_24x24.png" />
+    <Resource Include="Resources\Copy_24x24.png" />
+    <Resource Include="Resources\Download_24x24.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Languages\en-US.json">
@@ -137,6 +137,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

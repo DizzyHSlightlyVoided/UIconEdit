@@ -16,13 +16,16 @@
   "MenuFileSaveAs": "Save _As",
   "MenuFileQuit": "E_xit",
 
-  "MenuIcon": "_Icon",
-  "MenuIconAdd": "_Add",
-  "MenuIconDup": "_Duplicate",
-  "MenuIconRem": "_Remove",
+  "MenuEdit": "_Edit",
+  "MenuEditAdd": "_Add",
+  "MenuEditDup": "_Duplicate",
+  "MenuEditRem": "_Remove",
 
   "ModifiedCaption": "Save",
   "ModifiedMessage": "File was modified. Save?",
+
+  "RemoveCaption": "Delete Image",
+  "RemoveMessage": "Delete current image? This cannot be undone!",
 
   "ButtonOK": "_OK",
   "ButtonCancel": "_Cancel",

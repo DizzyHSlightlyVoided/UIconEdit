@@ -368,6 +368,7 @@ namespace UIconEdit.Maker
             LoadedFile.Entries.Insert(dex, newEntry);
             listbox.SelectedIndex = dex;
             IsModified = true;
+            listbox.ScrollIntoView(listbox.SelectedItem);
         }
 
         private void Add_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -415,6 +416,19 @@ namespace UIconEdit.Maker
         }
 
         public static readonly RoutedCommand RemoveCommand = new RoutedCommand("Duplicate", typeof(MainWindow));
+
+        private void Remove_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            QuestionWindow window = new QuestionWindow(this, _settings.LanguageFile.RemoveMessage, _settings.LanguageFile.RemoveCaption);
+            window.ButtonOKEnabled = false;
+            window.ButtonCancelEnabled = false;
+            window.ButtonYesEnabled = true;
+            window.ButtonNoEnabled = true;
+            bool? result = window.ShowDialog();
+            if (!result.HasValue || !result.Value || window.Result == MessageBoxResult.No) return;
+            LoadedFile.Entries.RemoveAt(listbox.SelectedIndex);
+            IsModified = true;
+        }
 
         private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
         {

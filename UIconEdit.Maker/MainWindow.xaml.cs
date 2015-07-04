@@ -465,6 +465,43 @@ namespace UIconEdit.Maker
             IsModified = true;
         }
 
+        public static readonly RoutedCommand ExportCommand = new RoutedCommand("Export", typeof(MainWindow));
+
+        private void Export_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            IconEntry entry = ((IconEntry)listbox.SelectedItem);
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = string.Format("{0} (*.png)|*.png", SettingsFile.LanguageFile.TypePng);
+            string filePath = FilePath;
+            if (!string.IsNullOrWhiteSpace(filePath))
+                dialog.FileName = Path.GetFileNameWithoutExtension(filePath) + "-";
+            dialog.FileName += string.Format("{0}bpp{1}x{2}", entry.BitsPerPixel, entry.Width, entry.Height);
+
+            bool? result = dialog.ShowDialog(this);
+
+            if (!result.HasValue || !result.Value) return;
+
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(entry.BaseImage));
+
+                using (FileStream fs = File.Open(dialog.FileName, FileMode.Create))
+                    encoder.Save(fs);
+                System.Threading.Thread.Sleep(100);
+            }
+            catch
+            {
+                ErrorWindow.Show(this, string.Format(SettingsFile.LanguageFile.ImageSaveError, dialog.FileName));
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
+        }
+
         private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Close();

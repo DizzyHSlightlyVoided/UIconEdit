@@ -122,6 +122,9 @@
     <Resource Include="Add_24x24.png" />
     <Resource Include="Delete_24x24.png" />
     <Resource Include="Copy_24x24.png" />
+    <Resource Include="Download_24x24.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Languages\en-US.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -20,6 +20,7 @@
   "MenuEditAdd": "_Add new image",
   "MenuEditDup": "_Duplicate current image",
   "MenuEditRem": "_Remove current image",
+  "MenuEditExp": "_Export current image",
 
   "ButtonTipOpen": "Open",
   "ButtonTipNew": "New",
@@ -28,6 +29,7 @@
   "ButtonTipAdd": "Add new image",
   "ButtonTipDup": "Duplicate current image",
   "ButtonTipRem": "Remove current image",
+  "ButtonTipExp": "Export current image",
 
   "ModifiedCaption": "Save",
   "ModifiedMessage": "File was modified. Save?",
@@ -78,5 +80,6 @@
   "TypeCur": "Cursor files",
   "TypeIcoCur": "Icon or cursor files",
   "TypeAll": "All files",
+  "TypePng": "PNG files",
   "TypeImage": "Image files"
 }

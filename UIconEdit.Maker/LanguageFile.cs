@@ -221,6 +221,7 @@ namespace UIconEdit.Maker
         public string TypeCur { get { return _text["TypeCur"]; } }
         public string TypeIcoCur { get { return _text["TypeIcoCur"]; } }
         public string TypeAll { get { return _text["TypeAll"]; } }
+        public string TypePng { get { return _text["TypePng"]; } }
         public string TypeImage { get { return _text["TypeImage"]; } }
 
         public string GetErrorMessage(IconLoadException e)

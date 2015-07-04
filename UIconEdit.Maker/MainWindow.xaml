@@ -16,6 +16,7 @@
         <CommandBinding Command="{x:Static local:MainWindow.AddCommand}" CanExecute="Add_CanExecute" Executed="Add_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.DuplicateCommand}" CanExecute="Duplicate_CanExecute" Executed="Duplicate_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.RemoveCommand}" CanExecute="Duplicate_CanExecute" Executed="Remove_Executed"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ExportCommand}" CanExecute="Duplicate_CanExecute" Executed="Export_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="S" Modifiers="Shift" Command="ApplicationCommands.SaveAs"/>
@@ -74,6 +75,12 @@
                         <Image Source="Delete_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem Header="{Binding SettingsFile.LanguageFile.MenuEditExp, ElementName=window, FallbackValue=_Export}"
+                          Command="{x:Static local:MainWindow.ExportCommand}">
+                    <MenuItem.Icon>
+                        <Image Source="Download_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
         </Menu>
         <ToolBar DockPanel.Dock="Top" Height="Auto">
@@ -119,6 +126,10 @@
             <Button Command="{x:Static local:MainWindow.RemoveCommand}"
                     ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipRem, ElementName=window, FallbackValue=Remove}">
                 <Image Source="Delete_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+            </Button>
+            <Button Command="{x:Static local:MainWindow.ExportCommand}"
+                    ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipExp, ElementName=window, FallbackValue=Export}">
+                <Image Source="Download_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">

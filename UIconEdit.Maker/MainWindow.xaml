@@ -77,13 +77,13 @@
             </MenuItem>
         </Menu>
         <ToolBar DockPanel.Dock="Top" Height="Auto">
-            <Button Command="ApplicationCommands.New">
+            <Button Command="ApplicationCommands.New" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipNew, ElementName=window, FallbackValue=New}">
                 <Image Source="New_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
-            <Button Command="ApplicationCommands.Open">
+            <Button Command="ApplicationCommands.Open" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipOpen, ElementName=window, FallbackValue=Open}">
                 <Image Source="Open_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
-            <Button Command="ApplicationCommands.Save">
+            <Button Command="ApplicationCommands.Save" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipSave, ElementName=window, FallbackValue=Save}">
                 <Image Source="Save_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Separator/>
@@ -109,13 +109,15 @@
             </ComboBox>
             <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}">%</TextBlock>
             <Separator/>
-            <Button Command="{x:Static local:MainWindow.AddCommand}">
+            <Button Command="{x:Static local:MainWindow.AddCommand}" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipAdd, ElementName=window, FallbackValue=Add}">
                 <Image Source="Add_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
-            <Button Command="{x:Static local:MainWindow.DuplicateCommand}">
+            <Button Command="{x:Static local:MainWindow.DuplicateCommand}"
+                    ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipDup, ElementName=window, FallbackValue=Duplicate}">
                 <Image Source="Copy_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
-            <Button Command="{x:Static local:MainWindow.RemoveCommand}">
+            <Button Command="{x:Static local:MainWindow.RemoveCommand}"
+                    ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipRem, ElementName=window, FallbackValue=Remove}">
                 <Image Source="Delete_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
         </ToolBar>

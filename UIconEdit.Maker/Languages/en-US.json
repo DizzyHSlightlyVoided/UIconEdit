@@ -17,9 +17,17 @@
   "MenuFileQuit": "E_xit",
 
   "MenuEdit": "_Edit",
-  "MenuEditAdd": "_Add",
-  "MenuEditDup": "_Duplicate",
-  "MenuEditRem": "_Remove",
+  "MenuEditAdd": "_Add new image",
+  "MenuEditDup": "_Duplicate current image",
+  "MenuEditRem": "_Remove current image",
+
+  "ButtonTipOpen": "Open",
+  "ButtonTipNew": "New",
+  "ButtonTipSave": "Save",
+
+  "ButtonTipAdd": "Add new image",
+  "ButtonTipDup": "Duplicate current image",
+  "ButtonTipRem": "Remove current image",
 
   "ModifiedCaption": "Save",
   "ModifiedMessage": "File was modified. Save?",

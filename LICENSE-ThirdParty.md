@@ -3,7 +3,7 @@
 
 Icons
 -----
-New, Open, Save, Add, Duplicate, Remove, and Zoom icons are taken from [VisualPharm's Must Have Icon Set](http://www.visualpharm.com/must_have_icon_set/).
+Toolbar and menu icons are taken from [VisualPharm's Must Have Icon Set](http://www.visualpharm.com/must_have_icon_set/).
 
 Apache License, Version 2.0
 ---------------------------

@@ -357,6 +357,19 @@ namespace UIconEdit.Maker
             e.Handled = true;
         }
 
+        private void _add(AddWindow addWindow)
+        {
+            bool? result = addWindow.ShowDialog();
+
+            if (!result.HasValue || !result.Value) return;
+
+            var newEntry = addWindow.GetIconEntry();
+            int dex = ~LoadedFile.Entries.BinarySearchSimilar(newEntry);
+            LoadedFile.Entries.Insert(dex, newEntry);
+            listbox.SelectedIndex = dex;
+            IsModified = true;
+        }
+
         private void Add_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
@@ -383,18 +396,25 @@ namespace UIconEdit.Maker
                 Mouse.OverrideCursor = null;
             }
 
-            Mouse.OverrideCursor = null;
-            AddWindow addWindow = new AddWindow(this, false, bmpSource, 0, 0, BitDepth.Depth32BitsPerPixel);
-            result = addWindow.ShowDialog();
-
-            if (!result.HasValue || !result.Value) return;
-
-            var newEntry = addWindow.GetIconEntry();
-            int dex = ~LoadedFile.Entries.BinarySearchSimilar(newEntry);
-            LoadedFile.Entries.Insert(dex, newEntry);
-            listbox.SelectedIndex = dex;
-            IsModified = true;
+            _add(new AddWindow(this, false, bmpSource, BitDepth.Depth32BitsPerPixel));
         }
+
+        public static readonly RoutedCommand DuplicateCommand = new RoutedCommand("Duplicate", typeof(MainWindow));
+
+        private void Duplicate_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsLoadedAndSelected;
+            e.Handled = true;
+        }
+
+        private void Duplicate_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            IconEntry entry = (IconEntry)(listbox.SelectedItem);
+
+            _add(new AddWindow(this, true, entry.BaseImage, entry.BitDepth));
+        }
+
+        public static readonly RoutedCommand RemoveCommand = new RoutedCommand("Duplicate", typeof(MainWindow));
 
         private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
         {

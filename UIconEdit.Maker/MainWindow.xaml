@@ -14,6 +14,7 @@
         <CommandBinding Command="ApplicationCommands.SaveAs" CanExecute="SaveAs_CanExecute" Executed="SaveAs_Executed"/>
         <CommandBinding Command="ApplicationCommands.Close" CanExecute="CommandBinding_CanExecute" Executed="Close_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.AddCommand}" CanExecute="Add_CanExecute" Executed="Add_Executed"/>
+        <CommandBinding Command="{x:Static local:MainWindow.DuplicateCommand}" CanExecute="Duplicate_CanExecute" Executed="Duplicate_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="S" Modifiers="Shift" Command="ApplicationCommands.SaveAs"/>
@@ -55,9 +56,15 @@
                           InputGestureText="Alt+F4"/>
             </MenuItem>
             <MenuItem Header="{Binding SettingsFile.LanguageFile.MenuIcon, ElementName=window, FallbackValue=_Icon}">
-                <MenuItem Header="{Binding SettingsFile.LanguageFile.MenuIcon, ElementName=window, FallbackValue=_Add}" Command="{x:Static local:MainWindow.AddCommand}">
+                <MenuItem Header="{Binding SettingsFile.LanguageFile.MenuIconAdd, ElementName=window, FallbackValue=_Add}" Command="{x:Static local:MainWindow.AddCommand}">
                     <MenuItem.Icon>
                         <Image Source="Add_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="{Binding SettingsFile.LanguageFile.MenuIconDup, ElementName=window, FallbackValue=_Duplicate}"
+                          Command="{x:Static local:MainWindow.DuplicateCommand}">
+                    <MenuItem.Icon>
+                        <Image Source="Copy_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
@@ -97,6 +104,9 @@
             <Separator/>
             <Button Command="{x:Static local:MainWindow.AddCommand}">
                 <Image Source="Add_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+            </Button>
+            <Button Command="{x:Static local:MainWindow.DuplicateCommand}">
+                <Image Source="Copy_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">

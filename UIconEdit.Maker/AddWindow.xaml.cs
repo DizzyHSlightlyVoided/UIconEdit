@@ -39,7 +39,7 @@ namespace UIconEdit.Maker
     /// </summary>
     partial class AddWindow
     {
-        public AddWindow(MainWindow mainWindow, bool duplicated, BitmapSource image, short width, short height, BitDepth bitDepth)
+        public AddWindow(MainWindow mainWindow, bool duplicated, BitmapSource image, BitDepth bitDepth)
         {
             Owner = _mainWindow = mainWindow;
             LoadedImage = image;
@@ -50,9 +50,10 @@ namespace UIconEdit.Maker
             binding.Mode = BindingMode.OneWay;
             BindingOperations.SetBinding(this, TitleProperty, binding);
 
-            if (width == 0 && image.PixelWidth >= IconEntry.MinDimension && image.PixelWidth <= IconEntry.MaxDimension)
+            short width = 32, height = 32;
+            if (image.PixelWidth >= IconEntry.MinDimension && image.PixelWidth <= IconEntry.MaxDimension)
                 width = (short)image.PixelWidth;
-            if (height == 0 && image.PixelHeight >= IconEntry.MinDimension && image.PixelHeight <= IconEntry.MaxDimension)
+            if (image.PixelHeight >= IconEntry.MinDimension && image.PixelHeight <= IconEntry.MaxDimension)
                 height = (short)image.PixelHeight;
 
             EntryWidth = width;
@@ -119,7 +120,7 @@ namespace UIconEdit.Maker
 
         public IconEntry GetIconEntry()
         {
-            var entry = new IconEntry(LoadedImage, EntryWidth, EntryHeight, BitDepth);
+            var entry = new IconEntry(LoadedImage, EntryWidth, EntryHeight, BitDepth, AlphaThreshold);
             entry.BaseImage = entry.GetQuantizedPng();
             return entry;
         }
@@ -128,9 +129,9 @@ namespace UIconEdit.Maker
         public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register("AlphaThreshold", typeof(byte), typeof(AddWindow),
             new PropertyMetadata(IconEntry.DefaultAlphaThreshold));
 
-        public bool AlphaThreshold
+        public byte AlphaThreshold
         {
-            get { return (bool)GetValue(AlphaThresholdProperty); }
+            get { return (byte)GetValue(AlphaThresholdProperty); }
             set { SetValue(AlphaThresholdProperty, value); }
         }
         #endregion

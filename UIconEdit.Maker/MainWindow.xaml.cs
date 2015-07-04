@@ -51,9 +51,9 @@ namespace UIconEdit.Maker
     {
         public MainWindow()
         {
-            InitializeComponent();
-
             _settings = new SettingsFile(this);
+
+            InitializeComponent();
 
             Mouse.OverrideCursor = Cursors.Wait;
             _settings.Load();

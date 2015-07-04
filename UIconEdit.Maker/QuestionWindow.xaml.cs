@@ -28,31 +28,46 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #endregion
 
+using System.ComponentModel;
 using System.Windows;
 using System.Media;
 
 namespace UIconEdit.Maker
 {
     /// <summary>
-    /// Interaction logic for ModificationWindow.xaml
+    /// Interaction logic for QuestionWindow.xaml
     /// </summary>
-    partial class ModificationWindow
+    partial class QuestionWindow
     {
-        public ModificationWindow(MainWindow mainWindow)
+        public QuestionWindow(MainWindow mainWindow, string message, string caption)
         {
             InitializeComponent();
             Owner = mainWindow;
+            TextMessage = message;
+            Title = caption;
         }
 
-        private static DependencyPropertyKey ResultPropertyKey = DependencyProperty.RegisterReadOnly("Result", typeof(MessageBoxResult), typeof(ModificationWindow),
+        #region Result
+        private static DependencyPropertyKey ResultPropertyKey = DependencyProperty.RegisterReadOnly("Result", typeof(MessageBoxResult), typeof(QuestionWindow),
             new PropertyMetadata(MessageBoxResult.Cancel));
-        public static DependencyProperty ResultProperty = ResultPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty ResultProperty = ResultPropertyKey.DependencyProperty;
 
         public MessageBoxResult Result
         {
             get { return (MessageBoxResult)GetValue(ResultProperty); }
             private set { SetValue(ResultPropertyKey, value); }
         }
+        #endregion
+
+        #region TextMessage
+        public static readonly DependencyProperty TextMessageProperty = DependencyProperty.Register("TextMessage", typeof(string), typeof(QuestionWindow));
+
+        public string TextMessage
+        {
+            get { return (string)GetValue(TextMessageProperty); }
+            set { SetValue(TextMessageProperty, value); }
+        }
+        #endregion
 
         private void saveYes_Click(object sender, RoutedEventArgs e)
         {

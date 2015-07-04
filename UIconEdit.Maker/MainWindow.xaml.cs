@@ -120,7 +120,7 @@ namespace UIconEdit.Maker
         }
 
         #region LoadedFile
-        public static DependencyProperty LoadedFileProperty = DependencyProperty.Register("LoadedFile", typeof(IconFileBase), typeof(MainWindow),
+        public static readonly DependencyProperty LoadedFileProperty = DependencyProperty.Register("LoadedFile", typeof(IconFileBase), typeof(MainWindow),
             new PropertyMetadata(null, LoadedFileChanged));
 
         private static void LoadedFileChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -347,7 +347,7 @@ namespace UIconEdit.Maker
         {
             if (!IsModified) return false;
 
-            ModificationWindow window = new ModificationWindow(this);
+            QuestionWindow window = new QuestionWindow(this, _settings.LanguageFile.ModifiedMessage, _settings.LanguageFile.ModifiedCaption);
             window.ShowDialog();
             if (window.Result == MessageBoxResult.Cancel) return true;
             else if (window.Result == MessageBoxResult.No) return false;

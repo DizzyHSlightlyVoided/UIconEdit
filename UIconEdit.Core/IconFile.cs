@@ -202,7 +202,7 @@ namespace UIconEdit
         {
             return 1;
         }
-        
+
         internal override ushort GetImgY(IconEntry entry)
         {
             switch (entry.BitDepth)

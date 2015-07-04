@@ -369,7 +369,7 @@ namespace UIconEdit
             set { SetValue(AlphaThresholdProperty, value); }
         }
         #endregion
-        
+
         #region HotspotX
         /// <summary>
         /// The dependency property for the <see cref="HotspotX"/> property.
@@ -432,21 +432,35 @@ namespace UIconEdit
         [Bindable(true, BindingDirection.OneWay)]
         public ushort BitsPerPixel
         {
-            get
+            get { return GetBitsPerPixel(_depth); }
+        }
+
+        /// <summary>
+        /// Returns the number of bits per pixel associated with the specified <see cref="UIconEdit.BitDepth"/> value.
+        /// </summary>
+        /// <param name="bitDepth">The <see cref="UIconEdit.BitDepth"/> to check.</param>
+        /// <returns>1 for <see cref="BitDepth.Depth1BitsPerPixel"/>; 4 for <see cref="BitDepth.Depth4BitsPerPixel"/>;
+        /// 8 for <see cref="BitDepth.Depth8BitsPerPixel"/>; 24 for <see cref="BitDepth.Depth24BitsPerPixel"/>; or
+        /// 32 for <see cref="BitDepth.Depth32BitsPerPixel"/>.</returns>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        public static ushort GetBitsPerPixel(BitDepth bitDepth)
+        {
+            switch (bitDepth)
             {
-                switch (_depth)
-                {
-                    case BitDepth.Depth1BitPerPixel:
-                        return 1;
-                    case BitDepth.Depth4BitsPerPixel:
-                        return 4;
-                    case BitDepth.Depth8BitsPerPixel:
-                        return 8;
-                    case BitDepth.Depth24BitsPerPixel:
-                        return 24;
-                    default:
-                        return 32;
-                }
+                case BitDepth.Depth1BitPerPixel:
+                    return 1;
+                case BitDepth.Depth4BitsPerPixel:
+                    return 4;
+                case BitDepth.Depth8BitsPerPixel:
+                    return 8;
+                case BitDepth.Depth24BitsPerPixel:
+                    return 24;
+                case BitDepth.Depth32BitsPerPixel:
+                    return 32;
+                default:
+                    throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
             }
         }
 
@@ -456,21 +470,35 @@ namespace UIconEdit
         [Bindable(true, BindingDirection.OneWay)]
         public long ColorCount
         {
-            get
+            get { return GetColorCount(_depth); }
+        }
+
+        /// <summary>
+        /// Gets the maximum color count associated with the specified <see cref="UIconEdit.BitDepth"/>.
+        /// </summary>
+        /// <param name="bitDepth">The <see cref="UIconEdit.BitDepth"/> to check.</param>
+        /// <returns>21 for <see cref="BitDepth.Depth2Color"/>; 16 for <see cref="BitDepth.Depth16Color"/>;
+        /// 256 for <see cref="BitDepth.Depth256Color"/>; 16777216 for <see cref="BitDepth.Depth24BitsPerPixel"/>; or
+        /// 4294967296 for <see cref="BitDepth.Depth32BitsPerPixel"/>.</returns>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        public static long GetColorCount(BitDepth bitDepth)
+        {
+            switch (bitDepth)
             {
-                switch (_depth)
-                {
-                    case BitDepth.Depth2Color:
-                        return 2;
-                    case BitDepth.Depth16Color:
-                        return 16;
-                    case BitDepth.Depth256Color:
-                        return 256;
-                    case BitDepth.Depth24BitsPerPixel:
-                        return 0x1000000;
-                    default:
-                        return uint.MaxValue + 1L;
-                }
+                case BitDepth.Depth2Color:
+                    return 2;
+                case BitDepth.Depth16Color:
+                    return 16;
+                case BitDepth.Depth256Color:
+                    return 256;
+                case BitDepth.Depth24BitsPerPixel:
+                    return 0x1000000;
+                case BitDepth.Depth32BitsPerPixel:
+                    return uint.MaxValue + 1L;
+                default:
+                    throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
             }
         }
 

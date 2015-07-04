@@ -193,17 +193,17 @@ namespace UIconEdit
         {
             get { return IconTypeCode.Cursor; }
         }
-        
+
         internal override bool IsValid(IconEntry entry)
         {
             return entry != null;
         }
-        
+
         internal override ushort GetImgX(IconEntry entry)
         {
             return entry.HotspotX;
         }
-        
+
         internal override ushort GetImgY(IconEntry entry)
         {
             return entry.HotspotY;

@@ -10,6 +10,7 @@
 
   "MenuFile": "_File",
   "MenuFileOpen": "_Open",
+  "MenuFileNew": "_New",
   "MenuFileSave": "_Save",
   "MenuFileSaveAs": "Save _As",
   "MenuFileQuit": "E_xit",

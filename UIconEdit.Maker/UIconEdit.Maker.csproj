@@ -100,15 +100,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Add.ico" />
-    <Resource Include="Delete.ico" />
+    <Resource Include="Zoom_24x24.png" />
+    <Resource Include="Save_24x24.png" />
+    <Resource Include="Open_24x24.png" />
+    <Resource Include="New_24x24.png" />
     <Resource Include="GradientEdit.ico" />
+    <Resource Include="Add_24x24.png" />
+    <Resource Include="Delete_24x24.png" />
     <Content Include="Languages\en-US.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Open.ico" />
-    <Resource Include="Zoom.ico" />
-    <Resource Include="Save.ico" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

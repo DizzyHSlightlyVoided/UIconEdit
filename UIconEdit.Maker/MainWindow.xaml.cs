@@ -321,6 +321,7 @@ namespace UIconEdit.Maker
         private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = IsModified && LoadedFile != null && LoadedFile.Entries.Count > 0 && LoadedFile.Entries.Count <= ushort.MaxValue;
+            e.Handled = true;
         }
 
         private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -331,11 +332,18 @@ namespace UIconEdit.Maker
         private void SaveAs_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = LoadedFile != null && LoadedFile.Entries.Count > 0 && LoadedFile.Entries.Count <= ushort.MaxValue;
+            e.Handled = true;
         }
 
         private void SaveAs_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             _save(true);
+        }
+
+        private void New_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (_checkModified()) return;
+            LoadedFile = new IconFile();
         }
 
         private void Close_Executed(object sender, ExecutedRoutedEventArgs e)

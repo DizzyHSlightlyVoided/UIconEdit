@@ -169,6 +169,7 @@ namespace UIconEdit.Maker
         public string ImageSaveError { get { return _text["ImageSaveError"]; } }
 
         public string MenuFile { get { return _text["MenuFile"]; } }
+        public string MenuFileNew { get { return _text["MenuFileNew"]; } }
         public string MenuFileOpen { get { return _text["MenuFileOpen"]; } }
         public string MenuFileSave { get { return _text["MenuFileSave"]; } }
         public string MenuFileSaveAs { get { return _text["MenuFileSaveAs"]; } }

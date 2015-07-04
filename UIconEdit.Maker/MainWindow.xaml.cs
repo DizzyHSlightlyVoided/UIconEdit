@@ -38,6 +38,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 using Microsoft.Win32;
 
@@ -274,10 +275,10 @@ namespace UIconEdit.Maker
             _settings.Save();
         }
 
-        private void _save(bool saveAs)
+        private bool _save(bool saveAs)
         {
             IconFileBase loadedFile = LoadedFile;
-            if (loadedFile == null) return;
+            if (loadedFile == null) return false;
             string filePath = FilePath;
             if (saveAs || string.IsNullOrWhiteSpace(filePath))
             {
@@ -293,7 +294,7 @@ namespace UIconEdit.Maker
                     dialog.FilterIndex = 2;
 
                 var result = dialog.ShowDialog(this);
-                if (!result.HasValue || !result.Value) return;
+                if (!result.HasValue || !result.Value) return false;
 
                 if (loadedFile.ID == IconTypeCode.Cursor && dialog.FilterIndex == 1)
                     loadedFile = loadedFile.CloneAsCursorFile();
@@ -307,10 +308,12 @@ namespace UIconEdit.Maker
                 loadedFile.Save(filePath);
                 System.Threading.Thread.Sleep(100);
                 IsModified = false;
+                return true;
             }
             catch (Exception)
             {
                 ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageSaveError, filePath));
+                return false;
             }
             finally
             {
@@ -346,6 +349,53 @@ namespace UIconEdit.Maker
             LoadedFile = new IconFile();
         }
 
+        public static readonly RoutedCommand AddCommand = new RoutedCommand("Add", typeof(MainWindow));
+
+        private void Add_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsFileLoaded;
+            e.Handled = true;
+        }
+
+        private void Add_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = string.Format("{0}|*.gif;*.png;*.bmp;*.dib;*.tif;*.tiff;*.jpg;*.jpeg|{1} (*.*)|*",
+                _settings.LanguageFile.TypeImage, _settings.LanguageFile.TypeAll);
+
+            bool? result = dialog.ShowDialog(this);
+            if (!result.HasValue || !result.Value) return;
+
+            BitmapSource bmpSource;
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                using (FileStream fs = File.OpenRead(dialog.FileName))
+                    bmpSource = new WriteableBitmap(BitmapFrame.Create(fs));
+            }
+            catch
+            {
+                ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageLoadError, dialog.FileName));
+                return;
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
+
+            Mouse.OverrideCursor = null;
+            AddWindow addWindow = new AddWindow(this, false, bmpSource, 0, 0, BitDepth.Depth32BitsPerPixel);
+            result = addWindow.ShowDialog();
+
+            if (!result.HasValue || !result.Value) return;
+
+            var newEntry = addWindow.GetIconEntry();
+            int dex = ~LoadedFile.Entries.BinarySearchSimilar(newEntry);
+            LoadedFile.Entries.Insert(dex, newEntry);
+            listbox.SelectedIndex = dex;
+            IsModified = true;
+        }
+
         private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Close();
@@ -367,9 +417,7 @@ namespace UIconEdit.Maker
             if (window.Result == MessageBoxResult.Cancel) return true;
             else if (window.Result == MessageBoxResult.No) return false;
 
-            _save(window.Result == MessageBoxResult.OK);
-
-            return false;
+            return !_save(window.Result == MessageBoxResult.OK);
         }
 
         private void listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -421,8 +469,9 @@ namespace UIconEdit.Maker
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             string format = (string)values[0];
-            IconEntry entry = (IconEntry)values[1];
-            return string.Format(format, entry.Width, entry.Height);
+            object width = values[1];
+            object height = (values.Length < 3) ? width : values[2];
+            return string.Format(format, width, height);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -436,8 +485,7 @@ namespace UIconEdit.Maker
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             string format = (string)values[0];
-            IconEntry entry = (IconEntry)values[1];
-            return string.Format(format, entry.BitsPerPixel);
+            return string.Format(format, values[1]);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

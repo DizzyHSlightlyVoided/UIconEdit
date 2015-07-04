@@ -13,6 +13,7 @@
         <CommandBinding Command="ApplicationCommands.Save" CanExecute="Save_CanExecute" Executed="Save_Executed"/>
         <CommandBinding Command="ApplicationCommands.SaveAs" CanExecute="SaveAs_CanExecute" Executed="SaveAs_Executed"/>
         <CommandBinding Command="ApplicationCommands.Close" CanExecute="CommandBinding_CanExecute" Executed="Close_Executed"/>
+        <CommandBinding Command="{x:Static local:MainWindow.AddCommand}" CanExecute="Add_CanExecute" Executed="Add_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="S" Modifiers="Shift" Command="ApplicationCommands.SaveAs"/>
@@ -53,6 +54,13 @@
                 <MenuItem Command="ApplicationCommands.Close" Header="{Binding SettingsFile.LanguageFile.MenuFileQuit, ElementName=window, FallbackValue=E_xit}"
                           InputGestureText="Alt+F4"/>
             </MenuItem>
+            <MenuItem Header="{Binding SettingsFile.LanguageFile.MenuIcon, ElementName=window, FallbackValue=_Icon}">
+                <MenuItem Header="{Binding SettingsFile.LanguageFile.MenuIcon, ElementName=window, FallbackValue=_Add}" Command="{x:Static local:MainWindow.AddCommand}">
+                    <MenuItem.Icon>
+                        <Image Source="Add_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
         </Menu>
         <ToolBar DockPanel.Dock="Top" Height="Auto">
             <Button Command="ApplicationCommands.New">
@@ -87,6 +95,9 @@
             </ComboBox>
             <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}">%</TextBlock>
             <Separator/>
+            <Button Command="{x:Static local:MainWindow.AddCommand}">
+                <Image Source="Add_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+            </Button>
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">
             <ScrollViewer>
@@ -104,16 +115,17 @@
                                 <TextBlock Grid.Row="1" HorizontalAlignment="Center">
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource BPSStringConverter}">
-                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.BitsPerPixelFormat"/>
-                                            <Binding />
+                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.FormatBitsPerPixel"/>
+                                            <Binding Path="BitsPerPixel"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
                                 <TextBlock Grid.Row="2" HorizontalAlignment="Center">
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource SizeStringConverter}">
-                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.SizeFormat"/>
-                                            <Binding />
+                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.FormatSize"/>
+                                            <Binding Path="Width"/>
+                                            <Binding Path="Height"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
@@ -124,7 +136,8 @@
             </ScrollViewer>
         </Border>
         <Border BorderThickness="0,1,1,1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="scrollImage" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="scrollImage"
+                          Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
                 <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" x:Name="frameImage"
                         HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"
                         Visibility="{Binding IsLoadedAndSelected, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window, Mode=OneWay}">

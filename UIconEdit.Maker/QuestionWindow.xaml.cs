@@ -47,7 +47,7 @@ namespace UIconEdit.Maker
         }
 
         #region Result
-        private static DependencyPropertyKey ResultPropertyKey = DependencyProperty.RegisterReadOnly("Result", typeof(MessageBoxResult), typeof(QuestionWindow),
+        private static readonly DependencyPropertyKey ResultPropertyKey = DependencyProperty.RegisterReadOnly("Result", typeof(MessageBoxResult), typeof(QuestionWindow),
             new PropertyMetadata(MessageBoxResult.Cancel));
         public static readonly DependencyProperty ResultProperty = ResultPropertyKey.DependencyProperty;
 

@@ -7,6 +7,7 @@
   "SettingsSaveError": "An error occurred while attempting to save the settings file.",
   "ImageLoadError": "An error occurred while attempting to load the file \"{0}\".",
   "ImageSaveError": "Could not save file \"{0}\".",
+  "ImageAddError": "A {0}-bit {1}×{2} image already exists in the icon file.",
 
   "MenuFile": "_File",
   "MenuFileOpen": "_Open",
@@ -14,6 +15,11 @@
   "MenuFileSave": "_Save",
   "MenuFileSaveAs": "Save _As",
   "MenuFileQuit": "E_xit",
+
+  "MenuIcon": "_Icon",
+  "MenuIconAdd": "_Add",
+  "MenuIconDup": "_Duplicate",
+  "MenuIconRem": "_Remove",
 
   "ModifiedCaption": "Save",
   "ModifiedMessage": "File was modified. Save?",
@@ -24,8 +30,27 @@
   "ButtonNo": "_No",
   "ButtonNoSave": "Do_n't Save",
 
-  "BitsPerPixelFormat": "{0}BPP", //{0} = number of bits per pixel
-  "SizeFormat": "{0}×{1}", //{0} = width, {1} = height.
+  "FormatBitsPerPixel": "{0}-bit", //{0} = number of bits per pixel
+  "FormatSize": "{0}×{1}", //{0} = width, {1} = height.
+  "CustomSize": "Custom:",
+  "ExtendedSize": "Extended Windows 10 Sizes",
+  "SizeWidth": "Width:",
+  "SizeHeight": "Height:",
+
+  "AlphaThreshold": "Alpha threshold:",
+
+  "Bits32": "Full Color + Alpha (32-bit)",
+  "Bits24": "Full Color (24-bit)",
+  "Bits8": "256-color (8-bit)",
+  "Bits4": "16-color (4-bit)",
+  "Bits1": "2-color (1-bit)",
+
+  "GroupImage": "Image",
+  "GroupSize": "Size",
+  "GroupBitsPerPixel": "Bits Per Pixel",
+
+  "AddTitle": "Add Image",
+  "DuplicateTitle": "Duplicate Image",
 
   "IconError0": "An unknown error occurred.",
   "IconError1": "The file is not a valid cursor or icon file.",
@@ -41,5 +66,6 @@
   "TypeIco": "Icon files",
   "TypeCur": "Cursor files",
   "TypeIcoCur": "Icon or cursor files",
-  "TypeAll": "All files"
+  "TypeAll": "All files",
+  "TypeImage": "Image files"
 }

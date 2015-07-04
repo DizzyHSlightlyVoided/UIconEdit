@@ -28,56 +28,50 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #endregion
 
-using System.ComponentModel;
-using System.Media;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
 
 namespace UIconEdit.Maker
 {
     /// <summary>
-    /// Interaction logic for ErrorWindow.xaml
+    /// Interaction logic for SizeRadioButton.xaml
     /// </summary>
-    partial class ErrorWindow
+    partial class SizeRadioButton
     {
-        public ErrorWindow(MainWindow mainWindow, string message)
+        public SizeRadioButton()
         {
-            _mainWindow = mainWindow;
-            _errorIcon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(System.Drawing.SystemIcons.Error.Handle,
-               Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            _message = message;
             InitializeComponent();
         }
 
-        private MainWindow _mainWindow;
-        [Bindable(true)]
-        public MainWindow MainWindow { get { return _mainWindow; } }
+        #region LanguageFile
+        public static readonly DependencyProperty LanguageFileProperty = DependencyProperty.Register("LanguageFile", typeof(LanguageFile), typeof(SizeRadioButton));
 
-        private BitmapSource _errorIcon;
-        [Bindable(true)]
-        public BitmapSource ErrorIcon { get { return _errorIcon; } }
-
-        private string _message;
-        [Bindable(true)]
-        public string Message { get { return _message; } }
-
-        public static bool? Show(MainWindow mainWindow, string message)
+        public LanguageFile LanguageFile
         {
-            return Show(mainWindow, mainWindow, message);
+            get { return (LanguageFile)GetValue(LanguageFileProperty); }
+            set { SetValue(LanguageFileProperty, value); }
         }
+        #endregion
 
-        public static bool? Show(MainWindow mainWindow, Window owner, string message)
-        {
-            Mouse.OverrideCursor = null;
-            ErrorWindow errorWindow = new ErrorWindow(mainWindow, message);
-            errorWindow.Owner = owner;
-            return errorWindow.ShowDialog();
-        }
+        #region EntryWidth
+        public static readonly DependencyProperty EntryWidthProperty = DependencyProperty.Register("EntryWidth", typeof(short), typeof(SizeRadioButton),
+            new PropertyMetadata((short)32));
 
-        private void window_Loaded(object sender, RoutedEventArgs e)
+        public short EntryWidth
         {
-            SystemSounds.Hand.Play();
+            get { return (short)GetValue(EntryWidthProperty); }
+            set { SetValue(EntryWidthProperty, value); }
         }
+        #endregion
+
+        #region EntryHeight
+        public static readonly DependencyProperty EntryHeightProperty = DependencyProperty.Register("EntryHeight", typeof(short), typeof(SizeRadioButton),
+            new PropertyMetadata((short)32));
+
+        public short EntryHeight
+        {
+            get { return (short)GetValue(EntryHeightProperty); }
+            set { SetValue(EntryHeightProperty, value); }
+        }
+        #endregion
     }
 }

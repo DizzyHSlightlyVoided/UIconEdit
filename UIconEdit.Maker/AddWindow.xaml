@@ -1,0 +1,106 @@
+﻿<Window x:Class="UIconEdit.Maker.AddWindow" x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UIconEdit.Maker"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d" ResizeMode="CanMinimize" x:Name="window" Icon="GradientEdit.ico"
+        Height="344" Width="600" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+    <Window.Resources>
+        <local:SizeStringConverter x:Key="SizeStringConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <system:Int16 x:Key="W16">16</system:Int16>
+        <system:Int16 x:Key="W24">24</system:Int16>
+        <system:Int16 x:Key="W32">32</system:Int16>
+        <system:Int16 x:Key="W48">48</system:Int16>
+        <system:Int16 x:Key="W256">256</system:Int16>
+        <system:Int16 x:Key="W768">768</system:Int16>
+        <system:Int16 x:Key="T20">20</system:Int16>
+        <system:Int16 x:Key="T40">40</system:Int16>
+        <system:Int16 x:Key="T64">64</system:Int16>
+        <system:Int16 x:Key="T80">80</system:Int16>
+        <system:Int16 x:Key="T96">96</system:Int16>
+        <system:Int16 x:Key="T128">128</system:Int16>
+    </Window.Resources>
+    <Grid>
+        <GroupBox x:Name="groupImage" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="110" Width="96"
+                  Header="{Binding Owner.SettingsFile.LanguageFile.GroupImage, FallbackValue=Image}">
+            <Image MaxWidth="64" MaxHeight="64" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding LoadedImage, ElementName=window}"/>
+        </GroupBox>
+        <GroupBox x:Name="groupBitDepth" HorizontalAlignment="Left" Margin="111,10,0,0" VerticalAlignment="Top" Height="110" Width="473"
+                  Header="{Binding Owner.SettingsFile.LanguageFile.GroupBitsPerPixel, FallbackValue='Bits Per Pixel'}">
+            <WrapPanel>
+                <RadioButton x:Name="rad32bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="212" Checked="bit_Checked"
+                             Content="{Binding Owner.SettingsFile.LanguageFile.Bit32, ElementName=window, FallbackValue='Full Color + Alpha (32-bit)'}"/>
+                <RadioButton x:Name="rad24bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="212" Checked="bit_Checked"
+                             Content="{Binding Owner.SettingsFile.LanguageFile.Bit24, ElementName=window, FallbackValue='Full Color (24-bit)'}"/>
+                <RadioButton x:Name="rad8bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
+                             Content="{Binding Owner.SettingsFile.LanguageFile.Bit8, ElementName=window, FallbackValue='256-Color (8-bit)'}"/>
+                <RadioButton x:Name="rad4bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
+                             Content="{Binding Owner.SettingsFile.LanguageFile.Bit4, ElementName=window, FallbackValue='16-Color (4-bit)'}"/>
+                <RadioButton x:Name="rad1bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
+                             Content="{Binding Owner.SettingsFile.LanguageFile.Bit1, ElementName=window, FallbackValue='2-Color (1-bit)'}"/>
+            </WrapPanel>
+        </GroupBox>
+        <GroupBox x:Name="groupSize" Header="GroupBox" HorizontalAlignment="Left" Margin="10,125,0,0" VerticalAlignment="Top" Height="151" Width="574">
+            <WrapPanel>
+                <CheckBox x:Name="chkExtended" Margin="10,10,20,0" IsChecked="{Binding ExtendedSizes, ElementName=window}"
+                          Content="{Binding Owner.SettingsFile.LanguageFile.ExtendedSize, FallbackValue='Extended Windows 10 Sizes'}"/>
+                <local:SizeRadioButton x:Name="sz16" Margin="10,10,20,0" EntryWidth="{StaticResource W16}" EntryHeight="{StaticResource W16}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"/>
+                <local:SizeRadioButton x:Name="sz20" Margin="10,10,20,0" EntryWidth="{StaticResource T20}" EntryHeight="{StaticResource T20}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"
+                                       Visibility="{Binding ExtendedSizes, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <local:SizeRadioButton x:Name="sz24" Margin="10,10,20,0" EntryWidth="{StaticResource W24}" EntryHeight="{StaticResource W24}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"/>
+                <local:SizeRadioButton x:Name="sz32" Margin="10,10,20,0" EntryWidth="{StaticResource W32}" EntryHeight="{StaticResource W32}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"/>
+                <local:SizeRadioButton x:Name="sz40" Margin="10,10,20,0" EntryWidth="{StaticResource T40}" EntryHeight="{StaticResource T40}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"
+                                       Visibility="{Binding ExtendedSizes, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <local:SizeRadioButton x:Name="sz48" Margin="10,10,20,0" EntryWidth="{StaticResource W48}" EntryHeight="{StaticResource W48}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"/>
+                <local:SizeRadioButton x:Name="sz64" Margin="10,10,20,0" EntryWidth="{StaticResource T64}" EntryHeight="{StaticResource T64}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"
+                                       Visibility="{Binding ExtendedSizes, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <local:SizeRadioButton x:Name="sz80" Margin="10,10,20,0" EntryWidth="{StaticResource T80}" EntryHeight="{StaticResource T80}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"
+                                       Visibility="{Binding ExtendedSizes, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <local:SizeRadioButton x:Name="sz96" Margin="10,10,20,0" EntryWidth="{StaticResource T96}" EntryHeight="{StaticResource T96}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"
+                                       Visibility="{Binding ExtendedSizes, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <local:SizeRadioButton x:Name="sz128" Margin="10,10,20,0" EntryWidth="{StaticResource T128}" EntryHeight="{StaticResource T128}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"
+                                       Visibility="{Binding ExtendedSizes, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <local:SizeRadioButton x:Name="sz256" Margin="10,10,20,0" EntryWidth="{StaticResource W256}" EntryHeight="{StaticResource W256}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"/>
+                <local:SizeRadioButton x:Name="sz768" Margin="10,10,20,0" EntryWidth="{StaticResource W768}" EntryHeight="{StaticResource W768}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"/>
+                <RadioButton x:Name="szCust" Margin="10,8,0,0" Checked="szCust_Checked">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.CustomSize, ElementName=window, FallbackValue='Custom Size:'}" Margin="0,0,10,0"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.SizeWidth, ElementName=window, FallbackValue='Width:'}"
+                                   VerticalAlignment="Center"/>
+                        <TextBox x:Name="cWidth" Width="64" IsEnabled="{Binding IsChecked, ElementName=szCust}" Margin="1,0,5,0"
+                                 Text="{Binding CustomWidth, ElementName=window}"/>
+                        <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.SizeHeight, ElementName=window, FallbackValue='Height:'}"
+                                   VerticalAlignment="Center"/>
+                        <TextBox x:Name="cHeight" Width="64" IsEnabled="{Binding IsChecked, ElementName=szCust}" Margin="1,0,5,0"
+                                 Text="{Binding CustomHeight, ElementName=window}"/>
+                    </StackPanel>
+                </RadioButton>
+            </WrapPanel>
+        </GroupBox>
+        <StackPanel Orientation="Horizontal" Margin="10,281,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.AlphaThreshold, ElementName=window, FallbackValue='Alpha Threshold:'}" VerticalAlignment="Center"
+                       Margin="0,0,10,0"/>
+            <TextBox Width="65" Text="{Binding AlphaThreshold, ElementName=window}"/>
+        </StackPanel>
+        <Button x:Name="btnOK" Margin="0,281,92,0" HorizontalAlignment="Right" VerticalAlignment="Top" MinWidth="75" IsDefault="True"
+                Content="{Binding Owner.SettingsFile.LanguageFile.ButtonOK, ElementName=window, FallbackValue=_OK}" Click="btnOK_Click"/>
+        <Button x:Name="btnCancel" Margin="0,281,12,0" HorizontalAlignment="Right" VerticalAlignment="Top" MinWidth="75" IsCancel="True"
+                Content="{Binding Owner.SettingsFile.LanguageFile.ButtonCancel, ElementName=window, FallbackValue=_Cancel}"/>
+    </Grid>
+</Window>

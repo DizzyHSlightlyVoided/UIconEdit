@@ -167,6 +167,7 @@ namespace UIconEdit.Maker
         public string SettingsSaveError { get { return _text["SettingsSaveError"]; } }
         public string ImageLoadError { get { return _text["ImageLoadError"]; } }
         public string ImageSaveError { get { return _text["ImageSaveError"]; } }
+        public string ImageAddError { get { return _text["ImageAddError"]; } }
 
         public string MenuFile { get { return _text["MenuFile"]; } }
         public string MenuFileNew { get { return _text["MenuFileNew"]; } }
@@ -174,6 +175,11 @@ namespace UIconEdit.Maker
         public string MenuFileSave { get { return _text["MenuFileSave"]; } }
         public string MenuFileSaveAs { get { return _text["MenuFileSaveAs"]; } }
         public string MenuFileQuit { get { return _text["MenuFileQuit"]; } }
+
+        public string MenuIcon { get { return _text["MenuIcon"]; } }
+        public string MenuIconAdd { get { return _text["MenuIconAdd"]; } }
+        public string MenuIconDup { get { return _text["MenuIconDup"]; } }
+        public string MenuIconRem { get { return _text["MenuIconRem"]; } }
 
         public string ModifiedCaption { get { return _text["ModifiedCaption"]; } }
         public string ModifiedMessage { get { return _text["ModifiedMessage"]; } }
@@ -184,13 +190,27 @@ namespace UIconEdit.Maker
         public string ButtonNo { get { return _text["ButtonNo"]; } }
         public string ButtonNoSave { get { return _text["ButtonNoSave"]; } }
 
-        public string BitsPerPixelFormat { get { return _text["BitsPerPixelFormat"]; } }
-        public string SizeFormat { get { return _text["SizeFormat"]; } }
+        public string FormatBitsPerPixel { get { return _text["FormatBitsPerPixel"]; } }
+        public string FormatSize { get { return _text["FormatSize"]; } }
+        public string CustomSize { get { return _text["CustomSize"]; } }
+        public string ExtendedSize { get { return _text["ExtendedSize"]; } }
+        public string SizeWidth { get { return _text["SizeWidth"]; } }
+        public string SizeHeight { get { return _text["SizeHeight"]; } }
+
+        public string AlphaThreshold { get { return _text["AlphaThreshold"]; } }
+
+        public string GroupImage { get { return _text["GroupImage"]; } }
+        public string GroupSize { get { return _text["GroupSize"]; } }
+        public string GroupBitsPerPixel { get { return _text["GroupBitsPerPixel"]; } }
+
+        public string AddTitle { get { return _text["AddTitle"]; } }
+        public string DuplicateTitle { get { return _text["DuplicateTitle"]; } }
 
         public string TypeIco { get { return _text["TypeIco"]; } }
         public string TypeCur { get { return _text["TypeCur"]; } }
         public string TypeIcoCur { get { return _text["TypeIcoCur"]; } }
         public string TypeAll { get { return _text["TypeAll"]; } }
+        public string TypeImage { get { return _text["TypeImage"]; } }
 
         public string GetErrorMessage(IconLoadException e)
         {

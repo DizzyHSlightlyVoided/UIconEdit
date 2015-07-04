@@ -26,7 +26,11 @@
     <Grid>
         <GroupBox x:Name="groupImage" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="110" Width="96"
                   Header="{Binding Owner.SettingsFile.LanguageFile.GroupImage, FallbackValue=Image}">
-            <Image MaxWidth="64" MaxHeight="64" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding LoadedImage, ElementName=window}"/>
+            <Border Background="{StaticResource TransparentTiles}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="1">
+                <Image MaxWidth="80" MaxHeight="80" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding LoadedImage, ElementName=window}"
+                       Margin="1" Width="{Binding LoadedImage.PixelWidth, ElementName=window}" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </Border>
         </GroupBox>
         <GroupBox x:Name="groupBitDepth" HorizontalAlignment="Left" Margin="111,10,0,0" VerticalAlignment="Top" Height="110" Width="473"
                   Header="{Binding Owner.SettingsFile.LanguageFile.GroupBitsPerPixel, FallbackValue='Bits Per Pixel'}">

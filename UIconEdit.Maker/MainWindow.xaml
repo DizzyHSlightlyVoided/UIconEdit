@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UIconEdit.Maker"
         mc:Ignorable="d" x:Name="window" Icon="GradientEdit.ico" SnapsToDevicePixels="True"
         Title="{Binding SettingsFile.LanguageFile.Title, ElementName=window, FallbackValue=UIconEdit}"
-        MinHeight="622" MinWidth="650" Height="622" Width="650" Loaded="window_Loaded" Closing="window_Closing" Closed="window_Closed">
+        MinHeight="622" MinWidth="654" Height="622" Width="654" Loaded="window_Loaded" Closing="window_Closing" Closed="window_Closed">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open" CanExecute="CommandBinding_CanExecute" Executed="Open_Executed"/>
         <CommandBinding Command="ApplicationCommands.New" CanExecute="CommandBinding_CanExecute" Executed="New_Executed"/>
@@ -121,17 +121,20 @@
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">
             <ScrollViewer>
-                <ListBox SelectionMode="Single" x:Name="listbox" ItemsSource="{Binding LoadedFile.Entries, ElementName=window}" Width="76"
+                <ListBox SelectionMode="Single" x:Name="listbox" ItemsSource="{Binding LoadedFile.Entries, ElementName=window}" Width="80"
                          SelectionChanged="listbox_SelectionChanged">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="1" HorizontalAlignment="Center">
+                            <Grid Margin="1,2,1,1" HorizontalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Image Source="{Binding BaseImage}" Width="64" Margin="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                <Border BorderThickness="1" Background="{StaticResource TransparentTiles}"
+                                        BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}">
+                                    <Image Source="{Binding BaseImage}" Width="64" Margin="2" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                </Border>
                                 <TextBlock Grid.Row="1" HorizontalAlignment="Center">
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource BPSStringConverter}">
@@ -159,31 +162,10 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="scrollImage"
                           Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
                 <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" x:Name="frameImage"
-                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="8" Background="{StaticResource TransparentTiles}"
                         Visibility="{Binding IsLoadedAndSelected, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window, Mode=OneWay}">
-                    <Border.Background>
-                        <DrawingBrush Stretch="None" TileMode="Tile" Viewport="0,0,14,14" ViewportUnits="Absolute">
-                            <DrawingBrush.Drawing>
-                                <DrawingGroup>
-                                    <GeometryDrawing Brush="White">
-                                        <GeometryDrawing.Geometry>
-                                            <RectangleGeometry Rect="0,0,14,14"/>
-                                        </GeometryDrawing.Geometry>
-                                    </GeometryDrawing>
-                                    <GeometryDrawing Brush="#ffdddddd">
-                                        <GeometryDrawing.Geometry>
-                                            <GeometryGroup>
-                                                <RectangleGeometry Rect="0,0,7,7"/>
-                                                <RectangleGeometry Rect="7,7,7,7"/>
-                                            </GeometryGroup>
-                                        </GeometryDrawing.Geometry>
-                                    </GeometryDrawing>
-                                </DrawingGroup>
-                            </DrawingBrush.Drawing>
-                        </DrawingBrush>
-                    </Border.Background>
                     <Image Source="{Binding SelectedItem.BaseImage, ElementName=listbox}" RenderOptions.BitmapScalingMode="{Binding ZoomScaleMode, ElementName=window}"
-                           Width="{Binding ZoomedWidth, ElementName=window}" Height="{Binding ZoomedHeight,ElementName=window}"/>
+                           Width="{Binding ZoomedWidth, ElementName=window}" Height="{Binding ZoomedHeight, ElementName=window}" Margin="2"/>
                 </Border>
             </ScrollViewer>
         </Border>

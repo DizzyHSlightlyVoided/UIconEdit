@@ -3,10 +3,10 @@
   "Title": "UIconEdit",
 
   "Error": "Error",
-  "LanguageLoadError": "An error occurred while attempting to load the language \"{0}\".",
-  "SettingsSaveError": "An error occurred while attempting to save the settings file.",
-  "ImageLoadError": "An error occurred while attempting to load the file \"{0}\".",
-  "ImageSaveError": "Could not save file \"{0}\".",
+  "LanguageLoadError": "Could not load the language \"{0}\".",
+  "SettingsSaveError": "Could not save the settings file.",
+  "ImageLoadError": "Could not load \"{0}\".",
+  "ImageSaveError": "Could not save \"{0}\".",
   "ImageAddError": "A {0}-bit {1}×{2} image already exists in the icon file.",
 
   "MenuFile": "_File",

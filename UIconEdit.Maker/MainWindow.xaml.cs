@@ -80,30 +80,63 @@ namespace UIconEdit.Maker
 
         private void _load(string path)
         {
+            bool oldModified = IsModified;
             Mouse.OverrideCursor = Cursors.Wait;
             try
             {
                 LoadedFile = IconFileBase.Load(path, _errorHandler);
                 FilePath = path;
                 listbox.SelectedIndex = 0;
+                Mouse.OverrideCursor = null;
+                return;
             }
             catch (IconLoadException e)
             {
-                _errorHandler(e);
-                if (e.Code == IconErrorCode.ZeroValidEntries)
+                if (e.Code != IconErrorCode.InvalidFormat)
                 {
-                    if (e.TypeCode == IconTypeCode.Cursor)
-                        LoadedFile = new CursorFile();
-                    else
-                        LoadedFile = new IconFile();
-                    FilePath = path;
-                    listbox.SelectedIndex = 0;
+                    _errorHandler(e);
+                    if (e.Code == IconErrorCode.ZeroValidEntries)
+                    {
+                        if (e.TypeCode == IconTypeCode.Cursor)
+                            LoadedFile = new CursorFile();
+                        else
+                            LoadedFile = new IconFile();
+                        FilePath = path;
+                        listbox.SelectedIndex = 0;
+                    }
+                    else IsModified = oldModified;
+
+                    Mouse.OverrideCursor = null;
+                    return;
                 }
-                else IsModified = false;
             }
             catch (Exception)
             {
-                IsModified = false;
+                ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageLoadError, path));
+            }
+
+            try
+            {
+                BitmapSource bmpSource;
+                using (FileStream fs = File.OpenRead(path))
+                    bmpSource = new WriteableBitmap(BitmapFrame.Create(fs));
+
+                Mouse.OverrideCursor = null;
+                AddWindow addWindow = new AddWindow(this, false, bmpSource, BitDepth.Depth32BitsPerPixel);
+                bool? result = addWindow.ShowDialog();
+
+                if (result.HasValue && result.Value)
+                {
+                    FilePath = null;
+                    LoadedFile = new IconFile();
+                    LoadedFile.Entries.Add(addWindow.GetIconEntry());
+                    listbox.SelectedIndex = 0;
+                    IsModified = true;
+                }
+                return;
+            }
+            catch (Exception)
+            {
                 ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageLoadError, path));
             }
             finally
@@ -261,8 +294,10 @@ namespace UIconEdit.Maker
                 dialog.FileName = Path.GetFileName(filePath);
             }
 
-            dialog.Filter = string.Format("{0} (*.ico)|*.ico|{1} (*.cur)|*.cur|{2} (*.ico, *.cur)|*.ico;*.cur|{3} (*.*)|*",
-                _settings.LanguageFile.TypeIco, _settings.LanguageFile.TypeCur, _settings.LanguageFile.TypeIcoCur, _settings.LanguageFile.TypeAll);
+            dialog.Filter = string.Format("{0} (*.ico)|*.ico|{1} (*.cur)|*.cur|{2} (*.ico, *.cur)|*.ico;*.cur|" +
+                "{3}|*.gif;*.png;*.bmp;*.dib;*.tif;*.tiff;*.jpg;*.jpeg|{4} (*.*)|*",
+                _settings.LanguageFile.TypeIco, _settings.LanguageFile.TypeCur, _settings.LanguageFile.TypeIcoCur, _settings.LanguageFile.TypeImage,
+                _settings.LanguageFile.TypeAll);
 
             var result = dialog.ShowDialog(this);
             if (!result.HasValue || !result.Value) return;

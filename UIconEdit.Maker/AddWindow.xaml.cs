@@ -87,6 +87,10 @@ namespace UIconEdit.Maker
                         initSize = true;
                         sz256.IsChecked = true;
                         break;
+                    case 768:
+                        initSize = true;
+                        sz768.IsChecked = true;
+                        break;
                 }
             }
             if (!initSize)

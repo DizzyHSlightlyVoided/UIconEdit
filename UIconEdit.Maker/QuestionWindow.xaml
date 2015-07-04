@@ -6,18 +6,25 @@
         xmlns:local="clr-namespace:UIconEdit.Maker"
         mc:Ignorable="d" Icon="GradientEdit.ico" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Loaded="window_Loaded"
         Height="200" Width="400">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
     <DockPanel>
         <Label Margin="10" DockPanel.Dock="Top">
             <TextBlock Text="{Binding TextMessage, ElementName=window}"/>
         </Label>
         <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
-            <Button x:Name="saveYes" Margin="5" Content="{Binding Owner.LanguageFile.MenuFileSave, ElementName=window, FallbackValue=_Save}" MinWidth="65"
-                    IsDefault="True" Click="saveYes_Click"/>
-            <Button x:Name="saveAs" Margin="5" Content="{Binding Owner.LanguageFile.MenuFileSaveAs, ElementName=window, FallbackValue='Save _As'}" MinWidth="65"
-                    Click="saveAs_Click"/>
-            <Button x:Name="saveNo" Margin="5" Content="{Binding Owner.LanguageFile.ButtonNoSave, ElementName=window, FallbackValue='Do_nt save'}" MinWidth="65"
-                    Click="saveNo_Click"/>
-            <Button x:Name="saveCancel" Margin="5" Content="{Binding Owner.LanguageFile.ButtonCancel, ElementName=window, FallbackValue=_Cancel}" MinWidth="65"
+            <Button x:Name="saveYes" Margin="5" Content="{Binding ButtonYesMessage, ElementName=window, FallbackValue=_Save}" MinWidth="65"
+                    Visibility="{Binding ButtonYesEnabled, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window}"
+                    IsDefault="True" Click="btnYes_Click"/>
+            <Button x:Name="saveAs" Margin="5" Content="{Binding ButtonOKMessage, ElementName=window, FallbackValue='Save _As'}" MinWidth="65"
+                    Visibility="{Binding ButtonOKEnabled, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window}"
+                    Click="btnOK_Click"/>
+            <Button x:Name="saveNo" Margin="5" Content="{Binding ButtonNoMessage, ElementName=window, FallbackValue='Do_nt save'}" MinWidth="65"
+                    Visibility="{Binding ButtonNoEnabled, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window}"
+                    Click="btnNo_Click"/>
+            <Button x:Name="saveCancel" Margin="5" Content="{Binding ButtonCancelMessage, ElementName=window, FallbackValue=_Cancel}" MinWidth="65"
+                    Visibility="{Binding ButtonCancelEnabled, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window}"
                     IsCancel="true"/>
         </StackPanel>
     </DockPanel>

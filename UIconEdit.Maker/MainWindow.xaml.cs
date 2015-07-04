@@ -348,6 +348,13 @@ namespace UIconEdit.Maker
             if (!IsModified) return false;
 
             QuestionWindow window = new QuestionWindow(this, _settings.LanguageFile.ModifiedMessage, _settings.LanguageFile.ModifiedCaption);
+            window.ButtonYesEnabled = true;
+            window.ButtonYesMessage = _settings.LanguageFile.MenuFileSave;
+            window.ButtonOKEnabled = true;
+            window.ButtonOKMessage = _settings.LanguageFile.MenuFileSaveAs;
+            window.ButtonNoEnabled = true;
+            window.ButtonNoMessage = _settings.LanguageFile.ButtonNoSave;
+            window.ButtonCancelEnabled = true;
             window.ShowDialog();
             if (window.Result == MessageBoxResult.Cancel) return true;
             else if (window.Result == MessageBoxResult.No) return false;

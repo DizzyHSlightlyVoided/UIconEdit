@@ -28,9 +28,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #endregion
 
-using System.ComponentModel;
-using System.Windows;
 using System.Media;
+using System.Windows;
 
 namespace UIconEdit.Maker
 {
@@ -69,21 +68,129 @@ namespace UIconEdit.Maker
         }
         #endregion
 
-        private void saveYes_Click(object sender, RoutedEventArgs e)
+        #region ButtonOKEnabled
+        public static readonly DependencyProperty ButtonOKEnabledProperty = DependencyProperty.Register("ButtonOKEnabled", typeof(bool), typeof(QuestionWindow),
+            new PropertyMetadata(true));
+
+        public bool ButtonOKEnabled
+        {
+            get { return (bool)GetValue(ButtonOKEnabledProperty); }
+            set { SetValue(ButtonOKEnabledProperty, value); }
+        }
+        #endregion
+
+        #region ButtonOKMessage
+        public static readonly DependencyProperty ButtonOKMessageProperty = DependencyProperty.Register("ButtonOKMessage", typeof(string), typeof(QuestionWindow),
+            new PropertyMetadata("_OK"), ButtonOKMessageValidate);
+
+        private static bool ButtonOKMessageValidate(object value)
+        {
+            return value != null;
+        }
+
+        public string ButtonOKMessage
+        {
+            get { return (string)GetValue(ButtonOKMessageProperty); }
+            set { SetValue(ButtonOKMessageProperty, value); }
+        }
+        #endregion
+
+        #region ButtonCancelEnabled
+        public static readonly DependencyProperty ButtonCancelEnabledProperty = DependencyProperty.Register("ButtonCancelEnabled", typeof(bool), typeof(QuestionWindow),
+            new PropertyMetadata(true));
+
+        public bool ButtonCancelEnabled
+        {
+            get { return (bool)GetValue(ButtonCancelEnabledProperty); }
+            set { SetValue(ButtonCancelEnabledProperty, value); }
+        }
+        #endregion
+
+        #region ButtonCancelMessage
+        public static readonly DependencyProperty ButtonCancelMessageProperty = DependencyProperty.Register("ButtonCancelMessage", typeof(string), typeof(QuestionWindow),
+            new PropertyMetadata("_Cancel"), ButtonCancelMessageValidate);
+
+        private static bool ButtonCancelMessageValidate(object value)
+        {
+            return value != null;
+        }
+
+        public string ButtonCancelMessage
+        {
+            get { return (string)GetValue(ButtonCancelMessageProperty); }
+            set { SetValue(ButtonCancelMessageProperty, value); }
+        }
+        #endregion
+
+        #region ButtonYesEnabled
+        public static readonly DependencyProperty ButtonYesEnabledProperty = DependencyProperty.Register("ButtonYesEnabled", typeof(bool), typeof(QuestionWindow),
+            new PropertyMetadata(false));
+
+        public bool ButtonYesEnabled
+        {
+            get { return (bool)GetValue(ButtonYesEnabledProperty); }
+            set { SetValue(ButtonYesEnabledProperty, value); }
+        }
+        #endregion
+
+        #region ButtonYesMessage
+        public static readonly DependencyProperty ButtonYesMessageProperty = DependencyProperty.Register("ButtonYesMessage", typeof(string), typeof(QuestionWindow),
+            new PropertyMetadata("_Yes"), ButtonYesMessageValidate);
+
+        private static bool ButtonYesMessageValidate(object value)
+        {
+            return value != null;
+        }
+
+        public string ButtonYesMessage
+        {
+            get { return (string)GetValue(ButtonYesMessageProperty); }
+            set { SetValue(ButtonYesMessageProperty, value); }
+        }
+        #endregion
+
+        #region ButtonNoEnabled
+        public static readonly DependencyProperty ButtonNoEnabledProperty = DependencyProperty.Register("ButtonNoEnabled", typeof(bool), typeof(QuestionWindow),
+            new PropertyMetadata(false));
+
+        public bool ButtonNoEnabled
+        {
+            get { return (bool)GetValue(ButtonNoEnabledProperty); }
+            set { SetValue(ButtonNoEnabledProperty, value); }
+        }
+        #endregion
+
+        #region ButtonNoMessage
+        public static readonly DependencyProperty ButtonNoMessageProperty = DependencyProperty.Register("ButtonNoMessage", typeof(string), typeof(QuestionWindow),
+            new PropertyMetadata("_No"), ButtonNoMessageValidate);
+
+        private static bool ButtonNoMessageValidate(object value)
+        {
+            return value != null;
+        }
+
+        public string ButtonNoMessage
+        {
+            get { return (string)GetValue(ButtonNoMessageProperty); }
+            set { SetValue(ButtonNoMessageProperty, value); }
+        }
+        #endregion
+
+        private void btnYes_Click(object sender, RoutedEventArgs e)
         {
             Result = MessageBoxResult.Yes;
             DialogResult = true;
             Close();
         }
 
-        private void saveAs_Click(object sender, RoutedEventArgs e)
+        private void btnOK_Click(object sender, RoutedEventArgs e)
         {
             Result = MessageBoxResult.OK;
             DialogResult = true;
             Close();
         }
 
-        private void saveNo_Click(object sender, RoutedEventArgs e)
+        private void btnNo_Click(object sender, RoutedEventArgs e)
         {
             Result = MessageBoxResult.No;
             DialogResult = false;

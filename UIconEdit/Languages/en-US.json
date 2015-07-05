@@ -9,6 +9,8 @@
   "ImageSaveError": "Could not save \"{0}\".",
   "ImageAddError": "A {0}-bit {1}×{2} image already exists in the icon file.",
 
+  "FilenameSuffix": "{0}bpp{1}x{2}",
+
   "MenuFile": "_File",
   "MenuFileOpen": "_Open",
   "MenuFileNew": "_New",
@@ -17,10 +19,11 @@
   "MenuFileQuit": "E_xit",
 
   "MenuEdit": "_Edit",
-  "MenuEditAdd": "_Add new image",
+  "MenuEditAdd": "Add _new image",
   "MenuEditDup": "_Duplicate current image",
   "MenuEditRem": "_Remove current image",
-  "MenuEditExp": "_Export current image",
+  "MenuEditExp": "E_xport current image",
+  "MenuEditExpAll": "Export _all",
 
   "ButtonTipOpen": "Open",
   "ButtonTipNew": "New",
@@ -42,11 +45,15 @@
   "RemoveCaption": "Delete Image",
   "RemoveMessage": "Delete current image? This cannot be undone!",
 
+  "OverwriteCaption": "Overwrite File",
+  "OverwriteMessage": "The file \"{0}\" already exists. Overwrite it?",
+
   "ButtonOK": "_OK",
   "ButtonCancel": "_Cancel",
   "ButtonYes": "_Yes",
   "ButtonNo": "_No",
   "ButtonNoSave": "Do_n't Save",
+  "ButtonOverwrite": "Overwrite _All",
 
   "FormatBitsPerPixel": "{0}-bit", //{0} = number of bits per pixel
   "FormatSize": "{0}×{1}", //{0} = width, {1} = height.
@@ -86,5 +93,6 @@
   "TypeIcoCur": "Icon or cursor files",
   "TypeAll": "All files",
   "TypePng": "PNG files",
+  "TypePngSuffix": "PNG files with size and bit-depth suffix",
   "TypeImage": "Image files"
 }

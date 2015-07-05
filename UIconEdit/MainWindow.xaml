@@ -17,6 +17,7 @@
         <CommandBinding Command="{x:Static local:MainWindow.DuplicateCommand}" CanExecute="Duplicate_CanExecute" Executed="Duplicate_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.RemoveCommand}" CanExecute="Duplicate_CanExecute" Executed="Remove_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.ExportCommand}" CanExecute="Duplicate_CanExecute" Executed="Export_Executed"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ExportAllCommand}" CanExecute="Duplicate_CanExecute" Executed="ExportAll_Executed"/>
         <CommandBinding Command="NavigationCommands.FirstPage" CanExecute="NavBack_CanExecute" Executed="FirstPage_Executed"/>
         <CommandBinding Command="NavigationCommands.PreviousPage" CanExecute="NavBack_CanExecute" Executed="PreviousPage_Executed"/>
         <CommandBinding Command="NavigationCommands.NextPage" CanExecute="NavForward_CanExecute" Executed="NextPage_Executed"/>
@@ -85,6 +86,8 @@
                         <Image Source="Resources\Download_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem Header="{Binding SettingsFile.LanguageFile.MenuEditExpAll, ElementName=window, FallbackValue=ExportAll}"
+                          Command="{x:Static local:MainWindow.ExportAllCommand}"/>
             </MenuItem>
         </Menu>
         <ToolBar DockPanel.Dock="Top" Height="Auto">

@@ -169,6 +169,8 @@ namespace UIconEdit.Maker
         public string ImageSaveError { get { return _text["ImageSaveError"]; } }
         public string ImageAddError { get { return _text["ImageAddError"]; } }
 
+        public string FilenameSuffix { get { return _text["FilenameSuffix"]; } }
+
         public string MenuFile { get { return _text["MenuFile"]; } }
         public string MenuFileNew { get { return _text["MenuFileNew"]; } }
         public string MenuFileOpen { get { return _text["MenuFileOpen"]; } }
@@ -181,6 +183,7 @@ namespace UIconEdit.Maker
         public string MenuEditDup { get { return _text["MenuEditDup"]; } }
         public string MenuEditRem { get { return _text["MenuEditRem"]; } }
         public string MenuEditExp { get { return _text["MenuEditExp"]; } }
+        public string MenuEditExpAll { get { return _text["MenuEditExpAll"]; } }
 
         public string ButtonTipNew { get { return _text["ButtonTipNew"]; } }
         public string ButtonTipOpen { get { return _text["ButtonTipOpen"]; } }
@@ -202,11 +205,15 @@ namespace UIconEdit.Maker
         public string RemoveCaption { get { return _text["RemoveCaption"]; } }
         public string RemoveMessage { get { return _text["RemoveMessage"]; } }
 
+        public string OverwriteCaption { get { return _text["OverwriteCaption"]; } }
+        public string OverwriteMessage { get { return _text["OverwriteMessage"]; } }
+
         public string ButtonOK { get { return _text["ButtonOK"]; } }
         public string ButtonCancel { get { return _text["ButtonCancel"]; } }
         public string ButtonYes { get { return _text["ButtonYes"]; } }
         public string ButtonNo { get { return _text["ButtonNo"]; } }
         public string ButtonNoSave { get { return _text["ButtonNoSave"]; } }
+        public string ButtonOverwrite { get { return _text["ButtonOverwrite"]; } }
 
         public string FormatBitsPerPixel { get { return _text["FormatBitsPerPixel"]; } }
         public string FormatSize { get { return _text["FormatSize"]; } }
@@ -229,6 +236,7 @@ namespace UIconEdit.Maker
         public string TypeIcoCur { get { return _text["TypeIcoCur"]; } }
         public string TypeAll { get { return _text["TypeAll"]; } }
         public string TypePng { get { return _text["TypePng"]; } }
+        public string TypePngSuffix { get { return _text["TypePngSuffix"]; } }
         public string TypeImage { get { return _text["TypeImage"]; } }
 
         public string GetErrorMessage(IconLoadException e)

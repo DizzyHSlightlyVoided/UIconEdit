@@ -113,6 +113,7 @@ namespace UIconEdit.Maker
             catch (Exception)
             {
                 ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageLoadError, path));
+                return;
             }
 
             try
@@ -471,11 +472,11 @@ namespace UIconEdit.Maker
         {
             IconEntry entry = ((IconEntry)listbox.SelectedItem);
             SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = string.Format("{0} (*.png)|*.png", SettingsFile.LanguageFile.TypePng);
+            dialog.Filter = string.Format("{0} (*.png)|*.png", _settings.LanguageFile.TypePng);
             string filePath = FilePath;
             if (!string.IsNullOrWhiteSpace(filePath))
                 dialog.FileName = Path.GetFileNameWithoutExtension(filePath) + "-";
-            dialog.FileName += string.Format("{0}bpp{1}x{2}", entry.BitsPerPixel, entry.Width, entry.Height);
+            dialog.FileName += string.Format(_settings.LanguageFile.FilenameSuffix, entry.BitsPerPixel, entry.Width, entry.Height);
 
             bool? result = dialog.ShowDialog(this);
 
@@ -494,7 +495,100 @@ namespace UIconEdit.Maker
             }
             catch
             {
-                ErrorWindow.Show(this, string.Format(SettingsFile.LanguageFile.ImageSaveError, dialog.FileName));
+                ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageSaveError, dialog.FileName));
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
+        }
+
+        public static readonly RoutedCommand ExportAllCommand = new RoutedCommand("ExportAll", typeof(MainWindow));
+
+        private void ExportAll_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.AddExtension = false;
+            dialog.Filter = string.Format("{0}|*.png", _settings.LanguageFile.TypePngSuffix);
+            string filePath = FilePath;
+            if (!string.IsNullOrWhiteSpace(filePath))
+                dialog.FileName = Path.GetFileNameWithoutExtension(filePath);
+
+            Tuple<string, IconEntry>[] entries = { };
+
+            bool unSelected = true;
+            while (unSelected)
+            {
+                bool? result = dialog.ShowDialog(this);
+
+                if (!result.HasValue || !result.Value) return;
+
+                unSelected = false;
+
+                const string png = ".png";
+
+                filePath = dialog.FileName.Trim();
+                if (filePath.EndsWith(png, StringComparison.OrdinalIgnoreCase))
+                    filePath = filePath.Substring(0, filePath.Length - 4);
+
+                entries = LoadedFile.Entries.Select(curEntry => new Tuple<string, IconEntry>(filePath +
+                    string.Format(_settings.LanguageFile.FilenameSuffix, curEntry.BitsPerPixel, curEntry.Width, curEntry.Height) + png,
+                    curEntry)).ToArray();
+
+                bool overwriteAll = false;
+                foreach (var curTuple in entries)
+                {
+                    if (unSelected || overwriteAll) break;
+
+                    if (File.Exists(curTuple.Item1))
+                    {
+                        QuestionWindow questionWindow = new QuestionWindow(this, string.Format(_settings.LanguageFile.OverwriteMessage, curTuple.Item1),
+                            _settings.LanguageFile.OverwriteCaption);
+                        questionWindow.ButtonYesEnabled = true;
+                        questionWindow.ButtonOKEnabled = true;
+                        questionWindow.ButtonOKMessage = _settings.LanguageFile.ButtonOverwrite;
+                        questionWindow.ButtonNoEnabled = true;
+                        questionWindow.ButtonCancelEnabled = true;
+
+                        result = questionWindow.ShowDialog();
+
+                        switch (questionWindow.Result)
+                        {
+                            default: //MessageBoxResult.Yes
+                                break;
+                            case MessageBoxResult.OK:
+                                overwriteAll = true;
+                                break;
+                            case MessageBoxResult.No:
+                                unSelected = true;
+                                break;
+                            case MessageBoxResult.Cancel:
+                                return;
+                        }
+                    }
+                }
+            }
+
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                foreach (var curTuple in entries)
+                {
+                    PngBitmapEncoder encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(curTuple.Item2.BaseImage));
+
+                    filePath = curTuple.Item1;
+
+                    using (FileStream fs = File.Open(filePath, FileMode.Create))
+                        encoder.Save(fs);
+                }
+
+                System.Threading.Thread.Sleep(100);
+            }
+            catch
+            {
+                ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageSaveError, filePath));
             }
             finally
             {

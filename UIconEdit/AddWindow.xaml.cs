@@ -91,6 +91,34 @@ namespace UIconEdit.Maker
                         initSize = true;
                         sz768.IsChecked = true;
                         break;
+                    case 20:
+                        initSize = true;
+                        sz20.IsChecked = chkExtended.IsChecked = true;
+                        break;
+                    case 40:
+                        initSize = true;
+                        sz40.IsChecked = chkExtended.IsChecked = true;
+                        break;
+                    case 64:
+                        initSize = true;
+                        sz64.IsChecked = chkExtended.IsChecked = true;
+                        break;
+                    case 80:
+                        initSize = true;
+                        sz80.IsChecked = chkExtended.IsChecked = true;
+                        break;
+                    case 96:
+                        initSize = true;
+                        sz96.IsChecked = chkExtended.IsChecked = true;
+                        break;
+                    case 128:
+                        initSize = true;
+                        sz128.IsChecked = chkExtended.IsChecked = true;
+                        break;
+                    case 512:
+                        initSize = true;
+                        sz512.IsChecked = chkExtended.IsChecked = true;
+                        break;
                 }
             }
             if (!initSize)

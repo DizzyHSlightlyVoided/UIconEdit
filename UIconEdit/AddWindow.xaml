@@ -22,6 +22,7 @@
         <system:Int16 x:Key="T80">80</system:Int16>
         <system:Int16 x:Key="T96">96</system:Int16>
         <system:Int16 x:Key="T128">128</system:Int16>
+        <system:Int16 x:Key="T512">512</system:Int16>
     </Window.Resources>
     <Grid>
         <GroupBox x:Name="groupImage" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="110" Width="96"
@@ -79,6 +80,9 @@
                                        Visibility="{Binding ExtendedSizes, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <local:SizeRadioButton x:Name="sz256" Margin="10,10,20,0" EntryWidth="{StaticResource W256}" EntryHeight="{StaticResource W256}"
                                        LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"/>
+                <local:SizeRadioButton x:Name="sz512" Margin="10,10,20,0" EntryWidth="{StaticResource T512}" EntryHeight="{StaticResource T512}"
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"
+                                       Visibility="{Binding ExtendedSizes, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <local:SizeRadioButton x:Name="sz768" Margin="10,10,20,0" EntryWidth="{StaticResource W768}" EntryHeight="{StaticResource W768}"
                                        LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"/>
                 <RadioButton x:Name="szCust" Margin="10,8,0,0" Checked="szCust_Checked">

@@ -568,6 +568,42 @@ namespace UIconEdit.Maker
         {
             e.Cancel = _checkModified();
         }
+
+        private void NavBack_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsLoadedAndSelected && listbox.SelectedIndex > 0;
+            e.Handled = true;
+        }
+
+        private void FirstPage_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            listbox.SelectedIndex = 0;
+            listbox.ScrollIntoView(listbox.SelectedItem);
+        }
+
+        private void PreviousPage_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            listbox.SelectedIndex--;
+            listbox.ScrollIntoView(listbox.SelectedItem);
+        }
+
+        private void NavForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsLoadedAndSelected && listbox.SelectedIndex < listbox.Items.Count - 1;
+            e.Handled = true;
+        }
+
+        private void NextPage_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            listbox.SelectedIndex++;
+            listbox.ScrollIntoView(listbox.SelectedItem);
+        }
+
+        private void LastPage_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            listbox.SelectedIndex = listbox.Items.Count - 1;
+            listbox.ScrollIntoView(listbox.SelectedIndex);
+        }
     }
 
     internal class SizeStringConverter : IMultiValueConverter

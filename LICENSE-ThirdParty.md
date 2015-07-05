@@ -3,7 +3,7 @@
 
 Icons
 -----
-Toolbar and menu icons are taken from [VisualPharm's Must Have Icon Set](http://www.visualpharm.com/must_have_icon_set/).
+All toolbar and menu icons except for the green navigation arrows are taken from [VisualPharm's Must Have Icon Set](http://www.visualpharm.com/must_have_icon_set/).
 
 Apache License, Version 2.0
 ---------------------------

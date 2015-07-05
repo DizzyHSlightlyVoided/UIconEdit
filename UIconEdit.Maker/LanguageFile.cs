@@ -185,6 +185,11 @@ namespace UIconEdit.Maker
         public string ButtonTipOpen { get { return _text["ButtonTipOpen"]; } }
         public string ButtonTipSave { get { return _text["ButtonTipSave"]; } }
 
+        public string ButtonTipFirst { get { return _text["ButtonTipFirst"]; } }
+        public string ButtonTipPrev { get { return _text["ButtonTipPrev"]; } }
+        public string ButtonTipNext { get { return _text["ButtonTipNext"]; } }
+        public string ButtonTipLast { get { return _text["ButtonTipLast"]; } }
+
         public string ButtonTipAdd { get { return _text["ButtonTipAdd"]; } }
         public string ButtonTipDup { get { return _text["ButtonTipDup"]; } }
         public string ButtonTipRem { get { return _text["ButtonTipRem"]; } }

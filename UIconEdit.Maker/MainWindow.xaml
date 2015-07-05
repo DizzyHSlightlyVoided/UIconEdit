@@ -17,6 +17,10 @@
         <CommandBinding Command="{x:Static local:MainWindow.DuplicateCommand}" CanExecute="Duplicate_CanExecute" Executed="Duplicate_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.RemoveCommand}" CanExecute="Duplicate_CanExecute" Executed="Remove_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.ExportCommand}" CanExecute="Duplicate_CanExecute" Executed="Export_Executed"/>
+        <CommandBinding Command="NavigationCommands.FirstPage" CanExecute="NavBack_CanExecute" Executed="FirstPage_Executed"/>
+        <CommandBinding Command="NavigationCommands.PreviousPage" CanExecute="NavBack_CanExecute" Executed="PreviousPage_Executed"/>
+        <CommandBinding Command="NavigationCommands.NextPage" CanExecute="NavForward_CanExecute" Executed="NextPage_Executed"/>
+        <CommandBinding Command="NavigationCommands.LastPage" CanExecute="NavForward_CanExecute" Executed="LastPage_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="S" Modifiers="Shift" Command="ApplicationCommands.SaveAs"/>
@@ -115,6 +119,19 @@
                 <ComboBoxItem>25</ComboBoxItem>
             </ComboBox>
             <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}">%</TextBlock>
+            <Separator/>
+            <Button Command="NavigationCommands.FirstPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipFirst, ElementName=window, FallbackValue=First}">
+                <Image Source="Resources\DArrowBackward.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+            </Button>
+            <Button Command="NavigationCommands.PreviousPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipPrev, ElementName=window, FallbackValue=Prev}">
+                <Image Source="Resources\ArrowBackward.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+            </Button>
+            <Button Command="NavigationCommands.NextPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipNext, ElementName=window, FallbackValue=Next}">
+                <Image Source="Resources\ArrowForward.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+            </Button>
+            <Button Command="NavigationCommands.LastPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipLast, ElementName=window, FallbackValue=Last}">
+                <Image Source="Resources\DArrowForward.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+            </Button>
             <Separator/>
             <Button Command="{x:Static local:MainWindow.AddCommand}" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipAdd, ElementName=window, FallbackValue=Add}">
                 <Image Source="Resources\Add_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>

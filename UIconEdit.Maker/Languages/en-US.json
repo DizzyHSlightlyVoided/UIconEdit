@@ -25,6 +25,11 @@
   "ButtonTipOpen": "Open",
   "ButtonTipNew": "New",
   "ButtonTipSave": "Save",
+  
+  "ButtonTipFirst": "First image",
+  "ButtonTipPrev": "Previous image",
+  "ButtonTipNext": "Next image",
+  "ButtonTipLast": "Last image",
 
   "ButtonTipAdd": "Add new image",
   "ButtonTipDup": "Duplicate current image",

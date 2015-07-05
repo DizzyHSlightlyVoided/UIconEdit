@@ -20,6 +20,7 @@ Planned functionality
 ### UIconEdit
 * Getting and setting a cursor's hotspot.
 * Extracting icons from .DLL and .EXE files.
+* File associations.
 
 ### UIconEdit.Core
 * The creation of animated cursors (.ANI files). This probably won't make it into UIconEdit itself.

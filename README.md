@@ -1,6 +1,31 @@
 ﻿UIconEdit
 =========
-A .Net library for reading and editing Windows cursor and icon files. Specifically, it is used to take one or more images, and resize and combine them to form a single icon or cursor file; and may also be used to extract images from an icon. (There is currently no functionality for animated cursors; however, this is planned for future updates.)
+A C# application for opening and editing [Windows .CUR and .ICO files](http://en.wikipedia.org/wiki/ICO_%28file_format%29), using the [Windows Presentation Foundation](http://en.wikipedia.org/wiki/Windows_Presentation_Foundation) for image processing. The project is divided into three parts:
+
+* The UIconEdit.Core library, which allows icon creation and modification in code.
+* The UIconEdit WPF graphical app.
+* The UIconBuilder command-line utility for creating icon or cursor files.
+
+UIconEdit app's functionality
+-----------------------------
+* Opening and saving icons and cursors.
+* Importing images from external files.
+* Exporting icon images as .PNG files.
+* Duplicating an image with a different size and/or bit depth. You could just take a single 256x256 PNG image, and set 256x256, 48x48, 32x32, and 16x16 images, with 32-bit, 24-bit, and 8-bit color depths.
+* Icon sizes up to 768x768 (the maximum as of Windows 10).
+* Opening .ICO, .CUR, and image files as a command-line parameter.
+
+Planned functionality
+---------------------
+### UIconEdit
+* Getting and setting a cursor's hotspot.
+* Extracting icons from .DLL and .EXE files.
+
+### UIconEdit.Core
+* The creation of animated cursors (.ANI files). This probably won't make it into UIconEdit itself.
+
+UIconEdit.Core examples
+-----------------------
 
 This is a basic form of creating an icon:
 ```C#

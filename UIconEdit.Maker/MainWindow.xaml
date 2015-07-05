@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UIconEdit.Maker"
         mc:Ignorable="d" x:Name="window" Icon="GradientEdit.ico" SnapsToDevicePixels="True"
         Title="{Binding SettingsFile.LanguageFile.Title, ElementName=window, FallbackValue=UIconEdit}"
-        MinHeight="622" MinWidth="654" Height="622" Width="654" Loaded="window_Loaded" Closing="window_Closing" Closed="window_Closed">
+        MinHeight="626" MinWidth="656" Height="624" Width="654" Loaded="window_Loaded" Closing="window_Closing" Closed="window_Closed">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open" CanExecute="CommandBinding_CanExecute" Executed="Open_Executed"/>
         <CommandBinding Command="ApplicationCommands.New" CanExecute="CommandBinding_CanExecute" Executed="New_Executed"/>
@@ -89,17 +89,17 @@
         </Menu>
         <ToolBar DockPanel.Dock="Top" Height="Auto">
             <Button Command="ApplicationCommands.New" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipNew, ElementName=window, FallbackValue=New}">
-                <Image Source="Resources\New_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Resources\New_24x24.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Button Command="ApplicationCommands.Open" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipOpen, ElementName=window, FallbackValue=Open}">
-                <Image Source="Resources\Open_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Resources\Open_24x24.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Button Command="ApplicationCommands.Save" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipSave, ElementName=window, FallbackValue=Save}">
-                <Image Source="Resources\Save_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Resources\Save_24x24.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Separator/>
             <Image Source="Resources\Zoom_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"
-                   IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"/>
+                   IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}" VerticalAlignment="Center"/>
             <ComboBox x:Name="cmbZoom" Width="100" IsEditable="True" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
                       Text="{Binding Zoom, ElementName=window, Mode=TwoWay}" PreviewTextInput="ComboBox_PreviewTextInput">
                 <ComboBoxItem>3200</ComboBoxItem>
@@ -121,32 +121,32 @@
             <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}">%</TextBlock>
             <Separator/>
             <Button Command="NavigationCommands.FirstPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipFirst, ElementName=window, FallbackValue=First}">
-                <Image Source="Resources\DArrowBackward.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Resources\DArrowBackward.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Button Command="NavigationCommands.PreviousPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipPrev, ElementName=window, FallbackValue=Prev}">
-                <Image Source="Resources\ArrowBackward.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Resources\ArrowBackward.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Button Command="NavigationCommands.NextPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipNext, ElementName=window, FallbackValue=Next}">
-                <Image Source="Resources\ArrowForward.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Resources\ArrowForward.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Button Command="NavigationCommands.LastPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipLast, ElementName=window, FallbackValue=Last}">
-                <Image Source="Resources\DArrowForward.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Resources\DArrowForward.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Separator/>
             <Button Command="{x:Static local:MainWindow.AddCommand}" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipAdd, ElementName=window, FallbackValue=Add}">
-                <Image Source="Resources\Add_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Resources\Add_24x24.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Button Command="{x:Static local:MainWindow.DuplicateCommand}"
                     ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipDup, ElementName=window, FallbackValue=Duplicate}">
-                <Image Source="Resources\Copy_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Resources\Copy_24x24.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Button Command="{x:Static local:MainWindow.RemoveCommand}"
                     ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipRem, ElementName=window, FallbackValue=Remove}">
-                <Image Source="Resources\Delete_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Resources\Delete_24x24.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
             <Button Command="{x:Static local:MainWindow.ExportCommand}"
                     ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipExp, ElementName=window, FallbackValue=Export}">
-                <Image Source="Resources\Download_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                <Image Source="Resources\Download_24x24.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">

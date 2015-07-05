@@ -44,6 +44,11 @@ namespace UIconEdit.Maker
             Owner = mainWindow;
             TextMessage = message;
             Title = caption;
+            var langFile = mainWindow.SettingsFile.LanguageFile;
+            ButtonOKMessage = langFile.ButtonOK;
+            ButtonCancelMessage = langFile.ButtonCancel;
+            ButtonYesMessage = langFile.ButtonYes;
+            ButtonNoMessage = langFile.ButtonNo;
         }
 
         #region Result

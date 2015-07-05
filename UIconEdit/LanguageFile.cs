@@ -180,6 +180,7 @@ namespace UIconEdit.Maker
         public string MenuEditAdd { get { return _text["MenuEditAdd"]; } }
         public string MenuEditDup { get { return _text["MenuEditDup"]; } }
         public string MenuEditRem { get { return _text["MenuEditRem"]; } }
+        public string MenuEditExp { get { return _text["MenuEditExp"]; } }
 
         public string ButtonTipNew { get { return _text["ButtonTipNew"]; } }
         public string ButtonTipOpen { get { return _text["ButtonTipOpen"]; } }
@@ -193,6 +194,7 @@ namespace UIconEdit.Maker
         public string ButtonTipAdd { get { return _text["ButtonTipAdd"]; } }
         public string ButtonTipDup { get { return _text["ButtonTipDup"]; } }
         public string ButtonTipRem { get { return _text["ButtonTipRem"]; } }
+        public string ButtonTipExp { get { return _text["ButtonTipExp"]; } }
 
         public string ModifiedCaption { get { return _text["ModifiedCaption"]; } }
         public string ModifiedMessage { get { return _text["ModifiedMessage"]; } }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UIconEdit.Maker" WindowStartupLocation="CenterOwner"
         mc:Ignorable="d" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Icon="GradientEdit.ico" Loaded="window_Loaded"
-        Title="{Binding MainWindow.LanguageFile.Error, ElementName=window, FallbackValue=Error}" Height="150" Width="300" MinHeight="100" MinWidth="300">
+        Title="{Binding MainWindow.SettingsFile.LanguageFile.Error, ElementName=window, FallbackValue=Error}" Height="150" Width="300" MinHeight="100" MinWidth="300">
     <DockPanel>
         <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
@@ -20,7 +20,7 @@
         <Border VerticalAlignment="Bottom" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" DockPanel.Dock="Bottom"
                 Grid.Column="0" Grid.ColumnSpan="2">
             <Button x:Name="button" HorizontalAlignment="Center" Margin="0,5,0,5" VerticalAlignment="Bottom" MinWidth="75" IsDefault="True"
-                    IsCancel="true" Content="{Binding MainWindow.LanguageFile.ButtonOK, ElementName=window, Mode=OneTime, FallbackValue=_OK}"/>
+                    IsCancel="true" Content="{Binding MainWindow.SettingsFile.LanguageFile.ButtonOK, ElementName=window, Mode=OneTime, FallbackValue=_OK}"/>
         </Border>
     </DockPanel>
 </Window>

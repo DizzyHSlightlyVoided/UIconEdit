@@ -571,7 +571,7 @@ namespace UIconEdit.Maker
 
         private void NavBack_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = IsLoadedAndSelected && listbox.SelectedIndex > 0;
+            e.CanExecute = IsFileLoaded && LoadedFile.Entries.Count != 0 && listbox.SelectedIndex != 0;
             e.Handled = true;
         }
 
@@ -589,7 +589,7 @@ namespace UIconEdit.Maker
 
         private void NavForward_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = IsLoadedAndSelected && listbox.SelectedIndex < listbox.Items.Count - 1;
+            e.CanExecute = IsFileLoaded && LoadedFile.Entries.Count != 0 && listbox.SelectedIndex < listbox.Items.Count - 1;
             e.Handled = true;
         }
 

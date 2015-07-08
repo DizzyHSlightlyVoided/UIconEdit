@@ -345,95 +345,154 @@ namespace UIconEdit
 
                                 ushort colorPanes = curReader.ReadUInt16(); //14
                                 ushort bitsPerPixel = curReader.ReadUInt16(); //16
+                                int bmpStride, alphaStride = (width + 7) / 8;
+                                _catchStride(ref alphaStride);
+
+                                PixelFormat pFormat;
 
                                 switch (bitsPerPixel)
                                 {
                                     case 1:
                                         bitDepth = BitDepth.Depth2Color;
+                                        bmpStride = alphaStride;
+                                        pFormat = PixelFormats.Indexed1;
                                         break;
                                     case 4:
                                         bitDepth = BitDepth.Depth16Color;
+                                        bmpStride = (width + 1) >> 1;
+                                        pFormat = PixelFormats.Indexed4;
                                         break;
                                     case 8:
                                         bitDepth = BitDepth.Depth256Color;
+                                        bmpStride = width;
+                                        pFormat = PixelFormats.Indexed8;
                                         break;
                                     case 24:
                                         bitDepth = BitDepth.Depth24BitsPerPixel;
+                                        bmpStride = width * 3;
+                                        pFormat = PixelFormats.Bgr24;
                                         break;
                                     case 32:
                                         bitDepth = BitDepth.Depth32BitsPerPixel;
+                                        bmpStride = width * 4;
+                                        pFormat = PixelFormats.Bgra32;
                                         break;
                                     default:
                                         throw new IconLoadException(IconErrorCode.InvalidBmpBitDepth, loadedId, bitsPerPixel, i);
                                 }
 
+                                _catchStride(ref bmpStride);
+
                                 if (loadedId != IconTypeCode.Cursor && entry.YBitsPerpixel != 0 && bitsPerPixel != entry.YBitsPerpixel)
                                     throw new IconLoadException(IconErrorCode.InvalidBmpBitDepth, loadedId, new Tuple<int, int>(entry.YBitsPerpixel, bitsPerPixel), i);
 
-                                int testHeight;
+                                int actualHeight;
 
                                 if (bitDepth == BitDepth.Depth32BitsPerPixel && entry.BHeight != 0 && entry.BHeight == height)
                                 {
-                                    testHeight = height;
+                                    actualHeight = height;
                                 }
                                 else
                                 {
                                     if ((height & 1) == 1)
                                         throw new IconLoadException(IconErrorCode.InvalidBmpHeightOdd, loadedId, height, i);
-                                    testHeight = height >> 1;
+                                    actualHeight = height >> 1;
                                 }
 
                                 if (height > (IconEntry.MaxDimension << 1) || height < (IconEntry.MinDimension << 1))
                                     throw new IconLoadException(IconErrorCode.InvalidBmpSize, loadedId, new Size(width, height), i);
 
                                 if ((entry.BWidth != 0 && entry.BWidth != width) ||
-                                    (entry.BHeight != 0 && entry.BHeight != testHeight && entry.BHeight != height))
+                                    (entry.BHeight != 0 && entry.BHeight != actualHeight && entry.BHeight != height))
                                 {
                                     throw new IconLoadException(IconErrorCode.BmpSizeMismatch, loadedId,
-                                        new Tuple<Size, Size>(new Size(entry.BWidth, entry.BHeight), new Size(width, testHeight)), i);
+                                        new Tuple<Size, Size>(new Size(entry.BWidth, entry.BHeight), new Size(width, actualHeight)), i);
                                 }
 
-                                using (MemoryStream bufferStream = new MemoryStream())
-                                {
-#if LEAVEOPEN
-                                    using (BinaryWriter bufferWriter = new BinaryWriter(bufferStream, new UTF8Encoding(), true))
-#else
-                                    BinaryWriter bufferWriter = new BinaryWriter(bufferStream, new UTF8Encoding());
-#endif
-                                    {
-                                        bufferWriter.Write(ushort.MinValue); //2
-                                        bufferWriter.Write((ushort)IconTypeCode.Icon); //4
-                                        bufferWriter.Write((short)1); //6
-                                        bufferWriter.Write(entry.BWidth); //7
-                                        bufferWriter.Write(entry.BHeight); //8
-                                        bufferWriter.Write(entry.ColorCount); //9
-                                        bufferWriter.Write(byte.MinValue); //10
-                                        bufferWriter.Write((short)1); //12
-                                        bufferWriter.Write(bitsPerPixel); //14
-                                        bufferWriter.Write(entry.ResourceLength); //18
-                                        bufferWriter.Write(22); //22
+                                if (reader.ReadInt32() != 0)
+                                    throw new IconLoadException(IconErrorCode.InvalidBmpFile, loadedId, i);
 
-                                        bufferWriter.Write(dibSize); //26
-                                        bufferWriter.Write(width); //30
-                                        bufferWriter.Write(height); //34
-                                        bufferWriter.Write(colorPanes); //36
-                                        bufferWriter.Write(bitsPerPixel); //38
-                                    }
-#if !LEAVEOPEN
-                                    bufferWriter.Flush();
-#endif
-                                    ms.CopyTo(bufferStream);
-                                    bufferStream.Seek(0, SeekOrigin.Begin);
-                                    try
+                                int dataLength = reader.ReadInt32();
+                                int bmpLength, alphaLength;
+
+                                if (dataLength == 0)
+                                {
+                                    bmpLength = actualHeight * bmpStride;
+                                    alphaLength = (actualHeight == height) ? 0 : actualHeight * alphaStride;
+                                    dataLength = bmpLength + alphaLength;
+                                }
+                                else if (actualHeight == height)
+                                {
+                                    alphaLength = 0;
+                                    bmpLength = dataLength;
+                                }
+                                else
+                                {
+                                    alphaLength = actualHeight * alphaStride;
+                                    bmpLength = dataLength - alphaLength;
+                                }
+
+                                reader.ReadInt64(); //Skip next eight bytes.
+
+                                int palCount = reader.ReadInt32();
+                                if (palCount != 0)
+                                {
+                                    if (bitDepth == BitDepth.Depth32BitsPerPixel || bitDepth == BitDepth.Depth24BitsPerPixel || palCount != IconEntry.GetColorCount(bitDepth))
+                                        throw new IconLoadException(IconErrorCode.InvalidBmpFile, loadedId, i);
+                                }
+                                else if (bitDepth != BitDepth.Depth32BitsPerPixel && bitDepth != BitDepth.Depth24BitsPerPixel)
+                                    palCount = (int)IconEntry.GetColorCount(bitDepth);
+
+                                reader.ReadInt32(); //Skip next 4 bytes
+
+                                BitmapPalette palette;
+
+                                if (palCount == 0)
+                                    palette = null;
+                                else
+                                {
+                                    List<Color> colors = new List<Color>(palCount);
+                                    for (int p = 0; p < palCount; p++)
                                     {
-                                        IconBitmapDecoder decoder = new IconBitmapDecoder(bufferStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-                                        loadedImage = new WriteableBitmap(decoder.Frames[0].Clone());
-                                        alphaMask = null;
+                                        byte b = reader.ReadByte();
+                                        byte g = reader.ReadByte();
+                                        byte r = reader.ReadByte();
+                                        reader.ReadByte();
+                                        colors.Add(Color.FromRgb(r, g, b));
                                     }
-                                    catch (FileFormatException e)
+                                    palette = new BitmapPalette(colors);
+                                }
+
+                                byte[] bmpData = new byte[bmpLength];
+
+                                for (int y = actualHeight - 1; y >= 0; y--)
+                                {
+                                    int yOff = bmpStride * y;
+                                    int read = reader.Read(bmpData, yOff, bmpStride);
+                                    if (read < bmpStride)
                                     {
-                                        throw new IconLoadException(e.Message, IconErrorCode.InvalidBmpFile, loadedId, i, e);
                                     }
+                                }
+
+                                loadedImage = new WriteableBitmap(BitmapSource.Create(width, actualHeight, 0, 0, pFormat, palette, bmpData, bmpStride));
+
+                                if (actualHeight == height)
+                                    alphaMask = null;
+                                else
+                                {
+                                    byte[] alphaData = new byte[alphaLength];
+
+                                    for (int y = actualHeight - 1; y >= 0; y--)
+                                    {
+                                        int yOff = alphaStride * y;
+                                        int read = reader.Read(alphaData, yOff, alphaStride);
+                                        if (read < alphaStride)
+                                        {
+                                        }
+                                    }
+
+                                    alphaMask = new WriteableBitmap(BitmapSource.Create(width, actualHeight, 0, 0, PixelFormats.Indexed1,
+                                        IconEntry.AlphaPalette, alphaData, alphaStride));
                                 }
                             }
                             #endregion
@@ -491,6 +550,13 @@ namespace UIconEdit
 
                 return returner;
             }
+        }
+
+        private static void _catchStride(ref int stride)
+        {
+            int offVal = stride & 3;
+            if (offVal != 0)
+                stride += 4 - offVal;
         }
 
         [DebuggerDisplay("ImageOffset = {ImageOffset}, ResourceLength = {ResourceLength}, End = {End}")]

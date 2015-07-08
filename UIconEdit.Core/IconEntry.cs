@@ -295,6 +295,8 @@ namespace UIconEdit
         /// </summary>
         public const short MaxDimension = 768;
 
+        private static BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.Black, Colors.White });
+
         #region BaseImage
         /// <summary>
         /// The dependency property for the <see cref="BaseImage"/> property.
@@ -316,7 +318,28 @@ namespace UIconEdit
         public BitmapSource BaseImage
         {
             get { return (BitmapSource)GetValue(BaseImageProperty); }
-            set { SetValue(BaseImageProperty, value); }
+            set
+            {
+                if (value == null) throw new ArgumentNullException();
+                SetValue(BaseImageProperty, value);
+            }
+        }
+        #endregion
+
+        #region AlphaImage
+        /// <summary>
+        /// The dependency property for the <see cref="AlphaImage"/> property.
+        /// </summary>
+        public static readonly DependencyProperty AlphaImageProperty = DependencyProperty.Register("AlphaImage", typeof(BitmapSource), typeof(IconEntry),
+            new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets and sets an image to be used as the alpha mask, or <c>null</c> to derive the alpha mask from <see cref="BaseImage"/>.
+        /// </summary>
+        public BitmapSource AlphaImage
+        {
+            get { return (BitmapSource)GetValue(AlphaImageProperty); }
+            set { SetValue(AlphaImageProperty, value); }
         }
         #endregion
 
@@ -562,8 +585,6 @@ namespace UIconEdit
             return GetQuantized(false, out alphaMask);
         }
 
-        private static BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.Black, Colors.White });
-
         internal WriteableBitmap GetQuantized(bool isPng, out BitmapSource alphaMask)
         {
             uint[] pixels;
@@ -586,8 +607,40 @@ namespace UIconEdit
             const uint opaqueAlpha = 0xFF000000u;
 
             byte _alphaThreshold = AlphaThreshold;
+            BitmapSource alphaImage = AlphaImage;
 
-            if (isPng) alphaMask = null;
+            if (isPng)
+            {
+                alphaMask = null;
+                if (alphaImage != null)
+                {
+                    alphaImage = new FormatConvertedBitmap(alphaImage, PixelFormats.Bgra32, null, 0);
+
+                    if (alphaImage.PixelWidth != _width || alphaImage.PixelHeight != _height)
+                    {
+                        alphaImage = new TransformedBitmap(alphaImage, new ScaleTransform((double)_width / alphaImage.PixelWidth,
+                            (double)_height / alphaImage.PixelHeight));
+                    }
+
+                    uint[] alphaPixels = new uint[_width * _height];
+                    alphaImage.CopyPixels(alphaPixels, _width * sizeof(uint), 0);
+
+                    for (int i = 0; i < alphaPixels.Length; i++)
+                    {
+                        if (alphaPixels[i] == uint.MaxValue)
+                            pixels[i] &= ~opaqueAlpha;
+                    }
+                }
+            }
+            else if (alphaImage != null)
+            {
+                if (alphaImage.PixelWidth != _width || alphaImage.PixelHeight != _height)
+                {
+                    alphaImage = new TransformedBitmap(alphaImage, new ScaleTransform((double)_width / alphaImage.PixelWidth,
+                        (double)_height / alphaImage.PixelHeight));
+                }
+                alphaMask = new FormatConvertedBitmap(alphaImage, PixelFormats.Indexed1, AlphaPalette, 0);
+            }
             else
             {
                 uint[] alphaPixels = new uint[pixels.Length];

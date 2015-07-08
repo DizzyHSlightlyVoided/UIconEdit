@@ -327,7 +327,12 @@ namespace UIconEdit
         /// The dependency property for the <see cref="BaseImage"/> property.
         /// </summary>
         public static readonly DependencyProperty BaseImageProperty = DependencyProperty.Register("BaseImage", typeof(BitmapSource), typeof(IconEntry),
-            new PropertyMetadata(new WriteableBitmap(1, 1, 0, 0, PixelFormats.Indexed1, AlphaPalette)), BaseImageValidate);
+            new PropertyMetadata(new WriteableBitmap(1, 1, 0, 0, PixelFormats.Indexed1, AlphaPalette), BaseImageChanged), BaseImageValidate);
+
+        private static void BaseImageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            d.SetValue(IsQuantizedPropertyKey, false);
+        }
 
         private static bool BaseImageValidate(object value)
         {
@@ -356,7 +361,7 @@ namespace UIconEdit
         /// The dependency property for the <see cref="AlphaImage"/> property.
         /// </summary>
         public static readonly DependencyProperty AlphaImageProperty = DependencyProperty.Register("AlphaImage", typeof(BitmapSource), typeof(IconEntry),
-            new PropertyMetadata(null));
+            new PropertyMetadata(null, BaseImageChanged));
 
         /// <summary>
         /// Gets and sets an image to be used as the alpha mask, or <c>null</c> to derive the alpha mask from <see cref="BaseImage"/>.
@@ -367,6 +372,12 @@ namespace UIconEdit
             set { SetValue(AlphaImageProperty, value); }
         }
         #endregion
+
+        /// <summary>
+        /// Gets a value indicating whether the current instance will be saved as a PNG image within the icon structure by default.
+        /// </summary>
+        [Bindable(true, BindingDirection.OneWay)]
+        public bool IsPng { get { return _width > byte.MaxValue || _height > byte.MaxValue; } }
 
         /// <summary>
         /// Gets a key for the icon entry.
@@ -600,6 +611,33 @@ namespace UIconEdit
         }
 
         /// <summary>
+        /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
+        /// in a form indicated by the specified value.
+        /// </summary>
+        /// <param name="isPng">If <c>true</c>, <see cref="AlphaImage"/> will be set <c>null</c> and <see cref="BaseImage"/> will be quantized
+        /// as if it was a PNG icon entry. If <c>false</c>, <see cref="BaseImage"/> and <see cref="AlphaImage"/> will be quantized
+        /// as if for a BMP entry.</param>
+        public void SetQuantized(bool isPng)
+        {
+            BitmapSource alphaMask, baseImage = GetQuantized(isPng, out alphaMask);
+            BaseImage = baseImage;
+            AlphaImage = alphaMask;
+            SetValue(IsQuantizedPropertyKey, true);
+        }
+
+        /// <summary>
+        /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
+        /// in a form indicated by <see cref="IsPng"/>.
+        /// </summary>
+        /// <remarks>
+        /// Performs the same action as <see cref="SetQuantized(bool)"/>, with <see cref="IsPng"/> passed as the parameter.
+        /// </remarks>
+        public void SetQuantized()
+        {
+            SetQuantized(IsPng);
+        }
+
+        /// <summary>
         /// Returns color quantization of the current instance as it would appear for a BMP entry.
         /// </summary>
         /// <param name="alphaMask">When this method returns, contains the quantized alpha mask generated using <see cref="AlphaThreshold"/>.
@@ -612,6 +650,15 @@ namespace UIconEdit
 
         internal WriteableBitmap GetQuantized(bool isPng, out BitmapSource alphaMask)
         {
+            bool isQuantized = IsQuantized;
+            BitmapSource alphaImage = AlphaImage;
+
+            if (isQuantized && (isPng == (alphaImage == null)))
+            {
+                alphaMask = alphaImage;
+                return new WriteableBitmap(BaseImage);
+            }
+
             uint[] pixels;
 
             {
@@ -632,7 +679,6 @@ namespace UIconEdit
             const uint opaqueAlpha = 0xFF000000u;
 
             byte _alphaThreshold = AlphaThreshold;
-            BitmapSource alphaImage = AlphaImage;
 
             if (isPng)
             {

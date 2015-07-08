@@ -155,7 +155,7 @@ namespace UIconEdit.Maker
         public IconEntry GetIconEntry()
         {
             var entry = new IconEntry(LoadedImage, EntryWidth, EntryHeight, BitDepth, AlphaThreshold);
-            entry.BaseImage = entry.GetQuantizedPng();
+            entry.SetQuantized();
             return entry;
         }
 

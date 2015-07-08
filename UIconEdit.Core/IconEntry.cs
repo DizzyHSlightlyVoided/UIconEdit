@@ -300,7 +300,12 @@ namespace UIconEdit
         /// The dependency property for the <see cref="BaseImage"/> property.
         /// </summary>
         public static readonly DependencyProperty BaseImageProperty = DependencyProperty.Register("BaseImage", typeof(BitmapSource), typeof(IconEntry),
-            new PropertyMetadata(null));
+            new PropertyMetadata(new WriteableBitmap(1, 1, 0, 0, PixelFormats.Indexed1, AlphaPalette)), BaseImageValidate);
+
+        private static bool BaseImageValidate(object value)
+        {
+            return value != null;
+        }
 
         /// <summary>
         /// Gets and sets the image associated with the current instance.

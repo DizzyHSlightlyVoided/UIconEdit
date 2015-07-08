@@ -307,7 +307,7 @@ namespace UIconEdit
         /// </summary>
         public const short MaxDimension = 768;
 
-        internal static readonly BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.Black, Colors.White });
+        internal static readonly BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.White, Colors.Black });
 
         #region IsQuantized
         private static readonly DependencyPropertyKey IsQuantizedPropertyKey = DependencyProperty.RegisterReadOnly("IsQuantized", typeof(bool), typeof(IconEntry),
@@ -366,6 +366,7 @@ namespace UIconEdit
 
         /// <summary>
         /// Gets and sets an image to be used as the alpha mask, or <c>null</c> to derive the alpha mask from <see cref="BaseImage"/>.
+        /// Black pixels are transparent; white pixels are opaque.
         /// </summary>
         public BitmapSource AlphaImage
         {
@@ -669,6 +670,7 @@ namespace UIconEdit
         /// Returns color quantization of the current instance as it would appear for a BMP entry.
         /// </summary>
         /// <param name="alphaMask">When this method returns, contains the quantized alpha mask generated using <see cref="AlphaThreshold"/>.
+        /// Black pixels are transparent; white pixels are opaque.
         /// This parameter is passed uninitialized.</param>
         /// <returns>A <see cref="BitmapSource"/> containing the quantized image without the alpha mask.</returns>
         public BitmapSource GetQuantized(out BitmapSource alphaMask)
@@ -748,9 +750,9 @@ namespace UIconEdit
                 {
                     uint curVal = pixels[i] >> 24;
                     if (curVal < _alphaThreshold)
-                        alphaPixels[i] = uint.MaxValue;
-                    else
                         alphaPixels[i] = opaqueAlpha;
+                    else
+                        alphaPixels[i] = uint.MaxValue;
                 }
 
                 alphaMask = new FormatConvertedBitmap(GetBitmap(_width, _height, alphaPixels), PixelFormats.Indexed1, AlphaPalette, 0);

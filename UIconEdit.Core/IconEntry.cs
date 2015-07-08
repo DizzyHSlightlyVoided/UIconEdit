@@ -285,6 +285,17 @@ namespace UIconEdit
         {
         }
 
+        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+            : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
+        {
+            SetValue(IsQuantizedPropertyKey, true);
+        }
+
+        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, BitDepth bitDepth)
+            : this(baseImage, alphaImage, bitDepth, 0, 0)
+        {
+        }
+
 
         /// <summary>
         /// The minimum dimensions of an icon. 1 pixel in size.
@@ -296,6 +307,20 @@ namespace UIconEdit
         public const short MaxDimension = 768;
 
         private static BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.Black, Colors.White });
+
+        #region IsQuantized
+        private static readonly DependencyPropertyKey IsQuantizedPropertyKey = DependencyProperty.RegisterReadOnly("IsQuantized", typeof(bool), typeof(IconEntry),
+            new PropertyMetadata(false));
+        /// <summary>
+        /// The dependency property for the read-only <see cref="IsQuantized"/> property.
+        /// </summary>
+        public static readonly DependencyProperty IsQuantizedProperty = IsQuantizedPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets a value indicating whether <see cref="BaseImage"/> and <see cref="AlphaImage"/> are known to be already quantized.
+        /// </summary>
+        public bool IsQuantized { get { return (bool)GetValue(IsQuantizedProperty); } }
+        #endregion
 
         #region BaseImage
         /// <summary>

@@ -123,7 +123,7 @@ namespace UIconEdit.Maker
                     bmpSource = new WriteableBitmap(BitmapFrame.Create(fs));
 
                 Mouse.OverrideCursor = null;
-                AddWindow addWindow = new AddWindow(this, false, bmpSource, BitDepth.Depth32BitsPerPixel);
+                AddWindow addWindow = new AddWindow(this, false, true, bmpSource, BitDepth.Depth32BitsPerPixel);
                 bool? result = addWindow.ShowDialog();
 
                 if (result.HasValue && result.Value)
@@ -433,7 +433,7 @@ namespace UIconEdit.Maker
                 Mouse.OverrideCursor = null;
             }
 
-            _add(new AddWindow(this, false, bmpSource, BitDepth.Depth32BitsPerPixel));
+            _add(new AddWindow(this, false, false, bmpSource, BitDepth.Depth32BitsPerPixel));
         }
 
         public static readonly RoutedCommand DuplicateCommand = new RoutedCommand("Duplicate", typeof(MainWindow));
@@ -448,7 +448,7 @@ namespace UIconEdit.Maker
         {
             IconEntry entry = (IconEntry)(listbox.SelectedItem);
 
-            _add(new AddWindow(this, true, entry.BaseImage, entry.BitDepth));
+            _add(new AddWindow(this, true, false, entry.BaseImage, entry.BitDepth));
         }
 
         public static readonly RoutedCommand RemoveCommand = new RoutedCommand("Duplicate", typeof(MainWindow));

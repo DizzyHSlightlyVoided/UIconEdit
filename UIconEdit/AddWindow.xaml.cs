@@ -39,7 +39,7 @@ namespace UIconEdit.Maker
     /// </summary>
     partial class AddWindow
     {
-        public AddWindow(MainWindow mainWindow, bool duplicated, BitmapSource image, BitDepth bitDepth)
+        public AddWindow(MainWindow mainWindow, bool duplicated, bool newFile, BitmapSource image, BitDepth bitDepth)
         {
             Owner = _mainWindow = mainWindow;
             LoadedImage = image;
@@ -49,6 +49,8 @@ namespace UIconEdit.Maker
             binding.ElementName = "window";
             binding.Mode = BindingMode.OneWay;
             BindingOperations.SetBinding(this, TitleProperty, binding);
+
+            SetValue(NewFilePropertyKey, newFile);
 
             short width = 32, height = 32;
             if (image.PixelWidth >= IconEntry.MinDimension && image.PixelWidth <= IconEntry.MaxDimension)
@@ -156,6 +158,14 @@ namespace UIconEdit.Maker
             entry.BaseImage = entry.GetQuantizedPng();
             return entry;
         }
+
+        #region NewFile
+        private static readonly DependencyPropertyKey NewFilePropertyKey = DependencyProperty.RegisterReadOnly("NewFile", typeof(bool), typeof(AddWindow),
+            new PropertyMetadata());
+        public static readonly DependencyProperty NewFileProperty = NewFilePropertyKey.DependencyProperty;
+
+        public bool NewFile { get { return (bool)GetValue(NewFileProperty); } }
+        #endregion
 
         #region AlphaThreshold
         public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register("AlphaThreshold", typeof(byte), typeof(AddWindow),
@@ -320,7 +330,7 @@ namespace UIconEdit.Maker
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
             var file = _mainWindow.LoadedFile;
-            if (file != null && file.Entries.ContainsSimilar(EntryWidth, EntryHeight, BitDepth))
+            if (!NewFile && file != null && file.Entries.ContainsSimilar(EntryWidth, EntryHeight, BitDepth))
             {
                 ErrorWindow.Show(_mainWindow, this, string.Format(_mainWindow.SettingsFile.LanguageFile.ImageAddError,
                     IconEntry.GetBitsPerPixel(BitDepth), EntryWidth, EntryHeight));

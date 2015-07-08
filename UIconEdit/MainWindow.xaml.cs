@@ -287,6 +287,9 @@ namespace UIconEdit.Maker
 
         private void Open_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            if (_checkModified())
+                return;
+
             OpenFileDialog dialog = new OpenFileDialog();
             string filePath = FilePath;
             if (filePath != null)

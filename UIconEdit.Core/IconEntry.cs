@@ -728,7 +728,7 @@ namespace UIconEdit
 
                     for (int i = 0; i < alphaPixels.Length; i++)
                     {
-                        if (alphaPixels[i] == uint.MaxValue)
+                        if (alphaPixels[i] == opaqueAlpha)
                             pixels[i] &= ~opaqueAlpha;
                     }
                 }

@@ -39,6 +39,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
@@ -260,10 +261,9 @@ namespace UIconEdit
                         while (gapLength > 0)
                             gapLength -= input.Read(curBuffer, 0, (int)Math.Min(gapLength, bufferSize));
 
-                        WriteableBitmap loadedImage;
+                        WriteableBitmap loadedImage, alphaMask;
 
                         int dibSize = reader.ReadInt32();
-                        if (dibSize < MinDibSize) throw new IconLoadException(IconErrorCode.InvalidEntryType, loadedId, i);
 
                         if (loadedId == IconTypeCode.Icon)
                         {
@@ -286,6 +286,7 @@ namespace UIconEdit
                         BitDepth bitDepth;
                         if (dibSize == pngLittleEndian)
                         {
+                            alphaMask = null;
                             #region Load Png
                             if (loadedId == IconTypeCode.Cursor)
                             {
@@ -427,6 +428,7 @@ namespace UIconEdit
                                     {
                                         IconBitmapDecoder decoder = new IconBitmapDecoder(bufferStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
                                         loadedImage = new WriteableBitmap(decoder.Frames[0].Clone());
+                                        alphaMask = null;
                                     }
                                     catch (FileFormatException e)
                                     {
@@ -440,12 +442,15 @@ namespace UIconEdit
 
                         if (loadedImage.PixelWidth > IconEntry.MaxDimension || loadedImage.PixelHeight > IconEntry.MaxDimension ||
                             loadedImage.PixelWidth < IconEntry.MinDimension || loadedImage.PixelHeight < IconEntry.MinDimension)
-                            throw new IconLoadException(IconErrorCode.InvalidPngSize, loadedId, new Size(loadedImage.PixelWidth, loadedImage.PixelHeight), i);
+                        {
+                            throw new IconLoadException(isPng ? IconErrorCode.InvalidPngSize : IconErrorCode.InvalidBmpSize,
+                                loadedId, new Size(loadedImage.PixelWidth, loadedImage.PixelHeight), i);
+                        }
 
                         if ((entry.BWidth != 0 && entry.BWidth != loadedImage.PixelWidth) ||
                             (entry.BHeight != 0 && entry.BHeight != loadedImage.PixelHeight))
                         {
-                            throw new IconLoadException(IconErrorCode.PngSizeMismatch, loadedId,
+                            throw new IconLoadException(isPng ? IconErrorCode.PngSizeMismatch : IconErrorCode.BmpSizeMismatch, loadedId,
                                 new Tuple<Size, Size>(new Size(entry.BWidth, entry.BHeight), new Size(loadedImage.PixelWidth, loadedImage.PixelHeight)), i);
                         }
 
@@ -455,9 +460,9 @@ namespace UIconEdit
                         IconEntry resultEntry;
 
                         if (loadedId == IconTypeCode.Cursor)
-                            resultEntry = new IconEntry(loadedImage, bitDepth, entry.XPlanes, entry.YBitsPerpixel);
+                            resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth, entry.XPlanes, entry.YBitsPerpixel);
                         else
-                            resultEntry = new IconEntry(loadedImage, bitDepth);
+                            resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth);
 
                         entries.Add(resultEntry);
                     }
@@ -1942,8 +1947,6 @@ namespace UIconEdit
         PngSizeMismatch = 0x1103,
         /// <summary>
         /// Code 0x1200: an error occurred when attempting to process a BMP entry. The inner exception may contain more information.
-        /// <see cref="IconLoadException.Value"/> contains a <see cref="Tuple{T1, T2}"/> in which the <see cref="Tuple{T1, T2}.Item1"/> is the 
-        /// size listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the actual size.
         /// </summary>
         InvalidBmpFile = 0x1200,
         /// <summary>

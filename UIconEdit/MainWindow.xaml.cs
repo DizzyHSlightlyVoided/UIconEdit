@@ -733,4 +733,23 @@ namespace UIconEdit.Maker
             throw new NotSupportedException();
         }
     }
+
+    internal class AlphaImageConverter : IValueConverter
+    {
+        private static readonly WriteableBitmap retVal = new WriteableBitmap(1, 1, 0, 0, PixelFormats.Bgr24, null);
+        
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            IconEntry entry = value as IconEntry;
+            if (entry == null) return null;
+            if (entry.AlphaImage == null) return entry.BaseImage;
+
+            return entry.GetQuantizedPng();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
 }

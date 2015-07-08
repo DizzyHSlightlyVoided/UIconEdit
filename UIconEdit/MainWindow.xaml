@@ -30,6 +30,7 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:BPSStringConverter x:Key="BPSStringConverter"/>
         <local:SizeStringConverter x:Key="SizeStringConverter"/>
+        <local:AlphaImageConverter x:Key="AlphaImageConverter"/>
         <Style x:Key="imgEnabled" TargetType="{x:Type Image}">
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="false">
@@ -166,7 +167,8 @@
                                 </Grid.RowDefinitions>
                                 <Border BorderThickness="1" Background="{StaticResource TransparentTiles}"
                                         BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}">
-                                    <Image Source="{Binding BaseImage}" Width="64" Margin="2" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                    <Image Source="{Binding Converter={StaticResource AlphaImageConverter}}" Width="64" Margin="2"
+                                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                                 </Border>
                                 <TextBlock Grid.Row="1" HorizontalAlignment="Center">
                                     <TextBlock.Text>

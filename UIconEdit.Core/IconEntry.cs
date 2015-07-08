@@ -288,6 +288,7 @@ namespace UIconEdit
         internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
             : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
+            AlphaImage = alphaImage;
             SetValue(IsQuantizedPropertyKey, true);
         }
 
@@ -306,7 +307,7 @@ namespace UIconEdit
         /// </summary>
         public const short MaxDimension = 768;
 
-        private static BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.Black, Colors.White });
+        internal static readonly BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.Black, Colors.White });
 
         #region IsQuantized
         private static readonly DependencyPropertyKey IsQuantizedPropertyKey = DependencyProperty.RegisterReadOnly("IsQuantized", typeof(bool), typeof(IconEntry),
@@ -563,6 +564,33 @@ namespace UIconEdit
                     return uint.MaxValue + 1L;
                 default:
                     throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
+            }
+        }
+
+        /// <summary>
+        /// Returns the <see cref="PixelFormat"/> associated with the specified <see cref="UIconEdit.BitDepth"/>.
+        /// </summary>
+        /// <param name="depth">The bit depth from which to get the pixel format.</param>
+        /// <returns>The pixel format associated with <paramref name="depth"/>.</returns>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="depth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        public static PixelFormat GetPixelFormat(BitDepth depth)
+        {
+            switch (depth)
+            {
+                case BitDepth.Depth1BitPerPixel:
+                    return PixelFormats.Indexed1;
+                case BitDepth.Depth4BitsPerPixel:
+                    return PixelFormats.Indexed4;
+                case BitDepth.Depth8BitsPerPixel:
+                    return PixelFormats.Indexed8;
+                case BitDepth.Depth24BitsPerPixel:
+                    return PixelFormats.Bgr24;
+                case BitDepth.Depth32BitsPerPixel:
+                    return PixelFormats.Bgra32;
+                default:
+                    throw new InvalidEnumArgumentException("depth", (int)depth, typeof(BitDepth));
             }
         }
 

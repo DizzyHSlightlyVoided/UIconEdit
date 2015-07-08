@@ -344,6 +344,7 @@ namespace UIconEdit.Maker
                 loadedFile.Save(filePath);
                 System.Threading.Thread.Sleep(100);
                 IsModified = false;
+                FilePath = filePath;
                 return true;
             }
             catch (Exception)

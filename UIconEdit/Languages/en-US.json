@@ -77,6 +77,11 @@
   "AddTitle": "Add Image",
   "DuplicateTitle": "Duplicate Image",
 
+  "Percent": "%",
+  "Hotspot": "Hotspot",
+  "HotspotX": "X:",
+  "HotspotY": "Y:",
+
   "IconError0": "An unknown error occurred.",
   "IconError1": "The file is not a valid cursor or icon file.",
   "IconError2icon": "The icon file does not contain any valid entries.",

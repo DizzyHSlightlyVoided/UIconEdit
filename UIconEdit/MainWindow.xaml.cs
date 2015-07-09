@@ -386,7 +386,7 @@ namespace UIconEdit.Maker
         private void New_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             if (_checkModified()) return;
-            LoadedFile = new IconFile();
+            LoadedFile = new CursorFile();
         }
 
         public static readonly RoutedCommand AddCommand = new RoutedCommand("Add", typeof(MainWindow));
@@ -738,8 +738,6 @@ namespace UIconEdit.Maker
 
     internal class AlphaImageConverter : IValueConverter
     {
-        private static readonly WriteableBitmap retVal = new WriteableBitmap(1, 1, 0, 0, PixelFormats.Bgr24, null);
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             IconEntry entry = value as IconEntry;
@@ -759,6 +757,21 @@ namespace UIconEdit.Maker
             }
 
             return BitmapSource.Create(entry.Width, entry.Height, 0, 0, PixelFormats.Bgra32, null, bmpPixels, entry.Width * 4);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    internal class CanUseHotspotConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            CursorFile cFile = value as CursorFile;
+            if (cFile == null) return Visibility.Collapsed;
+            return Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -231,6 +231,10 @@ namespace UIconEdit.Maker
         public string AddTitle { get { return _text["AddTitle"]; } }
         public string DuplicateTitle { get { return _text["DuplicateTitle"]; } }
 
+        public string Percent { get { return _text["Percent"]; } }
+        public string HotspotX { get { return _text["HotspotX"]; } }
+        public string HotspotY { get { return _text["HotspotY"]; } }
+
         public string TypeIco { get { return _text["TypeIco"]; } }
         public string TypeCur { get { return _text["TypeCur"]; } }
         public string TypeIcoCur { get { return _text["TypeIcoCur"]; } }

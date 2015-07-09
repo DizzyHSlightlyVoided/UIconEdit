@@ -123,15 +123,16 @@
     <Resource Include="Resources\Delete_24x24.png" />
     <Resource Include="Resources\Copy_24x24.png" />
     <Resource Include="Resources\Download_24x24.png" />
+    <Resource Include="Resources\Hotspot.png" />
+    <Resource Include="Resources\ArrowBackward.png" />
+    <Resource Include="Resources\ArrowForward.png" />
+    <Resource Include="Resources\DArrowBackward.png" />
+    <Resource Include="Resources\DArrowForward.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Languages\en-US.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Resources\ArrowBackward.png" />
-    <Resource Include="Resources\ArrowForward.png" />
-    <Resource Include="Resources\DArrowBackward.png" />
-    <Resource Include="Resources\DArrowForward.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

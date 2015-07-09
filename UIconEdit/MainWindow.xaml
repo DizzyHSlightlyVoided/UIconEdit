@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UIconEdit.Maker"
         mc:Ignorable="d" x:Name="window" Icon="GradientEdit.ico" SnapsToDevicePixels="True"
         Title="{Binding SettingsFile.LanguageFile.Title, ElementName=window, FallbackValue=UIconEdit}"
-        MinHeight="626" MinWidth="656" Height="624" Width="654" Loaded="window_Loaded" Closing="window_Closing" Closed="window_Closed">
+        MinHeight="626" MinWidth="800" Height="626" Width="800" Loaded="window_Loaded" Closing="window_Closing" Closed="window_Closed">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open" CanExecute="CommandBinding_CanExecute" Executed="Open_Executed"/>
         <CommandBinding Command="ApplicationCommands.New" CanExecute="CommandBinding_CanExecute" Executed="New_Executed"/>
@@ -31,6 +31,7 @@
         <local:BPSStringConverter x:Key="BPSStringConverter"/>
         <local:SizeStringConverter x:Key="SizeStringConverter"/>
         <local:AlphaImageConverter x:Key="AlphaImageConverter"/>
+        <local:CanUseHotspotConverter x:Key="CanUseHotspotConverter"/>
         <Style x:Key="imgEnabled" TargetType="{x:Type Image}">
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="false">
@@ -104,7 +105,7 @@
             <Separator/>
             <Image Source="Resources\Zoom_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"
                    IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}" VerticalAlignment="Center"/>
-            <ComboBox x:Name="cmbZoom" Width="100" IsEditable="True" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
+            <ComboBox x:Name="cmbZoom" Width="75" IsEditable="True" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
                       Text="{Binding Zoom, ElementName=window, Mode=TwoWay}" PreviewTextInput="ComboBox_PreviewTextInput">
                 <ComboBoxItem>3200</ComboBoxItem>
                 <ComboBoxItem>2400</ComboBoxItem>
@@ -122,7 +123,8 @@
                 <ComboBoxItem>50</ComboBoxItem>
                 <ComboBoxItem>25</ComboBoxItem>
             </ComboBox>
-            <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}">%</TextBlock>
+            <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
+                       Text="{Binding SettingsFile.LanguageFile.Percent, ElementName=window, FallbackValue=%}"/>
             <Separator/>
             <Button Command="NavigationCommands.FirstPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipFirst, ElementName=window, FallbackValue=First}">
                 <Image Source="Resources\DArrowBackward.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
@@ -152,6 +154,19 @@
                     ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipExp, ElementName=window, FallbackValue=Export}">
                 <Image Source="Resources\Download_24x24.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
+            <Separator/>
+            <StackPanel Orientation="Horizontal" x:Name="pnlHotspot" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
+                        Visibility="{Binding LoadedFile, ElementName=window, Converter={StaticResource CanUseHotspotConverter}}">
+                <CheckBox VerticalAlignment="Center">
+                    <Image Source="Resources\Hotspot.png" Height="24"/>
+                </CheckBox>
+                <TextBlock Margin="5,0,0,0" Text="{Binding SettingsFile.LanguageFile.HotspotX, ElementName=window, FallbackValue=X:}" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtHotX" VerticalAlignment="Center" Width="50" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}"
+                         Text="{Binding SelectedItem.HotspotX, ElementName=listbox}"/>
+                <TextBlock Margin="5,0,0,0" Text="{Binding SettingsFile.LanguageFile.HotspotY, ElementName=window, FallbackValue=Y:}" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtHotY" VerticalAlignment="Center" Width="50" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}"
+                         Text="{Binding SelectedItem.HotspotY, ElementName=listbox}"/>
+            </StackPanel>
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">
             <ScrollViewer>

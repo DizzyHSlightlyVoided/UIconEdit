@@ -194,6 +194,9 @@ namespace UIconEdit
 
         internal static IconFileBase Load(Stream input, IconTypeCode? id, Action<IconLoadException> handler)
         {
+#if DEBUG
+            Stopwatch sw = Stopwatch.StartNew();
+#endif
 #if LEAVEOPEN
             using (BinaryReader reader = new BinaryReader(input, new UTF8Encoding(), true))
 #else
@@ -463,16 +466,7 @@ namespace UIconEdit
                                     palette = new BitmapPalette(colors);
                                 }
 
-                                byte[] bmpData = new byte[bmpLength];
-
-                                for (int y = actualHeight - 1; y >= 0; y--)
-                                {
-                                    int yOff = bmpStride * y;
-                                    int read = reader.Read(bmpData, yOff, bmpStride);
-                                    if (read < bmpStride)
-                                    {
-                                    }
-                                }
+                                byte[] bmpData = _readBmpLines(reader, bmpStride, actualHeight);
 
                                 loadedImage = new WriteableBitmap(BitmapSource.Create(width, actualHeight, 0, 0, pFormat, palette, bmpData, bmpStride));
 
@@ -480,16 +474,7 @@ namespace UIconEdit
                                     alphaMask = null;
                                 else
                                 {
-                                    byte[] alphaData = new byte[alphaLength];
-
-                                    for (int y = actualHeight - 1; y >= 0; y--)
-                                    {
-                                        int yOff = alphaStride * y;
-                                        int read = reader.Read(alphaData, yOff, alphaStride);
-                                        if (read < alphaStride)
-                                        {
-                                        }
-                                    }
+                                    byte[] alphaData = _readBmpLines(reader, alphaStride, actualHeight);
 
                                     alphaMask = new WriteableBitmap(BitmapSource.Create(width, actualHeight, 0, 0, PixelFormats.Indexed1,
                                         IconEntry.AlphaPalette, alphaData, alphaStride));
@@ -540,7 +525,10 @@ namespace UIconEdit
                         offset += entry.ResourceLength;
                     }
                 }
-
+#if DEBUG
+                sw.Stop();
+                Debug.WriteLine("Finished processing all entries in {0}ms.", sw.Elapsed.TotalMilliseconds);
+#endif
                 if (entries.Count == 0)
                     throw new IconLoadException(IconErrorCode.ZeroValidEntries, loadedId);
 
@@ -550,6 +538,27 @@ namespace UIconEdit
 
                 return returner;
             }
+        }
+
+        private static byte[] _readBmpLines(BinaryReader reader, int stride, int height)
+        {
+            byte[] bmpData = new byte[stride * height];
+
+            for (int y = height - 1; y >= 0; y--)
+            {
+                int yOff = stride * y;
+                int count = stride;
+                while (count > 0)
+                {
+                    int read = reader.Read(bmpData, yOff, count);
+                    if (read == 0)
+                        throw new EndOfStreamException();
+                    yOff += read;
+                    count -= read;
+                }
+            }
+
+            return bmpData;
         }
 
         private static void _catchStride(ref int stride)
@@ -674,7 +683,9 @@ namespace UIconEdit
                 uint offset = (uint)(6 + (entries.Count * 16));
 
                 List<MemoryStream> streamList = new List<MemoryStream>();
-
+#if DEBUG
+                Stopwatch sw = Stopwatch.StartNew();
+#endif
                 foreach (IconEntry curEntry in entries)
                 {
                     MemoryStream writeStream;
@@ -688,6 +699,10 @@ namespace UIconEdit
                     ms.CopyTo(output);
                     ms.Dispose();
                 }
+#if DEBUG
+                sw.Stop();
+                Debug.WriteLine("Finished processing all entries in {0}ms.", sw.Elapsed.TotalMilliseconds);
+#endif
             }
 #if !LEAVEOPEN
             writer.Flush();
@@ -818,59 +833,56 @@ namespace UIconEdit
                     msWriter.Write(height);
                     msWriter.Write((short)1);
                     msWriter.Write(bitsPerPixel); //1, 4, 8, 24, or 32
-                    msWriter.Write(0); //Compression method = 0
 
-                    msWriter.Write(0);
+                    //Skip format (4 bytes), size (4 bytes), resolution (8 bytes), palette count (4 bytes), and "important colors" (4 bytes)
+                    msWriter.Write(new byte[24]);
 
-                    msWriter.Write(new byte[16]); //Skip resolution (8 bytes), palette count (4 bytes), and "important colors" (4 bytes)
-
-                    using (MemoryStream bmpStream = new MemoryStream())
-                    using (BinaryReader bmpReader = new BinaryReader(bmpStream))
+                    if (quantized.Palette != null)
                     {
-                        BmpBitmapEncoder encoder = new BmpBitmapEncoder();
-                        encoder.Frames.Add(BitmapFrame.Create(quantized));
-                        encoder.Save(bmpStream);
+                        ushort paletteCount = (ushort)IconEntry.GetColorCount(entry.BitDepth);
 
-                        bmpStream.Seek(10, SeekOrigin.Begin);
-                        uint streamOffset = bmpReader.ReadUInt32();
-                        bmpStream.Seek(28, SeekOrigin.Begin);
-                        ushort bitDepth = bmpReader.ReadUInt16();
-
-                        long colorCount = entry.ColorCount;
-                        if (colorCount <= 256 && quantized.Palette != null)
+                        for (int i = 0; i < paletteCount && i < quantized.Palette.Colors.Count; i++)
                         {
-                            bmpStream.Seek(54, SeekOrigin.Begin);
-
-                            for (int i = 0; i < colorCount; i++)
-                            {
-                                uint color = bmpReader.ReadUInt32();
-                                msWriter.Write(color);
-                            }
+                            Color curColor = quantized.Palette.Colors[i];
+                            msWriter.Write(curColor.B);
+                            msWriter.Write(curColor.G);
+                            msWriter.Write(curColor.R);
+                            msWriter.Write(byte.MaxValue);
                         }
 
-                        bmpStream.Seek(streamOffset, SeekOrigin.Begin);
-
-                        int dataLength = quantized.PixelHeight * 4 * (((bitsPerPixel * quantized.PixelWidth) + 31) / 32);
-
-                        byte[] buffer = bmpReader.ReadBytes(dataLength);
-                        msWriter.Write(buffer);
+                        for (int i = quantized.Palette.Colors.Count; i < paletteCount; i++)
+                            msWriter.Write(0xFF000000u);
                     }
+                    int width = quantized.PixelWidth;
+                    int alphaStride = (width + 7) >> 3;
+                    _catchStride(ref alphaStride);
+                    int bmpStride;
+                    switch (entry.BitDepth)
+                    {
+                        default: //32-bit
+                            bmpStride = width * 4;
+                            break;
+                        case BitDepth.Depth24BitsPerPixel:
+                            bmpStride = width * 3;
+                            break;
+                        case BitDepth.Depth8BitsPerPixel:
+                            bmpStride = width;
+                            break;
+                        case BitDepth.Depth4BitsPerPixel:
+                            bmpStride = (width + 1) >> 1;
+                            break;
+                        case BitDepth.Depth1BitPerPixel:
+                            bmpStride = alphaStride;
+                            break;
+                    }
+                    _catchStride(ref bmpStride);
+
+                    height = quantized.PixelHeight;
+
+                    _writeBmpData(quantized, msWriter, height, bmpStride);
 
                     if (alphaMask != null)
-                    {
-                        using (MemoryStream alphaStream = new MemoryStream())
-                        using (BinaryReader alphaReader = new BinaryReader(alphaStream))
-                        {
-                            BmpBitmapEncoder encoder = new BmpBitmapEncoder();
-                            encoder.Frames.Add(BitmapFrame.Create(alphaMask));
-                            encoder.Save(alphaStream);
-
-                            alphaStream.Seek(10, SeekOrigin.Begin);
-                            uint streamOffset = alphaReader.ReadUInt32();
-                            alphaStream.Seek(streamOffset, SeekOrigin.Begin);
-                            alphaStream.CopyTo(writeStream);
-                        }
-                    }
+                        _writeBmpData(alphaMask, msWriter, height, alphaStride);
                 }
 #if !LEAVEOPEN
                 writer.Flush();
@@ -884,6 +896,18 @@ namespace UIconEdit
             writer.Write(length); //12
             writer.Write(offset); //16
             offset += length;
+        }
+
+        private static void _writeBmpData(BitmapSource bmp, BinaryWriter msWriter, int height, int stride)
+        {
+            byte[] bmpData = new byte[height * stride];
+            bmp.CopyPixels(bmpData, stride, 0);
+
+            for (int y = height - 1; y >= 0; y--)
+            {
+                int yOff = y * stride;
+                msWriter.Write(bmpData, yOff, stride);
+            }
         }
         #endregion
 

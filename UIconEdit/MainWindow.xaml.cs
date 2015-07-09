@@ -129,7 +129,7 @@ namespace UIconEdit.Maker
                 if (result.HasValue && result.Value)
                 {
                     FilePath = null;
-                    LoadedFile = new IconFile();
+                    LoadedFile = new CursorFile();
                     LoadedFile.Entries.Add(addWindow.GetIconEntry());
                     listbox.SelectedIndex = 0;
                     IsModified = true;

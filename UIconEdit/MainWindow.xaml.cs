@@ -30,12 +30,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -703,84 +701,6 @@ namespace UIconEdit.Maker
         {
             listbox.SelectedIndex = listbox.Items.Count - 1;
             listbox.ScrollIntoView(listbox.SelectedIndex);
-        }
-    }
-
-    internal class SizeStringConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            string format = (string)values[0];
-            object width = values[1];
-            object height = (values.Length < 3) ? width : values[2];
-            return string.Format(format, width, height);
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    internal class BPSStringConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            string format = (string)values[0];
-            return string.Format(format, values[1]);
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    internal class AlphaImageConverter : IValueConverter
-    {
-        public static BitmapSource Convert(IconEntry entry)
-        {
-            if (entry == null) return null;
-            if (entry.AlphaImage == null || entry.BitDepth == BitDepth.Depth32BitsPerPixel) return entry.BaseImage;
-
-            uint[] bmpPixels = new uint[entry.Width * entry.Height];
-            uint[] alphaPixels = new uint[bmpPixels.Length];
-
-            new FormatConvertedBitmap(entry.BaseImage, PixelFormats.Bgra32, null, 0).CopyPixels(bmpPixels, entry.Width * 4, 0);
-            new FormatConvertedBitmap(entry.AlphaImage, PixelFormats.Bgra32, null, 0).CopyPixels(alphaPixels, entry.Width * 4, 0);
-
-            for (int i = 0; i < bmpPixels.Length; i++)
-            {
-                if (alphaPixels[i] != uint.MaxValue)
-                    bmpPixels[i] = 0;
-            }
-
-            return BitmapSource.Create(entry.Width, entry.Height, 0, 0, PixelFormats.Bgra32, null, bmpPixels, entry.Width * 4);
-        }
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Convert(value as IconEntry);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    internal class CanUseHotspotConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            CursorFile cFile = value as CursorFile;
-            if (cFile == null) return Visibility.Collapsed;
-            return Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
         }
     }
 }

@@ -219,6 +219,8 @@ namespace UIconEdit
             _width = (short)baseImage.PixelWidth;
             _height = (short)baseImage.PixelHeight;
             AlphaThreshold = alphaThreshold;
+            HotspotX = hotspotX;
+            HotspotY = hotspotY;
         }
 
         /// <summary>

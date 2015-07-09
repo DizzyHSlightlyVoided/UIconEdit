@@ -452,7 +452,7 @@ namespace UIconEdit.Maker
         {
             IconEntry entry = (IconEntry)(listbox.SelectedItem);
 
-            BitmapSource bmpSource = (BitmapSource)new AlphaImageConverter().Convert(entry, typeof(BitmapSource), null, CultureInfo.CurrentUICulture);
+            BitmapSource bmpSource = AlphaImageConverter.Convert(entry);
 
             _add(new AddWindow(this, true, false, bmpSource, entry.BitDepth));
         }
@@ -493,7 +493,7 @@ namespace UIconEdit.Maker
                 Mouse.OverrideCursor = Cursors.Wait;
 
                 PngBitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(entry.BaseImage));
+                encoder.Frames.Add(BitmapFrame.Create(AlphaImageConverter.Convert(entry)));
 
                 using (FileStream fs = File.Open(dialog.FileName, FileMode.Create))
                     encoder.Save(fs);
@@ -582,7 +582,7 @@ namespace UIconEdit.Maker
                 foreach (var curTuple in entries)
                 {
                     PngBitmapEncoder encoder = new PngBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(curTuple.Item2.BaseImage));
+                    encoder.Frames.Add(BitmapFrame.Create(AlphaImageConverter.Convert(curTuple.Item2)));
 
                     filePath = curTuple.Item1;
 
@@ -738,9 +738,8 @@ namespace UIconEdit.Maker
 
     internal class AlphaImageConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public static BitmapSource Convert(IconEntry entry)
         {
-            IconEntry entry = value as IconEntry;
             if (entry == null) return null;
             if (entry.AlphaImage == null || entry.BitDepth == BitDepth.Depth32BitsPerPixel) return entry.BaseImage;
 
@@ -757,6 +756,11 @@ namespace UIconEdit.Maker
             }
 
             return BitmapSource.Create(entry.Width, entry.Height, 0, 0, PixelFormats.Bgra32, null, bmpPixels, entry.Width * 4);
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Convert(value as IconEntry);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

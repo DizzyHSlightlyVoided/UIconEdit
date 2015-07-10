@@ -301,13 +301,25 @@ namespace UIconEdit
 
 
         /// <summary>
-        /// The minimum dimensions of an icon. 1 pixel in size.
+        /// The minimum dimensions of an icon. 1 pixels.
         /// </summary>
         public const short MinDimension = 1;
         /// <summary>
-        /// The maximum dimensions of an icon. 768 as of Windows 10.
+        /// The maximum dimensions of an icon. 768 pixels as of Windows 10.
         /// </summary>
         public const short MaxDimension = 768;
+        /// <summary>
+        /// Gets and sets the maximum width or height at which an icon entry will be saved as a BMP file when <see cref="BitDepth"/> is
+        /// <see cref="UIconEdit.BitDepth.Depth32BitsPerPixel"/>; all entries with a width or height greater than this will be saved as PNG.
+        /// 96 pixels.
+        /// </summary>
+        public const short MaxBmp32 = 96;
+        /// <summary>
+        /// Gets and sets the maximum width or height at which an icon entry will be saved as a BMP file when <see cref="BitDepth"/> is any value except
+        /// <see cref="UIconEdit.BitDepth.Depth32BitsPerPixel"/>; all entries with a width or height greater than this will be saved as PNG.
+        /// 255 pixels.
+        /// </summary>
+        public const short MaxBmp = byte.MaxValue;
 
         internal static readonly BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.White, Colors.Black });
 
@@ -381,7 +393,15 @@ namespace UIconEdit
         /// Gets a value indicating whether the current instance will be saved as a PNG image within the icon structure by default.
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
-        public bool IsPng { get { return _width > byte.MaxValue || _height > byte.MaxValue; } }
+        public bool IsPng
+        {
+            get
+            {
+                if (_depth == BitDepth.Depth32BitsPerPixel)
+                    return _width > 96 || _height > 96;
+                return _width > MaxBmp32 || _height > MaxBmp32;
+            }
+        }
 
         /// <summary>
         /// Gets a key for the icon entry.

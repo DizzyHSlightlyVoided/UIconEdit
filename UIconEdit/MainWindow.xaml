@@ -31,7 +31,10 @@
         <local:BPSStringConverter x:Key="BPSStringConverter"/>
         <local:SizeStringConverter x:Key="SizeStringConverter"/>
         <local:AlphaImageConverter x:Key="AlphaImageConverter"/>
+        <local:IsCursorConverter x:Key="IsCursorConverter"/>
         <local:CanUseHotspotConverter x:Key="CanUseHotspotConverter"/>
+        <local:BooleanAndToVisibilityConverter x:Key="BooleanAndToVisibilityConverter"/>
+        <local:ZoomConverter x:Key="ZoomConverter"/>
         <Style x:Key="imgEnabled" TargetType="{x:Type Image}">
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="false">
@@ -157,7 +160,7 @@
             <Separator/>
             <StackPanel Orientation="Horizontal" x:Name="pnlHotspot" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
                         Visibility="{Binding LoadedFile, ElementName=window, Converter={StaticResource CanUseHotspotConverter}}">
-                <CheckBox VerticalAlignment="Center">
+                <CheckBox VerticalAlignment="Center" x:Name="chkHotspot">
                     <Image Source="Resources\Hotspot.png" Height="24"/>
                 </CheckBox>
                 <TextBlock Margin="5,0,0,0" Text="{Binding SettingsFile.LanguageFile.HotspotX, ElementName=window, FallbackValue=X:}" VerticalAlignment="Center"/>
@@ -212,11 +215,42 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="scrollImage"
                           Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
                 <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" x:Name="frameImage"
-                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="8" Background="{StaticResource TransparentTiles}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="8" Background="{StaticResource TransparentTiles}" Padding="2"
                         Visibility="{Binding IsLoadedAndSelected, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=window, Mode=OneWay}">
-                    <Image Source="{Binding SelectedItem, ElementName=listbox, Converter={StaticResource AlphaImageConverter}}"
-                           RenderOptions.BitmapScalingMode="{Binding ZoomScaleMode, ElementName=window}"
-                           Width="{Binding ZoomedWidth, ElementName=window}" Height="{Binding ZoomedHeight, ElementName=window}" Margin="2"/>
+                    <Grid>
+                        <Image Source="{Binding SelectedItem, ElementName=listbox, Converter={StaticResource AlphaImageConverter}}"
+                               RenderOptions.BitmapScalingMode="{Binding ZoomScaleMode, ElementName=window}" x:Name="imgIcon"
+                               MouseMove="Image_MouseMove" MouseDown="imgIcon_MouseDown"
+                               Width="{Binding ZoomedWidth, ElementName=window}" Height="{Binding ZoomedHeight, ElementName=window}"/>
+                        <Grid Width="{Binding ZoomedWidth, ElementName=window}" Height="{Binding ZoomedHeight, ElementName=window}">
+                            <Grid.Visibility>
+                                <MultiBinding Converter="{StaticResource BooleanAndToVisibilityConverter}">
+                                    <Binding Path="LoadedFile" ElementName="window" Converter="{StaticResource IsCursorConverter}"/>
+                                    <Binding Path="IsChecked" ElementName="chkHotspot"/>
+                                </MultiBinding>
+                            </Grid.Visibility>
+                            <Line StrokeThickness="1" Y1="0" Y2="{Binding ZoomedHeight, ElementName=window}" x:Name="lineVert" Opacity="0.5"
+                                  Stroke="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" X2="{Binding X1, ElementName=lineVert, Mode=OneWay}"
+                                  MouseMove="Image_MouseMove"  MouseDown="imgIcon_MouseDown" Fill="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
+                                <Line.X1>
+                                    <MultiBinding Converter="{StaticResource ZoomConverter}">
+                                        <Binding Path="Zoom" ElementName="window"/>
+                                        <Binding Path="SelectedItem.HotspotX" ElementName="listbox"/>
+                                    </MultiBinding>
+                                </Line.X1>
+                            </Line>
+                            <Line StrokeThickness="1" X1="0" X2="{Binding ZoomedWidth, ElementName=window}" x:Name="lineHoriz" Opacity="0.5"
+                                  Stroke="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Y2="{Binding Y1, ElementName=lineHoriz, Mode=OneWay}"
+                                  MouseMove="Image_MouseMove"  MouseDown="imgIcon_MouseDown" Fill="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
+                                <Line.Y1>
+                                    <MultiBinding Converter="{StaticResource ZoomConverter}">
+                                        <Binding Path="Zoom" ElementName="window"/>
+                                        <Binding Path="SelectedItem.HotspotY" ElementName="listbox"/>
+                                    </MultiBinding>
+                                </Line.Y1>
+                            </Line>
+                        </Grid>
+                    </Grid>
                 </Border>
             </ScrollViewer>
         </Border>

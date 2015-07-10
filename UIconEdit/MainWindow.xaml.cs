@@ -626,6 +626,7 @@ namespace UIconEdit.Maker
 
         private void listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            chkHotspot.IsChecked = false;
             if (listbox.SelectedIndex < 0)
             {
                 SetValue(IsLoadedAndSelectedPropertyKey, false);
@@ -701,6 +702,31 @@ namespace UIconEdit.Maker
         {
             listbox.SelectedIndex = listbox.Items.Count - 1;
             listbox.ScrollIntoView(listbox.SelectedIndex);
+        }
+
+        private void Image_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Released || !chkHotspot.IsEnabled || !chkHotspot.IsChecked.HasValue || !chkHotspot.IsChecked.Value)
+            {
+                listbox.Focus();
+                return;
+            }
+
+            var position = e.GetPosition(imgIcon);
+
+            IconEntry curEntry = listbox.SelectedItem as IconEntry;
+
+            curEntry.HotspotX = (ushort)(position.X * curEntry.Width / ZoomedWidth);
+            curEntry.HotspotY = (ushort)(position.Y * curEntry.Height / ZoomedHeight);
+
+            IsModified = true;
+            listbox.Focus();
+        }
+
+        private void imgIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Image_MouseMove(sender, e);
+            listbox.Focus();
         }
     }
 }

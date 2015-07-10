@@ -14,11 +14,11 @@ UIconEdit app's functionality
 * Duplicating an image with a different size and/or bit depth. You could just take a single 256x256 PNG image, and set 256x256, 48x48, 32x32, and 16x16 images, with 32-bit, 24-bit, and 8-bit color depths.
 * Icon sizes up to 768x768 (the maximum as of Windows 10).
 * Opening .ICO, .CUR, and image files as a command-line parameter.
+* Getting and setting a cursor's hotspot.
 
 Planned functionality
 ---------------------
 ### UIconEdit
-* Getting and setting a cursor's hotspot.
 * Extracting icons from .DLL and .EXE files.
 * File associations.
 

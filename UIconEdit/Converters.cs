@@ -101,16 +101,80 @@ namespace UIconEdit.Maker
         }
     }
 
-    internal class CanUseHotspotConverter : IValueConverter
+    internal class IsCursorConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            CursorFile cFile = value as CursorFile;
-            if (cFile == null) return Visibility.Collapsed;
-            return Visibility.Visible;
+            return value is CursorFile;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    internal class CanUseHotspotConverter : IsCursorConverter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)base.Convert(value, targetType, parameter, culture) ? Visibility.Visible : Visibility.Collapsed;
+        }
+    }
+
+    internal class BooleanAndToVisibilityConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values.Length == 0) return Visibility.Collapsed;
+
+            foreach (object curVal in values)
+            {
+                bool bVal = false;
+                if (curVal is bool?)
+                {
+                    bool? nVal = (bool?)curVal;
+                    if (nVal.HasValue) bVal = nVal.Value;
+                }
+                else if (curVal is bool)
+                    bVal = (bool)curVal;
+
+                if (!bVal) return Visibility.Collapsed;
+            }
+            return Visibility.Visible;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    internal class ZoomConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values.Length == 0) return 0;
+
+            double value = 1;
+
+            foreach (object curVal in values)
+            {
+                if (curVal is IConvertible)
+                    value *= ((IConvertible)curVal).ToDouble(culture);
+            }
+
+            if (values[0] is IConvertible)
+            {
+                double curVal = ((IConvertible)values[0]).ToDouble(null);
+                if (curVal > 100)
+                    value += (curVal / 2);
+            }
+
+            return Math.Round(value / 100);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();
         }

@@ -327,22 +327,28 @@ namespace UIconEdit.Maker
                 }
                 dialog.Filter = string.Format("{0} (*.ico)|*.ico|{1} (*.cur)|*.cur", _settings.LanguageFile.TypeIco, _settings.LanguageFile.TypeCur);
 
-                if (loadedFile.ID == IconTypeCode.Cursor)
+                if (loadedFile.ID == IconTypeCode.Cursor && filePath != null)
                     dialog.FilterIndex = 2;
 
                 var result = dialog.ShowDialog(this);
                 if (!result.HasValue || !result.Value) return false;
 
                 if (loadedFile.ID == IconTypeCode.Cursor && dialog.FilterIndex == 1)
-                    loadedFile = loadedFile.CloneAsCursorFile();
-                else if (loadedFile.ID == IconTypeCode.Icon && dialog.FilterIndex == 2)
                     loadedFile = loadedFile.CloneAsIconFile();
+                else if (loadedFile.ID == IconTypeCode.Icon && dialog.FilterIndex == 2)
+                    loadedFile = loadedFile.CloneAsCursorFile();
                 filePath = dialog.FileName;
             }
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
                 loadedFile.Save(filePath);
+                if (loadedFile.ID != LoadedFile.ID)
+                {
+                    int dex = listbox.SelectedIndex;
+                    LoadedFile = loadedFile;
+                    listbox.SelectedIndex = dex;
+                }
                 System.Threading.Thread.Sleep(100);
                 IsModified = false;
                 FilePath = filePath;

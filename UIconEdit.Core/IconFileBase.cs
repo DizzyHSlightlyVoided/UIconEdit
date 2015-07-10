@@ -788,7 +788,7 @@ namespace UIconEdit
 
             bool isPng = entry.IsPng;
 
-            if (isPng)
+            if (image.Width > byte.MaxValue || image.Height > byte.MaxValue)
                 writer.Write(ushort.MinValue); //2
             else
             {

@@ -455,6 +455,130 @@ Copies all elements in the list to the specified array, starting at the specifie
 The length of `array` minus `arrayIndex` is less than [`EntryList.Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
+## Method: `public System.Int32 BinarySearch(UIconEdit.IconEntry entry)`
+
+Performs a binary search for the specified entry within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
+* `entry`: The icon entry to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of `entry`, if found; otherwise, the bitwise complement of the index where `entry` would be.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 BinarySearch(System.Int32 index, System.Int32 count, UIconEdit.IconEntry entry)`
+
+Performs a binary search for the specified entry within the specified range of elements. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
+* `index`: The index in the list at which the search begins.
+* `count`: The number of elements to search.
+* `entry`: The icon entry to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of `entry`, if found; otherwise, the bitwise complement of the index where `entry` would be.
+
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` or `count` is less than 0.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`index` and `count` do not indicate a valid range of elements in the list.
+
+--------------------------------------------------
+## Method: `public System.Int32 BinarySearchSimilar(UIconEdit.IconEntry entry)`
+
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as the specified entry within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
+* `entry`: The icon entry to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `entry`, if found; otherwise, the bitwise complement of the index where `entry` would be.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 BinarySearchSimilar(System.Int32 index, System.Int32 count, UIconEdit.IconEntry entry)`
+
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as the specified entry within the specified range of elements. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
+* `index`: The index in the list at which the search begins.
+* `count`: The number of elements to search.
+* `entry`: The icon entry to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `entry`, if found; otherwise, the bitwise complement of the index where `entry` would be.
+
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` or `count` is less than 0.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`index` and `count` do not indicate a valid range of elements in the list.
+
+--------------------------------------------------
+## Method: `public System.Int32 BinarySearchSimilar(UIconEdit.EntryKey key)`
+
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
+* `key`: The entry key to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `key`, if found; otherwise, the bitwise complement of the index where `key` would be.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 BinarySearchSimilar(System.Int32 index, System.Int32 count, UIconEdit.EntryKey key)`
+
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as the specified key within the specified range of elements. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
+* `index`: The index in the list at which the search begins.
+* `count`: The number of elements to search.
+* `key`: The entry key to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of `key`, if found; otherwise, the bitwise complement of the index where `key` would be.
+
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` or `count` is less than 0.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`index` and `count` do not indicate a valid range of elements in the list.
+
+--------------------------------------------------
+## Method: `public System.Int32 BinarySearchSimilar(System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
+* `width`: The width of the icon entry to search for.
+* `height`: The height of the icon entry to search for.
+* `bitDepth`: The bit depth of the icon entry to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `width`, `height`, and `bitDepth`, if found; otherwise, the bitwise complement of the index of where `width`, `height`, and `bitDepth` would be.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 BinarySearchSimilar(System.Int32 index, System.Int32 count, System.Int16 width, System.Int16 height, UIconEdit.BitDepth bitDepth)`
+
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
+* `index`: The index in the list at which the search begins.
+* `count`: The number of elements to search.
+* `width`: The width of the icon entry to search for.
+* `height`: The height of the icon entry to search for.
+* `bitDepth`: The bit depth of the icon entry to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) as `width`, `height`, and `bitDepth`, if found; otherwise, the bitwise complement of the index of where `width`, `height`, and `bitDepth` would be.
+
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` or `count` is less than 0.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`index` and `count` do not indicate a valid range of elements in the list.
+
+--------------------------------------------------
+## Method: `public void Sort()`
+
+Sorts all elements in the list according to their [`IconEntry.EntryKey`](#property-public-uiconeditentrykey-entrykey--get-) value.
+### Remarks
+
+This method raises the [`EntryList.CollectionChanged`](#collectionchanged) event using [`NotifyCollectionChangedAction.Reset`](https://msdn.microsoft.com/en-us/library/system.collections.specialized.notifycollectionchangedaction.reset.aspx) if the list contains more than 2 elements.
+
+--------------------------------------------------
 ## Method: `public UIconEdit.IconFileBase.EntryList.Enumerator GetEnumerator()`
 
 Returns an enumerator which iterates through the list.
@@ -765,7 +889,7 @@ Code 0x1105: the width or height of a PNG entry does not match the width or heig
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpFile = 4608`
 
-Code 0x1200: an error occurred when attempting to process a BMP entry. The inner exception may contain more information. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the size listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
+Code 0x1200: an error occurred when attempting to process a BMP entry. The inner exception may contain more information.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpBitDepth = 4609`
@@ -1305,12 +1429,32 @@ The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#fiel
 --------------------------------------------------
 ## Field: `public const System.Int16 MinDimension = 1`
 
-The minimum dimensions of an icon. 1 pixel in size.
+The minimum dimensions of an icon. 1 pixels.
 
 --------------------------------------------------
 ## Field: `public const System.Int16 MaxDimension = 768`
 
-The maximum dimensions of an icon. 768 as of Windows 10.
+The maximum dimensions of an icon. 768 pixels as of Windows 10.
+
+--------------------------------------------------
+## Field: `public const System.Int16 MaxBmp32 = 96`
+
+Gets and sets the maximum width or height at which an icon entry will be saved as a BMP file when [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) is [`BitDepth.Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0); all entries with a width or height greater than this will be saved as PNG. 96 pixels.
+
+--------------------------------------------------
+## Field: `public const System.Int16 MaxBmp = 255`
+
+Gets and sets the maximum width or height at which an icon entry will be saved as a BMP file when [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) is any value except [`BitDepth.Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0); all entries with a width or height greater than this will be saved as PNG. 255 pixels.
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty IsQuantizedProperty`
+
+The dependency property for the read-only [`IconEntry.IsQuantized`](#property-public-systemboolean-isquantized--get-) property.
+
+--------------------------------------------------
+## Property: `public System.Boolean IsQuantized { get; }`
+
+Gets a value indicating whether [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) are known to be already quantized.
 
 --------------------------------------------------
 ## Field: `public static readonly System.Windows.DependencyProperty BaseImageProperty`
@@ -1326,6 +1470,21 @@ Gets and sets the image associated with the current instance.
 
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 In a set operation, the specified value is `null`.
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty AlphaImageProperty`
+
+The dependency property for the [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) property.
+
+--------------------------------------------------
+## Property: `public System.Windows.Media.Imaging.BitmapSource AlphaImage { get; set; }`
+
+Gets and sets an image to be used as the alpha mask, or `null` to derive the alpha mask from [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-). Black pixels are transparent; white pixels are opaque.
+
+--------------------------------------------------
+## Property: `public System.Boolean IsPng { get; }`
+
+Gets a value indicating whether the current instance will be saved as a PNG image within the icon structure by default.
 
 --------------------------------------------------
 ## Property: `public UIconEdit.EntryKey EntryKey { get; }`
@@ -1383,9 +1542,51 @@ In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the
 Gets the number of bits per pixel specified by [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-).
 
 --------------------------------------------------
+## Method: `public static System.UInt16 GetBitsPerPixel(UIconEdit.BitDepth bitDepth)`
+
+Returns the number of bits per pixel associated with the specified [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+* `bitDepth`: The [`BitDepth`](#type-public-enum-uiconeditbitdepth) to check.
+
+**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): 1 for [`BitDepth.Depth1BitsPerPixel`](#field-bitdepthdepth1bitsperpixel--4); 4 for [`BitDepth.Depth4BitsPerPixel`](#field-bitdepthdepth4bitsperpixel--3); 8 for [`BitDepth.Depth8BitsPerPixel`](#field-bitdepthdepth8bitsperpixel--2); 24 for [`BitDepth.Depth24BitsPerPixel`](#field-bitdepthdepth24bitsperpixel--1); or 32 for [`BitDepth.Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0).
+
+
+### Exceptions
+
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+
+--------------------------------------------------
 ## Property: `public System.Int64 ColorCount { get; }`
 
 Gets the maximum color count specified by [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-).
+
+--------------------------------------------------
+## Method: `public static System.Int64 GetColorCount(UIconEdit.BitDepth bitDepth)`
+
+Gets the maximum color count associated with the specified [`BitDepth`](#type-public-enum-uiconeditbitdepth).
+* `bitDepth`: The [`BitDepth`](#type-public-enum-uiconeditbitdepth) to check.
+
+**Returns:** Type [`Int64`](https://msdn.microsoft.com/en-us/library/system.int64.aspx): 21 for [`BitDepth.Depth2Color`](#field-bitdepthdepth2color--4); 16 for [`BitDepth.Depth16Color`](#field-bitdepthdepth16color--3); 256 for [`BitDepth.Depth256Color`](#field-bitdepthdepth256color--2); 16777216 for [`BitDepth.Depth24BitsPerPixel`](#field-bitdepthdepth24bitsperpixel--1); or 4294967296 for [`BitDepth.Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0).
+
+
+### Exceptions
+
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+
+--------------------------------------------------
+## Method: `public static System.Windows.Media.PixelFormat GetPixelFormat(UIconEdit.BitDepth depth)`
+
+Returns the [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformat.aspx) associated with the specified [`BitDepth`](#type-public-enum-uiconeditbitdepth).
+* `depth`: The bit depth from which to get the pixel format.
+
+**Returns:** Type [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformat.aspx): The pixel format associated with `depth`.
+
+
+### Exceptions
+
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`depth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 --------------------------------------------------
 ## Method: `public UIconEdit.IconEntry Clone()`
@@ -1404,10 +1605,24 @@ Returns color quantization of the current instance as it would appear for a PNG 
 
 
 --------------------------------------------------
+## Method: `public void SetQuantized(System.Boolean isPng)`
+
+Sets [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) equal to their quantized equivalent, in a form indicated by the specified value.
+* `isPng`: If `true`, [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) will be set `null` and [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) will be quantized as if it was a PNG icon entry. If `false`, [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) will be quantized as if for a BMP entry.
+
+--------------------------------------------------
+## Method: `public void SetQuantized()`
+
+Sets [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) equal to their quantized equivalent, in a form indicated by [`IconEntry.IsPng`](#property-public-systemboolean-ispng--get-).
+### Remarks
+
+Performs the same action as [`IconEntry.SetQuantized(System.Boolean)`](#method-public-void-setquantizedsystemboolean-ispng), with [`IconEntry.IsPng`](#property-public-systemboolean-ispng--get-) passed as the parameter.
+
+--------------------------------------------------
 ## Method: `IconEntry.GetQuantized(out System.Windows.Media.Imaging.BitmapSource alphaMask)`
 
 Returns color quantization of the current instance as it would appear for a BMP entry.
-* `alphaMask`: When this method returns, contains the quantized alpha mask generated using [`IconEntry.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-). This parameter is passed uninitialized.
+* `alphaMask`: When this method returns, contains the quantized alpha mask generated using [`IconEntry.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-). Black pixels are transparent; white pixels are opaque. This parameter is passed uninitialized.
 
 **Returns:** A [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx) containing the quantized image without the alpha mask.
 

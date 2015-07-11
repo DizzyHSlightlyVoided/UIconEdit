@@ -156,7 +156,7 @@
             </StackPanel>
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">
-            <ScrollViewer>
+            <ScrollViewer x:Name="scrollEntries" PreviewMouseWheel="listbox_PreviewMouseWheel">
                 <ListBox SelectionMode="Single" x:Name="listbox" ItemsSource="{Binding LoadedFile.Entries, ElementName=window}" Width="80"
                          SelectionChanged="listbox_SelectionChanged">
                     <ListBox.ItemTemplate>

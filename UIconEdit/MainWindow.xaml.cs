@@ -742,5 +742,11 @@ namespace UIconEdit.Maker
             Image_MouseMove(sender, e);
             listbox.Focus();
         }
+
+        private void listbox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            scrollEntries.ScrollToVerticalOffset(scrollEntries.VerticalOffset - e.Delta / 2);
+            e.Handled = true;
+        }
     }
 }

@@ -109,23 +109,7 @@
             <Image Source="Resources\Zoom_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"
                    IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}" VerticalAlignment="Center"/>
             <ComboBox x:Name="cmbZoom" Width="75" IsEditable="True" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
-                      Text="{Binding Zoom, ElementName=window, Mode=TwoWay}" PreviewTextInput="ComboBox_PreviewTextInput">
-                <ComboBoxItem>3200</ComboBoxItem>
-                <ComboBoxItem>2400</ComboBoxItem>
-                <ComboBoxItem>2000</ComboBoxItem>
-                <ComboBoxItem>1600</ComboBoxItem>
-                <ComboBoxItem>1200</ComboBoxItem>
-                <ComboBoxItem>1000</ComboBoxItem>
-                <ComboBoxItem>800</ComboBoxItem>
-                <ComboBoxItem>600</ComboBoxItem>
-                <ComboBoxItem>400</ComboBoxItem>
-                <ComboBoxItem>300</ComboBoxItem>
-                <ComboBoxItem>200</ComboBoxItem>
-                <ComboBoxItem>150</ComboBoxItem>
-                <ComboBoxItem>100</ComboBoxItem>
-                <ComboBoxItem>50</ComboBoxItem>
-                <ComboBoxItem>25</ComboBoxItem>
-            </ComboBox>
+                      Text="{Binding Zoom, ElementName=window, Mode=TwoWay}" ItemsSource="{x:Static local:MainWindow.Zooms}"/>
             <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
                        Text="{Binding SettingsFile.LanguageFile.Percent, ElementName=window, FallbackValue=%}"/>
             <Separator/>

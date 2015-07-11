@@ -208,12 +208,15 @@ namespace UIconEdit.Maker
         public string OverwriteCaption { get { return _text["OverwriteCaption"]; } }
         public string OverwriteMessage { get { return _text["OverwriteMessage"]; } }
 
+        public string Preview { get { return _text["Preview"]; } }
+
         public string ButtonOK { get { return _text["ButtonOK"]; } }
         public string ButtonCancel { get { return _text["ButtonCancel"]; } }
         public string ButtonYes { get { return _text["ButtonYes"]; } }
         public string ButtonNo { get { return _text["ButtonNo"]; } }
         public string ButtonNoSave { get { return _text["ButtonNoSave"]; } }
         public string ButtonOverwrite { get { return _text["ButtonOverwrite"]; } }
+        public string ButtonPreview { get { return _text["ButtonPreview"]; } }
 
         public string FormatBitsPerPixel { get { return _text["FormatBitsPerPixel"]; } }
         public string FormatSize { get { return _text["FormatSize"]; } }
@@ -234,6 +237,8 @@ namespace UIconEdit.Maker
         public string Percent { get { return _text["Percent"]; } }
         public string HotspotX { get { return _text["HotspotX"]; } }
         public string HotspotY { get { return _text["HotspotY"]; } }
+
+        public string ScalingFilter { get { return _text["ScalingFilter"]; } }
 
         public string TypeIco { get { return _text["TypeIco"]; } }
         public string TypeCur { get { return _text["TypeCur"]; } }
@@ -297,6 +302,17 @@ namespace UIconEdit.Maker
                 return message;
 
             return _text[s];
+        }
+
+        public string GetScalingFilter(ScalingFilter e)
+        {
+            string s = e.ToString();
+            string result;
+
+            if (_text.TryGetValue("ScalingFilter" + s, out result))
+                return result;
+
+            return s;
         }
     }
 }

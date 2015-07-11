@@ -28,7 +28,7 @@
   "ButtonTipOpen": "Open",
   "ButtonTipNew": "New",
   "ButtonTipSave": "Save",
-  
+
   "ButtonTipFirst": "First image",
   "ButtonTipPrev": "Previous image",
   "ButtonTipNext": "Next image",
@@ -48,12 +48,15 @@
   "OverwriteCaption": "Overwrite File",
   "OverwriteMessage": "The file \"{0}\" already exists. Overwrite it?",
 
+  "Preview": "Preview", //Preview
+
   "ButtonOK": "_OK",
   "ButtonCancel": "_Cancel",
   "ButtonYes": "_Yes",
   "ButtonNo": "_No",
   "ButtonNoSave": "Do_n't Save",
   "ButtonOverwrite": "Overwrite _All",
+  "ButtonPreview": "_Preview",
 
   "FormatBitsPerPixel": "{0}-bit", //{0} = number of bits per pixel
   "FormatSize": "{0}×{1}", //{0} = width, {1} = height.
@@ -92,6 +95,14 @@
   "IconError1000cursor": "Invalid cursor entry.",
   "IconError1001": "{0}-bit images are not allowed!", //{0} = number of bits per pixel.
   "IconError1102": "An icon frame of size {0}x{1} is out of bounds!", //{0} = width, {1} = height
+
+  "ScalingFilter": "Scaling filter:",
+  "ScalingFilterMatrix": "Simple",
+  "ScalingFilterBilinear": "Bilinear",
+  "ScalingFilterBicubic": "Bicubic",
+  "ScalingFilterNearestNeighbor": "Nearest Neighbor",
+  "ScalingFilterHighQualityBilinear": "High-Quality Bilinear",
+  "ScalingFilterHighQualityBicubic": "High-Quality Bicubic",
 
   "TypeIco": "Icon files",
   "TypeCur": "Cursor files",

@@ -28,9 +28,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #endregion
 
+using System;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using System.Windows.Input;
 
 namespace UIconEdit.Maker
 {
@@ -39,6 +41,9 @@ namespace UIconEdit.Maker
     /// </summary>
     partial class AddWindow
     {
+        private static readonly ScalingFilter[] _filters = (ScalingFilter[])Enum.GetValues(typeof(ScalingFilter));
+        public static ScalingFilter[] Filters { get { return _filters; } }
+
         public AddWindow(MainWindow mainWindow, bool duplicated, bool newFile, BitmapSource image, BitDepth bitDepth)
         {
             Owner = _mainWindow = mainWindow;
@@ -155,9 +160,12 @@ namespace UIconEdit.Maker
         public IconEntry GetIconEntry()
         {
             var entry = new IconEntry(LoadedImage, EntryWidth, EntryHeight, BitDepth, AlphaThreshold);
+            entry.ScalingFilter = (ScalingFilter)cmbFilter.SelectedValue;
             entry.SetQuantized();
             return entry;
         }
+
+        public static readonly RoutedCommand PreviewCommand = new RoutedCommand("Preview", typeof(AddWindow));
 
         #region NewFile
         private static readonly DependencyPropertyKey NewFilePropertyKey = DependencyProperty.RegisterReadOnly("NewFile", typeof(bool), typeof(AddWindow),
@@ -233,6 +241,17 @@ namespace UIconEdit.Maker
         {
             get { return (bool)GetValue(ExtendedSizesProperty); }
             set { SetValue(ExtendedSizesProperty, value); }
+        }
+        #endregion
+
+        #region MatrixSelectedIndex
+        public static readonly DependencyProperty MatrixSelectedIndexProperty = DependencyProperty.Register("MatrixSelectedIndex", typeof(int), typeof(AddWindow),
+            new PropertyMetadata(0));
+
+        public int MatrixSelectedIndex
+        {
+            get { return (int)GetValue(MatrixSelectedIndexProperty); }
+            set { SetValue(MatrixSelectedIndexProperty, value); }
         }
         #endregion
 
@@ -339,6 +358,18 @@ namespace UIconEdit.Maker
 
             DialogResult = true;
             Close();
+        }
+
+        private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+            e.Handled = true;
+        }
+
+        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            PreviewWindow pWindow = new PreviewWindow(this);
+            pWindow.ShowDialog();
         }
     }
 }

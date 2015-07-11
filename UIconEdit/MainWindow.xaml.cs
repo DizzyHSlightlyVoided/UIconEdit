@@ -47,6 +47,10 @@ namespace UIconEdit.Maker
     /// </summary>
     partial class MainWindow
     {
+        private static int[] _zooms = new int[] { 3200, 2400, 2000, 1600, 1200, 1000, 800, 600, 400, 300, 200, 150, 100, 50, 25 };
+
+        public static int[] Zooms { get { return _zooms; } }
+
         public MainWindow()
         {
             _settings = new SettingsFile(this);
@@ -221,13 +225,18 @@ namespace UIconEdit.Maker
         public bool IsLoadedAndSelected { get { return (bool)GetValue(IsLoadedAndSelectedProperty); } }
         #endregion
 
+        internal static void ZoomSet(Window w, BitmapSource image, DependencyProperty ZoomProperty, DependencyPropertyKey ZoomedWidthPropertyKey,
+            DependencyPropertyKey ZoomedHeightPropertyKey, DependencyPropertyKey ZoomScaleModePropertyKey)
+        {
+            int val = (int)w.GetValue(ZoomProperty);
+            w.SetValue(ZoomedWidthPropertyKey, Math.Floor(image.PixelWidth * (val / 100.0)));
+            w.SetValue(ZoomedHeightPropertyKey, Math.Floor(image.PixelHeight * (val / 100.0)));
+            w.SetValue(ZoomScaleModePropertyKey, val >= 100 ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality);
+        }
+
         private void _zoomSet()
         {
-            int val = Zoom;
-            var image = ((IconEntry)listbox.SelectedItem).BaseImage;
-            SetValue(ZoomedWidthPropertyKey, Math.Floor(image.PixelWidth * (val / 100.0)));
-            SetValue(ZoomedHeightPropertyKey, Math.Floor(image.PixelHeight * (val / 100.0)));
-            SetValue(ZoomScaleModePropertyKey, val >= 100 ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality);
+            ZoomSet(this, ((IconEntry)listbox.SelectedItem).BaseImage, ZoomProperty, ZoomedWidthPropertyKey, ZoomedHeightPropertyKey, ZoomScaleModePropertyKey);
         }
 
         #region Zoom
@@ -237,11 +246,10 @@ namespace UIconEdit.Maker
         private static void ZoomChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             MainWindow m = (MainWindow)d;
-            int newVal = (int)e.NewValue;
             m._zoomSet();
         }
 
-        private static bool ZoomValidate(object value)
+        internal static bool ZoomValidate(object value)
         {
             return (int)value > 0;
         }
@@ -642,6 +650,12 @@ namespace UIconEdit.Maker
             SetValue(IsLoadedAndSelectedPropertyKey, true);
             var image = ((IconEntry)listbox.SelectedItem).BaseImage;
 
+            SelectZoom(this, scrollImage, image, ZoomProperty, ZoomedWidthPropertyKey, ZoomedHeightPropertyKey, ZoomScaleModePropertyKey);
+        }
+
+        internal static void SelectZoom(Window window, ScrollViewer scrollImage, BitmapSource image, DependencyProperty ZoomProperty,
+            DependencyPropertyKey ZoomedWidthPropertyKey, DependencyPropertyKey ZoomedHeightPropertyKey, DependencyPropertyKey ZoomScaleModePropertyKey)
+        {
             const double padding = 24;
 
             double multiplier;
@@ -657,16 +671,10 @@ namespace UIconEdit.Maker
             }
 
             int newZoom = (int)(multiplier * 100);
-            if (Zoom == newZoom)
-                _zoomSet();
+            if ((int)window.GetValue(ZoomProperty) == newZoom)
+                ZoomSet(window, image, ZoomProperty, ZoomedWidthPropertyKey, ZoomedHeightPropertyKey, ZoomScaleModePropertyKey);
             else
-                Zoom = newZoom;
-        }
-
-        private void ComboBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            int val;
-            e.Handled = !(int.TryParse(e.Text, out val) && val >= 0);
+                window.SetValue(ZoomProperty, newZoom);
         }
 
         private void window_Closing(object sender, CancelEventArgs e)

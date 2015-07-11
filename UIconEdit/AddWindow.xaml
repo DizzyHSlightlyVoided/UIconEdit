@@ -4,11 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UIconEdit.Maker"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
-        mc:Ignorable="d" ResizeMode="CanMinimize" x:Name="window" Icon="GradientEdit.ico"
-        Height="344" Width="600" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+        xmlns:system="clr-namespace:System;assembly=mscorlib" WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d" ResizeMode="CanMinimize" x:Name="window" Icon="GradientEdit.ico" SizeToContent="Height"
+        Height="420" Width="600" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
     <Window.Resources>
         <local:SizeStringConverter x:Key="SizeStringConverter"/>
+        <local:ScaleFilterConverter x:Key="ScaleFilterConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <system:Int16 x:Key="W16">16</system:Int16>
         <system:Int16 x:Key="W24">24</system:Int16>
@@ -24,6 +25,9 @@
         <system:Int16 x:Key="T128">128</system:Int16>
         <system:Int16 x:Key="T512">512</system:Int16>
     </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:AddWindow.PreviewCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed"/>
+    </Window.CommandBindings>
     <Grid>
         <GroupBox x:Name="groupImage" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="110" Width="96"
                   Header="{Binding Owner.SettingsFile.LanguageFile.GroupImage, FallbackValue=Image}">
@@ -101,14 +105,40 @@
                 </RadioButton>
             </WrapPanel>
         </GroupBox>
-        <StackPanel Orientation="Horizontal" Margin="10,281,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.AlphaThreshold, ElementName=window, FallbackValue='Alpha Threshold:'}" VerticalAlignment="Center"
-                       Margin="0,0,10,0"/>
-            <TextBox Width="65" Text="{Binding AlphaThreshold, ElementName=window}"/>
+        <WrapPanel Orientation="Horizontal" Margin="10,281,10,40"  VerticalAlignment="Bottom">
+            <StackPanel Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.AlphaThreshold, ElementName=window, FallbackValue='Alpha Threshold:'}"
+                           VerticalAlignment="Center"/>
+                <TextBox Width="65" Text="{Binding AlphaThreshold, ElementName=window}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.ScalingFilter, ElementName=window, FallbackValue='Scaling filter:'}"
+                           VerticalAlignment="Center"/>
+                <ComboBox x:Name="cmbFilter" MinWidth="120" Margin="5,0,0,0" VerticalAlignment="Center" ItemsSource="{x:Static local:AddWindow.Filters}"
+                          SelectedIndex="{Binding MatrixSelectedIndex, ElementName=window}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding Converter="{StaticResource ScaleFilterConverter}">
+                                        <Binding />
+                                        <Binding Path="Owner.SettingsFile.LanguageFile" ElementName="window"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+        </WrapPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5">
+            <Button x:Name="btnPrev" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinWidth="75"
+                    Content="{Binding Owner.SettingsFile.LanguageFile.ButtonPreview, FallbackValue=_Preview}"
+                    Command="{x:Static local:AddWindow.PreviewCommand}"/>
+            <Button x:Name="btnOK" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinWidth="75" IsDefault="True"
+                    Content="{Binding Owner.SettingsFile.LanguageFile.ButtonOK, ElementName=window, FallbackValue=_OK}" Click="btnOK_Click"/>
+            <Button x:Name="btnCancel" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinWidth="75" IsCancel="True"
+                    Content="{Binding Owner.SettingsFile.LanguageFile.ButtonCancel, ElementName=window, FallbackValue=_Cancel}"/>
         </StackPanel>
-        <Button x:Name="btnOK" Margin="0,281,92,0" HorizontalAlignment="Right" VerticalAlignment="Top" MinWidth="75" IsDefault="True"
-                Content="{Binding Owner.SettingsFile.LanguageFile.ButtonOK, ElementName=window, FallbackValue=_OK}" Click="btnOK_Click"/>
-        <Button x:Name="btnCancel" Margin="0,281,12,0" HorizontalAlignment="Right" VerticalAlignment="Top" MinWidth="75" IsCancel="True"
-                Content="{Binding Owner.SettingsFile.LanguageFile.ButtonCancel, ElementName=window, FallbackValue=_Cancel}"/>
     </Grid>
 </Window>

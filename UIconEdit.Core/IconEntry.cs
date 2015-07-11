@@ -617,6 +617,18 @@ namespace UIconEdit
             }
         }
 
+        /// <summary>
+        /// Applies <see cref="AlphaImage"/> to <see cref="BaseImage"/>.
+        /// </summary>
+        /// <returns>A new <see cref="BitmapSource"/>, sized according to <see cref="Width"/> and <see cref="Height"/>, consisting of
+        /// <see cref="AlphaImage"/> applied to <see cref="BaseImage"/> and with pixel format <see cref="PixelFormats.Bgra32"/></returns>
+        public BitmapSource CombineAlpha()
+        {
+            BitmapSource alphaMask;
+
+            return GetQuantized(true, BitDepth.Depth32BitsPerPixel, out alphaMask);
+        }
+
         internal IconFileBase File;
 
         private static readonly Dictionary<string, DependencyPropertyKey> propertyKeys =
@@ -701,6 +713,11 @@ namespace UIconEdit
         }
 
         internal WriteableBitmap GetQuantized(bool isPng, out BitmapSource alphaMask)
+        {
+            return GetQuantized(isPng, _depth, out alphaMask);
+        }
+
+        private WriteableBitmap GetQuantized(bool isPng, BitDepth _depth, out BitmapSource alphaMask)
         {
             bool isQuantized = IsQuantized;
             BitmapSource alphaImage = AlphaImage;
@@ -834,6 +851,13 @@ namespace UIconEdit
 
         internal unsafe WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, uint[] pixels, DPixelFormat format, ushort maxColors)
         {
+            if (format == DPixelFormat.Format32bppArgb && maxColors > 256)
+            {
+                WriteableBitmap wBmp = new WriteableBitmap(pixelWidth, pixelHeight, 0, 0, PixelFormats.Bgra32, null);
+                wBmp.WritePixels(new Int32Rect(0, 0, pixelWidth, pixelHeight), pixels, pixelWidth * 4, 0);
+                return wBmp;
+            }
+
             var fullRect = new DRectangle(0, 0, pixelWidth, pixelHeight);
             DBitmap resultBmp;
             {

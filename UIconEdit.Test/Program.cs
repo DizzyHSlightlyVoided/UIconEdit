@@ -92,7 +92,7 @@ namespace UIconEdit.Builder
         {
             Console.WriteLine("Saving {0} ...", filename);
             PngBitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(entry.BaseImage));
+            encoder.Frames.Add(BitmapFrame.Create(entry.CombineAlpha()));
             using (FileStream fs = File.Open(filename, FileMode.Create))
                 encoder.Save(fs);
         }

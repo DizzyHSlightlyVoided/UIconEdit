@@ -1589,6 +1589,14 @@ Returns the [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.wind
 `depth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 --------------------------------------------------
+## Method: `public System.Windows.Media.Imaging.BitmapSource CombineAlpha()`
+
+Applies [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) to [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-).
+
+**Returns:** Type [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx): A new [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx), sized according to [`IconEntry.Width`](#property-public-systemint16-width--get-) and [`IconEntry.Height`](#property-public-systemint16-height--get-), consisting of [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) applied to [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and with pixel format [`PixelFormats.Bgra32`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformats.bgra32.aspx)
+
+
+--------------------------------------------------
 ## Method: `public UIconEdit.IconEntry Clone()`
 
 Returns a duplicate of the current instance.

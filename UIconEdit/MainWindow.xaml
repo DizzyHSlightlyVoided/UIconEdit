@@ -108,8 +108,10 @@
             <Separator/>
             <Image Source="Resources\Zoom_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"
                    IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}" VerticalAlignment="Center"/>
-            <ComboBox x:Name="cmbZoom" Width="75" IsEditable="True" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
-                      Text="{Binding Zoom, ElementName=window, Mode=TwoWay}" ItemsSource="{x:Static local:MainWindow.Zooms}"/>
+            <Border VerticalAlignment="center">
+                <ComboBox x:Name="cmbZoom" Width="75" IsEditable="True" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
+                          Text="{Binding Zoom, ElementName=window, Mode=TwoWay}" ItemsSource="{x:Static local:MainWindow.Zooms}"/>
+            </Border>
             <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
                        Text="{Binding SettingsFile.LanguageFile.Percent, ElementName=window, FallbackValue=%}"/>
             <Separator/>
@@ -148,11 +150,9 @@
                     <Image Source="Resources\Hotspot.png" Height="24"/>
                 </CheckBox>
                 <TextBlock Margin="5,0,0,0" Text="{Binding SettingsFile.LanguageFile.HotspotX, ElementName=window, FallbackValue=X:}" VerticalAlignment="Center"/>
-                <TextBox x:Name="txtHotX" VerticalAlignment="Center" Width="50" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}"
-                         Text="{Binding SelectedItem.HotspotX, ElementName=listbox}"/>
+                <TextBox x:Name="txtHotX" VerticalAlignment="Center" Width="50" Text="{Binding SelectedItem.HotspotX, ElementName=listbox}"/>
                 <TextBlock Margin="5,0,0,0" Text="{Binding SettingsFile.LanguageFile.HotspotY, ElementName=window, FallbackValue=Y:}" VerticalAlignment="Center"/>
-                <TextBox x:Name="txtHotY" VerticalAlignment="Center" Width="50" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}"
-                         Text="{Binding SelectedItem.HotspotY, ElementName=listbox}"/>
+                <TextBox x:Name="txtHotY" VerticalAlignment="Center" Width="50" Text="{Binding SelectedItem.HotspotY, ElementName=listbox}"/>
             </StackPanel>
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">

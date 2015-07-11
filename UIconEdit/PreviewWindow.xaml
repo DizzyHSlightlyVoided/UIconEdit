@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UIconEdit.Maker" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
         mc:Ignorable="d" WindowStartupLocation="CenterOwner" Loaded="window_Loaded" Icon="GradientEdit.ico"
         Title="{Binding Owner.Owner.SettingsFile.LanguageFile.Preview, ElementName=window, FallbackValue=Preview}"
-        MinHeight="580" MinWidth="600" Height="580" Width="600">
+        MinHeight="597" MinWidth="600" Height="597" Width="600">
     <Window.Resources>
         <local:ScaleFilterConverter x:Key="ScaleFilterConverter"/>
     </Window.Resources>
@@ -14,26 +14,30 @@
         <ToolBar DockPanel.Dock="Top" Height="Auto">
             <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.ScalingFilter, ElementName=window, FallbackValue='Scaling filter:'}"
                        VerticalAlignment="Center"/>
-            <ComboBox x:Name="cmbFilter" MinWidth="120" Margin="5,0,0,0" VerticalAlignment="Center" ItemsSource="{x:Static local:AddWindow.Filters}"
+            <Border Margin="5,0,0,0" VerticalAlignment="Center">
+                <ComboBox x:Name="cmbFilter" MinWidth="120" ItemsSource="{x:Static local:AddWindow.Filters}"
                       SelectedIndex="{Binding Owner.MatrixSelectedIndex, ElementName=window}" SelectionChanged="cmbFilter_SelectionChanged">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock>
-                            <TextBlock.Text>
-                                <MultiBinding Converter="{StaticResource ScaleFilterConverter}">
-                                    <Binding />
-                                    <Binding Path="Owner.Owner.SettingsFile.LanguageFile" ElementName="window"/>
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding Converter="{StaticResource ScaleFilterConverter}">
+                                        <Binding />
+                                        <Binding Path="Owner.Owner.SettingsFile.LanguageFile" ElementName="window"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Border>
             <Separator/>
             <Image Source="Resources\Zoom_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality"
                    IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}" VerticalAlignment="Center"/>
-            <ComboBox x:Name="cmbZoom" Width="75" IsEditable="True" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
-                      Text="{Binding Zoom, ElementName=window, Mode=TwoWay}" ItemsSource="{x:Static local:MainWindow.Zooms}"/>
+            <Border VerticalAlignment="Center">
+                <ComboBox x:Name="cmbZoom" Width="75" IsEditable="True" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
+                          Text="{Binding Zoom, ElementName=window, Mode=TwoWay}" ItemsSource="{x:Static local:MainWindow.Zooms}"/>
+            </Border>
             <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
                        Text="{Binding SettingsFile.LanguageFile.Percent, ElementName=window, FallbackValue=%}"/>
         </ToolBar>

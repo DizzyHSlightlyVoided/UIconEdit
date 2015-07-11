@@ -44,6 +44,7 @@ using DBitmap = System.Drawing.Bitmap;
 using DPixelFormat = System.Drawing.Imaging.PixelFormat;
 using DRectangle = System.Drawing.Rectangle;
 using ImageLockMode = System.Drawing.Imaging.ImageLockMode;
+using InterpolationMode = System.Drawing.Drawing2D.InterpolationMode;
 
 namespace UIconEdit
 {
@@ -514,6 +515,47 @@ namespace UIconEdit
         }
         #endregion
 
+        #region ScalingFilter
+        /// <summary>
+        /// The dependency property for the <see cref="ScalingFilter"/> property.
+        /// </summary>
+        public static readonly DependencyProperty ScalingFilterProperty = DependencyProperty.Register("ScalingFilter", typeof(ScalingFilter), typeof(IconEntry),
+            new PropertyMetadata(ScalingFilter.Matrix), ScalingFilterValidate);
+
+        private static bool ScalingFilterValidate(object value)
+        {
+            switch ((ScalingFilter)value)
+            {
+                case ScalingFilter.Matrix:
+                case ScalingFilter.Bicubic:
+                case ScalingFilter.Bilinear:
+                case ScalingFilter.HighQualityBicubic:
+                case ScalingFilter.HighQualityBilinear:
+                case ScalingFilter.NearestNeighbor:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets and sets the scaling mode used to resize <see cref="BaseImage"/> and <see cref="AlphaImage"/> when quantizing.
+        /// </summary>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// In a set operation, the specified value is not a valid <see cref="UIconEdit.ScalingFilter"/> value.
+        /// </exception>
+        public ScalingFilter ScalingFilter
+        {
+            get { return (ScalingFilter)GetValue(ScalingFilterProperty); }
+            set
+            {
+                if (!ScalingFilterValidate(value))
+                    throw new InvalidEnumArgumentException(null, (int)value, typeof(ScalingFilter));
+                SetValue(ScalingFilterProperty, value);
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Gets the number of bits per pixel specified by <see cref="BitDepth"/>.
         /// </summary>
@@ -700,6 +742,7 @@ namespace UIconEdit
             SetQuantized(IsPng);
         }
 
+        #region Get Quantized
         /// <summary>
         /// Returns color quantization of the current instance as it would appear for a BMP entry.
         /// </summary>
@@ -728,23 +771,9 @@ namespace UIconEdit
                 return new WriteableBitmap(BaseImage);
             }
 
-            uint[] pixels;
+            ScalingFilter scaleMode = ScalingFilter;
 
-            {
-                var image = BaseImage;
-                pixels = new uint[_width * _height];
-                BitmapSource copier;
-                FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
-                if (formatBmp.PixelWidth == _width && formatBmp.PixelHeight == _height)
-                    copier = formatBmp;
-                else
-                {
-                    TransformedBitmap transBmp = new TransformedBitmap(formatBmp, new ScaleTransform((double)_width / formatBmp.PixelWidth,
-                        (double)_height / formatBmp.PixelHeight));
-                    copier = transBmp;
-                }
-                copier.CopyPixels(pixels, _width * sizeof(uint), 0);
-            }
+            uint[] pixels = _scaleBitmap(scaleMode, BaseImage);
             const uint opaqueAlpha = 0xFF000000u;
 
             byte _alphaThreshold = AlphaThreshold;
@@ -772,16 +801,7 @@ namespace UIconEdit
                     }
                 }
             }
-            else if (alphaImage != null)
-            {
-                if (alphaImage.PixelWidth != _width || alphaImage.PixelHeight != _height)
-                {
-                    alphaImage = new TransformedBitmap(alphaImage, new ScaleTransform((double)_width / alphaImage.PixelWidth,
-                        (double)_height / alphaImage.PixelHeight));
-                }
-                alphaMask = new FormatConvertedBitmap(alphaImage, PixelFormats.Indexed1, AlphaPalette, 0);
-            }
-            else
+            else if (alphaImage == null)
             {
                 uint[] alphaPixels = new uint[pixels.Length];
 
@@ -795,6 +815,24 @@ namespace UIconEdit
                 }
 
                 alphaMask = new FormatConvertedBitmap(GetBitmap(_width, _height, alphaPixels), PixelFormats.Indexed1, AlphaPalette, 0);
+            }
+            else
+            {
+                if (alphaImage.PixelWidth != _width || alphaImage.PixelHeight != _height)
+                {
+                    if (scaleMode == ScalingFilter.Matrix)
+                    {
+                        alphaImage = new TransformedBitmap(alphaImage, new ScaleTransform((double)_width / alphaImage.PixelWidth,
+                            (double)_height / alphaImage.PixelHeight));
+                    }
+                    else
+                    {
+                        uint[] alphaPixels = new uint[_width * _height];
+                        _scaleBitmap(scaleMode, new FormatConvertedBitmap(alphaImage, PixelFormats.Bgra32, null, 0), alphaPixels);
+                        alphaMask = GetBitmap(_width, _height, alphaPixels);
+                    }
+                }
+                alphaMask = new FormatConvertedBitmap(alphaImage, PixelFormats.Indexed1, AlphaPalette, 0);
             }
 
             if (_depth == BitDepth.Depth32BitsPerPixel)
@@ -847,6 +885,78 @@ namespace UIconEdit
             }
 
             return GetBitmap(_width, _height, pixels);
+        }
+
+        private uint[] _scaleBitmap(ScalingFilter scaleMode, BitmapSource image)
+        {
+            uint[] pixels = new uint[_width * _height];
+            FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
+            if (formatBmp.PixelWidth == _width && formatBmp.PixelHeight == _height)
+            {
+                formatBmp.CopyPixels(pixels, _width * sizeof(uint), 0);
+            }
+            else if (scaleMode == ScalingFilter.Matrix)
+            {
+                TransformedBitmap transBmp = new TransformedBitmap(formatBmp, new ScaleTransform((double)_width / formatBmp.PixelWidth,
+                    (double)_height / formatBmp.PixelHeight));
+                transBmp.CopyPixels(pixels, _width * sizeof(uint), 0);
+            }
+            else _scaleBitmap(scaleMode, formatBmp, pixels);
+
+            return pixels;
+        }
+
+        private void _scaleBitmap(ScalingFilter scaleMode, FormatConvertedBitmap image, uint[] pixels)
+        {
+            using (DBitmap dBitmap = new DBitmap(image.PixelWidth, image.PixelHeight, DPixelFormat.Format32bppArgb))
+            {
+                BitmapData dData = dBitmap.LockBits(new DRectangle(0, 0, image.PixelWidth, image.PixelHeight),
+                    ImageLockMode.WriteOnly, DPixelFormat.Format32bppArgb);
+
+                image.CopyPixels(new Int32Rect(0, 0, image.PixelWidth, image.PixelHeight), dData.Scan0, image.PixelHeight * dData.Stride, dData.Stride);
+
+                dBitmap.UnlockBits(dData);
+
+                using (DBitmap sizeBmp = new DBitmap(_width, _height, DPixelFormat.Format32bppArgb))
+                {
+                    using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(sizeBmp))
+                    {
+                        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
+                        switch (scaleMode)
+                        {
+                            case ScalingFilter.Bicubic:
+                                g.InterpolationMode = InterpolationMode.Bicubic;
+                                break;
+                            case ScalingFilter.Bilinear:
+                                g.InterpolationMode = InterpolationMode.Bilinear;
+                                break;
+                            case ScalingFilter.HighQualityBicubic:
+                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                                break;
+                            case ScalingFilter.HighQualityBilinear:
+                                g.InterpolationMode = InterpolationMode.HighQualityBilinear;
+                                break;
+                            case ScalingFilter.NearestNeighbor:
+                                g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                                break;
+                        }
+
+                        g.DrawImage(dBitmap, 0, 0, _width, _height);
+                    }
+
+                    BitmapData sizeData = sizeBmp.LockBits(new DRectangle(0, 0, _width, _height), ImageLockMode.ReadOnly, DPixelFormat.Format32bppArgb);
+
+                    unsafe
+                    {
+                        uint* pData = (uint*)sizeData.Scan0;
+                        for (int i = 0; i < pixels.Length; i++)
+                            pixels[i] = pData[i];
+                    }
+
+                    sizeBmp.UnlockBits(sizeData);
+                }
+            }
         }
 
         internal unsafe WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, uint[] pixels, DPixelFormat format, ushort maxColors)
@@ -970,6 +1080,7 @@ namespace UIconEdit
         {
             return GetBitmap(pixelWidth, pixelHeight, pixels, DPixelFormat.Format32bppArgb, ushort.MaxValue);
         }
+        #endregion
 
         /// <summary>
         /// Returns a string representation of the current instance.
@@ -1451,5 +1562,36 @@ namespace UIconEdit
         /// Indicates that the entry is 2-color (1 bit per pixel). Same value as <see cref="Depth2Color"/>.
         /// </summary>
         Depth1BitsPerPixel = Depth2Color,
+    }
+
+    /// <summary>
+    /// Indicates options for resizing <see cref="IconEntry.BaseImage"/> and <see cref="IconEntry.AlphaImage"/> when quantizing.
+    /// </summary>
+    public enum ScalingFilter
+    {
+        /// <summary>
+        /// Resizes using a transformation matrix.
+        /// </summary>
+        Matrix,
+        /// <summary>
+        /// Specifies bilinear interpolation.
+        /// </summary>
+        Bilinear,
+        /// <summary>
+        /// Specifies bicubic interpolation.
+        /// </summary>
+        Bicubic,
+        /// <summary>
+        /// Specifies nearest-neighbor interpolation.
+        /// </summary>
+        NearestNeighbor,
+        /// <summary>
+        /// Specifies high-quality bilinear interpolation. Prefiltering is performed to ensure high-quality transformation.
+        /// </summary>
+        HighQualityBilinear,
+        /// <summary>
+        /// Specifies high-quality bicubic interpolation. Prefiltering is performed to ensure high-quality transformation.
+        /// </summary>
+        HighQualityBicubic
     }
 }

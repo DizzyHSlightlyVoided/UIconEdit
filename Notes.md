@@ -21,4 +21,4 @@ At some point, there was a "Project Threshold" build which displayed 512x512 and
 Cursors
 -------
 
-Windows system cursors are made with 
+Windows system cursors are made with precisely one bit-depth, and with one 

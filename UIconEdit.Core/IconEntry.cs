@@ -961,13 +961,21 @@ namespace UIconEdit
 
         internal unsafe WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, uint[] pixels, DPixelFormat format, ushort maxColors)
         {
-            if (format == DPixelFormat.Format32bppArgb && maxColors > 256)
+            if (maxColors > 256 && (format == DPixelFormat.Format32bppArgb || format == DPixelFormat.Format24bppRgb))
             {
                 WriteableBitmap wBmp = new WriteableBitmap(pixelWidth, pixelHeight, 0, 0, PixelFormats.Bgra32, null);
-                wBmp.WritePixels(new Int32Rect(0, 0, pixelWidth, pixelHeight), pixels, pixelWidth * 4, 0);
-                return wBmp;
-            }
+                if (format == DPixelFormat.Format24bppRgb)
+                {
+                    for (int i = 0; i < pixels.Length; i++)
+                        pixels[i] |= 0xFF000000;
+                }
 
+                wBmp.WritePixels(new Int32Rect(0, 0, pixelWidth, pixelHeight), pixels, pixelWidth * 4, 0);
+                if (format == DPixelFormat.Format32bppArgb)
+                    return wBmp;
+
+                return new WriteableBitmap(new FormatConvertedBitmap(wBmp, PixelFormats.Bgr24, null, 0));
+            }
             var fullRect = new DRectangle(0, 0, pixelWidth, pixelHeight);
             DBitmap resultBmp;
             {

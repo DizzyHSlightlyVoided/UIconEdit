@@ -1537,6 +1537,21 @@ The dependency property for the [`IconEntry.HotspotY`](#property-public-systemui
 In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the top side. Constrained to greater than or equal to 0 and less than or equal to [`IconEntry.Height`](#property-public-systemint16-height--get-).
 
 --------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty ScalingFilterProperty`
+
+The dependency property for the [`IconEntry.ScalingFilter`](#property-public-uiconeditscalingfilter-scalingfilter--get-set-) property.
+
+--------------------------------------------------
+## Property: `public UIconEdit.ScalingFilter ScalingFilter { get; set; }`
+
+Gets and sets the scaling mode used to resize [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) when quantizing.
+
+### Exceptions
+
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+In a set operation, the specified value is not a valid [`ScalingFilter`](#type-public-enum-uiconeditscalingfilter) value.
+
+--------------------------------------------------
 ## Property: `public System.UInt16 BitsPerPixel { get; }`
 
 Gets the number of bits per pixel specified by [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-).
@@ -1929,3 +1944,38 @@ Indicates that the entry is 2-color (1 bit per pixel). Same value as [`BitDepth.
 ## Field: `BitDepth.Depth1BitsPerPixel = 4`
 
 Indicates that the entry is 2-color (1 bit per pixel). Same value as [`BitDepth.Depth2Color`](#field-bitdepthdepth2color--4).
+
+--------------------------------------------------
+# Type: `public enum UIconEdit.ScalingFilter`
+
+Indicates options for resizing [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) when quantizing.
+
+--------------------------------------------------
+## Field: `ScalingFilter.Matrix = 0`
+
+Resizes using a transformation matrix.
+
+--------------------------------------------------
+## Field: `ScalingFilter.Bilinear = 1`
+
+Specifies bilinear interpolation.
+
+--------------------------------------------------
+## Field: `ScalingFilter.Bicubic = 2`
+
+Specifies bicubic interpolation.
+
+--------------------------------------------------
+## Field: `ScalingFilter.NearestNeighbor = 3`
+
+Specifies nearest-neighbor interpolation.
+
+--------------------------------------------------
+## Field: `ScalingFilter.HighQualityBilinear = 4`
+
+Specifies high-quality bilinear interpolation. Prefiltering is performed to ensure high-quality transformation.
+
+--------------------------------------------------
+## Field: `ScalingFilter.HighQualityBicubic = 5`
+
+Specifies high-quality bicubic interpolation. Prefiltering is performed to ensure high-quality transformation.

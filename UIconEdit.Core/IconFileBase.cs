@@ -268,7 +268,10 @@ namespace UIconEdit
 
                         int dibSize = reader.ReadInt32();
 
-                        if (loadedId == IconTypeCode.Icon)
+                        BitDepth bitDepth;
+                        if (loadedId == IconTypeCode.Cursor)
+                            bitDepth = 0;
+                        else
                         {
                             switch (entry.YBitsPerpixel)
                             {
@@ -278,6 +281,7 @@ namespace UIconEdit
                                 case 8:
                                 case 24:
                                 case 32:
+                                    bitDepth = IconEntry.GetBitDepth(entry.YBitsPerpixel);
                                     break;
                                 default:
                                     throw new IconLoadException(IconErrorCode.InvalidBitDepth, loadedId, entry.YBitsPerpixel, i);
@@ -286,36 +290,11 @@ namespace UIconEdit
 
                         const int pngLittleEndian = 0x474e5089; //"\u0089PNG"  in little-endian order.
                         bool isPng = false;
-                        BitDepth bitDepth;
                         if (dibSize == pngLittleEndian)
                         {
-                            alphaMask = null;
                             #region Load Png
-                            if (loadedId == IconTypeCode.Cursor)
-                            {
-                                bitDepth = BitDepth.Depth32BitsPerPixel;
-                            }
-                            else
-                            {
-                                switch (entry.YBitsPerpixel)
-                                {
-                                    case 1:
-                                        bitDepth = BitDepth.Depth2Color;
-                                        break;
-                                    case 4:
-                                        bitDepth = BitDepth.Depth16Color;
-                                        break;
-                                    case 8:
-                                        bitDepth = BitDepth.Depth256Color;
-                                        break;
-                                    case 24:
-                                        bitDepth = BitDepth.Depth24BitsPerPixel;
-                                        break;
-                                    default: //32
-                                        bitDepth = BitDepth.Depth32BitsPerPixel;
-                                        break;
-                                }
-                            }
+                            alphaMask = null;
+
                             using (OffsetStream os = new OffsetStream(input, new byte[] { 0x89, 0x50, 0x4e, 0x47 }, entry.ResourceLength - 4, true))
                             using (MemoryStream ms = new MemoryStream())
                             {
@@ -324,8 +303,36 @@ namespace UIconEdit
                                 try
                                 {
                                     PngBitmapDecoder decoder = new PngBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+                                    BitmapSource frame = decoder.Frames[0];
+                                    var pFormat = frame.Format;
 
-                                    loadedImage = new WriteableBitmap(decoder.Frames[0]);
+                                    BitDepth otherDepth;
+
+                                    if (pFormat == PixelFormats.Indexed8 || pFormat == PixelFormats.Gray8)
+                                        otherDepth = BitDepth.Depth8BitsPerPixel;
+                                    else if (pFormat == PixelFormats.Indexed4 || pFormat == PixelFormats.Gray4)
+                                        otherDepth = BitDepth.Depth4BitsPerPixel;
+                                    else if (pFormat == PixelFormats.Indexed2 || pFormat == PixelFormats.Gray2)
+                                        otherDepth = BitDepth.Depth1BitPerPixel;
+                                    else if (pFormat == PixelFormats.Bgr24 || pFormat == PixelFormats.Rgb24)
+                                        otherDepth = BitDepth.Depth24BitsPerPixel;
+                                    else if (pFormat == PixelFormats.Bgra32)
+                                        otherDepth = BitDepth.Depth32BitsPerPixel;
+                                    else
+                                    {
+                                        otherDepth = BitDepth.Depth32BitsPerPixel;
+                                        frame = new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 0);
+                                    }
+
+                                    if (loadedId == IconTypeCode.Cursor)
+                                        bitDepth = otherDepth;
+                                    else if (bitDepth != otherDepth)
+                                    {
+                                        throw new IconLoadException(IconErrorCode.PngBitDepthMismatch, loadedId,
+                                            new Tuple<int, int>(entry.YBitsPerpixel, IconEntry.GetBitsPerPixel(otherDepth)), i);
+                                    }
+
+                                    loadedImage = new WriteableBitmap(frame);
                                 }
                                 catch (FileFormatException e)
                                 {
@@ -356,37 +363,33 @@ namespace UIconEdit
                                 switch (bitsPerPixel)
                                 {
                                     case 1:
-                                        bitDepth = BitDepth.Depth2Color;
                                         bmpStride = alphaStride;
                                         pFormat = PixelFormats.Indexed1;
                                         break;
                                     case 4:
-                                        bitDepth = BitDepth.Depth16Color;
                                         bmpStride = (width + 1) >> 1;
                                         pFormat = PixelFormats.Indexed4;
                                         break;
                                     case 8:
-                                        bitDepth = BitDepth.Depth256Color;
                                         bmpStride = width;
                                         pFormat = PixelFormats.Indexed8;
                                         break;
                                     case 24:
-                                        bitDepth = BitDepth.Depth24BitsPerPixel;
                                         bmpStride = width * 3;
                                         pFormat = PixelFormats.Bgr24;
                                         break;
                                     case 32:
-                                        bitDepth = BitDepth.Depth32BitsPerPixel;
                                         bmpStride = width * 4;
                                         pFormat = PixelFormats.Bgra32;
                                         break;
                                     default:
                                         throw new IconLoadException(IconErrorCode.InvalidBmpBitDepth, loadedId, bitsPerPixel, i);
                                 }
-
                                 _catchStride(ref bmpStride);
 
-                                if (loadedId != IconTypeCode.Cursor && entry.YBitsPerpixel != 0 && bitsPerPixel != entry.YBitsPerpixel)
+                                if (loadedId == IconTypeCode.Cursor)
+                                    bitDepth = IconEntry.GetBitDepth(bitsPerPixel);
+                                else if (entry.YBitsPerpixel != 0 && bitsPerPixel != entry.YBitsPerpixel)
                                     throw new IconLoadException(IconErrorCode.InvalidBmpBitDepth, loadedId, new Tuple<int, int>(entry.YBitsPerpixel, bitsPerPixel), i);
 
                                 int actualHeight;
@@ -2036,11 +2039,17 @@ namespace UIconEdit
         /// </summary>
         PngSizeMismatch = 0x1103,
         /// <summary>
+        /// Code 0x1205: there is a mismatch between the bit depth of a PNG entry and the expected bit depth of the file.
+        /// <see cref="IconLoadException.Value"/> contains a <see cref="Tuple{T1, T2}"/> in which the <see cref="Tuple{T1, T2}.Item1"/> is the bit depth
+        /// listed in the icon directory entry, and <see cref="Tuple{T1, T2}.Item2"/> is the bit depth listed in the PNG entry.
+        /// </summary>
+        PngBitDepthMismatch = 0x1105,
+        /// <summary>
         /// Code 0x1200: an error occurred when attempting to process a BMP entry. The inner exception may contain more information.
         /// </summary>
         InvalidBmpFile = 0x1200,
         /// <summary>
-        /// Code 0x1201 the bit depth of a BMP entry is not supported.
+        /// Code 0x1201: the bit depth of a BMP entry is not supported.
         /// <see cref="IconLoadException.Value"/> contains the bit depth.
         /// </summary>
         InvalidBmpBitDepth = 0x1201,

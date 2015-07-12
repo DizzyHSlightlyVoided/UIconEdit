@@ -887,6 +887,11 @@ Code 0x1102: the width or height of a PNG entry is less than [`IconEntry.MinDime
 Code 0x1105: the width or height of a PNG entry does not match the width or height listed in the icon directory entry.
 
 --------------------------------------------------
+## Field: `IconErrorCode.PngBitDepthMismatch = 4357`
+
+Code 0x1205: there is a mismatch between the bit depth of a PNG entry and the expected bit depth of the file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the bit depth listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the bit depth listed in the PNG entry.
+
+--------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpFile = 4608`
 
 Code 0x1200: an error occurred when attempting to process a BMP entry. The inner exception may contain more information.
@@ -894,7 +899,7 @@ Code 0x1200: an error occurred when attempting to process a BMP entry. The inner
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpBitDepth = 4609`
 
-Code 0x1201 the bit depth of a BMP entry is not supported. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
+Code 0x1201: the bit depth of a BMP entry is not supported. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBmpSize = 4610`
@@ -1588,6 +1593,20 @@ Gets the maximum color count associated with the specified [`BitDepth`](#type-pu
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
 `bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.BitDepth GetBitDepth(System.Int64 value)`
+
+Returns the [`BitDepth`](#type-public-enum-uiconeditbitdepth) associated with the specified numeric value.
+* `value`: The color count or number of bits per pixel to use.
+
+**Returns:** Type [`BitDepth`](#type-public-enum-uiconeditbitdepth): [`BitDepth.Depth1BitPerPixel`](#field-bitdepthdepth1bitperpixel--4) if `value` is 1 or 2; [`BitDepth.Depth4BitsPerPixel`](#field-bitdepthdepth4bitsperpixel--3) if `value` is 4 or 16; [`BitDepth.Depth8BitsPerPixel`](#field-bitdepthdepth8bitsperpixel--2) if `value` is 8 or 256; [`BitDepth.Depth24BitsPerPixel`](#field-bitdepthdepth24bitsperpixel--1) if `value` is 24 or 16777216; or [`BitDepth.Depth32BitsPerPixel`](#field-bitdepthdepth32bitsperpixel--0) if `value` is 32 or 4294967296.
+
+
+### Exceptions
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`value` is not one of the specified parameter values.
 
 --------------------------------------------------
 ## Method: `public static System.Windows.Media.PixelFormat GetPixelFormat(UIconEdit.BitDepth depth)`

@@ -270,6 +270,7 @@ namespace UIconEdit.Maker
                 case IconErrorCode.InvalidEntryType:
                 case IconErrorCode.InvalidPngFile:
                 case IconErrorCode.PngSizeMismatch:
+                case IconErrorCode.PngBitDepthMismatch:
                 case IconErrorCode.InvalidBmpFile:
                 case IconErrorCode.BmpSizeMismatch:
                 case IconErrorCode.InvalidBmpHeightOdd:

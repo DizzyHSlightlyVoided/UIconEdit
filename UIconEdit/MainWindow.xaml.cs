@@ -90,6 +90,7 @@ namespace UIconEdit.Maker
                 FilePath = path;
                 listbox.SelectedIndex = 0;
                 Mouse.OverrideCursor = null;
+                scrollEntries.ScrollToTop();
                 return;
             }
             catch (IconLoadException e)
@@ -109,6 +110,7 @@ namespace UIconEdit.Maker
                     else IsModified = oldModified;
 
                     Mouse.OverrideCursor = null;
+                    scrollEntries.ScrollToTop();
                     return;
                 }
             }
@@ -135,6 +137,7 @@ namespace UIconEdit.Maker
                     LoadedFile.Entries.Add(addWindow.GetIconEntry());
                     listbox.SelectedIndex = 0;
                     IsModified = true;
+                    scrollEntries.ScrollToTop();
                 }
                 return;
             }
@@ -308,6 +311,12 @@ namespace UIconEdit.Maker
                 "{3}|*.gif;*.png;*.bmp;*.dib;*.tif;*.tiff;*.jpg;*.jpeg|{4} (*.*)|*",
                 _settings.LanguageFile.TypeIco, _settings.LanguageFile.TypeCur, _settings.LanguageFile.TypeIcoCur, _settings.LanguageFile.TypeImage,
                 _settings.LanguageFile.TypeAll);
+
+            {
+                var loadedFile = LoadedFile;
+                if (filePath != null && loadedFile != null && loadedFile.ID == IconTypeCode.Cursor)
+                    dialog.FilterIndex = 2;
+            }
 
             var result = dialog.ShowDialog(this);
             if (!result.HasValue || !result.Value) return;

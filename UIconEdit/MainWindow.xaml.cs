@@ -536,7 +536,7 @@ namespace UIconEdit.Maker
         {
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.AddExtension = false;
-            dialog.Filter = string.Format("{0}|*.png", _settings.LanguageFile.TypePngSuffix);
+            dialog.Filter = string.Format("{0} (*.png)|*", _settings.LanguageFile.TypePngSuffix);
             string filePath = FilePath;
             if (!string.IsNullOrWhiteSpace(filePath))
                 dialog.FileName = Path.GetFileNameWithoutExtension(filePath);

@@ -633,6 +633,42 @@ namespace UIconEdit
         }
 
         /// <summary>
+        /// Returns the <see cref="UIconEdit.BitDepth"/> associated with the specified numeric value.
+        /// </summary>
+        /// <param name="value">The color count or number of bits per pixel to use.</param>
+        /// <returns><see cref="UIconEdit.BitDepth.Depth1BitPerPixel"/> if <paramref name="value"/> is 1 or 2;
+        /// <see cref="UIconEdit.BitDepth.Depth4BitsPerPixel"/> if <paramref name="value"/> is 4 or 16;
+        /// <see cref="UIconEdit.BitDepth.Depth8BitsPerPixel"/> if <paramref name="value"/> is 8 or 256;
+        /// <see cref="UIconEdit.BitDepth.Depth24BitsPerPixel"/> if <paramref name="value"/> is 24 or 16777216; or
+        /// <see cref="UIconEdit.BitDepth.Depth32BitsPerPixel"/> if <paramref name="value"/> is 32 or 4294967296.</returns>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="value"/> is not one of the specified parameter values.
+        /// </exception>
+        public static BitDepth GetBitDepth(long value)
+        {
+            switch (value)
+            {
+                case 1:
+                case 2:
+                    return BitDepth.Depth1BitPerPixel;
+                case 4:
+                case 16:
+                    return BitDepth.Depth4BitsPerPixel;
+                case 8:
+                case 256:
+                    return BitDepth.Depth8BitsPerPixel;
+                case 24:
+                case 0x1000000:
+                    return BitDepth.Depth24BitsPerPixel;
+                case 32:
+                case uint.MaxValue + 1L:
+                    return BitDepth.Depth32BitsPerPixel;
+                default:
+                    throw new ArgumentException("Not a valid color count or bits-per-pixel value.", "value");
+            }
+        }
+
+        /// <summary>
         /// Returns the <see cref="PixelFormat"/> associated with the specified <see cref="UIconEdit.BitDepth"/>.
         /// </summary>
         /// <param name="depth">The bit depth from which to get the pixel format.</param>

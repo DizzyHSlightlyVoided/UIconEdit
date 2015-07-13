@@ -132,6 +132,7 @@ namespace UIconEdit.Maker
 
                 if (result.HasValue && result.Value)
                 {
+                    Mouse.OverrideCursor = Cursors.Wait;
                     FilePath = null;
                     LoadedFile = new CursorFile();
                     LoadedFile.Entries.Add(addWindow.GetIconEntry());
@@ -139,6 +140,7 @@ namespace UIconEdit.Maker
                     IsModified = true;
                     scrollEntries.ScrollToTop();
                 }
+                Mouse.OverrideCursor = null;
                 return;
             }
             catch (Exception)
@@ -423,13 +425,14 @@ namespace UIconEdit.Maker
             bool? result = addWindow.ShowDialog();
 
             if (!result.HasValue || !result.Value) return;
-
+            Mouse.OverrideCursor = Cursors.Wait;
             var newEntry = addWindow.GetIconEntry();
             int dex = ~LoadedFile.Entries.BinarySearchSimilar(newEntry);
             LoadedFile.Entries.Insert(dex, newEntry);
             listbox.SelectedIndex = dex;
             IsModified = true;
             listbox.ScrollIntoView(listbox.SelectedItem);
+            Mouse.OverrideCursor = null;
         }
 
         private void Add_Executed(object sender, ExecutedRoutedEventArgs e)

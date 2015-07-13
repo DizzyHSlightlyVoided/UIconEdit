@@ -26,7 +26,7 @@
         <system:Int16 x:Key="T512">512</system:Int16>
     </Window.Resources>
     <Window.CommandBindings>
-        <CommandBinding Command="{x:Static local:AddWindow.PreviewCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed"/>
+        <CommandBinding Command="{x:Static local:AddWindow.PreviewCommand}" CanExecute="Preview_CanExecute" Executed="Preview_Executed"/>
     </Window.CommandBindings>
     <Grid>
         <GroupBox x:Name="groupImage" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="110" Width="96"

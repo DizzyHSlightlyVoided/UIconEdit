@@ -32,6 +32,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Input;
 
 namespace UIconEdit.Maker
 {
@@ -50,6 +51,7 @@ namespace UIconEdit.Maker
         private void window_Loaded(object sender, RoutedEventArgs e)
         {
             MainWindow.SelectZoom(this, scrollImage, SourceImage, ZoomProperty, ZoomedWidthPropertyKey, ZoomedHeightPropertyKey, ZoomScaleModePropertyKey);
+            Mouse.OverrideCursor = null;
         }
 
         #region SourceImage
@@ -110,7 +112,9 @@ namespace UIconEdit.Maker
 
         private void cmbFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Mouse.OverrideCursor = Cursors.Wait;
             SourceImage = ((AddWindow)Owner).GetIconEntry().CombineAlpha();
+            Mouse.OverrideCursor = null;
         }
     }
 }

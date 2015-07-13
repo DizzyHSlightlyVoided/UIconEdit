@@ -380,14 +380,15 @@ namespace UIconEdit.Maker
             Close();
         }
 
-        private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void Preview_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
             e.Handled = true;
         }
 
-        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void Preview_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            Mouse.OverrideCursor = Cursors.Wait;
             PreviewWindow pWindow = new PreviewWindow(this);
             pWindow.ShowDialog();
         }

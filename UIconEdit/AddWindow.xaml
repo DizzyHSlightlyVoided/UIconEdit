@@ -113,9 +113,9 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.ScalingFilter, ElementName=window, FallbackValue='Scaling filter:'}"
-                           VerticalAlignment="Center"/>
+                           VerticalAlignment="Center" IsEnabled="{Binding DifferentSize, ElementName=window}"/>
                 <ComboBox x:Name="cmbFilter" MinWidth="120" Margin="5,0,0,0" VerticalAlignment="Center" ItemsSource="{x:Static local:AddWindow.Filters}"
-                          SelectedIndex="{Binding MatrixSelectedIndex, ElementName=window}">
+                          SelectedIndex="{Binding MatrixSelectedIndex, ElementName=window}" IsEnabled="{Binding DifferentSize, ElementName=window}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock>

@@ -13,9 +13,9 @@
     <DockPanel>
         <ToolBar DockPanel.Dock="Top" Height="Auto">
             <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.ScalingFilter, ElementName=window, FallbackValue='Scaling filter:'}"
-                       VerticalAlignment="Center"/>
+                       VerticalAlignment="Center" IsEnabled="{Binding Owner.DifferentSize, ElementName=window}"/>
             <Border Margin="5,0,0,0" VerticalAlignment="Center">
-                <ComboBox x:Name="cmbFilter" MinWidth="120" ItemsSource="{x:Static local:AddWindow.Filters}"
+                <ComboBox x:Name="cmbFilter" MinWidth="120" ItemsSource="{x:Static local:AddWindow.Filters}" IsEnabled="{Binding Owner.DifferentSize, ElementName=window}"
                           SelectedIndex="{Binding Owner.MatrixSelectedIndex, ElementName=window}" SelectionChanged="cmbFilter_SelectionChanged">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>

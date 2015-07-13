@@ -255,10 +255,30 @@ namespace UIconEdit.Maker
         }
         #endregion
 
+        #region DifferentSize
+        private static readonly DependencyPropertyKey DifferentSizePropertyKey = DependencyProperty.RegisterReadOnly("DifferentSize", typeof(bool), typeof(AddWindow),
+            new PropertyMetadata(true, null, DifferentSizeCoerce));
+        public static readonly DependencyProperty DifferentSizeProperty = DifferentSizePropertyKey.DependencyProperty;
+
+        private static object DifferentSizeCoerce(DependencyObject d, object baseValue)
+        {
+            AddWindow a = (AddWindow)d;
+            var image = a.LoadedImage;
+            return image.PixelWidth != a.EntryWidth || image.PixelHeight != a.EntryHeight;
+        }
+
+        public bool DifferentSize { get { return (bool)GetValue(DifferentSizeProperty); } }
+        #endregion
+
         private static bool SizeValidate(object value)
         {
             short val = (short)value;
             return val >= IconEntry.MinDimension && val <= IconEntry.MaxDimension;
+        }
+
+        private static void EntrySizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            d.CoerceValue(DifferentSizeProperty);
         }
 
         #region EntryWidth
@@ -274,7 +294,7 @@ namespace UIconEdit.Maker
 
         #region EntryHeight
         public static readonly DependencyProperty EntryHeightProperty = DependencyProperty.Register("EntryHeight", typeof(short), typeof(AddWindow),
-            new PropertyMetadata((short)32), SizeValidate);
+            new PropertyMetadata((short)32, EntrySizeChanged), SizeValidate);
 
         public short EntryHeight
         {

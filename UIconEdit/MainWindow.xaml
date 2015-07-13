@@ -112,8 +112,8 @@
                 <ComboBox x:Name="cmbZoom" Width="75" IsEditable="True" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
                           Text="{Binding Zoom, ElementName=window, Mode=TwoWay}" ItemsSource="{x:Static local:MainWindow.Zooms}"/>
             </Border>
-            <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
-                       Text="{Binding SettingsFile.LanguageFile.Percent, ElementName=window, FallbackValue=%}"/>
+            <Label VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}" Padding="0"
+                   Content="{Binding SettingsFile.LanguageFile.Percent, ElementName=window, FallbackValue=%}"/>
             <Separator/>
             <Button Command="NavigationCommands.FirstPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipFirst, ElementName=window, FallbackValue=First}">
                 <Image Source="Resources\DArrowBackward.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
@@ -147,11 +147,13 @@
             <StackPanel Orientation="Horizontal" x:Name="pnlHotspot" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
                         Visibility="{Binding LoadedFile, ElementName=window, Converter={StaticResource CanUseHotspotConverter}}">
                 <CheckBox VerticalAlignment="Center" x:Name="chkHotspot">
-                    <Image Source="Resources\Hotspot.png" Height="24"/>
+                    <Image Source="Resources\Hotspot.png" Height="24" Style="{StaticResource imgEnabled}"/>
                 </CheckBox>
-                <TextBlock Margin="5,0,0,0" Text="{Binding SettingsFile.LanguageFile.HotspotX, ElementName=window, FallbackValue=X:}" VerticalAlignment="Center"/>
+                <Label Margin="5,0,1,0" Content="{Binding SettingsFile.LanguageFile.HotspotX, ElementName=window, FallbackValue=X:}"
+                       VerticalAlignment="Center" Padding="0"/>
                 <TextBox x:Name="txtHotX" VerticalAlignment="Center" Width="50" Text="{Binding SelectedItem.HotspotX, ElementName=listbox}"/>
-                <TextBlock Margin="5,0,0,0" Text="{Binding SettingsFile.LanguageFile.HotspotY, ElementName=window, FallbackValue=Y:}" VerticalAlignment="Center"/>
+                <Label Margin="5,0,1,0" Content="{Binding SettingsFile.LanguageFile.HotspotY, ElementName=window, FallbackValue=Y:}"
+                       VerticalAlignment="Center" Padding="0"/>
                 <TextBox x:Name="txtHotY" VerticalAlignment="Center" Width="50" Text="{Binding SelectedItem.HotspotY, ElementName=listbox}"/>
             </StackPanel>
         </ToolBar>

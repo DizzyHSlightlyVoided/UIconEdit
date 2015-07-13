@@ -227,6 +227,12 @@ namespace UIconEdit.Maker
 
         public string AlphaThreshold { get { return _text["AlphaThreshold"]; } }
 
+        public string Bits32 { get { return _text["Bits32"]; } }
+        public string Bits24 { get { return _text["Bits24"]; } }
+        public string Bits8 { get { return _text["Bits8"]; } }
+        public string Bits4 { get { return _text["Bits4"]; } }
+        public string Bits1 { get { return _text["Bits1"]; } }
+
         public string GroupImage { get { return _text["GroupImage"]; } }
         public string GroupSize { get { return _text["GroupSize"]; } }
         public string GroupBitsPerPixel { get { return _text["GroupBitsPerPixel"]; } }

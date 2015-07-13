@@ -16,7 +16,7 @@
                        VerticalAlignment="Center"/>
             <Border Margin="5,0,0,0" VerticalAlignment="Center">
                 <ComboBox x:Name="cmbFilter" MinWidth="120" ItemsSource="{x:Static local:AddWindow.Filters}"
-                      SelectedIndex="{Binding Owner.MatrixSelectedIndex, ElementName=window}" SelectionChanged="cmbFilter_SelectionChanged">
+                          SelectedIndex="{Binding Owner.MatrixSelectedIndex, ElementName=window}" SelectionChanged="cmbFilter_SelectionChanged">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock>
@@ -32,22 +32,20 @@
                 </ComboBox>
             </Border>
             <Separator/>
-            <Image Source="Resources\Zoom_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality"
-                   IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}" VerticalAlignment="Center"/>
+            <Image Source="Resources\Zoom_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" VerticalAlignment="Center"/>
             <Border VerticalAlignment="Center">
-                <ComboBox x:Name="cmbZoom" Width="75" IsEditable="True" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
-                          Text="{Binding Zoom, ElementName=window, Mode=TwoWay}" ItemsSource="{x:Static local:MainWindow.Zooms}"/>
+                <ComboBox x:Name="cmbZoom" Width="75" IsEditable="True" Text="{Binding Zoom, ElementName=window, Mode=TwoWay}"
+                          ItemsSource="{x:Static local:MainWindow.Zooms}"/>
             </Border>
-            <TextBlock VerticalAlignment="Center" IsEnabled="{Binding IsLoadedAndSelected, ElementName=window}"
-                       Text="{Binding SettingsFile.LanguageFile.Percent, ElementName=window, FallbackValue=%}"/>
+            <TextBlock VerticalAlignment="Center" Text="{Binding Owner.Owner.SettingsFile.LanguageFile.Percent, ElementName=window, FallbackValue=%}"/>
         </ToolBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="scrollImage">
                 <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" x:Name="frameImage"
                         HorizontalAlignment="Center" VerticalAlignment="Center" Margin="8" Background="{StaticResource TransparentTiles}" Padding="2">
                     <Image Source="{Binding SourceImage, ElementName=window}"
-                       RenderOptions.BitmapScalingMode="{Binding ZoomScaleMode, ElementName=window}" x:Name="imgIcon"
-                       Width="{Binding ZoomedWidth, ElementName=window}" Height="{Binding ZoomedHeight, ElementName=window}"/>
+                           RenderOptions.BitmapScalingMode="{Binding ZoomScaleMode, ElementName=window}" x:Name="imgIcon"
+                           Width="{Binding ZoomedWidth, ElementName=window}" Height="{Binding ZoomedHeight, ElementName=window}"/>
                 </Border>
             </ScrollViewer>
         </Border>

@@ -41,15 +41,15 @@
                   Header="{Binding Owner.SettingsFile.LanguageFile.GroupBitsPerPixel, FallbackValue='Bits Per Pixel'}">
             <WrapPanel>
                 <RadioButton x:Name="rad32bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="212" Checked="bit_Checked"
-                             Content="{Binding Owner.SettingsFile.LanguageFile.Bit32, ElementName=window, FallbackValue='Full Color + Alpha (32-bit)'}"/>
+                             Content="{Binding Owner.SettingsFile.LanguageFile.Bits32, ElementName=window, FallbackValue='Full Color + Alpha (32-bit)'}"/>
                 <RadioButton x:Name="rad24bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="212" Checked="bit_Checked"
-                             Content="{Binding Owner.SettingsFile.LanguageFile.Bit24, ElementName=window, FallbackValue='Full Color (24-bit)'}"/>
+                             Content="{Binding Owner.SettingsFile.LanguageFile.Bits24, ElementName=window, FallbackValue='Full Color (24-bit)'}"/>
                 <RadioButton x:Name="rad8bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
-                             Content="{Binding Owner.SettingsFile.LanguageFile.Bit8, ElementName=window, FallbackValue='256-Color (8-bit)'}"/>
+                             Content="{Binding Owner.SettingsFile.LanguageFile.Bits8, ElementName=window, FallbackValue='256-Color (8-bit)'}"/>
                 <RadioButton x:Name="rad4bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
-                             Content="{Binding Owner.SettingsFile.LanguageFile.Bit4, ElementName=window, FallbackValue='16-Color (4-bit)'}"/>
+                             Content="{Binding Owner.SettingsFile.LanguageFile.Bits4, ElementName=window, FallbackValue='16-Color (4-bit)'}"/>
                 <RadioButton x:Name="rad1bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
-                             Content="{Binding Owner.SettingsFile.LanguageFile.Bit1, ElementName=window, FallbackValue='2-Color (1-bit)'}"/>
+                             Content="{Binding Owner.SettingsFile.LanguageFile.Bits1, ElementName=window, FallbackValue='2-Color (1-bit)'}"/>
             </WrapPanel>
         </GroupBox>
         <GroupBox x:Name="groupSize" Header="GroupBox" HorizontalAlignment="Left" Margin="10,125,0,0" VerticalAlignment="Top" Height="151" Width="574">

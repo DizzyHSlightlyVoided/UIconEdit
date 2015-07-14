@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UIconEdit.Maker" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
         mc:Ignorable="d" WindowStartupLocation="CenterOwner" Loaded="window_Loaded" Icon="GradientEdit.ico"
         Title="{Binding Owner.Owner.SettingsFile.LanguageFile.Preview, ElementName=window, FallbackValue=Preview}"
-        MinHeight="597" MinWidth="600" Height="597" Width="600">
+        MinHeight="629" MinWidth="600" Height="629" Width="600">
     <Window.Resources>
         <local:ScaleFilterConverter x:Key="ScaleFilterConverter"/>
     </Window.Resources>
@@ -39,6 +39,9 @@
             </Border>
             <TextBlock VerticalAlignment="Center" Text="{Binding Owner.Owner.SettingsFile.LanguageFile.Percent, ElementName=window, FallbackValue=%}"/>
         </ToolBar>
+        <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" DockPanel.Dock="Bottom">
+            <Button Content="{Binding Owner.Owner.SettingsFile.LanguageFile.ButtonOK, FallbackValue=_OK}" MinWidth="75" IsDefault="True" IsCancel="True" Margin="5"/>
+        </StackPanel>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="scrollImage">
                 <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" x:Name="frameImage"

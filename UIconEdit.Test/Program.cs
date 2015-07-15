@@ -32,7 +32,7 @@ using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace UIconEdit.Builder
+namespace UIconEdit.Test
 {
     class Program
     {

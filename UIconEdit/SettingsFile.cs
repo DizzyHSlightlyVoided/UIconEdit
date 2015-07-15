@@ -34,6 +34,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -68,6 +69,20 @@ namespace UIconEdit.Maker
 
                 if (jLang != null)
                     LanguageName = jLang.Value.ToString();
+
+                var jKeep = root.GetValue(KeepHotspotCheckedName) as JValue;
+                if (jKeep != null)
+                {
+                    switch (jKeep.Type)
+                    {
+                        case JTokenType.Boolean:
+                            KeepHotspotChecked = jKeep.Value<bool>();
+                            break;
+                        case JTokenType.Null:
+                            KeepHotspotChecked = false;
+                            break;
+                    }
+                }
             }
             catch (Exception)
             {
@@ -75,6 +90,9 @@ namespace UIconEdit.Maker
             finally
             {
                 _loaded = true;
+
+                SetValue(IsModifiedPropertyKey, false);
+                _dirty.Clear();
             }
         }
 
@@ -84,11 +102,13 @@ namespace UIconEdit.Maker
 
         private bool _loaded;
 
-        public void Save()
+        public void Save(Window window)
         {
             if (!_loaded) return;
+            var oldOverride = Mouse.OverrideCursor;
             try
             {
+                Mouse.OverrideCursor = Cursors.Wait;
                 using (MemoryStream ms = new MemoryStream())
                 {
                     using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8, 4096, true))
@@ -98,17 +118,40 @@ namespace UIconEdit.Maker
 
                         writer.WriteStartObject();
                         writer.WritePropertyName(LanguageNameName); writer.WriteValue(LanguageName);
+                        writer.WritePropertyName(KeepHotspotCheckedName); writer.WriteValue(KeepHotspotChecked);
                         writer.WriteEndObject();
                     }
                     ms.Seek(0, SeekOrigin.Begin);
                     using (FileStream fs = File.Open(SettingsPath, FileMode.Create))
                         ms.CopyTo(fs);
+
+                    SetValue(IsModifiedPropertyKey, false);
+                    _dirty.Clear();
                 }
             }
             catch
             {
-                ErrorWindow.Show(_owner, LanguageFile.SettingsSaveError);
+                ErrorWindow.Show(_owner, window, LanguageFile.SettingsSaveError);
             }
+            finally
+            {
+                Mouse.OverrideCursor = oldOverride;
+            }
+        }
+
+        public void Save()
+        {
+            Save(_owner);
+        }
+
+        private static void SaveableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            SettingsFile s = (SettingsFile)d;
+
+            if (s._loaded && !s._dirty.ContainsKey(e.Property))
+                s._dirty.Add(e.Property, e.OldValue);
+
+            s.SetValue(IsModifiedPropertyKey, true);
         }
 
         #region LanguageName
@@ -127,13 +170,14 @@ namespace UIconEdit.Maker
 
             try
             {
-                if ((string)e.NewValue == string.Empty)
-                    s.LanguageFile = LanguageFile.Default;
-                else
-                    s.LanguageFile = new LanguageFile((string)e.NewValue, true);
-
-                if (s._loaded && !s._dirty.ContainsKey(e.Property))
-                    s._dirty.Add(e.Property, e.OldValue);
+                var file = s.LanguageFile;
+                if (file == null || !file.ShortName.Equals((string)e.NewValue, StringComparison.OrdinalIgnoreCase))
+                {
+                    if ((string)e.NewValue == string.Empty)
+                        s.LanguageFile = LanguageFile.Default;
+                    else
+                        s.LanguageFile = new LanguageFile((string)e.NewValue, true);
+                }
             }
             catch
             {
@@ -160,6 +204,8 @@ namespace UIconEdit.Maker
                 d.SetValue(LanguageNameProperty, null);
             else
                 d.SetValue(LanguageNameProperty, ((LanguageFile)e.NewValue).ShortName);
+
+            SaveableChanged(d, e);
         }
 
         public LanguageFile LanguageFile
@@ -169,6 +215,26 @@ namespace UIconEdit.Maker
         }
         #endregion
 
+        #region KeepHotspotChecked
+        const string KeepHotspotCheckedName = "KeepHotspotChecked";
+        public static readonly DependencyProperty KeepHotspotCheckedProperty = DependencyProperty.Register(KeepHotspotCheckedName, typeof(bool), typeof(SettingsFile),
+            new PropertyMetadata(false, SaveableChanged));
+
+        public bool KeepHotspotChecked
+        {
+            get { return (bool)GetValue(KeepHotspotCheckedProperty); }
+            set { SetValue(KeepHotspotCheckedProperty, value); }
+        }
+        #endregion
+
+        #region IsModified 
+        private static readonly DependencyPropertyKey IsModifiedPropertyKey = DependencyProperty.RegisterReadOnly("IsModified", typeof(bool), typeof(SettingsFile),
+            new PropertyMetadata(false));
+        public static readonly DependencyProperty IsModifiedProperty = IsModifiedPropertyKey.DependencyProperty;
+
+        public bool IsModified { get { return (bool)GetValue(IsModifiedProperty); } }
+        #endregion
+
         private Dictionary<DependencyProperty, object> _dirty = new Dictionary<DependencyProperty, object>();
 
         public void Reset()
@@ -176,6 +242,7 @@ namespace UIconEdit.Maker
             foreach (var curKVP in _dirty)
                 SetValue(curKVP.Key, curKVP.Value);
             _dirty.Clear();
+            SetValue(IsModifiedPropertyKey, false);
         }
     }
 }

@@ -626,6 +626,19 @@ namespace UIconEdit.Maker
             }
         }
 
+        public static readonly RoutedCommand SettingsCommand = new RoutedCommand("Settings", typeof(MainWindow));
+
+        public void Settings_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            SettingsWindow window = new SettingsWindow(this);
+            var result = window.ShowDialog();
+
+            if (!result.HasValue || !result.Value)
+                _settings.Reset();
+
+            _settings.Save();
+        }
+
         private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Close();
@@ -652,7 +665,8 @@ namespace UIconEdit.Maker
 
         private void listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            chkHotspot.IsChecked = false;
+            if (!_settings.KeepHotspotChecked)
+                chkHotspot.IsChecked = false;
             if (listbox.SelectedIndex < 0)
             {
                 SetValue(IsLoadedAndSelectedPropertyKey, false);

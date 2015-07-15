@@ -42,6 +42,8 @@ namespace UIconEdit.Maker
 {
     internal class LanguageFile : IEquatable<LanguageFile>
     {
+        private static JsonSerializer jSer = new JsonSerializer();
+
         private static LanguageFile _default = new LanguageFile();
         /// <summary>
         /// Gets a default language file.
@@ -95,8 +97,6 @@ namespace UIconEdit.Maker
                 Load(sr, false);
         }
 
-        JsonSerializer jSer = new JsonSerializer();
-
         private void Load(TextReader textReader, bool initial)
         {
             Dictionary<string, string> loadedText;
@@ -121,7 +121,16 @@ namespace UIconEdit.Maker
 
         public bool Equals(LanguageFile other)
         {
-            return other != null && other.ShortName.Equals(ShortName, StringComparison.OrdinalIgnoreCase);
+            if (ReferenceEquals(other, null) || !_shortName.Equals(other._shortName, StringComparison.OrdinalIgnoreCase)) return false;
+            if (_text == other._text) return true;
+
+            foreach (var curKVP in _text)
+            {
+                string curVal;
+                if (!other._text.TryGetValue(curKVP.Key, out curVal) && curKVP.Value != curVal)
+                    return false;
+            }
+            return true;
         }
 
         public override bool Equals(object obj)
@@ -184,6 +193,7 @@ namespace UIconEdit.Maker
         public string MenuEditRem { get { return _text["MenuEditRem"]; } }
         public string MenuEditExp { get { return _text["MenuEditExp"]; } }
         public string MenuEditExpAll { get { return _text["MenuEditExpAll"]; } }
+        public string MenuEditSettings { get { return _text["MenuEditSettings"]; } }
 
         public string ButtonTipNew { get { return _text["ButtonTipNew"]; } }
         public string ButtonTipOpen { get { return _text["ButtonTipOpen"]; } }
@@ -210,6 +220,10 @@ namespace UIconEdit.Maker
 
         public string Preview { get { return _text["Preview"]; } }
 
+        public string Settings { get { return _text["Settings"]; } }
+        public string SettingsLanguage { get { return _text["SettingsLanguage"]; } }
+        public string SettingsKeepChecked { get { return _text["SettingsKeepChecked"]; } }
+
         public string ButtonOK { get { return _text["ButtonOK"]; } }
         public string ButtonCancel { get { return _text["ButtonCancel"]; } }
         public string ButtonYes { get { return _text["ButtonYes"]; } }
@@ -217,6 +231,7 @@ namespace UIconEdit.Maker
         public string ButtonNoSave { get { return _text["ButtonNoSave"]; } }
         public string ButtonOverwrite { get { return _text["ButtonOverwrite"]; } }
         public string ButtonPreview { get { return _text["ButtonPreview"]; } }
+        public string ButtonApply { get { return _text["ButtonApply"]; } }
 
         public string FormatBitsPerPixel { get { return _text["FormatBitsPerPixel"]; } }
         public string FormatSize { get { return _text["FormatSize"]; } }

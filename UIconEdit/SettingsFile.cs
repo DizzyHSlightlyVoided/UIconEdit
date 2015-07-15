@@ -43,16 +43,43 @@ namespace UIconEdit.Maker
 {
     class SettingsFile : DependencyObject
     {
-        private static string SettingsPath =
-            Path.Combine(Path.GetDirectoryName(typeof(SettingsFile).Assembly.Location), "settings.json");
+        private static string SettingsPath = Path.Combine(
+#if DEBUG
+            Path.GetDirectoryName(typeof(SettingsFile).Assembly.Location),
+#else
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UIconEdit",
+#endif
+            "settings.json");
 
         public SettingsFile(MainWindow owner)
         {
             _owner = owner;
         }
 
+#if !DEBUG
+        private void _dirVerify()
+        {
+            string dir = Path.GetDirectoryName(SettingsPath);
+
+            if (File.Exists(SettingsPath) || Directory.Exists(dir)) return;
+
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
+
+            string[] dirParts = dir.Substring(path.Length).Split(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < dirParts.Length; i++)
+            {
+                path = Path.Combine(path, dirParts[i]);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+            }
+        }
+#endif
         public void Load()
         {
+#if !DEBUG
+            _dirVerify();
+#endif
             try
             {
                 if (!File.Exists(SettingsPath))
@@ -108,6 +135,9 @@ namespace UIconEdit.Maker
             var oldOverride = Mouse.OverrideCursor;
             try
             {
+#if !DEBUG
+                _dirVerify();
+#endif
                 Mouse.OverrideCursor = Cursors.Wait;
                 using (MemoryStream ms = new MemoryStream())
                 {

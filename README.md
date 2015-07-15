@@ -1,10 +1,9 @@
 ﻿UIconEdit
 =========
-A C# application for opening and editing [Windows .CUR and .ICO files](http://en.wikipedia.org/wiki/ICO_%28file_format%29), using the [Windows Presentation Foundation](http://en.wikipedia.org/wiki/Windows_Presentation_Foundation) for image processing. The project is divided into three parts:
+A C# application for opening and editing [Windows .CUR and .ICO files](http://en.wikipedia.org/wiki/ICO_%28file_format%29), using the [Windows Presentation Foundation](http://en.wikipedia.org/wiki/Windows_Presentation_Foundation) for image processing. The project is divided into two parts:
 
 * The UIconEdit.Core library, which allows icon creation and modification in code.
 * The UIconEdit WPF graphical app.
-* The UIconBuilder command-line utility for creating icon or cursor files.
 
 UIconEdit app's functionality
 -----------------------------
@@ -55,4 +54,4 @@ using (IconFile iconFile = IconFile.Load(@"C:\Path\To\Input.ico"))
 
 NOTICE
 ------
-UIconEdit and UIconBuilder are currently **in development**. Parts of the API and functionality may be changed or removed without warning.
+UIconEdit is currently **in development**. Parts of the API and functionality may be changed or removed without warning.

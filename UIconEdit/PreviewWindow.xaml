@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UIconEdit.Maker" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-        mc:Ignorable="d" WindowStartupLocation="CenterOwner" Loaded="window_Loaded" Icon="GradientEdit.ico"
+        mc:Ignorable="d" WindowStartupLocation="CenterOwner" Loaded="window_Loaded" Icon="GradientEdit.ico" ShowInTaskbar="False"
         Title="{Binding Owner.Owner.SettingsFile.LanguageFile.Preview, ElementName=window, FallbackValue=Preview}"
         MinHeight="629" MinWidth="600" Height="629" Width="600">
     <Window.Resources>

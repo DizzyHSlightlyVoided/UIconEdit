@@ -34,7 +34,7 @@ An error occurred when processing the icon file's format.
 An I/O error occurred.
 
 --------------------------------------------------
-## Method: `public static UIconEdit.IconFileBase Load(System.IO.Stream input, System.Action<UIconEdit.IconLoadException> handler)`
+## Method: `public static UIconEdit.IconFileBase Load(System.IO.Stream input, UIconEdit.IconLoadExceptionHandler handler)`
 
 Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified stream.
 * `input`: A stream containing an icon or cursor file.
@@ -61,7 +61,7 @@ An error occurred when processing the icon file's format.
 An I/O error occurred.
 
 --------------------------------------------------
-## Method: `public static UIconEdit.IconFileBase Load(System.String path, System.Action<UIconEdit.IconLoadException> handler)`
+## Method: `public static UIconEdit.IconFileBase Load(System.String path, UIconEdit.IconLoadExceptionHandler handler)`
 
 Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
 * `path`: The path to a cursor or icon file.
@@ -145,6 +145,246 @@ The caller does not have the required permission.
 
 ##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
 An error occurred when processing the icon file's format.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static System.Int32 ExtractIconCount(System.String path)`
+
+Determines the number of icons in the specified EXE or DLL file.
+* `path`: The path to the file to load.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of icons in the specified file.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+--------------------------------------------------
+## Method: `public static System.Int32 ExtractCursorCount(System.String path)`
+
+Determines the number of cursors in the specified EXE or DLL file.
+* `path`: The path to the file to load.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of cursors in the specified file.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.IconFile ExtractIconSingle(System.String path, System.Int32 index, UIconEdit.IconLoadExceptionHandler handler)`
+
+Extracts a single icon from the specified EXE or DLL file.
+* `path`: The path to the file to load.
+* `index`: The index of the icon in `path`.
+* `handler`: A delegate used to handle non-fatal [`IconLoadException`](#type-public-class-uiconediticonloadexception) errors, or `null` to always throw an exception.
+
+**Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): The icon at the specified index in `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than the number of icons in `path`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when loading the icon.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.IconFile ExtractIconSingle(System.String path, System.Int32 index)`
+
+Extracts a single icon from the specified EXE or DLL file.
+* `path`: The path to the file to load.
+* `index`: The index of the icon in `path`.
+
+**Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): The icon at the specified index in `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than the number of icons in `path`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when loading the icon.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.CursorFile ExtractCursorSingle(System.String path, System.Int32 index, UIconEdit.IconLoadExceptionHandler handler)`
+
+Extracts a single cursor from the specified EXE or DLL file.
+* `path`: The path to the file to load.
+* `index`: The index of the cursor in `path`.
+* `handler`: A delegate used to handle non-fatal [`IconLoadException`](#type-public-class-uiconediticonloadexception) errors, or `null` to always throw an exception.
+
+**Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): The cursor at the specified index in `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than the number of cursors in `path`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when loading the icon.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.CursorFile ExtractCursorSingle(System.String path, System.Int32 index)`
+
+Extracts a single cursor from the specified EXE or DLL file.
+* `path`: The path to the file to load.
+* `index`: The index of the cursor in `path`.
+
+**Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): The cursor at the specified index in `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than the number of cursors in `path`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when loading the icon.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.IconFile[] ExtractAllIcons(System.String path, UIconEdit.IconExtractExceptionHandler singleHandler, UIconEdit.IconExtractExceptionHandler allHandler)`
+
+Extracts all icons from the specified EXE or DLL file.
+* `path`: The path to the file from which to load all icons.
+* `singleHandler`: A delegate used to handle [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown by a single icon entry in a single icon file, or `null` to always throw an exception regardless.
+* `allHandler`: A delegate used to handle all other excpetions thrown by a single icon entry in an icon file, or `null` to always throw an exception regardless.
+
+**Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`IconFile`](#type-public-class-uiconediticonfile): An array containing all icon files that could be loaded from `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconExtractException`](#type-public-class-uiconediticonextractexception)
+An error occurred when loading an icon.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.IconFile[] ExtractAllIcons(System.String path)`
+
+Extracts all icons from the specified EXE or DLL file.
+* `path`: The path to the file from which to load all icons.
+
+**Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`IconFile`](#type-public-class-uiconediticonfile): An array containing all icon files that could be loaded from `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconExtractException`](#type-public-class-uiconediticonextractexception)
+An error occurred when loading an icon.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.CursorFile[] ExtractAllCursors(System.String path, UIconEdit.IconExtractExceptionHandler singleHandler, UIconEdit.IconExtractExceptionHandler allHandler)`
+
+Extracts all cursors from the specified EXE or DLL file.
+* `path`: The path to the file from which to load all cursors.
+* `singleHandler`: A delegate used to handle [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown by a single cursor entry in a single cursor file, or `null` to always throw an exception regardless.
+* `allHandler`: A delegate used to handle all other excpetions thrown by a single cursor entry in an cursor file, or `null` to always throw an exception regardless.
+
+**Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`CursorFile`](#type-public-class-uiconeditcursorfile): An array containing all cursor files that could be loaded from `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconExtractException`](#type-public-class-uiconediticonextractexception)
+An error occurred when loading an cursor.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static UIconEdit.CursorFile[] ExtractAllCursors(System.String path)`
+
+Extracts all cursors from the specified EXE or DLL file.
+* `path`: The path to the file from which to load all cursors.
+
+**Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`CursorFile`](#type-public-class-uiconeditcursorfile): An array containing all cursor files that could be loaded from `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconExtractException`](#type-public-class-uiconediticonextractexception)
+An error occurred when loading an cursor.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
 An I/O error occurred.
@@ -817,6 +1057,16 @@ Gets an object whose value caused the error, or `null` if there was no such valu
 Gets a value indicating the type of the icon file.
 
 --------------------------------------------------
+# Type: `public class UIconEdit.IconExtractException`
+
+The exception that is thrown when an icon file extracted from an EXE or DLL file contains invalid data.
+
+--------------------------------------------------
+## Property: `public System.Int32 ExtractIndex { get; }`
+
+The index in the DLL or EXE file of the loaded icon or cursor.
+
+--------------------------------------------------
 # Type: `public enum UIconEdit.IconErrorCode`
 
 Indicates the cause of an [`IconLoadException`](#type-public-class-uiconediticonloadexception).
@@ -928,6 +1178,12 @@ A delegate function for handling [`IconLoadException`](#type-public-class-uicone
 * `e`: An [`IconLoadException`](#type-public-class-uiconediticonloadexception) containing information about the error.
 
 --------------------------------------------------
+# Type: `public class UIconEdit.IconExtractExceptionHandler`
+
+A delegate function for handling [`IconExtractException`](#type-public-class-uiconediticonextractexception) errors.
+* `e`: An [`IconExtractException`](#type-public-class-uiconediticonextractexception) containing information about the error.
+
+--------------------------------------------------
 # Type: `public class UIconEdit.CursorFile`
 
 Represents a cursor file.
@@ -964,7 +1220,7 @@ An error occurred when processing the cursor file's format.
 An I/O error occurred.
 
 --------------------------------------------------
-## Method: `public static UIconEdit.CursorFile Load(System.IO.Stream input, System.Action<UIconEdit.IconLoadException> handler)`
+## Method: `public static UIconEdit.CursorFile Load(System.IO.Stream input, UIconEdit.IconLoadExceptionHandler handler)`
 
 Loads a [`CursorFile`](#type-public-class-uiconeditcursorfile) from the specified stream.
 * `input`: A stream containing an cursor file.
@@ -991,7 +1247,7 @@ An error occurred when processing the cursor file's format.
 An I/O error occurred.
 
 --------------------------------------------------
-## Method: `public static UIconEdit.CursorFile Load(System.String path, System.Action<UIconEdit.IconLoadException> handler)`
+## Method: `public static UIconEdit.CursorFile Load(System.String path, UIconEdit.IconLoadExceptionHandler handler)`
 
 Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
 * `path`: The path to a cursor file.
@@ -1129,7 +1385,7 @@ An error occurred when processing the icon file's format.
 An I/O error occurred.
 
 --------------------------------------------------
-## Method: `public static UIconEdit.IconFile Load(System.IO.Stream input, System.Action<UIconEdit.IconLoadException> handler)`
+## Method: `public static UIconEdit.IconFile Load(System.IO.Stream input, UIconEdit.IconLoadExceptionHandler handler)`
 
 Loads a [`IconFile`](#type-public-class-uiconediticonfile) from the specified stream.
 * `input`: A stream containing an icon file.
@@ -1156,7 +1412,7 @@ An error occurred when processing the icon file's format.
 An I/O error occurred.
 
 --------------------------------------------------
-## Method: `public static UIconEdit.IconFile Load(System.String path, System.Action<UIconEdit.IconLoadException> handler)`
+## Method: `public static UIconEdit.IconFile Load(System.String path, UIconEdit.IconLoadExceptionHandler handler)`
 
 Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
 * `path`: The path to a icon file.

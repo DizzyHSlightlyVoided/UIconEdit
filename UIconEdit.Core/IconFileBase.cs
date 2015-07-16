@@ -601,6 +601,417 @@ namespace UIconEdit
         }
         #endregion
 
+        #region Extract
+        private static int _extractCount(string path, IntPtr lpszType)
+        {
+            if (path == null) throw new ArgumentNullException("path");
+
+            IntPtr hModule = IntPtr.Zero;
+
+            try
+            {
+                hModule = WinFuncs.LoadLibraryEx(path, IntPtr.Zero, WinFuncs.LOAD_LIBRARY_AS_DATAFILE);
+
+                if (hModule == IntPtr.Zero)
+                    throw new Win32Exception();
+
+                return _extractNames(hModule, lpszType).Count;
+            }
+            finally
+            {
+                if (hModule != IntPtr.Zero)
+                    WinFuncs.FreeLibrary(hModule);
+            }
+        }
+
+        private static HashSet<IntPtr> _extractNames(IntPtr hModule, IntPtr lpszType)
+        {
+            LinkedList<IntPtr> names = new LinkedList<IntPtr>();
+
+            ENUMRESNAMEPROC callback = delegate (IntPtr h, IntPtr t, IntPtr name, IntPtr l)
+            {
+                names.AddLast(name);
+                return true;
+            };
+
+            if (!WinFuncs.EnumResourceNames(hModule, lpszType, callback, IntPtr.Zero))
+                throw new Win32Exception();
+
+            return new HashSet<IntPtr>(names);
+        }
+
+        /// <summary>
+        /// Determines the number of icons in the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <returns>The number of icons in the specified file.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        public static int ExtractIconCount(string path)
+        {
+            return _extractCount(path, (IntPtr)WinFuncs.RT_GROUP_ICON);
+        }
+
+        /// <summary>
+        /// Determines the number of cursors in the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <returns>The number of cursors in the specified file.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        public static int ExtractCursorCount(string path)
+        {
+            return _extractCount(path, (IntPtr)WinFuncs.RT_GROUP_CURSOR);
+        }
+
+        private static IconFileBase _extractSingle(IntPtr hModule, IntPtr lpszType, IntPtr name, IconTypeCode typeCode, IconLoadExceptionHandler handler)
+        {
+            using (MemoryStream dirStream = WinFuncs.ExtractData(hModule, lpszType, name))
+            using (BinaryReader dirReader = new BinaryReader(dirStream))
+            {
+                uint head = dirReader.ReadUInt32();
+                ushort entryCount = dirReader.ReadUInt16();
+                IntPtr tSingle = lpszType - 11;
+
+                int iconLength = 6 + (entryCount * 16), picOffset = iconLength;
+                for (int i = 0; i < entryCount; i++)
+                {
+                    int iOff = (14 * i) + 6 + 8;
+
+                    dirStream.Seek(iOff, SeekOrigin.Begin);
+
+                    iconLength += dirReader.ReadInt32();
+                }
+
+                using (MemoryStream iconStream = new MemoryStream(iconLength))
+                using (BinaryWriter iconWriter = new BinaryWriter(iconStream))
+                {
+                    iconStream.SetLength(picOffset);
+
+                    iconWriter.Write(head);
+                    iconWriter.Write(entryCount);
+
+                    for (int i = 0; i < entryCount; i++)
+                    {
+                        int dOff = (14 * i) + 6;
+                        int iOff = (16 * i) + 6;
+
+                        dirStream.Seek(dOff + 12, SeekOrigin.Begin);
+                        ushort id = dirReader.ReadUInt16();
+
+                        using (MemoryStream picStream = WinFuncs.ExtractData(hModule, tSingle, (IntPtr)id))
+                        {
+                            iconStream.Seek(iOff, SeekOrigin.Begin);
+                            iconStream.Write(dirStream.GetBuffer(), dOff, 8); //First 8 bytes are the same.
+                            iconWriter.Write((int)picStream.Length);
+                            iconWriter.Write(picOffset);
+
+                            iconStream.Seek(picOffset, SeekOrigin.Begin);
+                            picStream.CopyTo(iconStream);
+
+                            picOffset += (int)picStream.Length;
+                        }
+                    }
+
+                    iconStream.Seek(0, SeekOrigin.Begin);
+                    return Load(iconStream, typeCode, handler);
+                }
+            }
+        }
+
+        private static IconFileBase _extractSingle(string path, int index, IntPtr lpszType, IconTypeCode typeCode, IconLoadExceptionHandler handler)
+        {
+            if (path == null) throw new ArgumentNullException("path");
+            IntPtr hModule = IntPtr.Zero;
+            try
+            {
+                hModule = WinFuncs.LoadLibraryEx(path, IntPtr.Zero, WinFuncs.LOAD_LIBRARY_AS_DATAFILE);
+
+                var names = _extractNames(hModule, lpszType).ToList();
+
+                return _extractSingle(hModule, lpszType, names[index], typeCode, handler);
+            }
+            finally
+            {
+                if (hModule != IntPtr.Zero)
+                    WinFuncs.FreeLibrary(hModule);
+            }
+        }
+
+        /// <summary>
+        /// Extracts a single icon from the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <param name="index">The index of the icon in <paramref name="path"/>.</param>
+        /// <param name="handler">A delegate used to handle non-fatal <see cref="IconLoadException"/> errors, 
+        /// or <c>null</c> to always throw an exception.</param>
+        /// <returns>The icon at the specified index in <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static IconFile ExtractIconSingle(string path, int index, IconLoadExceptionHandler handler)
+        {
+            return (IconFile)_extractSingle(path, index, (IntPtr)WinFuncs.RT_GROUP_ICON, IconTypeCode.Icon, handler);
+        }
+
+        /// <summary>
+        /// Extracts a single icon from the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <param name="index">The index of the icon in <paramref name="path"/>.</param>
+        /// <returns>The icon at the specified index in <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static IconFile ExtractIconSingle(string path, int index)
+        {
+            return ExtractIconSingle(path, index, null);
+        }
+
+        /// <summary>
+        /// Extracts a single cursor from the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <param name="index">The index of the cursor in <paramref name="path"/>.</param>
+        /// <param name="handler">A delegate used to handle non-fatal <see cref="IconLoadException"/> errors, 
+        /// or <c>null</c> to always throw an exception.</param>
+        /// <returns>The cursor at the specified index in <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or is greater than the number of cursors in <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static CursorFile ExtractCursorSingle(string path, int index, IconLoadExceptionHandler handler)
+        {
+            return (CursorFile)_extractSingle(path, index, (IntPtr)WinFuncs.RT_GROUP_CURSOR, IconTypeCode.Cursor, handler);
+        }
+
+        /// <summary>
+        /// Extracts a single cursor from the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <param name="index">The index of the cursor in <paramref name="path"/>.</param>
+        /// <returns>The cursor at the specified index in <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or is greater than the number of cursors in <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static CursorFile ExtractCursorSingle(string path, int index)
+        {
+            return ExtractCursorSingle(path, index, null);
+        }
+
+        private static TIconFile[] _extractAll<TIconFile>(string path, IntPtr lpszType, IconTypeCode typeCode,
+            IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
+            where TIconFile : IconFileBase
+        {
+            int curIndex = 0;
+
+            IconLoadExceptionHandler sHandler = null;
+            if (singleHandler != null)
+            {
+                sHandler = delegate (IconLoadException e)
+                {
+                    singleHandler(new IconExtractException(e, curIndex));
+                };
+            }
+
+            IntPtr hModule = IntPtr.Zero;
+            LinkedList<IconFileBase> allItems = new LinkedList<IconFileBase>();
+
+            int curDex = 0;
+            try
+            {
+                hModule = WinFuncs.LoadLibraryEx(path, IntPtr.Zero, WinFuncs.LOAD_LIBRARY_AS_DATAFILE);
+
+                HashSet<IntPtr> names = _extractNames(hModule, lpszType);
+
+                foreach (IntPtr curName in names)
+                {
+                    try
+                    {
+                        allItems.AddLast(_extractSingle(hModule, lpszType, curName, typeCode, sHandler));
+                    }
+                    catch (Exception e)
+                    {
+                        IconExtractException x;
+                        if (e is IconLoadException)
+                            x = new IconExtractException((IconLoadException)e, curDex);
+                        else
+                            x = new IconExtractException(e, curDex);
+
+                        if (allHandler != null)
+                            allHandler(x);
+                        else
+                            throw x;
+                    }
+                    curDex++;
+                }
+            }
+            finally
+            {
+                if (hModule != null)
+                    WinFuncs.FreeLibrary(hModule);
+            }
+
+            TIconFile[] returner = new TIconFile[allItems.Count];
+            int i = 0;
+            foreach (TIconFile curFile in allItems)
+                returner[i++] = curFile;
+
+            return returner;
+        }
+
+        /// <summary>
+        /// Extracts all icons from the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file from which to load all icons.</param>
+        /// <param name="singleHandler">A delegate used to handle <see cref="IconLoadException"/>s thrown by a single icon entry in a single icon file,
+        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// <param name="allHandler">A delegate used to handle all other excpetions thrown by a single icon entry in an icon file,
+        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// <returns>An array containing all icon files that could be loaded from <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconExtractException">
+        /// An error occurred when loading an icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static IconFile[] ExtractAllIcons(string path, IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
+        {
+            return _extractAll<IconFile>(path, (IntPtr)WinFuncs.RT_GROUP_ICON, IconTypeCode.Icon, singleHandler, allHandler);
+        }
+
+        /// <summary>
+        /// Extracts all icons from the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file from which to load all icons.</param>
+        /// <returns>An array containing all icon files that could be loaded from <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconExtractException">
+        /// An error occurred when loading an icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static IconFile[] ExtractAllIcons(string path)
+        {
+            return ExtractAllIcons(path, null, null);
+        }
+
+        /// <summary>
+        /// Extracts all cursors from the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file from which to load all cursors.</param>
+        /// <param name="singleHandler">A delegate used to handle <see cref="IconLoadException"/>s thrown by a single cursor entry in a single cursor file,
+        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// <param name="allHandler">A delegate used to handle all other excpetions thrown by a single cursor entry in an cursor file,
+        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// <returns>An array containing all cursor files that could be loaded from <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconExtractException">
+        /// An error occurred when loading an cursor.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static CursorFile[] ExtractAllCursors(string path, IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
+        {
+            return _extractAll<CursorFile>(path, (IntPtr)WinFuncs.RT_GROUP_CURSOR, IconTypeCode.Cursor, singleHandler, allHandler);
+        }
+
+        /// <summary>
+        /// Extracts all cursors from the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file from which to load all cursors.</param>
+        /// <returns>An array containing all cursor files that could be loaded from <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconExtractException">
+        /// An error occurred when loading an cursor.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static CursorFile[] ExtractAllCursors(string path)
+        {
+            return ExtractAllCursors(path, null, null);
+        }
+        #endregion
+
         /// <summary>
         /// When overridden in a derived class,
         /// returns a duplicate of the current instance.
@@ -1786,7 +2197,7 @@ namespace UIconEdit
     /// <summary>
     /// The exception that is thrown when an icon file contains invalid data.
     /// </summary>
-    public sealed class IconLoadException : FileFormatException
+    public class IconLoadException : FileFormatException
     {
         private static string DefaultMessage { get { return new FileFormatException().Message; } }
 
@@ -1905,7 +2316,6 @@ namespace UIconEdit
         {
         }
 
-#if DEBUG
         internal IconLoadException(IconLoadException e)
             : base(e.BaseMessage, e)
         {
@@ -1916,7 +2326,6 @@ namespace UIconEdit
         }
 
         internal string BaseMessage { get { return base.Message; } }
-#endif
 
         /// <summary>
         /// Gets a message describing the error.
@@ -1967,6 +2376,30 @@ namespace UIconEdit
         /// Gets a value indicating the type of the icon file.
         /// </summary>
         public IconTypeCode TypeCode { get { return _typeCode; } }
+    }
+
+    /// <summary>
+    /// The exception that is thrown when an icon file extracted from an EXE or DLL file contains invalid data.
+    /// </summary>
+    public class IconExtractException : IconLoadException
+    {
+        internal IconExtractException(IconLoadException e, int index)
+            : base(e)
+        {
+            _extractIndex = index;
+        }
+
+        internal IconExtractException(Exception e, int index)
+            : base(e.Message, e)
+        {
+            _extractIndex = index;
+        }
+
+        private int _extractIndex;
+        /// <summary>
+        /// The index in the DLL or EXE file of the loaded icon or cursor.
+        /// </summary>
+        public int ExtractIndex { get { return _extractIndex; } }
     }
 
     /// <summary>
@@ -2083,4 +2516,10 @@ namespace UIconEdit
     /// </summary>
     /// <param name="e">An <see cref="IconLoadException"/> containing information about the error.</param>
     public delegate void IconLoadExceptionHandler(IconLoadException e);
+
+    /// <summary>
+    /// A delegate function for handling <see cref="IconExtractException"/> errors.
+    /// </summary>
+    /// <param name="e">An <see cref="IconExtractException"/> containing information about the error.</param>
+    public delegate void IconExtractExceptionHandler(IconExtractException e);
 }

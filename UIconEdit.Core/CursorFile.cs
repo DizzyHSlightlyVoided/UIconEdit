@@ -92,7 +92,7 @@ namespace UIconEdit
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
-        public static new CursorFile Load(Stream input, Action<IconLoadException> handler)
+        public static new CursorFile Load(Stream input, IconLoadExceptionHandler handler)
         {
             return (CursorFile)Load(input, IconTypeCode.Cursor, handler);
         }
@@ -134,7 +134,7 @@ namespace UIconEdit
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
-        public static new CursorFile Load(string path, Action<IconLoadException> handler)
+        public static new CursorFile Load(string path, IconLoadExceptionHandler handler)
         {
             using (FileStream fs = File.OpenRead(path))
                 return (CursorFile)Load(fs, IconTypeCode.Cursor, handler);

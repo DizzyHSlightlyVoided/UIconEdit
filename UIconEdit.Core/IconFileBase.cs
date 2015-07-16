@@ -106,7 +106,7 @@ namespace UIconEdit
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
-        public static IconFileBase Load(Stream input, Action<IconLoadException> handler)
+        public static IconFileBase Load(Stream input, IconLoadExceptionHandler handler)
         {
             return Load(input, null, handler);
         }
@@ -147,7 +147,7 @@ namespace UIconEdit
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
-        public static IconFileBase Load(string path, Action<IconLoadException> handler)
+        public static IconFileBase Load(string path, IconLoadExceptionHandler handler)
         {
             using (FileStream fs = File.OpenRead(path))
                 return Load(fs, handler);
@@ -192,7 +192,7 @@ namespace UIconEdit
             return Load(path, null);
         }
 
-        internal static IconFileBase Load(Stream input, IconTypeCode? id, Action<IconLoadException> handler)
+        internal static IconFileBase Load(Stream input, IconTypeCode? id, IconLoadExceptionHandler handler)
         {
 #if DEBUG
             Stopwatch sw = Stopwatch.StartNew();

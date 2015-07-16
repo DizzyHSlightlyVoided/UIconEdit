@@ -56,16 +56,13 @@ namespace UIconEdit.Test
                 Console.WriteLine();
                 Console.WriteLine("Press any key to continue ...");
                 Console.ReadKey();
+                Console.WriteLine();
             }
             Console.WriteLine("Loading file Gradient.ico ...");
             {
                 IconFile iconFile = IconFile.Load("Gradient.ico");
-                IconEntry[] entries = iconFile.Entries.ToArray();
-                for (int i = 0; i < entries.Length; i++)
-                {
-                    var entry = entries[i];
+                foreach (IconEntry entry in iconFile.Entries)
                     Save(entry, string.Format("Gradient{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height));
-                }
                 Console.WriteLine("Saving GradientOut.ico ...");
                 iconFile.Save("GradientOut.ico");
             }
@@ -73,12 +70,8 @@ namespace UIconEdit.Test
             Console.WriteLine("Loading file Crosshair.cur ...");
             {
                 CursorFile cursorFile = CursorFile.Load("Crosshair.cur");
-                IconEntry[] cursorEntries = cursorFile.Entries.ToArray();
-                for (int i = 0; i < cursorEntries.Length; i++)
-                {
-                    var entry = cursorEntries[i];
+                foreach (IconEntry entry in cursorFile.Entries)
                     Save(entry, string.Format("Crosshair{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height));
-                }
 
                 Console.WriteLine("Saving CrosshairOut.cur ...");
                 cursorFile.Save("CrosshairOut.cur");

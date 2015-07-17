@@ -46,6 +46,7 @@
     <Compile Include="CursorFile.cs" />
     <Compile Include="IconFile.cs" />
     <Compile Include="IconEntry.cs" />
+    <Compile Include="IconLoadException.cs" />
     <Compile Include="OffsetStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WinFuncs.cs" />

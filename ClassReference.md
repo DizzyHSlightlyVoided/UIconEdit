@@ -1038,228 +1038,6 @@ Indicates an icon (.ICO) file.
 Indicates a cursor (.CUR) file.
 
 --------------------------------------------------
-# Type: `public class UIconEdit.IconLoadException`
-
-The exception that is thrown when an icon file contains invalid data.
-
---------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value, System.Int32 index)`
-
-Creates a new instance using a message which describes the error and the specified error code.
-* `message`: A message describing the error.
-* `code`: The error code used to identify the cause of the error.
-* `typeCode`: The type code of the file which caused the error.
-* `value`: The value which caused the error.
-* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
-
---------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value)`
-
-Creates a new instance using a message which describes the error and the specified error code.
-* `message`: A message describing the error.
-* `code`: The error code used to identify the cause of the error.
-* `typeCode`: The type code of the file which caused the error.
-* `value`: The value which caused the error.
-
---------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Int32 index)`
-
-Creates a new instance using a message which describes the error and the specified error code.
-* `message`: A message describing the error.
-* `code`: The error code used to identify the cause of the error.
-* `typeCode`: The type code of the file which caused the error.
-* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
-
---------------------------------------------------
-## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value, System.Int32 index)`
-
-Creates a new instance with the default message and the specified error code.
-* `code`: The error code used to identify the cause of the error.
-* `typeCode`: The type code of the file which caused the error.
-* `value`: The value which caused the error.
-* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
-
---------------------------------------------------
-## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Int32 index)`
-
-Creates a new instance with the default message and the specified error code.
-* `code`: The error code used to identify the cause of the error.
-* `typeCode`: The type code of the file which caused the error.
-* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
-
---------------------------------------------------
-## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value)`
-
-Creates a new instance with the default message and the specified error code.
-* `code`: The error code used to identify the cause of the error.
-* `typeCode`: The type code of the file which caused the error.
-* `value`: The value which caused the error.
-
---------------------------------------------------
-## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode)`
-
-Creates a new instance with the default message and the specified error code.
-* `code`: The error code used to identify the cause of the error.
-* `typeCode`: The type code of the file which caused the error.
-
---------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode index, System.Int32 innerException, System.Exception typeCode)`
-
-Creates a new instance with the specified message and error code and a reference to the exception which caused this error.
-* `message`: A message describing the error.
-* `code`: The error code used to identify the cause of the error.
-* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
-* `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
-* `typeCode`: The type code of the file which caused the error.
-
---------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, System.Exception innerException)`
-
-Creates a new instance with the specified message and a reference to the exception which caused this error.
-* `message`: A message describing the error.
-* `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
-
---------------------------------------------------
-## Property: `public virtual System.String Message { get; }`
-
-Gets a message describing the error.
-
---------------------------------------------------
-## Property: `public UIconEdit.IconErrorCode Code { get; }`
-
-Gets an error code describing the icon error.
-
---------------------------------------------------
-## Property: `public System.Int32 Index { get; }`
-
-Gets the index in the icon file of the icon entry which caused this exception, or -1 if it occurred before the icon entries were processed.
-
---------------------------------------------------
-## Property: `public System.Object Value { get; }`
-
-Gets an object whose value caused the error, or `null` if there was no such value.
-
---------------------------------------------------
-## Property: `public UIconEdit.IconTypeCode TypeCode { get; }`
-
-Gets a value indicating the type of the icon file.
-
---------------------------------------------------
-# Type: `public class UIconEdit.IconExtractException`
-
-The exception that is thrown when an icon file extracted from an EXE or DLL file contains invalid data.
-
---------------------------------------------------
-## Property: `public System.Int32 ExtractIndex { get; }`
-
-The index in the DLL or EXE file of the loaded icon or cursor.
-
---------------------------------------------------
-# Type: `public enum UIconEdit.IconErrorCode`
-
-Indicates the cause of an [`IconLoadException`](#type-public-class-uiconediticonloadexception).
-
---------------------------------------------------
-## Field: `IconErrorCode.Unknown = 0`
-
-Code 0: the cause of the error is unknown.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidFormat = 1`
-
-Code 0x1: The file is not a valid cursor or icon format. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.ZeroEntries = 2`
-
-Code 0x2: The icon contains zero entries. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.ResourceTooSmall = 3`
-
-Code 0x3: One of the icon directory entries has a length less than or equal to 40 bytes, which is logically too small for either a BMP or a PNG file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the length. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.ResourceTooEarly = 4`
-
-Code 0x4: One of the icon directory entries has a starting offset which would overlap with the list of entries. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the offset. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.ResourceOverlap = 5`
-
-Code 0x5: One or more of the icon directory entries have overlapping offset/length combinations. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.WrongType = 6`
-
-Code 0x6: An icon was expected but a cursor was loaded, or vice versa. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the expected value. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidEntryType = 4096`
-
-Code 0x1000: the file type of an entry is invalid.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidBitDepth = 4097`
-
-Code 0x1001: the file is an icon, and an icon directory entry has a bit depth with any value other than 0, 1, 4, 8, 24, or 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
-
---------------------------------------------------
-## Field: `IconErrorCode.ZeroValidEntries = 4098`
-
-There are no remaining valid entries after processing. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidPngFile = 4352`
-
-Code 0x1100: an error occurred when attempting to load a PNG entry. The inner exception may contain more information.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidPngSize = 4354`
-
-Code 0x1102: the width or height of a PNG entry is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768). [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the size of the image.
-
---------------------------------------------------
-## Field: `IconErrorCode.PngSizeMismatch = 4355`
-
-Code 0x1105: the width or height of a PNG entry does not match the width or height listed in the icon directory entry.
-
---------------------------------------------------
-## Field: `IconErrorCode.PngBitDepthMismatch = 4357`
-
-Code 0x1205: there is a mismatch between the bit depth of a PNG entry and the expected bit depth of the file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the bit depth listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the bit depth listed in the PNG entry.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpFile = 4608`
-
-Code 0x1200: an error occurred when attempting to process a BMP entry. The inner exception may contain more information.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpBitDepth = 4609`
-
-Code 0x1201: the bit depth of a BMP entry is not supported. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpSize = 4610`
-
-Code 0x1202: the width or height of a BMP entry is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768). The maximum height is doubled in images with a bit depth less than 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the size of the image.
-
---------------------------------------------------
-## Field: `IconErrorCode.BmpSizeMismatch = 4611`
-
-Code 0x1203: the width or height of a BMP entry does not match the width or height listed in the icon directory entry. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the size listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpHeightOdd = 4612`
-
-Code 0x1204: the height of a BMP entry is an odd number, indicating that there is no AND (transparency) mask. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the [`BitmapSource.PixelHeight`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.pixelheight.aspx) of the image.
-
---------------------------------------------------
-## Field: `IconErrorCode.BmpBitDepthMismatch = 4613`
-
-Code 0x1205: there is a mismatch between the bit depth of a BMP entry and the expected bit depth of the file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the bit depth listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the bit depth listed in the BMP entry.
-
---------------------------------------------------
 # Type: `public class UIconEdit.IconLoadExceptionHandler`
 
 A delegate function for handling [`IconLoadException`](#type-public-class-uiconediticonloadexception) errors.
@@ -2350,3 +2128,225 @@ Specifies high-quality bilinear interpolation. Prefiltering is performed to ensu
 ## Field: `ScalingFilter.HighQualityBicubic = 5`
 
 Specifies high-quality bicubic interpolation. Prefiltering is performed to ensure high-quality transformation.
+
+--------------------------------------------------
+# Type: `public class UIconEdit.IconLoadException`
+
+The exception that is thrown when an icon file contains invalid data.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value, System.Int32 index)`
+
+Creates a new instance using a message which describes the error and the specified error code.
+* `message`: A message describing the error.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+* `value`: The value which caused the error.
+* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value)`
+
+Creates a new instance using a message which describes the error and the specified error code.
+* `message`: A message describing the error.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+* `value`: The value which caused the error.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Int32 index)`
+
+Creates a new instance using a message which describes the error and the specified error code.
+* `message`: A message describing the error.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value, System.Int32 index)`
+
+Creates a new instance with the default message and the specified error code.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+* `value`: The value which caused the error.
+* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Int32 index)`
+
+Creates a new instance with the default message and the specified error code.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value)`
+
+Creates a new instance with the default message and the specified error code.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+* `value`: The value which caused the error.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode)`
+
+Creates a new instance with the default message and the specified error code.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode index, System.Int32 innerException, System.Exception typeCode)`
+
+Creates a new instance with the specified message and error code and a reference to the exception which caused this error.
+* `message`: A message describing the error.
+* `code`: The error code used to identify the cause of the error.
+* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
+* `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
+* `typeCode`: The type code of the file which caused the error.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(System.String message, System.Exception innerException)`
+
+Creates a new instance with the specified message and a reference to the exception which caused this error.
+* `message`: A message describing the error.
+* `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
+
+--------------------------------------------------
+## Property: `public virtual System.String Message { get; }`
+
+Gets a message describing the error.
+
+--------------------------------------------------
+## Property: `public UIconEdit.IconErrorCode Code { get; }`
+
+Gets an error code describing the icon error.
+
+--------------------------------------------------
+## Property: `public System.Int32 Index { get; }`
+
+Gets the index in the icon file of the icon entry which caused this exception, or -1 if it occurred before the icon entries were processed.
+
+--------------------------------------------------
+## Property: `public System.Object Value { get; }`
+
+Gets an object whose value caused the error, or `null` if there was no such value.
+
+--------------------------------------------------
+## Property: `public UIconEdit.IconTypeCode TypeCode { get; }`
+
+Gets a value indicating the type of the icon file.
+
+--------------------------------------------------
+# Type: `public class UIconEdit.IconExtractException`
+
+The exception that is thrown when an icon file extracted from an EXE or DLL file contains invalid data.
+
+--------------------------------------------------
+## Property: `public System.Int32 ExtractIndex { get; }`
+
+The index in the DLL or EXE file of the loaded icon or cursor.
+
+--------------------------------------------------
+# Type: `public enum UIconEdit.IconErrorCode`
+
+Indicates the cause of an [`IconLoadException`](#type-public-class-uiconediticonloadexception).
+
+--------------------------------------------------
+## Field: `IconErrorCode.Unknown = 0`
+
+Code 0: the cause of the error is unknown.
+
+--------------------------------------------------
+## Field: `IconErrorCode.InvalidFormat = 1`
+
+Code 0x1: The file is not a valid cursor or icon format. This is a fatal error, and the icon file cannot continue processing when it occurs.
+
+--------------------------------------------------
+## Field: `IconErrorCode.ZeroEntries = 2`
+
+Code 0x2: The icon contains zero entries. This is a fatal error, and the icon file cannot continue processing when it occurs.
+
+--------------------------------------------------
+## Field: `IconErrorCode.ResourceTooSmall = 3`
+
+Code 0x3: One of the icon directory entries has a length less than or equal to 40 bytes, which is logically too small for either a BMP or a PNG file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the length. This is a fatal error, and the icon file cannot continue processing when it occurs.
+
+--------------------------------------------------
+## Field: `IconErrorCode.ResourceTooEarly = 4`
+
+Code 0x4: One of the icon directory entries has a starting offset which would overlap with the list of entries. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the offset. This is a fatal error, and the icon file cannot continue processing when it occurs.
+
+--------------------------------------------------
+## Field: `IconErrorCode.ResourceOverlap = 5`
+
+Code 0x5: One or more of the icon directory entries have overlapping offset/length combinations. This is a fatal error, and the icon file cannot continue processing when it occurs.
+
+--------------------------------------------------
+## Field: `IconErrorCode.WrongType = 6`
+
+Code 0x6: An icon was expected but a cursor was loaded, or vice versa. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the expected value. This is a fatal error, and the icon file cannot continue processing when it occurs.
+
+--------------------------------------------------
+## Field: `IconErrorCode.InvalidEntryType = 4096`
+
+Code 0x1000: the file type of an entry is invalid.
+
+--------------------------------------------------
+## Field: `IconErrorCode.InvalidBitDepth = 4097`
+
+Code 0x1001: the file is an icon, and an icon directory entry has a bit depth with any value other than 0, 1, 4, 8, 24, or 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
+
+--------------------------------------------------
+## Field: `IconErrorCode.ZeroValidEntries = 4098`
+
+There are no remaining valid entries after processing. This is a fatal error, and the icon file cannot continue processing when it occurs.
+
+--------------------------------------------------
+## Field: `IconErrorCode.InvalidPngFile = 4352`
+
+Code 0x1100: an error occurred when attempting to load a PNG entry. The inner exception may contain more information.
+
+--------------------------------------------------
+## Field: `IconErrorCode.InvalidPngSize = 4354`
+
+Code 0x1102: the width or height of a PNG entry is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768). [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the size of the image.
+
+--------------------------------------------------
+## Field: `IconErrorCode.PngSizeMismatch = 4355`
+
+Code 0x1105: the width or height of a PNG entry does not match the width or height listed in the icon directory entry.
+
+--------------------------------------------------
+## Field: `IconErrorCode.PngBitDepthMismatch = 4357`
+
+Code 0x1205: there is a mismatch between the bit depth of a PNG entry and the expected bit depth of the file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the bit depth listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the bit depth listed in the PNG entry.
+
+--------------------------------------------------
+## Field: `IconErrorCode.InvalidBmpFile = 4608`
+
+Code 0x1200: an error occurred when attempting to process a BMP entry. The inner exception may contain more information.
+
+--------------------------------------------------
+## Field: `IconErrorCode.InvalidBmpBitDepth = 4609`
+
+Code 0x1201: the bit depth of a BMP entry is not supported. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
+
+--------------------------------------------------
+## Field: `IconErrorCode.InvalidBmpSize = 4610`
+
+Code 0x1202: the width or height of a BMP entry is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768). The maximum height is doubled in images with a bit depth less than 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the size of the image.
+
+--------------------------------------------------
+## Field: `IconErrorCode.BmpSizeMismatch = 4611`
+
+Code 0x1203: the width or height of a BMP entry does not match the width or height listed in the icon directory entry. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the size listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
+
+--------------------------------------------------
+## Field: `IconErrorCode.InvalidBmpHeightOdd = 4612`
+
+Code 0x1204: the height of a BMP entry is an odd number, indicating that there is no AND (transparency) mask. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the [`BitmapSource.PixelHeight`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.pixelheight.aspx) of the image.
+
+--------------------------------------------------
+## Field: `IconErrorCode.BmpBitDepthMismatch = 4613`
+
+Code 0x1205: there is a mismatch between the bit depth of a BMP entry and the expected bit depth of the file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the bit depth listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the bit depth listed in the BMP entry.

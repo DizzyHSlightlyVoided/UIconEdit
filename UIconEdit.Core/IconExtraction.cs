@@ -36,7 +36,7 @@ using System.Security;
 
 namespace UIconEdit
 {
-    internal class WinFuncs
+    internal class IconExtraction
     {
         public const uint LOAD_LIBRARY_AS_DATAFILE = 0x00000002;
         public const int RT_CURSOR = 1;

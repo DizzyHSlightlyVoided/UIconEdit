@@ -610,7 +610,7 @@ namespace UIconEdit
 
             try
             {
-                hModule = WinFuncs.LoadLibraryEx(path, IntPtr.Zero, WinFuncs.LOAD_LIBRARY_AS_DATAFILE);
+                hModule = IconExtraction.LoadLibraryEx(path, IntPtr.Zero, IconExtraction.LOAD_LIBRARY_AS_DATAFILE);
 
                 if (hModule == IntPtr.Zero)
                     throw new Win32Exception();
@@ -620,7 +620,7 @@ namespace UIconEdit
             finally
             {
                 if (hModule != IntPtr.Zero)
-                    WinFuncs.FreeLibrary(hModule);
+                    IconExtraction.FreeLibrary(hModule);
             }
         }
 
@@ -634,7 +634,7 @@ namespace UIconEdit
                 return true;
             };
 
-            if (!WinFuncs.EnumResourceNames(hModule, lpszType, callback, IntPtr.Zero))
+            if (!IconExtraction.EnumResourceNames(hModule, lpszType, callback, IntPtr.Zero))
                 throw new Win32Exception();
 
             return new HashSet<IntPtr>(names);
@@ -653,7 +653,7 @@ namespace UIconEdit
         /// </exception>
         public static int ExtractIconCount(string path)
         {
-            return _extractCount(path, (IntPtr)WinFuncs.RT_GROUP_ICON);
+            return _extractCount(path, (IntPtr)IconExtraction.RT_GROUP_ICON);
         }
 
         /// <summary>
@@ -669,12 +669,12 @@ namespace UIconEdit
         /// </exception>
         public static int ExtractCursorCount(string path)
         {
-            return _extractCount(path, (IntPtr)WinFuncs.RT_GROUP_CURSOR);
+            return _extractCount(path, (IntPtr)IconExtraction.RT_GROUP_CURSOR);
         }
 
         private static IconFileBase _extractSingle(IntPtr hModule, IntPtr lpszType, IntPtr name, IconTypeCode typeCode, IconLoadExceptionHandler handler)
         {
-            using (MemoryStream dirStream = WinFuncs.ExtractData(hModule, lpszType, name))
+            using (MemoryStream dirStream = IconExtraction.ExtractData(hModule, lpszType, name))
             using (BinaryReader dirReader = new BinaryReader(dirStream))
             {
                 uint head = dirReader.ReadUInt32();
@@ -707,7 +707,7 @@ namespace UIconEdit
                         dirStream.Seek(dOff + 12, SeekOrigin.Begin);
                         ushort id = dirReader.ReadUInt16();
 
-                        using (MemoryStream picStream = WinFuncs.ExtractData(hModule, tSingle, (IntPtr)id))
+                        using (MemoryStream picStream = IconExtraction.ExtractData(hModule, tSingle, (IntPtr)id))
                         {
                             iconStream.Seek(iOff, SeekOrigin.Begin);
                             iconStream.Write(dirStream.GetBuffer(), dOff, 8); //First 8 bytes are the same.
@@ -733,7 +733,7 @@ namespace UIconEdit
             IntPtr hModule = IntPtr.Zero;
             try
             {
-                hModule = WinFuncs.LoadLibraryEx(path, IntPtr.Zero, WinFuncs.LOAD_LIBRARY_AS_DATAFILE);
+                hModule = IconExtraction.LoadLibraryEx(path, IntPtr.Zero, IconExtraction.LOAD_LIBRARY_AS_DATAFILE);
 
                 var names = _extractNames(hModule, lpszType).ToList();
 
@@ -742,7 +742,7 @@ namespace UIconEdit
             finally
             {
                 if (hModule != IntPtr.Zero)
-                    WinFuncs.FreeLibrary(hModule);
+                    IconExtraction.FreeLibrary(hModule);
             }
         }
 
@@ -771,7 +771,7 @@ namespace UIconEdit
         /// </exception>
         public static IconFile ExtractIconSingle(string path, int index, IconLoadExceptionHandler handler)
         {
-            return (IconFile)_extractSingle(path, index, (IntPtr)WinFuncs.RT_GROUP_ICON, IconTypeCode.Icon, handler);
+            return (IconFile)_extractSingle(path, index, (IntPtr)IconExtraction.RT_GROUP_ICON, IconTypeCode.Icon, handler);
         }
 
         /// <summary>
@@ -825,7 +825,7 @@ namespace UIconEdit
         /// </exception>
         public static CursorFile ExtractCursorSingle(string path, int index, IconLoadExceptionHandler handler)
         {
-            return (CursorFile)_extractSingle(path, index, (IntPtr)WinFuncs.RT_GROUP_CURSOR, IconTypeCode.Cursor, handler);
+            return (CursorFile)_extractSingle(path, index, (IntPtr)IconExtraction.RT_GROUP_CURSOR, IconTypeCode.Cursor, handler);
         }
 
         /// <summary>
@@ -869,7 +869,7 @@ namespace UIconEdit
             int curDex = 0;
             try
             {
-                hModule = WinFuncs.LoadLibraryEx(path, IntPtr.Zero, WinFuncs.LOAD_LIBRARY_AS_DATAFILE);
+                hModule = IconExtraction.LoadLibraryEx(path, IntPtr.Zero, IconExtraction.LOAD_LIBRARY_AS_DATAFILE);
 
                 HashSet<IntPtr> names = _extractNames(hModule, lpszType);
 
@@ -898,7 +898,7 @@ namespace UIconEdit
             finally
             {
                 if (hModule != null)
-                    WinFuncs.FreeLibrary(hModule);
+                    IconExtraction.FreeLibrary(hModule);
             }
         }
 
@@ -936,7 +936,7 @@ namespace UIconEdit
         /// </exception>
         public static IconFile[] ExtractAllIcons(string path, IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
         {
-            return _extractAll<IconFile>(path, (IntPtr)WinFuncs.RT_GROUP_ICON, IconTypeCode.Icon, singleHandler, allHandler);
+            return _extractAll<IconFile>(path, (IntPtr)IconExtraction.RT_GROUP_ICON, IconTypeCode.Icon, singleHandler, allHandler);
         }
 
         /// <summary>
@@ -984,7 +984,7 @@ namespace UIconEdit
         /// </exception>
         public static CursorFile[] ExtractAllCursors(string path, IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
         {
-            return _extractAll<CursorFile>(path, (IntPtr)WinFuncs.RT_GROUP_CURSOR, IconTypeCode.Cursor, singleHandler, allHandler);
+            return _extractAll<CursorFile>(path, (IntPtr)IconExtraction.RT_GROUP_CURSOR, IconTypeCode.Cursor, singleHandler, allHandler);
         }
 
         /// <summary>
@@ -1036,7 +1036,7 @@ namespace UIconEdit
             if (path == null) throw new ArgumentNullException("path");
             if (callback == null) throw new ArgumentNullException("callback");
 
-            _forEachIcon(path, (IntPtr)WinFuncs.RT_GROUP_ICON, IconTypeCode.Icon, callback, singleHandler, allHandler);
+            _forEachIcon(path, (IntPtr)IconExtraction.RT_GROUP_ICON, IconTypeCode.Icon, callback, singleHandler, allHandler);
         }
 
         /// <summary>
@@ -1088,7 +1088,7 @@ namespace UIconEdit
             if (path == null) throw new ArgumentNullException("path");
             if (callback == null) throw new ArgumentNullException("callback");
 
-            _forEachIcon(path, (IntPtr)WinFuncs.RT_GROUP_CURSOR, IconTypeCode.Cursor, callback, singleHandler, allHandler);
+            _forEachIcon(path, (IntPtr)IconExtraction.RT_GROUP_CURSOR, IconTypeCode.Cursor, callback, singleHandler, allHandler);
         }
 
         /// <summary>

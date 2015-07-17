@@ -42,10 +42,10 @@ namespace UIconEdit.Test
             {
                 const string path = @"C:\Windows\System32\imageres.dll";
 
-                Console.WriteLine(path + string.Format(" contains {0} icons.", IconFileBase.ExtractIconCount(path)));
+                Console.WriteLine(path + string.Format(" contains {0} icons.", IconExtraction.ExtractIconCount(path)));
 
                 Console.WriteLine("Extracting index 6 from " + path + "...");
-                IconFile iFile = IconFileBase.ExtractIconSingle(path, 6);
+                IconFile iFile = IconExtraction.ExtractIconSingle(path, 6);
                 foreach (IconEntry entry in iFile.Entries)
                     Save(entry, string.Format("Extracted{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height));
                 Console.WriteLine();

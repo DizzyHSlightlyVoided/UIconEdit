@@ -854,7 +854,7 @@ namespace UIconEdit
             return ExtractCursorSingle(path, index, null);
         }
 
-        private static TIconFile[] _extractAll<TIconFile>(string path, IntPtr lpszType, IconTypeCode typeCode,
+        private static void _forEachIcon<TIconFile>(string path, IntPtr lpszType, IconTypeCode typeCode, IconExtractCallback<TIconFile> callback,
             IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
             where TIconFile : IconFileBase
         {
@@ -862,15 +862,9 @@ namespace UIconEdit
 
             IconLoadExceptionHandler sHandler = null;
             if (singleHandler != null)
-            {
-                sHandler = delegate (IconLoadException e)
-                {
-                    singleHandler(new IconExtractException(e, curIndex));
-                };
-            }
+                sHandler = e => singleHandler(new IconExtractException(e, curIndex));
 
             IntPtr hModule = IntPtr.Zero;
-            LinkedList<IconFileBase> allItems = new LinkedList<IconFileBase>();
 
             int curDex = 0;
             try
@@ -883,7 +877,7 @@ namespace UIconEdit
                 {
                     try
                     {
-                        allItems.AddLast(_extractSingle(hModule, lpszType, curName, typeCode, sHandler));
+                        callback(curDex, names.Count, (TIconFile)_extractSingle(hModule, lpszType, curName, typeCode, sHandler));
                     }
                     catch (Exception e)
                     {
@@ -906,13 +900,17 @@ namespace UIconEdit
                 if (hModule != null)
                     WinFuncs.FreeLibrary(hModule);
             }
+        }
 
-            TIconFile[] returner = new TIconFile[allItems.Count];
-            int i = 0;
-            foreach (TIconFile curFile in allItems)
-                returner[i++] = curFile;
+        private static TIconFile[] _extractAll<TIconFile>(string path, IntPtr lpszType, IconTypeCode typeCode,
+            IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
+            where TIconFile : IconFileBase
+        {
+            LinkedList<TIconFile> allItems = new LinkedList<TIconFile>();
 
-            return returner;
+            _forEachIcon<TIconFile>(path, lpszType, typeCode, (curDex, total, icon) => allItems.AddLast(icon), singleHandler, allHandler);
+
+            return allItems.ToArray();
         }
 
         /// <summary>
@@ -969,7 +967,7 @@ namespace UIconEdit
         /// <param name="path">The path to the file from which to load all cursors.</param>
         /// <param name="singleHandler">A delegate used to handle <see cref="IconLoadException"/>s thrown by a single cursor entry in a single cursor file,
         /// or <c>null</c> to always throw an exception regardless.</param>
-        /// <param name="allHandler">A delegate used to handle all other excpetions thrown by a single cursor entry in an cursor file,
+        /// <param name="allHandler">A delegate used to handle all other excpetions thrown by a single cursor entry in a cursor file,
         /// or <c>null</c> to always throw an exception regardless.</param>
         /// <returns>An array containing all cursor files that could be loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
@@ -979,7 +977,7 @@ namespace UIconEdit
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
         /// </exception>
         /// <exception cref="IconExtractException">
-        /// An error occurred when loading an cursor.
+        /// An error occurred when loading a cursor.
         /// </exception>
         /// <exception cref="IOException">
         /// An I/O error occurred.
@@ -1001,7 +999,7 @@ namespace UIconEdit
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
         /// </exception>
         /// <exception cref="IconExtractException">
-        /// An error occurred when loading an cursor.
+        /// An error occurred when loading a cursor.
         /// </exception>
         /// <exception cref="IOException">
         /// An I/O error occurred.
@@ -1009,6 +1007,110 @@ namespace UIconEdit
         public static CursorFile[] ExtractAllCursors(string path)
         {
             return ExtractAllCursors(path, null, null);
+        }
+
+        /// <summary>
+        /// Iterates through each icon in the specified EXE or DLL file, and performs the specified action on each one.
+        /// </summary>
+        /// <param name="path">The path to the file from which to load all icons.</param>
+        /// <param name="callback">An action to perform on each icon.</param>
+        /// <param name="singleHandler">A delegate used to handle <see cref="IconLoadException"/>s thrown by a single icon entry in a single cursor file,
+        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// <param name="allHandler">A delegate used to handle all other excpetions thrown by a single icon entry in an icon file,
+        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> or <paramref name="callback"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconExtractException">
+        /// An error occurred when loading an icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static void ExtractIconsForEach(string path, IconExtractCallback<IconFile> callback,
+            IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
+        {
+            if (path == null) throw new ArgumentNullException("path");
+            if (callback == null) throw new ArgumentNullException("callback");
+
+            _forEachIcon(path, (IntPtr)WinFuncs.RT_GROUP_ICON, IconTypeCode.Icon, callback, singleHandler, allHandler);
+        }
+
+        /// <summary>
+        /// Iterates through each icon in the specified EXE or DLL file, and performs the specified action on each one.
+        /// </summary>
+        /// <param name="path">The path to the file from which to load all icons.</param>
+        /// <param name="callback">An action to perform on each icon.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> or <paramref name="callback"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconExtractException">
+        /// An error occurred when loading an icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static void ExtractIconsForEach(string path, IconExtractCallback<IconFile> callback)
+        {
+            ExtractIconsForEach(path, callback, null, null);
+        }
+
+        /// <summary>
+        /// Iterates through each cursor in the specified EXE or DLL file, and performs the specified action on each one.
+        /// </summary>
+        /// <param name="path">The path to the file from which to load all cursors.</param>
+        /// <param name="callback">An action to perform on each cursor.</param>
+        /// <param name="singleHandler">A delegate used to handle <see cref="IconLoadException"/>s thrown by a single icon entry in a single cursor file,
+        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// <param name="allHandler">A delegate used to handle all other excpetions thrown by a single icon entry in a cursor file,
+        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> or <paramref name="callback"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconExtractException">
+        /// An error occurred when loading a cursor.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static void ExtractcursorsForEach(string path, IconExtractCallback<CursorFile> callback,
+            IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
+        {
+            if (path == null) throw new ArgumentNullException("path");
+            if (callback == null) throw new ArgumentNullException("callback");
+
+            _forEachIcon(path, (IntPtr)WinFuncs.RT_GROUP_CURSOR, IconTypeCode.Cursor, callback, singleHandler, allHandler);
+        }
+
+        /// <summary>
+        /// Iterates through each cursor in the specified EXE or DLL file, and performs the specified action on each one.
+        /// </summary>
+        /// <param name="path">The path to the file from which to load all cursors.</param>
+        /// <param name="callback">An action to perform on each cursor.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> or <paramref name="callback"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconExtractException">
+        /// An error occurred when loading a cursor.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static void ExtractcursorsForEach(string path, IconExtractCallback<CursorFile> callback)
+        {
+            ExtractcursorsForEach(path, callback, null, null);
         }
         #endregion
 
@@ -2522,4 +2624,14 @@ namespace UIconEdit
     /// </summary>
     /// <param name="e">An <see cref="IconExtractException"/> containing information about the error.</param>
     public delegate void IconExtractExceptionHandler(IconExtractException e);
+
+    /// <summary>
+    /// A delegate function to perform on each cursor or icon extracted from a DLL or EXE file.
+    /// </summary>
+    /// <typeparam name="TIconFile">The type of the <see cref="IconFileBase"/> implementation.</typeparam>
+    /// <param name="index">The index of the current cursor or icon to process.</param>
+    /// <param name="totalCount">The total number of icons or cursors in the file.</param>
+    /// <param name="iconFile">The cursor or icon which was extracted.</param>
+    public delegate void IconExtractCallback<TIconFile>(int index, int totalCount, TIconFile iconFile)
+        where TIconFile : IconFileBase;
 }

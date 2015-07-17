@@ -347,7 +347,7 @@ An I/O error occurred.
 Extracts all cursors from the specified EXE or DLL file.
 * `path`: The path to the file from which to load all cursors.
 * `singleHandler`: A delegate used to handle [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown by a single cursor entry in a single cursor file, or `null` to always throw an exception regardless.
-* `allHandler`: A delegate used to handle all other excpetions thrown by a single cursor entry in an cursor file, or `null` to always throw an exception regardless.
+* `allHandler`: A delegate used to handle all other excpetions thrown by a single cursor entry in a cursor file, or `null` to always throw an exception regardless.
 
 **Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`CursorFile`](#type-public-class-uiconeditcursorfile): An array containing all cursor files that could be loaded from `path`.
 
@@ -361,7 +361,7 @@ Extracts all cursors from the specified EXE or DLL file.
 An error occurred when attempting to load resources from `path`.
 
 ##### [`IconExtractException`](#type-public-class-uiconediticonextractexception)
-An error occurred when loading an cursor.
+An error occurred when loading a cursor.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
 An I/O error occurred.
@@ -384,7 +384,95 @@ Extracts all cursors from the specified EXE or DLL file.
 An error occurred when attempting to load resources from `path`.
 
 ##### [`IconExtractException`](#type-public-class-uiconediticonextractexception)
-An error occurred when loading an cursor.
+An error occurred when loading a cursor.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static void ExtractIconsForEach(System.String path, UIconEdit.IconExtractCallback<UIconEdit.IconFile> callback, UIconEdit.IconExtractExceptionHandler singleHandler, UIconEdit.IconExtractExceptionHandler allHandler)`
+
+Iterates through each icon in the specified EXE or DLL file, and performs the specified action on each one.
+* `path`: The path to the file from which to load all icons.
+* `callback`: An action to perform on each icon.
+* `singleHandler`: A delegate used to handle [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown by a single icon entry in a single cursor file, or `null` to always throw an exception regardless.
+* `allHandler`: A delegate used to handle all other excpetions thrown by a single icon entry in an icon file, or `null` to always throw an exception regardless.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` or `callback` is `null`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconExtractException`](#type-public-class-uiconediticonextractexception)
+An error occurred when loading an icon.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static void ExtractIconsForEach(System.String path, UIconEdit.IconExtractCallback<UIconEdit.IconFile> callback)`
+
+Iterates through each icon in the specified EXE or DLL file, and performs the specified action on each one.
+* `path`: The path to the file from which to load all icons.
+* `callback`: An action to perform on each icon.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` or `callback` is `null`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconExtractException`](#type-public-class-uiconediticonextractexception)
+An error occurred when loading an icon.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static void ExtractcursorsForEach(System.String path, UIconEdit.IconExtractCallback<UIconEdit.CursorFile> callback, UIconEdit.IconExtractExceptionHandler singleHandler, UIconEdit.IconExtractExceptionHandler allHandler)`
+
+Iterates through each cursor in the specified EXE or DLL file, and performs the specified action on each one.
+* `path`: The path to the file from which to load all cursors.
+* `callback`: An action to perform on each cursor.
+* `singleHandler`: A delegate used to handle [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown by a single icon entry in a single cursor file, or `null` to always throw an exception regardless.
+* `allHandler`: A delegate used to handle all other excpetions thrown by a single icon entry in a cursor file, or `null` to always throw an exception regardless.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` or `callback` is `null`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconExtractException`](#type-public-class-uiconediticonextractexception)
+An error occurred when loading a cursor.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static void ExtractcursorsForEach(System.String path, UIconEdit.IconExtractCallback<UIconEdit.CursorFile> callback)`
+
+Iterates through each cursor in the specified EXE or DLL file, and performs the specified action on each one.
+* `path`: The path to the file from which to load all cursors.
+* `callback`: An action to perform on each cursor.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` or `callback` is `null`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconExtractException`](#type-public-class-uiconediticonextractexception)
+An error occurred when loading a cursor.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
 An I/O error occurred.
@@ -1182,6 +1270,14 @@ A delegate function for handling [`IconLoadException`](#type-public-class-uicone
 
 A delegate function for handling [`IconExtractException`](#type-public-class-uiconediticonextractexception) errors.
 * `e`: An [`IconExtractException`](#type-public-class-uiconediticonextractexception) containing information about the error.
+
+--------------------------------------------------
+# Type: `public class UIconEdit.IconExtractCallback`1`
+
+A delegate function to perform on each cursor or icon extracted from a DLL or EXE file.The type of the [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation.
+* `index`: The index of the current cursor or icon to process.
+* `totalCount`: The total number of icons or cursors in the file.
+* `iconFile`: The cursor or icon which was extracted.
 
 --------------------------------------------------
 # Type: `public class UIconEdit.CursorFile`

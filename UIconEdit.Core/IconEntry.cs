@@ -1418,13 +1418,13 @@ namespace UIconEdit
         /// 0 if the current instance is equal to <paramref name="other"/>.</returns>
         public int CompareTo(EntryKey other)
         {
-            if (BitDepth != other.BitDepth)
-                return BitDepth.CompareTo(other.BitDepth);
+            int compare = (int)BitDepth - (int)other.BitDepth;
+            if (compare != 0) return compare;
 
-            if (Height != other.Height)
-                return other.Height.CompareTo(Height);
+            compare = other.Height - Height;
+            if (compare != 0) return compare;
 
-            return other.Width.CompareTo(Width);
+            return other.Width - Width;
         }
 
         /// <summary>
@@ -1568,7 +1568,7 @@ namespace UIconEdit
     /// <summary>
     /// Indicates the bit depth of an icon entry.
     /// </summary>
-    public enum BitDepth
+    public enum BitDepth : short
     {
         /// <summary>
         /// Indicates that the entry is full color with alpha (32 bits per pixel).

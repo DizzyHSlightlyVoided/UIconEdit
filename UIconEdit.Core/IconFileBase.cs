@@ -306,26 +306,24 @@ namespace UIconEdit
                                     BitmapSource frame = decoder.Frames[0];
                                     var pFormat = frame.Format;
 
-                                    BitDepth otherDepth;
-
-                                    if (pFormat == PixelFormats.Indexed8 || pFormat == PixelFormats.Gray8)
-                                        otherDepth = BitDepth.Depth8BitsPerPixel;
-                                    else if (pFormat == PixelFormats.Indexed4 || pFormat == PixelFormats.Gray4)
-                                        otherDepth = BitDepth.Depth4BitsPerPixel;
-                                    else if (pFormat == PixelFormats.Indexed2 || pFormat == PixelFormats.Gray2)
-                                        otherDepth = BitDepth.Depth1BitPerPixel;
-                                    else if (pFormat == PixelFormats.Bgr24 || pFormat == PixelFormats.Rgb24)
-                                        otherDepth = BitDepth.Depth24BitsPerPixel;
-                                    else if (pFormat == PixelFormats.Bgra32)
-                                        otherDepth = BitDepth.Depth32BitsPerPixel;
-                                    else
-                                    {
-                                        otherDepth = BitDepth.Depth32BitsPerPixel;
-                                        frame = new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 0);
-                                    }
-
                                     if (loadedId == IconTypeCode.Cursor)
-                                        bitDepth = otherDepth;
+                                    {
+                                        if (pFormat == PixelFormats.Indexed8 || pFormat == PixelFormats.Gray8)
+                                            bitDepth = BitDepth.Depth8BitsPerPixel;
+                                        else if (pFormat == PixelFormats.Indexed4 || pFormat == PixelFormats.Gray4)
+                                            bitDepth = BitDepth.Depth4BitsPerPixel;
+                                        else if (pFormat == PixelFormats.Indexed2 || pFormat == PixelFormats.Gray2)
+                                            bitDepth = BitDepth.Depth1BitPerPixel;
+                                        else if (pFormat == PixelFormats.Bgr24 || pFormat == PixelFormats.Rgb24)
+                                            bitDepth = BitDepth.Depth24BitsPerPixel;
+                                        else if (pFormat == PixelFormats.Bgra32)
+                                            bitDepth = BitDepth.Depth32BitsPerPixel;
+                                        else
+                                        {
+                                            bitDepth = BitDepth.Depth32BitsPerPixel;
+                                            frame = new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 0);
+                                        }
+                                    }
 
                                     loadedImage = new WriteableBitmap(frame);
                                 }

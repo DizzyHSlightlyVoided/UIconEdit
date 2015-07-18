@@ -1906,9 +1906,14 @@ Gets a value indicating the type of the icon file.
 The exception that is thrown when an icon file extracted from an EXE or DLL file contains invalid data.
 
 --------------------------------------------------
-## Property: `public System.IntPtr ExtractKey { get; }`
+## Property: `public virtual System.String Message { get; }`
 
-Gets the [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx) key in the DLL or EXE file of the loaded icon or cursor.
+Gets a message describing the error.
+
+--------------------------------------------------
+## Property: `public System.Int32 ExtractIndex { get; }`
+
+Gets the index in the DLL or EXE file of the loaded icon or cursor.
 
 --------------------------------------------------
 # Type: `public enum UIconEdit.IconErrorCode`
@@ -2055,45 +2060,11 @@ Determines the number of cursors in the specified EXE or DLL file.
 An error occurred when attempting to load resources from `path`.
 
 --------------------------------------------------
-## Method: `public static System.IntPtr[] ExtractIconKeys(System.String path)`
-
-Gets an array containing all icon keys in the specified EXE or DLL file.
-* `path`: The path to the file to load.
-
-**Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx): An array containing the [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx) keys of all icons in the specified file.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`path` is `null`.
-
-##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
-An error occurred when attempting to load resources from `path`.
-
---------------------------------------------------
-## Method: `public static System.IntPtr[] ExtractCursorKeys(System.String path)`
-
-Gets an array containing all cursor keys in the specified EXE or DLL file.
-* `path`: The path to the file to load.
-
-**Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx): An array containing the [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx) keys of all cursors in the specified file.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`path` is `null`.
-
-##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
-An error occurred when attempting to load resources from `path`.
-
---------------------------------------------------
-## Method: `public static UIconEdit.IconFile ExtractIconSingle(System.String path, System.IntPtr key, UIconEdit.IconLoadExceptionHandler handler)`
+## Method: `public static UIconEdit.IconFile ExtractIconSingle(System.String path, System.Int32 index, UIconEdit.IconLoadExceptionHandler handler)`
 
 Extracts a single icon from the specified EXE or DLL file.
 * `path`: The path to the file to load.
-* `key`: The [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx) key of the icon in `path`.
+* `index`: The zero-based index of the icon in `path`.
 * `handler`: A delegate used to handle non-fatal [`IconLoadException`](#type-public-class-uiconediticonloadexception) errors, or `null` to always throw an exception.
 
 **Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): The icon with the specified key in `path`.
@@ -2104,8 +2075,8 @@ Extracts a single icon from the specified EXE or DLL file.
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 `path` is `null`.
 
-##### [`KeyNotFoundException`](https://msdn.microsoft.com/en-us/library/system.collections.generic.keynotfoundexception.aspx)
-`key` is not a valid key for an icon in `path`.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than the number of icons in `path`.
 
 ##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
 An error occurred when attempting to load resources from `path`.
@@ -2117,11 +2088,11 @@ An error occurred when loading the icon.
 An I/O error occurred.
 
 --------------------------------------------------
-## Method: `public static UIconEdit.IconFile ExtractIconSingle(System.String path, System.IntPtr key)`
+## Method: `public static UIconEdit.IconFile ExtractIconSingle(System.String path, System.Int32 index)`
 
 Extracts a single icon from the specified EXE or DLL file.
 * `path`: The path to the file to load.
-* `key`: The [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx) key of the icon in `path`.
+* `index`: The index of the icon in `path`.
 
 **Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): The icon with the specified key in `path`.
 
@@ -2131,8 +2102,8 @@ Extracts a single icon from the specified EXE or DLL file.
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 `path` is `null`.
 
-##### [`KeyNotFoundException`](https://msdn.microsoft.com/en-us/library/system.collections.generic.keynotfoundexception.aspx)
-`key` is not a valid key for an icon in `path`.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than the number of icons in `path`.
 
 ##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
 An error occurred when attempting to load resources from `path`.
@@ -2144,11 +2115,11 @@ An error occurred when loading the icon.
 An I/O error occurred.
 
 --------------------------------------------------
-## Method: `public static UIconEdit.CursorFile ExtractCursorSingle(System.String path, System.IntPtr key, UIconEdit.IconLoadExceptionHandler handler)`
+## Method: `public static UIconEdit.CursorFile ExtractCursorSingle(System.String path, System.Int32 index, UIconEdit.IconLoadExceptionHandler handler)`
 
 Extracts a single cursor from the specified EXE or DLL file.
 * `path`: The path to the file to load.
-* `key`: The [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx) key of the cursor in `path`.
+* `index`: The index of the cursor in `path`.
 * `handler`: A delegate used to handle non-fatal [`IconLoadException`](#type-public-class-uiconediticonloadexception) errors, or `null` to always throw an exception.
 
 **Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): The cursor with the specified key in `path`.
@@ -2159,8 +2130,8 @@ Extracts a single cursor from the specified EXE or DLL file.
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 `path` is `null`.
 
-##### [`KeyNotFoundException`](https://msdn.microsoft.com/en-us/library/system.collections.generic.keynotfoundexception.aspx)
-`key` is not a valid key for a cursor in `path`.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than the number of cursors in `path`.
 
 ##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
 An error occurred when attempting to load resources from `path`.
@@ -2172,11 +2143,11 @@ An error occurred when loading the icon.
 An I/O error occurred.
 
 --------------------------------------------------
-## Method: `public static UIconEdit.CursorFile ExtractCursorSingle(System.String path, System.IntPtr key)`
+## Method: `public static UIconEdit.CursorFile ExtractCursorSingle(System.String path, System.Int32 index)`
 
 Extracts a single cursor from the specified EXE or DLL file.
 * `path`: The path to the file to load.
-* `key`: The [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx) key of the cursor in `path`.
+* `index`: The [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx) key of the cursor in `path`.
 
 **Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): The cursor with the specified key in `path`.
 
@@ -2186,8 +2157,8 @@ Extracts a single cursor from the specified EXE or DLL file.
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 `path` is `null`.
 
-##### [`KeyNotFoundException`](https://msdn.microsoft.com/en-us/library/system.collections.generic.keynotfoundexception.aspx)
-`key` is not a valid key for a cursor in `path`.
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than the number of cursors in `path`.
 
 ##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
 An error occurred when attempting to load resources from `path`.

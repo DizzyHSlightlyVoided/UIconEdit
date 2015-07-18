@@ -230,23 +230,31 @@ namespace UIconEdit
     /// </summary>
     public class IconExtractException : IconLoadException
     {
-        internal IconExtractException(IconLoadException e, IntPtr key)
+        internal IconExtractException(IconLoadException e, int index)
             : base(e)
         {
-            _key = key;
+            _index = index;
         }
 
-        internal IconExtractException(Exception e, IntPtr key)
-            : base(e.Message, e)
+        internal IconExtractException(Exception e, IconTypeCode code, int index)
+            : base(e.Message, IconErrorCode.Unknown, code, BeforeEntries, e)
         {
-            _key = key;
+            _index = index;
         }
 
-        private IntPtr _key;
         /// <summary>
-        /// Gets the <see cref="IntPtr"/> key in the DLL or EXE file of the loaded icon or cursor.
+        /// Gets a message describing the error.
         /// </summary>
-        public IntPtr ExtractKey { get { return _key; } }
+        public override string Message
+        {
+            get { return string.Concat(base.Message, Environment.NewLine, "Extracted index: ", _index); }
+        }
+
+        private int _index;
+        /// <summary>
+        /// Gets the index in the DLL or EXE file of the loaded icon or cursor.
+        /// </summary>
+        public int ExtractIndex { get { return _index; } }
     }
 
     /// <summary>

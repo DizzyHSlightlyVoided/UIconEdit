@@ -145,6 +145,42 @@ namespace UIconEdit.Maker
             }
             catch (Exception)
             {
+            }
+
+            try
+            {
+                IconFile[] icons;
+                CursorFile[] cursors;
+                try
+                {
+                    icons = IconExtraction.ExtractAllIcons(path, _handler, _handler);
+                }
+                catch
+                {
+                    icons = new IconFile[0];
+                }
+                try
+                {
+                    cursors = IconExtraction.ExtractAllCursors(path, _handler, _handler);
+                }
+                catch
+                {
+                    cursors = new CursorFile[0];
+                }
+                if ((icons == null || icons.Length == 0) && (cursors == null || cursors.Length == 0))
+                    throw new InvalidDataException();
+
+                ExtractWindow extractWindow = new ExtractWindow(this, icons, cursors);
+                Mouse.OverrideCursor = null;
+                bool? result = extractWindow.ShowDialog();
+                if (!result.HasValue || !result.Value) return;
+                LoadedFile = extractWindow.GetFile();
+                listbox.SelectedIndex = 0;
+                IsModified = false;
+                scrollEntries.ScrollToTop();
+            }
+            catch (Exception)
+            {
                 ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageLoadError, path));
             }
             finally
@@ -152,6 +188,8 @@ namespace UIconEdit.Maker
                 Mouse.OverrideCursor = null;
             }
         }
+
+        private static void _handler(IconExtractException e) { System.Diagnostics.Debug.WriteLine("{0}: {1}", e.GetType(), e.Message); }
 
         private void _errorHandler(IconLoadException e)
         {

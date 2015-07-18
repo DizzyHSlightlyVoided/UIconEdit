@@ -177,6 +177,7 @@ namespace UIconEdit.Maker
         public string ImageLoadError { get { return _text["ImageLoadError"]; } }
         public string ImageSaveError { get { return _text["ImageSaveError"]; } }
         public string ImageAddError { get { return _text["ImageAddError"]; } }
+        public string IconExtractNone { get { return _text["IconExtractNone"]; } }
 
         public string FilenameSuffix { get { return _text["FilenameSuffix"]; } }
 
@@ -258,6 +259,11 @@ namespace UIconEdit.Maker
         public string Percent { get { return _text["Percent"]; } }
         public string HotspotX { get { return _text["HotspotX"]; } }
         public string HotspotY { get { return _text["HotspotY"]; } }
+
+        public string Extract { get { return _text["Extract"]; } }
+        public string ExtractFrameCount { get { return _text["ExtractFrameCount"]; } }
+        public string ExtractIco { get { return _text["ExtractIco"]; } }
+        public string ExtractCur { get { return _text["ExtractCur"]; } }
 
         public string ScalingFilter { get { return _text["ScalingFilter"]; } }
 

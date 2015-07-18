@@ -583,7 +583,7 @@ namespace UIconEdit
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
-        public static void ExtractcursorsForEach(string path, IconExtractCallback<CursorFile> callback,
+        public static void ExtractCursorsForEach(string path, IconExtractCallback<CursorFile> callback,
             IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
         {
             if (path == null) throw new ArgumentNullException("path");
@@ -609,9 +609,9 @@ namespace UIconEdit
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
-        public static void ExtractcursorsForEach(string path, IconExtractCallback<CursorFile> callback)
+        public static void ExtractCursorsForEach(string path, IconExtractCallback<CursorFile> callback)
         {
-            ExtractcursorsForEach(path, callback, null, null);
+            ExtractCursorsForEach(path, callback, null, null);
         }
     }
 

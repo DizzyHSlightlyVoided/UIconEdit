@@ -25,7 +25,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Border BorderThickness="1" Background="{StaticResource TransparentTiles}" HorizontalAlignment="Center" 
-                                        BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}">
+                                    BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}">
                                 <Image HorizontalAlignment="Center" MaxWidth="48" MaxHeight="48" Margin="2" Source="{Binding Image}"/>
                             </Border>
                             <TextBlock Text="{Binding}" HorizontalAlignment="Center" Grid.Row="1"/>

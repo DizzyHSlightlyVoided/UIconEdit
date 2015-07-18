@@ -170,14 +170,16 @@ namespace UIconEdit.Maker
                 if ((icons == null || icons.Length == 0) && (cursors == null || cursors.Length == 0))
                     throw new InvalidDataException();
 
-                ExtractWindow extractWindow = new ExtractWindow(this, icons, cursors);
-                Mouse.OverrideCursor = null;
-                bool? result = extractWindow.ShowDialog();
-                if (!result.HasValue || !result.Value) return;
-                LoadedFile = extractWindow.GetFile();
-                listbox.SelectedIndex = 0;
-                IsModified = false;
-                scrollEntries.ScrollToTop();
+                using (ExtractWindow extractWindow = new ExtractWindow(this, icons, cursors))
+                {
+                    Mouse.OverrideCursor = null;
+                    bool? result = extractWindow.ShowDialog();
+                    if (!result.HasValue || !result.Value) return;
+                    LoadedFile = extractWindow.GetFile();
+                    listbox.SelectedIndex = 0;
+                    IsModified = false;
+                    scrollEntries.ScrollToTop();
+                }
             }
             catch (Exception)
             {
@@ -206,6 +208,9 @@ namespace UIconEdit.Maker
         private static void LoadedFileChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             MainWindow m = (MainWindow)d;
+            if (e.OldValue != null)
+                ((IDisposable)e.OldValue).Dispose();
+
             m.SetValue(IsFileLoadedPropertyKey, e.NewValue != null);
             m.SetValue(IsModifiedPropertyKey, false);
             if (e.NewValue == null || ((IconFileBase)e.NewValue).Entries.Count == 0)
@@ -218,6 +223,7 @@ namespace UIconEdit.Maker
                 m.listbox.SelectedIndex = 0;
                 m.listbox.Focus();
             }
+            GC.Collect();
         }
 
         /// <summary>
@@ -367,6 +373,7 @@ namespace UIconEdit.Maker
         private void window_Closed(object sender, EventArgs e)
         {
             _settings.Save();
+            LoadedFile = null;
         }
 
         private bool _save(bool saveAs)

@@ -41,14 +41,13 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace UIconEdit
 {
     /// <summary>
     /// Base class for icon and cursor files.
     /// </summary>
-    public abstract class IconFileBase : DispatcherObject, ICloneable
+    public abstract class IconFileBase : DependencyObject, ICloneable, IDisposable
     {
         /// <summary>
         /// Initializes a new instance.
@@ -655,7 +654,7 @@ namespace UIconEdit
 
         internal virtual bool IsValid(IconEntry entry)
         {
-            return entry != null;
+            return entry != null && !entry.IsDisposed;
         }
 
         internal abstract ushort GetImgX(IconEntry entry);
@@ -911,6 +910,51 @@ namespace UIconEdit
         }
         #endregion
 
+        #region Disposal
+        private bool _isDisposed;
+        /// <summary>
+        /// Gets a value indicating whether the current instance has been disposed.
+        /// Intended to be set in <see cref="Dispose(bool)"/>.
+        /// </summary>
+        public bool IsDisposed
+        {
+            get { return _isDisposed; }
+            protected set { _isDisposed |= value; }
+        }
+
+        /// <summary>
+        /// Releases all managed and unmanaged resources used by the current instance.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases all unmanaged resources used by the current instance, and optionally releases managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+
+            foreach (IconEntry curEntry in _entries)
+                curEntry.Dispose();
+
+            _entries.Clear();
+
+            _isDisposed = true;
+        }
+        #endregion
+
+        /// <summary>
+        /// Destructor.
+        /// </summary>
+        ~IconFileBase()
+        {
+            Dispose(false);
+        }
+
         /// <summary>
         /// Represents a list of icon entries. Entries with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and
         /// <see cref="IconEntry.BitDepth"/> cannot be added to the list; however, there may be duplicates if an icon loaded from an
@@ -1030,7 +1074,7 @@ namespace UIconEdit
             /// Adds the specified icon entry to the list.
             /// </summary>
             /// <param name="item">The icon entry to add to the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c> or disposed,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
             /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
             public bool Add(IconEntry item)
@@ -1054,7 +1098,7 @@ namespace UIconEdit
             /// </summary>
             /// <param name="index">The index at which to insert the icon entry.</param>
             /// <param name="item">The icon entry to add to the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c> or disposed,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
             /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
             /// <exception cref="ArgumentOutOfRangeException">
@@ -1063,7 +1107,8 @@ namespace UIconEdit
             public bool Insert(int index, IconEntry item)
             {
                 if (index < 0 || index > _items.Count) throw new ArgumentOutOfRangeException("index");
-                if (_items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item.EntryKey)) return false;
+                if (_file._isDisposed || _items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item.EntryKey))
+                    return false;
                 item.File = _file;
                 _items.Insert(index, item);
                 return true;
@@ -1081,6 +1126,7 @@ namespace UIconEdit
 
             private bool _setValue(int index, IconEntry value, bool setter)
             {
+                if (_file._isDisposed) return false;
                 if (setter && index == _items.Count)
                     return Add(value);
                 var oldItem = _items[index];
@@ -1097,7 +1143,7 @@ namespace UIconEdit
             /// </summary>
             /// <param name="index">The index of the value to set.</param>
             /// <param name="item">The item to set at the specified index.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c> or disposed,
             /// is already associated with a different icon file, or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
             /// and <see cref="IconEntry.BitDepth"/> already exists at a different index.</returns>
             public bool SetValue(int index, IconEntry item)

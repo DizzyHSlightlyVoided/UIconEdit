@@ -34,6 +34,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace UIconEdit.Maker
@@ -41,7 +42,7 @@ namespace UIconEdit.Maker
     /// <summary>
     /// Interaction logic for ExtractWindow.xaml
     /// </summary>
-    partial class ExtractWindow
+    partial class ExtractWindow : IDisposable
     {
         public ExtractWindow(MainWindow owner, IconFile[] icons, CursorFile[] cursors)
         {
@@ -102,7 +103,7 @@ namespace UIconEdit.Maker
         [Bindable(true)]
         public ObservableCollection<FileToken> CursorFiles { get { return _cursors; } }
 
-        public struct FileToken
+        public struct FileToken : IDisposable
         {
             private static readonly EntryKey _baseKey = new EntryKey(48, 48, BitDepth.Depth32BitsPerPixel);
 
@@ -145,15 +146,28 @@ namespace UIconEdit.Maker
                 else format = _settings.LanguageFile.ExtractFrameCount;
                 return string.Format(format, _index, _count);
             }
+
+            public void Dispose()
+            {
+                File.Dispose();
+                _image = null;
+                _settings = null;
+            }
         }
 
         public IconFileBase GetFile()
         {
             FileToken token;
             if (tabCur.IsSelected)
+            {
                 token = (FileToken)listCursors.SelectedItem;
+                _cursors.Remove(token);
+            }
             else
+            {
                 token = (FileToken)listIcons.SelectedItem;
+                _icons.Remove(token);
+            }
 
             return token.File;
         }
@@ -164,10 +178,18 @@ namespace UIconEdit.Maker
             Close();
         }
 
-        private void tab_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void tab_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             DialogResult = true;
             Close();
+        }
+
+        public void Dispose()
+        {
+            foreach (FileToken curToken in _cursors.Concat(_icons))
+                curToken.Dispose();
+            _icons.Clear();
+            _cursors.Clear();
         }
     }
 }

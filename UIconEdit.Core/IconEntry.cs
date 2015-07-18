@@ -51,7 +51,7 @@ namespace UIconEdit
     /// <summary>
     /// Represents a single entry in an icon.
     /// </summary>
-    public class IconEntry : DependencyObject
+    public class IconEntry : DependencyObject, IDisposable
     {
         /// <summary>
         /// The default <see cref="AlphaThreshold"/> value.
@@ -300,7 +300,6 @@ namespace UIconEdit
         {
         }
 
-
         /// <summary>
         /// The minimum dimensions of an icon. 1 pixels.
         /// </summary>
@@ -343,7 +342,13 @@ namespace UIconEdit
         /// The dependency property for the <see cref="BaseImage"/> property.
         /// </summary>
         public static readonly DependencyProperty BaseImageProperty = DependencyProperty.Register("BaseImage", typeof(BitmapSource), typeof(IconEntry),
-            new PropertyMetadata(new WriteableBitmap(1, 1, 0, 0, PixelFormats.Indexed1, AlphaPalette), BaseImageChanged), BaseImageValidate);
+            new PropertyMetadata(new WriteableBitmap(1, 1, 0, 0, PixelFormats.Indexed1, AlphaPalette), BaseImageChanged, BaseImageCoerce), BaseImageValidate);
+
+        private static object BaseImageCoerce(DependencyObject d, object baseValue)
+        {
+            if (((IconEntry)d)._isDisposed) throw new ObjectDisposedException(null);
+            return baseValue;
+        }
 
         private static void BaseImageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -358,14 +363,22 @@ namespace UIconEdit
         /// <summary>
         /// Gets and sets the image associated with the current instance.
         /// </summary>
+        /// <exception cref="ObjectDisposedException">
+        /// The current instance is disposed.
+        /// </exception>
         /// <exception cref="ArgumentNullException">
         /// In a set operation, the specified value is <c>null</c>.
         /// </exception>
         public BitmapSource BaseImage
         {
-            get { return (BitmapSource)GetValue(BaseImageProperty); }
+            get
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                return (BitmapSource)GetValue(BaseImageProperty);
+            }
             set
             {
+                if (_isDisposed) throw new ObjectDisposedException(null);
                 if (value == null) throw new ArgumentNullException();
                 SetValue(BaseImageProperty, value);
             }
@@ -377,7 +390,7 @@ namespace UIconEdit
         /// The dependency property for the <see cref="AlphaImage"/> property.
         /// </summary>
         public static readonly DependencyProperty AlphaImageProperty = DependencyProperty.Register("AlphaImage", typeof(BitmapSource), typeof(IconEntry),
-            new PropertyMetadata(null, BaseImageChanged));
+            new PropertyMetadata(null, BaseImageChanged, BaseImageCoerce));
 
         /// <summary>
         /// Gets and sets an image to be used as the alpha mask, or <c>null</c> to derive the alpha mask from <see cref="BaseImage"/>.
@@ -385,8 +398,16 @@ namespace UIconEdit
         /// </summary>
         public BitmapSource AlphaImage
         {
-            get { return (BitmapSource)GetValue(AlphaImageProperty); }
-            set { SetValue(AlphaImageProperty, value); }
+            get
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                return (BitmapSource)GetValue(AlphaImageProperty);
+            }
+            set
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                SetValue(AlphaImageProperty, value);
+            }
         }
         #endregion
 
@@ -1135,6 +1156,55 @@ namespace UIconEdit
             return string.Format("{0}, BaseImage:{1}", EntryKey, BaseImage);
         }
 
+        #region Disposal
+        private bool _isDisposed;
+        /// <summary>
+        /// Gets a value indicating whether the current instance has been disposed.
+        /// Intended to be set in <see cref="Dispose(bool)"/>.
+        /// </summary>
+        public bool IsDisposed
+        {
+            get { return _isDisposed; }
+            protected set { _isDisposed |= value; }
+        }
+
+        /// <summary>
+        /// Releases all managed and unmanaged resources used by the current instance.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases all unmanaged resources used by the current instance, and optionally releases managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        public virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+            try
+            {
+                SetValue(BaseImageProperty, BaseImageProperty.DefaultMetadata.DefaultValue);
+                SetValue(AlphaImageProperty, null);
+            }
+            catch (Exception) //Should only happen if you dispose in the wrong thread
+            {
+            }
+            finally
+            {
+                _isDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Destructor.
+        /// </summary>
+        ~IconEntry()
+        {
+            Dispose(false);
+        }
+        #endregion
 
         /// <summary>
         /// Parses the specified string as a <see cref="UIconEdit.BitDepth"/> value.

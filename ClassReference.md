@@ -233,6 +233,22 @@ The specified path is invalid.
 An I/O error occurred.
 
 --------------------------------------------------
+## Property: `public System.Boolean IsDisposed { get; }`
+
+Gets a value indicating whether the current instance has been disposed. Intended to be set in [`IconFileBase.Dispose(System.Boolean)`](#method-protected-virtual-void-disposesystemboolean-disposing).
+
+--------------------------------------------------
+## Method: `public virtual void Dispose()`
+
+Releases all managed and unmanaged resources used by the current instance.
+
+--------------------------------------------------
+## Method: `protected virtual void Dispose(System.Boolean disposing)`
+
+Releases all unmanaged resources used by the current instance, and optionally releases managed resources.
+* `disposing`: `true` to release both managed and unmanaged resources; `false` to release only unmanaged resources.
+
+--------------------------------------------------
 # Type: `class UIconEdit.IconFileBase.EntryList`
 
 Represents a list of icon entries. Entries with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) cannot be added to the list; however, there may be duplicates if an icon loaded from an external icon file contained them.
@@ -278,7 +294,7 @@ Gets the number of elements in the list.
 Adds the specified icon entry to the list.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null` or disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list.
 
 
 --------------------------------------------------
@@ -288,7 +304,7 @@ Adds the specified icon entry to the list at the specified index.
 * `index`: The index at which to insert the icon entry.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null` or disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists in the list.
 
 
 ### Exceptions
@@ -303,7 +319,7 @@ Sets the value at the specified index.
 * `index`: The index of the value to set.
 * `item`: The item to set at the specified index.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists at a different index.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null` or disposed, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-) already exists at a different index.
 
 
 --------------------------------------------------
@@ -1267,6 +1283,9 @@ Gets and sets the image associated with the current instance.
 
 ### Exceptions
 
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+The current instance is disposed.
+
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 In a set operation, the specified value is `null`.
 
@@ -1470,6 +1489,22 @@ Returns a string representation of the current instance.
 
 **Returns:** Type [`String`](https://msdn.microsoft.com/en-us/library/system.string.aspx): A string representation of the current instance.
 
+
+--------------------------------------------------
+## Property: `public System.Boolean IsDisposed { get; }`
+
+Gets a value indicating whether the current instance has been disposed. Intended to be set in [`IconEntry.Dispose(System.Boolean)`](#method-public-virtual-void-disposesystemboolean-disposing).
+
+--------------------------------------------------
+## Method: `public virtual void Dispose()`
+
+Releases all managed and unmanaged resources used by the current instance.
+
+--------------------------------------------------
+## Method: `public virtual void Dispose(System.Boolean disposing)`
+
+Releases all unmanaged resources used by the current instance, and optionally releases managed resources.
+* `disposing`: `true` to release both managed and unmanaged resources; `false` to release only unmanaged resources.
 
 --------------------------------------------------
 ## Method: `public static UIconEdit.BitDepth ParseBitDepth(System.String value)`

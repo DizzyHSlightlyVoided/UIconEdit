@@ -326,11 +326,6 @@ namespace UIconEdit
 
                                     if (loadedId == IconTypeCode.Cursor)
                                         bitDepth = otherDepth;
-                                    else if (bitDepth != otherDepth)
-                                    {
-                                        throw new IconLoadException(IconErrorCode.PngBitDepthMismatch, loadedId,
-                                            new Tuple<int, int>(entry.YBitsPerpixel, IconEntry.GetBitsPerPixel(otherDepth)), i);
-                                    }
 
                                     loadedImage = new WriteableBitmap(frame);
                                 }

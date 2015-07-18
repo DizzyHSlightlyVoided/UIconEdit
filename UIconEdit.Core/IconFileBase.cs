@@ -194,7 +194,7 @@ namespace UIconEdit
 
         internal static IconFileBase Load(Stream input, IconTypeCode? id, IconLoadExceptionHandler handler)
         {
-#if DEBUG
+#if DEBUG && MESSAGE
             Stopwatch sw = Stopwatch.StartNew();
 #endif
 #if LEAVEOPEN
@@ -494,8 +494,10 @@ namespace UIconEdit
                                 new Tuple<Size, Size>(new Size(entry.BWidth, entry.BHeight), new Size(loadedImage.PixelWidth, loadedImage.PixelHeight)), i);
                         }
 
+#if DEBUG && MESSAGE
                         Debug.WriteLine("Reading type {0}, width:{1}, height:{2}, bit depth:{3}",
                             isPng ? "PNG" : "BMP", loadedImage.PixelWidth, loadedImage.PixelHeight, bitDepth);
+#endif
 
                         IconEntry resultEntry;
 
@@ -521,7 +523,7 @@ namespace UIconEdit
                         offset += entry.ResourceLength;
                     }
                 }
-#if DEBUG
+#if DEBUG && MESSAGE
                 sw.Stop();
                 Debug.WriteLine("Finished processing all entries in {0}ms.", sw.Elapsed.TotalMilliseconds);
 #endif
@@ -679,7 +681,7 @@ namespace UIconEdit
                 uint offset = (uint)(6 + (entries.Count * 16));
 
                 List<MemoryStream> streamList = new List<MemoryStream>();
-#if DEBUG
+#if DEBUG && MESSAGE
                 Stopwatch sw = Stopwatch.StartNew();
 #endif
                 foreach (IconEntry curEntry in entries)
@@ -695,7 +697,7 @@ namespace UIconEdit
                     ms.CopyTo(output);
                     ms.Dispose();
                 }
-#if DEBUG
+#if DEBUG && MESSAGE
                 sw.Stop();
                 Debug.WriteLine("Finished processing all entries in {0}ms.", sw.Elapsed.TotalMilliseconds);
 #endif
@@ -885,8 +887,10 @@ namespace UIconEdit
 #endif
             }
 
+#if DEBUG && MESSAGE
             Debug.WriteLine("Writing type {0} - width:{1}, height:{2}, bit depth:{3}, computed bits per pixel:{4}, length:{5}",
                 isPng ? "PNG" : "BMP", entry.Width, entry.Height, entry.BitDepth, GetImgY(entry), writeStream.Length);
+#endif
 
             length = (uint)writeStream.Length;
             writer.Write(length); //12

@@ -50,6 +50,9 @@ namespace UIconEdit
         private const int RT_GROUP_CURSOR = RT_CURSOR + 11;
         private const int RT_GROUP_ICON = RT_ICON + 11;
 
+        private const int ERROR_RESOURCE_TYPE_NOT_FOUND = 1813;
+        private const int ERROR_RESOURCE_NAME_NOT_FOUND = 1814;
+
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         [SuppressUnmanagedCodeSecurity]
         private static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hFile, uint dwFlags);
@@ -81,29 +84,38 @@ namespace UIconEdit
 
         private static MemoryStream ExtractData(IntPtr hModule, IntPtr type, IntPtr name)
         {
-            IntPtr hResInfo = FindResource(hModule, name, type);
-            if (hResInfo == IntPtr.Zero)
-                throw new Win32Exception();
+            try
+            {
+                IntPtr hResInfo = FindResource(hModule, name, type);
+                if (hResInfo == IntPtr.Zero)
+                    throw new Win32Exception();
 
-            IntPtr hResData = LoadResource(hModule, hResInfo);
-            if (hResData == IntPtr.Zero)
-                throw new Win32Exception();
+                IntPtr hResData = LoadResource(hModule, hResInfo);
+                if (hResData == IntPtr.Zero)
+                    throw new Win32Exception();
 
-            IntPtr pResData = LockResource(hResData);
-            if (pResData == IntPtr.Zero)
-                throw new Win32Exception();
+                IntPtr pResData = LockResource(hResData);
+                if (pResData == IntPtr.Zero)
+                    throw new Win32Exception();
 
-            uint size = SizeofResource(hModule, hResInfo);
-            if (size == 0)
-                throw new Win32Exception();
+                uint size = SizeofResource(hModule, hResInfo);
+                if (size == 0)
+                    throw new Win32Exception();
 
-            byte[] data = new byte[size];
-            Marshal.Copy(pResData, data, 0, data.Length);
+                byte[] data = new byte[size];
+                Marshal.Copy(pResData, data, 0, data.Length);
 
-            return new MemoryStream(data, 0, data.Length, false, true);
+                return new MemoryStream(data, 0, data.Length, false, true);
+            }
+            catch (Win32Exception xc)
+            {
+                if (xc.NativeErrorCode == ERROR_RESOURCE_NAME_NOT_FOUND)
+                    throw new KeyNotFoundException();
+                throw;
+            }
         }
 
-        private static int _extractCount(string path, IntPtr lpszType)
+        private static HashSet<IntPtr> _extractNames(string path, IntPtr lpszType)
         {
             if (path == null) throw new ArgumentNullException("path");
 
@@ -116,7 +128,7 @@ namespace UIconEdit
                 if (hModule == IntPtr.Zero)
                     throw new Win32Exception();
 
-                return _extractNames(hModule, lpszType).Count;
+                return _extractNames(hModule, lpszType);
             }
             finally
             {
@@ -136,7 +148,12 @@ namespace UIconEdit
             };
 
             if (!EnumResourceNames(hModule, lpszType, callback, IntPtr.Zero))
-                throw new Win32Exception();
+            {
+                var xc = new Win32Exception();
+                if (xc.NativeErrorCode == ERROR_RESOURCE_TYPE_NOT_FOUND)
+                    return new HashSet<IntPtr>();
+                throw xc;
+            }
 
             return new HashSet<IntPtr>(names);
         }
@@ -154,7 +171,7 @@ namespace UIconEdit
         /// </exception>
         public static int ExtractIconCount(string path)
         {
-            return _extractCount(path, (IntPtr)RT_GROUP_ICON);
+            return _extractNames(path, (IntPtr)RT_GROUP_ICON).Count;
         }
 
         /// <summary>
@@ -170,7 +187,39 @@ namespace UIconEdit
         /// </exception>
         public static int ExtractCursorCount(string path)
         {
-            return _extractCount(path, (IntPtr)RT_GROUP_CURSOR);
+            return _extractNames(path, (IntPtr)RT_GROUP_CURSOR).Count;
+        }
+
+        /// <summary>
+        /// Gets an array containing all icon keys in the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <returns>An array containing the <see cref="IntPtr"/> keys of all icons in the specified file.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        public static IntPtr[] ExtractIconKeys(string path)
+        {
+            return _extractNames(path, (IntPtr)RT_GROUP_ICON).ToArray();
+        }
+
+        /// <summary>
+        /// Gets an array containing all cursor keys in the specified EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <returns>An array containing the <see cref="IntPtr"/> keys of all cursors in the specified file.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        public static IntPtr[] ExtractCursorKeys(string path)
+        {
+            return _extractNames(path, (IntPtr)RT_GROUP_CURSOR).ToArray();
         }
 
         private static IconFileBase _extractSingle(IntPtr hModule, IntPtr lpszType, IntPtr name, IconTypeCode typeCode, IconLoadExceptionHandler handler)
@@ -228,7 +277,7 @@ namespace UIconEdit
             }
         }
 
-        private static IconFileBase _extractSingle(string path, int index, IntPtr lpszType, IconTypeCode typeCode, IconLoadExceptionHandler handler)
+        private static IconFileBase _extractSingle(string path, IntPtr name, IntPtr lpszType, IconTypeCode typeCode, IconLoadExceptionHandler handler)
         {
             if (path == null) throw new ArgumentNullException("path");
             IntPtr hModule = IntPtr.Zero;
@@ -236,9 +285,7 @@ namespace UIconEdit
             {
                 hModule = LoadLibraryEx(path, IntPtr.Zero, LOAD_LIBRARY_AS_DATAFILE);
 
-                var names = _extractNames(hModule, lpszType).ToList();
-
-                return _extractSingle(hModule, lpszType, names[index], typeCode, handler);
+                return _extractSingle(hModule, lpszType, name, typeCode, handler);
             }
             finally
             {
@@ -251,15 +298,15 @@ namespace UIconEdit
         /// Extracts a single icon from the specified EXE or DLL file.
         /// </summary>
         /// <param name="path">The path to the file to load.</param>
-        /// <param name="index">The index of the icon in <paramref name="path"/>.</param>
+        /// <param name="key">The <see cref="IntPtr"/> key of the icon in <paramref name="path"/>.</param>
         /// <param name="handler">A delegate used to handle non-fatal <see cref="IconLoadException"/> errors, 
         /// or <c>null</c> to always throw an exception.</param>
-        /// <returns>The icon at the specified index in <paramref name="path"/>.</returns>
+        /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is <c>null</c>.
         /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
+        /// <exception cref="KeyNotFoundException">
+        /// <paramref name="key"/> is not a valid key for an icon in <paramref name="path"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -270,22 +317,22 @@ namespace UIconEdit
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
-        public static IconFile ExtractIconSingle(string path, int index, IconLoadExceptionHandler handler)
+        public static IconFile ExtractIconSingle(string path, IntPtr key, IconLoadExceptionHandler handler)
         {
-            return (IconFile)_extractSingle(path, index, (IntPtr)RT_GROUP_ICON, IconTypeCode.Icon, handler);
+            return (IconFile)_extractSingle(path, key, (IntPtr)RT_GROUP_ICON, IconTypeCode.Icon, handler);
         }
 
         /// <summary>
         /// Extracts a single icon from the specified EXE or DLL file.
         /// </summary>
         /// <param name="path">The path to the file to load.</param>
-        /// <param name="index">The index of the icon in <paramref name="path"/>.</param>
-        /// <returns>The icon at the specified index in <paramref name="path"/>.</returns>
+        /// <param name="key">The <see cref="IntPtr"/> key of the icon in <paramref name="path"/>.</param>
+        /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is <c>null</c>.
         /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
+        /// <exception cref="KeyNotFoundException">
+        /// <paramref name="key"/> is not a valid key for an icon in <paramref name="path"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -296,24 +343,24 @@ namespace UIconEdit
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
-        public static IconFile ExtractIconSingle(string path, int index)
+        public static IconFile ExtractIconSingle(string path, IntPtr key)
         {
-            return ExtractIconSingle(path, index, null);
+            return ExtractIconSingle(path, key, null);
         }
 
         /// <summary>
         /// Extracts a single cursor from the specified EXE or DLL file.
         /// </summary>
         /// <param name="path">The path to the file to load.</param>
-        /// <param name="index">The index of the cursor in <paramref name="path"/>.</param>
+        /// <param name="key">The <see cref="IntPtr"/> key of the cursor in <paramref name="path"/>.</param>
         /// <param name="handler">A delegate used to handle non-fatal <see cref="IconLoadException"/> errors, 
         /// or <c>null</c> to always throw an exception.</param>
-        /// <returns>The cursor at the specified index in <paramref name="path"/>.</returns>
+        /// <returns>The cursor with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is <c>null</c>.
         /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="index"/> is less than 0 or is greater than the number of cursors in <paramref name="path"/>.
+        /// <exception cref="KeyNotFoundException">
+        /// <paramref name="key"/> is not a valid key for a cursor in <paramref name="path"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -324,22 +371,22 @@ namespace UIconEdit
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
-        public static CursorFile ExtractCursorSingle(string path, int index, IconLoadExceptionHandler handler)
+        public static CursorFile ExtractCursorSingle(string path, IntPtr key, IconLoadExceptionHandler handler)
         {
-            return (CursorFile)_extractSingle(path, index, (IntPtr)RT_GROUP_CURSOR, IconTypeCode.Cursor, handler);
+            return (CursorFile)_extractSingle(path, key, (IntPtr)RT_GROUP_CURSOR, IconTypeCode.Cursor, handler);
         }
 
         /// <summary>
         /// Extracts a single cursor from the specified EXE or DLL file.
         /// </summary>
         /// <param name="path">The path to the file to load.</param>
-        /// <param name="index">The index of the cursor in <paramref name="path"/>.</param>
-        /// <returns>The cursor at the specified index in <paramref name="path"/>.</returns>
+        /// <param name="key">The <see cref="IntPtr"/> key of the cursor in <paramref name="path"/>.</param>
+        /// <returns>The cursor with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is <c>null</c>.
         /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="index"/> is less than 0 or is greater than the number of cursors in <paramref name="path"/>.
+        /// <exception cref="KeyNotFoundException">
+        /// <paramref name="key"/> is not a valid key for a cursor in <paramref name="path"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -350,50 +397,54 @@ namespace UIconEdit
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
-        public static CursorFile ExtractCursorSingle(string path, int index)
+        public static CursorFile ExtractCursorSingle(string path, IntPtr key)
         {
-            return ExtractCursorSingle(path, index, null);
+            return ExtractCursorSingle(path, key, null);
         }
 
         private static void _forEachIcon<TIconFile>(string path, IntPtr lpszType, IconTypeCode typeCode, IconExtractCallback<TIconFile> callback,
             IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
             where TIconFile : IconFileBase
         {
-            int curIndex = 0;
-
             IconLoadExceptionHandler sHandler = null;
-            if (singleHandler != null)
-                sHandler = e => singleHandler(new IconExtractException(e, curIndex));
 
             IntPtr hModule = IntPtr.Zero;
 
-            int curDex = 0;
             try
             {
                 hModule = LoadLibraryEx(path, IntPtr.Zero, LOAD_LIBRARY_AS_DATAFILE);
 
                 HashSet<IntPtr> names = _extractNames(hModule, lpszType);
 
+#if DEBUG
+                var nameList = names.ToArray();
+
+                for (int curDex = 0; curDex < nameList.Length; curDex++)
+                {
+                    IntPtr curName = nameList[curDex];
+#else
                 foreach (IntPtr curName in names)
                 {
+#endif
                     try
                     {
-                        callback(curDex, names.Count, (TIconFile)_extractSingle(hModule, lpszType, curName, typeCode, sHandler));
+                        if (singleHandler != null)
+                            sHandler = e => singleHandler(new IconExtractException(e, curName));
+                        callback(curName, names.Count, (TIconFile)_extractSingle(hModule, lpszType, curName, typeCode, sHandler));
                     }
                     catch (Exception e)
                     {
                         IconExtractException x;
                         if (e is IconLoadException)
-                            x = new IconExtractException((IconLoadException)e, curDex);
+                            x = new IconExtractException((IconLoadException)e, curName);
                         else
-                            x = new IconExtractException(e, curDex);
+                            x = new IconExtractException(e, curName);
 
                         if (allHandler != null)
                             allHandler(x);
                         else
                             throw x;
                     }
-                    curDex++;
                 }
             }
             finally
@@ -614,6 +665,16 @@ namespace UIconEdit
             ExtractCursorsForEach(path, callback, null, null);
         }
     }
+
+    /// <summary>
+    /// A delegate function to perform on each cursor or icon extracted from a DLL or EXE file.
+    /// </summary>
+    /// <typeparam name="TIconFile">The type of the <see cref="IconFileBase"/> implementation.</typeparam>
+    /// <param name="key">The <see cref="IntPtr"/> key of the current cursor or icon to process.</param>
+    /// <param name="totalCount">The total number of icons or cursors in the file.</param>
+    /// <param name="iconFile">The cursor or icon which was extracted.</param>
+    public delegate void IconExtractCallback<TIconFile>(IntPtr key, int totalCount, TIconFile iconFile)
+        where TIconFile : IconFileBase;
 
     [UnmanagedFunctionPointer(CallingConvention.Winapi, SetLastError = true, CharSet = CharSet.Unicode)]
     [SuppressUnmanagedCodeSecurity]

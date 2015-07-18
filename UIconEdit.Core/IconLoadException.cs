@@ -156,6 +156,7 @@ namespace UIconEdit
         public IconLoadException(string message, Exception innerException)
             : base(message, innerException)
         {
+            _index = BeforeEntries;
         }
 
         internal IconLoadException(IconLoadException e)
@@ -229,23 +230,23 @@ namespace UIconEdit
     /// </summary>
     public class IconExtractException : IconLoadException
     {
-        internal IconExtractException(IconLoadException e, int index)
+        internal IconExtractException(IconLoadException e, IntPtr key)
             : base(e)
         {
-            _extractIndex = index;
+            _key = key;
         }
 
-        internal IconExtractException(Exception e, int index)
+        internal IconExtractException(Exception e, IntPtr key)
             : base(e.Message, e)
         {
-            _extractIndex = index;
+            _key = key;
         }
 
-        private int _extractIndex;
+        private IntPtr _key;
         /// <summary>
-        /// The index in the DLL or EXE file of the loaded icon or cursor.
+        /// Gets the <see cref="IntPtr"/> key in the DLL or EXE file of the loaded icon or cursor.
         /// </summary>
-        public int ExtractIndex { get { return _extractIndex; } }
+        public IntPtr ExtractKey { get { return _key; } }
     }
 
     /// <summary>

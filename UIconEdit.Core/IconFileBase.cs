@@ -1787,14 +1787,4 @@ namespace UIconEdit
     /// </summary>
     /// <param name="e">An <see cref="IconExtractException"/> containing information about the error.</param>
     public delegate void IconExtractExceptionHandler(IconExtractException e);
-
-    /// <summary>
-    /// A delegate function to perform on each cursor or icon extracted from a DLL or EXE file.
-    /// </summary>
-    /// <typeparam name="TIconFile">The type of the <see cref="IconFileBase"/> implementation.</typeparam>
-    /// <param name="index">The index of the current cursor or icon to process.</param>
-    /// <param name="totalCount">The total number of icons or cursors in the file.</param>
-    /// <param name="iconFile">The cursor or icon which was extracted.</param>
-    public delegate void IconExtractCallback<TIconFile>(int index, int totalCount, TIconFile iconFile)
-        where TIconFile : IconFileBase;
 }

@@ -413,7 +413,7 @@ namespace UIconEdit
                     {
                         if (singleHandler != null)
                             sHandler = e => singleHandler(new IconExtractException(e, curIndex));
-                        callback(name, 0, (TIconFile)_extractSingle(h, t, name, typeCode, sHandler));
+                        callback(name, (TIconFile)_extractSingle(h, t, name, typeCode, sHandler));
                         curIndex++;
                         return true;
                     }
@@ -452,7 +452,7 @@ namespace UIconEdit
         {
             LinkedList<TIconFile> allItems = new LinkedList<TIconFile>();
 
-            _forEachIcon<TIconFile>(path, lpszType, typeCode, (curDex, total, icon) => allItems.AddLast(icon), singleHandler, allHandler);
+            _forEachIcon<TIconFile>(path, lpszType, typeCode, (curDex, icon) => allItems.AddLast(icon), singleHandler, allHandler);
 
             return allItems.ToArray();
         }
@@ -663,9 +663,8 @@ namespace UIconEdit
     /// </summary>
     /// <typeparam name="TIconFile">The type of the <see cref="IconFileBase"/> implementation.</typeparam>
     /// <param name="key">The <see cref="IntPtr"/> key of the current cursor or icon to process.</param>
-    /// <param name="totalCount">The total number of icons or cursors in the file.</param>
     /// <param name="iconFile">The cursor or icon which was extracted.</param>
-    public delegate void IconExtractCallback<TIconFile>(IntPtr key, int totalCount, TIconFile iconFile)
+    public delegate void IconExtractCallback<TIconFile>(IntPtr key, TIconFile iconFile)
         where TIconFile : IconFileBase;
 
     [UnmanagedFunctionPointer(CallingConvention.Winapi, SetLastError = true, CharSet = CharSet.Unicode)]

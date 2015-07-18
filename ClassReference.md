@@ -2393,5 +2393,4 @@ An I/O error occurred.
 
 A delegate function to perform on each cursor or icon extracted from a DLL or EXE file.The type of the [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation.
 * `key`: The [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx) key of the current cursor or icon to process.
-* `totalCount`: The total number of icons or cursors in the file.
 * `iconFile`: The cursor or icon which was extracted.

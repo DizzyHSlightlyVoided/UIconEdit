@@ -40,20 +40,6 @@ namespace UIconEdit.Test
         static void Main(string[] args)
         {
             {
-                const string path = @"C:\Windows\System32\imageres.dll";
-
-                Console.WriteLine(path + string.Format(" contains {0} icons.", IconExtraction.ExtractIconCount(path)));
-
-                Console.WriteLine("Extracting index 6 from " + path + "...");
-                IconFile iFile = IconExtraction.ExtractIconSingle(path, 6);
-                foreach (IconEntry entry in iFile.Entries)
-                    Save(entry, string.Format("Extracted{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height));
-                Console.WriteLine();
-                Console.WriteLine("Press any key to continue ...");
-                Console.ReadKey();
-                Console.WriteLine();
-            }
-            {
                 string[] strings = new string[] { "32", "64", "29", "Depth32", "32Bit", "32Color", "16777216Color", "Depth4294967296Color", BitDepth.Depth256Color.ToString() };
 
                 foreach (string str in strings)

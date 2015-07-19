@@ -128,13 +128,13 @@ namespace UIconEdit
                 if (hModule == IntPtr.Zero)
                     throw new Win32Exception();
 
-                ENUMRESNAMEPROC callback = delegate (IntPtr h, IntPtr t, IntPtr name, IntPtr l)
+                ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, IntPtr t, IntPtr name, IntPtr l)
                 {
                     iconCount++;
                     return true;
                 };
 
-                if (!EnumResourceNames(hModule, lpszType, callback, IntPtr.Zero))
+                if (!EnumResourceNames(hModule, lpszType, lpEnumFunc, IntPtr.Zero))
                 {
                     var xc = new Win32Exception();
                     if (xc.NativeErrorCode == ERROR_RESOURCE_TYPE_NOT_FOUND)
@@ -251,7 +251,7 @@ namespace UIconEdit
 
                 IconFileBase returner = null;
                 Exception x = null;
-                ENUMRESNAMEPROC callback = delegate (IntPtr h, IntPtr t, IntPtr name, IntPtr l)
+                ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, IntPtr t, IntPtr name, IntPtr l)
                 {
                     try
                     {
@@ -266,12 +266,14 @@ namespace UIconEdit
                         x = e;
                         return false;
                     }
-
-                    iconCount++;
+                    finally
+                    {
+                        iconCount++;
+                    }
                     return true;
                 };
 
-                if (EnumResourceNames(hModule, lpszType, callback, IntPtr.Zero))
+                if (EnumResourceNames(hModule, lpszType, lpEnumFunc, IntPtr.Zero))
                     throw new ArgumentOutOfRangeException("index");
 
                 if (returner != null) return returner;
@@ -407,14 +409,13 @@ namespace UIconEdit
                 hModule = LoadLibraryEx(path, IntPtr.Zero, LOAD_LIBRARY_AS_DATAFILE);
 
                 IconExtractException x = null;
-                ENUMRESNAMEPROC enumCallback = delegate (IntPtr h, IntPtr t, IntPtr name, IntPtr l)
+                ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, IntPtr t, IntPtr name, IntPtr l)
                 {
                     try
                     {
                         if (singleHandler != null)
                             sHandler = e => singleHandler(new IconExtractException(e, curIndex));
                         callback(curIndex, (TIconFile)_extractSingle(h, t, name, typeCode, sHandler));
-                        curIndex++;
                         return true;
                     }
                     catch (Exception e)
@@ -431,9 +432,13 @@ namespace UIconEdit
                         }
                         return false;
                     }
+                    finally
+                    {
+                        curIndex++;
+                    }
                 };
 
-                if (!EnumResourceNames(hModule, lpszType, enumCallback, IntPtr.Zero))
+                if (!EnumResourceNames(hModule, lpszType, lpEnumFunc, IntPtr.Zero))
                 {
                     if (x == null) throw new Win32Exception();
                     throw x;

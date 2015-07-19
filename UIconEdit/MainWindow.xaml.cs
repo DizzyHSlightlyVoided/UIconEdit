@@ -159,7 +159,17 @@ namespace UIconEdit.Maker
                 {
                     bool? result = extractWindow.ShowDialog();
                     if (!result.HasValue || !result.Value) return;
-                    LoadedFile = extractWindow.GetFileAndDispose();
+                    try
+                    {
+                        LoadedFile = extractWindow.GetFileAndDispose();
+                    }
+                    catch
+                    {
+                        ErrorWindow.Show(this, string.Format(extractWindow.IconType == IconTypeCode.Cursor ?
+                            _settings.LanguageFile.CursorExtractError : _settings.LanguageFile.IconExtractError,
+                            extractWindow.IconIndex, path));
+                        return;
+                    }
                     listbox.SelectedIndex = 0;
                     IsModified = false;
                     scrollEntries.ScrollToTop();

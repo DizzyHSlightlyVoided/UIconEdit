@@ -177,6 +177,8 @@ namespace UIconEdit.Maker
         public string ImageLoadError { get { return _text["ImageLoadError"]; } }
         public string ImageSaveError { get { return _text["ImageSaveError"]; } }
         public string ImageAddError { get { return _text["ImageAddError"]; } }
+        public string IconExtractError { get { return _text["IconExtractError"]; } }
+        public string CursorExtractError { get { return _text["CursorExtractError"]; } }
         public string IconExtractNone { get { return _text["IconExtractNone"]; } }
 
         public string FilenameSuffix { get { return _text["FilenameSuffix"]; } }

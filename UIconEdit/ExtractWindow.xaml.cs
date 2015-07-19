@@ -153,6 +153,12 @@ namespace UIconEdit.Maker
         [Bindable(true)]
         public ObservableCollection<FileToken> CursorFiles { get { return _cursors; } }
 
+        IconTypeCode _type;
+        public IconTypeCode IconType { get { return _type; } }
+
+        private int _iconIndex;
+        public int IconIndex { get { return _iconIndex; } }
+
         public struct FileToken : IDisposable
         {
             private static readonly EntryKey _baseKey = new EntryKey(48, 48, BitDepth.Depth32BitsPerPixel);
@@ -191,7 +197,7 @@ namespace UIconEdit.Maker
                 string format;
                 if (_settings == null) format = "#{0} ({1})";
                 else format = _settings.LanguageFile.ExtractFrameCount;
-                return string.Format(format, _index + 1, _count);
+                return string.Format(format, _index, _count);
             }
 
             public void Dispose()
@@ -206,12 +212,16 @@ namespace UIconEdit.Maker
             FileToken token;
             if (tabCur.IsSelected)
             {
+                _type = IconTypeCode.Cursor;
                 token = (FileToken)listCursors.SelectedItem;
+                _iconIndex = token.Index;
                 Dispose();
                 return IconExtraction.ExtractCursorSingle(_path, token.Index, _handler);
             }
 
+            _type = IconTypeCode.Icon;
             token = (FileToken)listIcons.SelectedItem;
+            _iconIndex = token.Index;
             Dispose();
             return IconExtraction.ExtractIconSingle(_path, token.Index, _handler);
         }

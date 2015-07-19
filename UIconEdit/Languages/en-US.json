@@ -8,6 +8,8 @@
   "ImageLoadError": "Could not load \"{0}\".",
   "ImageSaveError": "Could not save \"{0}\".",
   "ImageAddError": "A {0}-bit {1}×{2} image already exists in the icon file.",
+  "IconExtractError": "Could not load icon #{0} in \"{1}\".",
+  "CursorExtractError": "Could not load cursor #{0} in \"{1}\".",
   "IconExtractNone": "No valid icons or cursors were loaded from \"{0}\".",
 
   "FilenameSuffix": "{0}bpp{1}x{2}",

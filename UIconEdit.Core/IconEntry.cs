@@ -1422,58 +1422,104 @@ namespace UIconEdit
     [StructLayout(LayoutKind.Sequential)]
     public struct EntryKey : IEquatable<EntryKey>, IComparable<EntryKey>
     {
+        internal static bool IsValid(short width, short height, BitDepth bitDepth)
+        {
+            return width >= IconEntry.MinDimension && width <= IconEntry.MaxDimension && height >= IconEntry.MinDimension && height <= IconEntry.MaxDimension
+                && _isValid(bitDepth);
+        }
+
         /// <summary>
         /// Creates a new instance.
         /// </summary>
         /// <param name="width">The width of the icon entry.</param>
         /// <param name="height">The height of the icon entry.</param>
         /// <param name="bitDepth">The bit depth of the icon entry.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
         public EntryKey(short width, short height, BitDepth bitDepth)
         {
-            Width = width;
-            Height = height;
-            BitDepth = bitDepth;
+            if (width < IconEntry.MinDimension || width > IconEntry.MaxDimension)
+                throw new ArgumentOutOfRangeException("width");
+            if (height < IconEntry.MinDimension || height > IconEntry.MaxDimension)
+                throw new ArgumentOutOfRangeException("height");
+            if (!_isValid(bitDepth))
+                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
+
+            _width = width;
+            _height = height;
+            _bitDepth = bitDepth;
         }
 
+        private static bool _isValid(BitDepth bitDepth)
+        {
+            switch (bitDepth)
+            {
+                case BitDepth.Depth32BitsPerPixel:
+                case BitDepth.Depth24BitsPerPixel:
+                case BitDepth.Depth8BitsPerPixel:
+                case BitDepth.Depth4BitsPerPixel:
+                case BitDepth.Depth1BitPerPixel:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private short _width;
         /// <summary>
         /// Indicates the width of the icon entry.
         /// </summary>
-        public short Width;
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// In a set operation, the specified value is less than <see cref="IconEntry.MinDimension"/> or greater than <see cref="IconEntry.MaxDimension"/>
+        /// </exception>
+        public short Width
+        {
+            get { return _width < IconEntry.MinDimension || _width > IconEntry.MaxDimension ? IconEntry.MinDimension : _width; }
+            set
+            {
+                if (value < IconEntry.MinDimension || value > IconEntry.MaxDimension)
+                    throw new ArgumentOutOfRangeException();
+                _width = value;
+            }
+        }
+
+        private short _height;
         /// <summary>
         /// Indicates the height of the icon entry.
         /// </summary>
-        public short Height;
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// In a set operation, the specified value is less than <see cref="IconEntry.MinDimension"/> or greater than <see cref="IconEntry.MaxDimension"/>
+        /// </exception>
+        public short Height
+        {
+            get { return _height; }
+            set
+            {
+                if (value < IconEntry.MinDimension || value > IconEntry.MaxDimension)
+                    throw new ArgumentOutOfRangeException();
+                _height = value;
+            }
+        }
+
+        private BitDepth _bitDepth;
         /// <summary>
         /// Indicates the bit depth of the icon entry.
         /// </summary>
-        public BitDepth BitDepth;
-
-        /// <summary>
-        /// Gets a value indicating whether <see cref="Width"/>, <see cref="Height"/>, and <see cref="BitDepth"/> are all 0.
-        /// </summary>
-        public bool IsEmpty { get { return Width == 0 && Height == 0 && BitDepth == 0; } }
-
-        /// <summary>
-        /// Gets a value indicating whether the current instance contains valid values which would actually occur in an <see cref="IconEntry"/>.
-        /// </summary>
-        public bool IsValid
+        /// <exception cref="InvalidEnumArgumentException">
+        /// In a set operation, the specified value is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// </exception>
+        public BitDepth BitDepth
         {
-            get
+            get { return _isValid(_bitDepth) ? _bitDepth : 0; }
+            set
             {
-                if (Width < IconEntry.MinDimension || Width > IconEntry.MaxDimension || Height < IconEntry.MinDimension || Height > IconEntry.MaxDimension)
-                    return false;
-
-                switch (BitDepth)
-                {
-                    case BitDepth.Depth1BitPerPixel:
-                    case BitDepth.Depth4BitsPerPixel:
-                    case BitDepth.Depth8BitsPerPixel:
-                    case BitDepth.Depth24BitsPerPixel:
-                    case BitDepth.Depth32BitsPerPixel:
-                        return true;
-                }
-
-                return false;
+                if (!_isValid(value))
+                    throw new InvalidEnumArgumentException(null, (int)value, typeof(BitDepth));
+                _bitDepth = value;
             }
         }
 
@@ -1498,9 +1544,13 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// An <see cref="EntryKey"/> with <see cref="IsEmpty"/> set to <c>true</c>.
+        /// An <see cref="EntryKey"/> value which will occur earliest according to <see cref="CompareTo(EntryKey)"/>.
         /// </summary>
-        public static readonly EntryKey Empty;
+        public static readonly EntryKey Earliest = new EntryKey(IconEntry.MaxDimension, IconEntry.MaxDimension, BitDepth.Depth32BitsPerPixel);
+        /// <summary>
+        /// An <see cref="EntryKey"/> value which will occur last according to <see cref="CompareTo(EntryKey)"/>.
+        /// </summary>
+        public static readonly EntryKey Last = new EntryKey(IconEntry.MinDimension, IconEntry.MinDimension, BitDepth.Depth1BitPerPixel);
 
         /// <summary>
         /// Returns a string representation of the current value.

@@ -1610,44 +1610,62 @@ Creates a new instance.
 * `height`: The height of the icon entry.
 * `bitDepth`: The bit depth of the icon entry.
 
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
+
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+`bitDepth` is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
+
 --------------------------------------------------
-## Field: `public System.Int16 Width`
+## Property: `public System.Int16 Width { get; set; }`
 
 Indicates the width of the icon entry.
 
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768)
+
 --------------------------------------------------
-## Field: `public System.Int16 Height`
+## Property: `public System.Int16 Height { get; set; }`
 
 Indicates the height of the icon entry.
 
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768)
+
 --------------------------------------------------
-## Field: `public UIconEdit.BitDepth BitDepth`
+## Property: `public UIconEdit.BitDepth BitDepth { get; set; }`
 
 Indicates the bit depth of the icon entry.
 
---------------------------------------------------
-## Property: `public System.Boolean IsEmpty { get; }`
+### Exceptions
 
-Gets a value indicating whether [`EntryKey.Width`](#field-public-systemint16-width), [`EntryKey.Height`](#field-public-systemint16-height), and [`EntryKey.BitDepth`](#field-public-uiconeditbitdepth-bitdepth) are all 0.
-
---------------------------------------------------
-## Property: `public System.Boolean IsValid { get; }`
-
-Gets a value indicating whether the current instance contains valid values which would actually occur in an [`IconEntry`](#type-public-class-uiconediticonentry).
+##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
+In a set operation, the specified value is not a valid [`BitDepth`](#type-public-enum-uiconeditbitdepth) value.
 
 --------------------------------------------------
 ## Method: `public System.Int32 CompareTo(UIconEdit.EntryKey other)`
 
-Compares the current instance to the specified other [`EntryKey`](#type-public-struct-uiconeditentrykey) object. First [`EntryKey.BitDepth`](#field-public-uiconeditbitdepth-bitdepth) is compared, then [`EntryKey.Height`](#field-public-systemint16-height), then [`EntryKey.Width`](#field-public-systemint16-width) (with higher color-counts and larger elements first).
+Compares the current instance to the specified other [`EntryKey`](#type-public-struct-uiconeditentrykey) object. First [`EntryKey.BitDepth`](#property-public-uiconeditbitdepth-bitdepth--get-set-) is compared, then [`EntryKey.Height`](#property-public-systemint16-height--get-set-), then [`EntryKey.Width`](#property-public-systemint16-width--get-set-) (with higher color-counts and larger elements first).
 * `other`: The other [`EntryKey`](#type-public-struct-uiconeditentrykey) to compare.
 
 **Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): A value less than 0 if the current value comes before `other`; a value greater than 0 if the current value comes after `other`; or 0 if the current instance is equal to `other`.
 
 
 --------------------------------------------------
-## Field: `public static readonly UIconEdit.EntryKey Empty`
+## Field: `public static readonly UIconEdit.EntryKey Earliest`
 
-An [`EntryKey`](#type-public-struct-uiconeditentrykey) with [`EntryKey.IsEmpty`](#property-public-systemboolean-isempty--get-) set to `true`.
+An [`EntryKey`](#type-public-struct-uiconeditentrykey) value which will occur earliest according to [`EntryKey.CompareTo(UIconEdit.EntryKey)`](#method-public-systemint32-comparetouiconeditentrykey-other).
+
+--------------------------------------------------
+## Field: `public static readonly UIconEdit.EntryKey Last`
+
+An [`EntryKey`](#type-public-struct-uiconeditentrykey) value which will occur last according to [`EntryKey.CompareTo(UIconEdit.EntryKey)`](#method-public-systemint32-comparetouiconeditentrykey-other).
 
 --------------------------------------------------
 ## Method: `public System.String ToString()`

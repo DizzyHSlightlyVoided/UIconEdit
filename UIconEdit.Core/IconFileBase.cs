@@ -1209,7 +1209,6 @@ namespace UIconEdit
             /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
             public bool RemoveSimilar(EntryKey key)
             {
-                if (!key.IsValid) return false;
                 for (int i = 0; i < _items.Count; i++)
                 {
                     if (key == _items[i].EntryKey)
@@ -1232,6 +1231,7 @@ namespace UIconEdit
             /// <c>false</c> if no such icon entry was found in the list.</returns>
             public bool RemoveSimilar(short width, short height, BitDepth bitDepth)
             {
+                if (!EntryKey.IsValid(width, height, bitDepth)) return false;
                 return RemoveSimilar(new EntryKey(width, height, bitDepth));
             }
 
@@ -1295,6 +1295,7 @@ namespace UIconEdit
             /// <c>false</c> if no such icon entry was found in the list.</returns>
             public bool ContainsSimilar(short width, short height, BitDepth bitDepth)
             {
+                if (!EntryKey.IsValid(width, height, bitDepth)) return false;
                 return _set.Contains(new EntryKey(width, height, bitDepth));
             }
 
@@ -1334,7 +1335,6 @@ namespace UIconEdit
             /// as <paramref name="key"/>, if found; otherwise, -1.</returns>
             public int IndexOfSimilar(EntryKey key)
             {
-                if (!key.IsValid) return -1;
                 for (int i = 0; i < _items.Count; i++)
                     if (key == _items[i].EntryKey) return i;
                 return -1;
@@ -1350,6 +1350,7 @@ namespace UIconEdit
             /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>, if found; otherwise, -1.</returns>
             public int IndexOfSimilar(short width, short height, BitDepth bitDepth)
             {
+                if (!EntryKey.IsValid(width, height, bitDepth)) return -1;
                 return IndexOfSimilar(new EntryKey(width, height, bitDepth));
             }
 
@@ -1518,6 +1519,7 @@ namespace UIconEdit
             /// and <paramref name="bitDepth"/> would be.</returns>
             public int BinarySearchSimilar(short width, short height, BitDepth bitDepth)
             {
+                if (!EntryKey.IsValid(width, height, bitDepth)) return ~0;
                 return BinarySearchSimilar(new EntryKey(width, height, bitDepth));
             }
 
@@ -1543,6 +1545,7 @@ namespace UIconEdit
             /// </exception>
             public int BinarySearchSimilar(int index, int count, short width, short height, BitDepth bitDepth)
             {
+                if (!EntryKey.IsValid(width, height, bitDepth)) return -1;
                 return BinarySearchSimilar(index, count, new EntryKey(width, height, bitDepth));
             }
 

@@ -218,7 +218,7 @@ namespace UIconEdit
                         returner = new IconFile();
                         break;
                     default:
-                        throw new IconLoadException(IconErrorCode.InvalidFormat, IconTypeCode.Unknown);
+                        throw new IconLoadException(IconErrorCode.InvalidFormat, IconTypeCode.Unknown, loadedId);
                 }
 
                 ushort entryCount = reader.ReadUInt16();
@@ -477,7 +477,7 @@ namespace UIconEdit
                             }
                             #endregion
                         }
-                        else throw new IconLoadException(IconErrorCode.InvalidEntryType, loadedId, i);
+                        else throw new IconLoadException(IconErrorCode.InvalidEntryType, loadedId, dibSize, i);
 
                         if (loadedImage.PixelWidth > IconEntry.MaxDimension || loadedImage.PixelHeight > IconEntry.MaxDimension ||
                             loadedImage.PixelWidth < IconEntry.MinDimension || loadedImage.PixelHeight < IconEntry.MinDimension)

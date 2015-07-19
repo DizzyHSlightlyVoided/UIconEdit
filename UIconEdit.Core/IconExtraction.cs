@@ -413,7 +413,7 @@ namespace UIconEdit
                     {
                         if (singleHandler != null)
                             sHandler = e => singleHandler(new IconExtractException(e, curIndex));
-                        callback(name, (TIconFile)_extractSingle(h, t, name, typeCode, sHandler));
+                        callback(curIndex, (TIconFile)_extractSingle(h, t, name, typeCode, sHandler));
                         curIndex++;
                         return true;
                     }
@@ -662,9 +662,9 @@ namespace UIconEdit
     /// A delegate function to perform on each cursor or icon extracted from a DLL or EXE file.
     /// </summary>
     /// <typeparam name="TIconFile">The type of the <see cref="IconFileBase"/> implementation.</typeparam>
-    /// <param name="key">The <see cref="IntPtr"/> key of the current cursor or icon to process.</param>
+    /// <param name="index">The index of the current cursor or icon to process.</param>
     /// <param name="iconFile">The cursor or icon which was extracted.</param>
-    public delegate void IconExtractCallback<TIconFile>(IntPtr key, TIconFile iconFile)
+    public delegate void IconExtractCallback<TIconFile>(int index, TIconFile iconFile)
         where TIconFile : IconFileBase;
 
     [UnmanagedFunctionPointer(CallingConvention.Winapi, SetLastError = true, CharSet = CharSet.Unicode)]

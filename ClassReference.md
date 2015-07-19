@@ -2392,5 +2392,5 @@ An I/O error occurred.
 # Type: `public class UIconEdit.IconExtractCallback`1`
 
 A delegate function to perform on each cursor or icon extracted from a DLL or EXE file.The type of the [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation.
-* `key`: The [`IntPtr`](https://msdn.microsoft.com/en-us/library/system.intptr.aspx) key of the current cursor or icon to process.
+* `index`: The index of the current cursor or icon to process.
 * `iconFile`: The cursor or icon which was extracted.

@@ -267,7 +267,7 @@ namespace UIconEdit
 
                         int dibSize = reader.ReadInt32();
 
-                        BitDepth bitDepth;
+                        IconBitDepth bitDepth;
                         if (loadedId == IconTypeCode.Cursor)
                             bitDepth = 0;
                         else
@@ -308,18 +308,18 @@ namespace UIconEdit
                                     if (loadedId == IconTypeCode.Cursor)
                                     {
                                         if (pFormat == PixelFormats.Indexed8 || pFormat == PixelFormats.Gray8)
-                                            bitDepth = BitDepth.Depth8BitsPerPixel;
+                                            bitDepth = IconBitDepth.Depth8BitsPerPixel;
                                         else if (pFormat == PixelFormats.Indexed4 || pFormat == PixelFormats.Gray4)
-                                            bitDepth = BitDepth.Depth4BitsPerPixel;
+                                            bitDepth = IconBitDepth.Depth4BitsPerPixel;
                                         else if (pFormat == PixelFormats.Indexed2 || pFormat == PixelFormats.Gray2)
-                                            bitDepth = BitDepth.Depth1BitPerPixel;
+                                            bitDepth = IconBitDepth.Depth1BitPerPixel;
                                         else if (pFormat == PixelFormats.Bgr24 || pFormat == PixelFormats.Rgb24)
-                                            bitDepth = BitDepth.Depth24BitsPerPixel;
+                                            bitDepth = IconBitDepth.Depth24BitsPerPixel;
                                         else if (pFormat == PixelFormats.Bgra32)
-                                            bitDepth = BitDepth.Depth32BitsPerPixel;
+                                            bitDepth = IconBitDepth.Depth32BitsPerPixel;
                                         else
                                         {
-                                            bitDepth = BitDepth.Depth32BitsPerPixel;
+                                            bitDepth = IconBitDepth.Depth32BitsPerPixel;
                                             frame = new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 0);
                                         }
                                     }
@@ -386,7 +386,7 @@ namespace UIconEdit
 
                                 int actualHeight;
 
-                                if (bitDepth == BitDepth.Depth32BitsPerPixel && entry.BHeight != 0 && entry.BHeight == height)
+                                if (bitDepth == IconBitDepth.Depth32BitsPerPixel && entry.BHeight != 0 && entry.BHeight == height)
                                 {
                                     actualHeight = height;
                                 }
@@ -435,10 +435,10 @@ namespace UIconEdit
                                 int palCount = reader.ReadInt32();
                                 if (palCount != 0)
                                 {
-                                    if (bitDepth == BitDepth.Depth32BitsPerPixel || bitDepth == BitDepth.Depth24BitsPerPixel || palCount != IconEntry.GetColorCount(bitDepth))
+                                    if (bitDepth == IconBitDepth.Depth32BitsPerPixel || bitDepth == IconBitDepth.Depth24BitsPerPixel || palCount != IconEntry.GetColorCount(bitDepth))
                                         throw new IconLoadException(IconErrorCode.InvalidBmpFile, loadedId, i);
                                 }
-                                else if (bitDepth != BitDepth.Depth32BitsPerPixel && bitDepth != BitDepth.Depth24BitsPerPixel)
+                                else if (bitDepth != IconBitDepth.Depth32BitsPerPixel && bitDepth != IconBitDepth.Depth24BitsPerPixel)
                                     palCount = (int)IconEntry.GetColorCount(bitDepth);
 
                                 reader.ReadInt32(); //Skip next 4 bytes
@@ -859,16 +859,16 @@ namespace UIconEdit
                         default: //32-bit
                             bmpStride = width * 4;
                             break;
-                        case BitDepth.Depth24BitsPerPixel:
+                        case IconBitDepth.Depth24BitsPerPixel:
                             bmpStride = width * 3;
                             break;
-                        case BitDepth.Depth8BitsPerPixel:
+                        case IconBitDepth.Depth8BitsPerPixel:
                             bmpStride = width;
                             break;
-                        case BitDepth.Depth4BitsPerPixel:
+                        case IconBitDepth.Depth4BitsPerPixel:
                             bmpStride = (width + 1) >> 1;
                             break;
-                        case BitDepth.Depth1BitPerPixel:
+                        case IconBitDepth.Depth1BitPerPixel:
                             bmpStride = alphaStride;
                             break;
                     }
@@ -967,7 +967,7 @@ namespace UIconEdit
             , IReadOnlyList<IconEntry>
 #endif
         {
-            private HashSet<EntryKey> _set;
+            private HashSet<IconEntryKey> _set;
             private ObservableCollection<IconEntry> _items;
             private IconFileBase _file;
             private bool _noDups;
@@ -988,7 +988,7 @@ namespace UIconEdit
             internal EntryList(IconFileBase file)
             {
                 _file = file;
-                _set = new HashSet<EntryKey>();
+                _set = new HashSet<IconEntryKey>();
                 _setItems(new ObservableCollection<IconEntry>());
                 _noDups = true;
             }
@@ -1207,7 +1207,7 @@ namespace UIconEdit
             /// <param name="key">The entry key to compare.</param>
             /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
-            public bool RemoveSimilar(EntryKey key)
+            public bool RemoveSimilar(IconEntryKey key)
             {
                 for (int i = 0; i < _items.Count; i++)
                 {
@@ -1229,10 +1229,10 @@ namespace UIconEdit
             /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
             /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
             /// <c>false</c> if no such icon entry was found in the list.</returns>
-            public bool RemoveSimilar(short width, short height, BitDepth bitDepth)
+            public bool RemoveSimilar(short width, short height, IconBitDepth bitDepth)
             {
-                if (!EntryKey.IsValid(width, height, bitDepth)) return false;
-                return RemoveSimilar(new EntryKey(width, height, bitDepth));
+                if (!IconEntryKey.IsValid(width, height, bitDepth)) return false;
+                return RemoveSimilar(new IconEntryKey(width, height, bitDepth));
             }
 
             /// <summary>
@@ -1279,7 +1279,7 @@ namespace UIconEdit
             /// <param name="key">The entry key to compare.</param>
             /// <returns><c>true</c> if an icon entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="key"/> exists in the list; <c>false</c> otherwise.</returns>
-            public bool ContainsSimilar(EntryKey key)
+            public bool ContainsSimilar(IconEntryKey key)
             {
                 return _set.Contains(key);
             }
@@ -1293,10 +1293,10 @@ namespace UIconEdit
             /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
             /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was found;
             /// <c>false</c> if no such icon entry was found in the list.</returns>
-            public bool ContainsSimilar(short width, short height, BitDepth bitDepth)
+            public bool ContainsSimilar(short width, short height, IconBitDepth bitDepth)
             {
-                if (!EntryKey.IsValid(width, height, bitDepth)) return false;
-                return _set.Contains(new EntryKey(width, height, bitDepth));
+                if (!IconEntryKey.IsValid(width, height, bitDepth)) return false;
+                return _set.Contains(new IconEntryKey(width, height, bitDepth));
             }
 
             /// <summary>
@@ -1333,7 +1333,7 @@ namespace UIconEdit
             /// <param name="key">The entry key to compare.</param>
             /// <returns>The index of an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
             /// as <paramref name="key"/>, if found; otherwise, -1.</returns>
-            public int IndexOfSimilar(EntryKey key)
+            public int IndexOfSimilar(IconEntryKey key)
             {
                 for (int i = 0; i < _items.Count; i++)
                     if (key == _items[i].EntryKey) return i;
@@ -1348,10 +1348,10 @@ namespace UIconEdit
             /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
             /// <returns>The index of an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
             /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>, if found; otherwise, -1.</returns>
-            public int IndexOfSimilar(short width, short height, BitDepth bitDepth)
+            public int IndexOfSimilar(short width, short height, IconBitDepth bitDepth)
             {
-                if (!EntryKey.IsValid(width, height, bitDepth)) return -1;
-                return IndexOfSimilar(new EntryKey(width, height, bitDepth));
+                if (!IconEntryKey.IsValid(width, height, bitDepth)) return -1;
+                return IndexOfSimilar(new IconEntryKey(width, height, bitDepth));
             }
 
             /// <summary>
@@ -1380,7 +1380,7 @@ namespace UIconEdit
                 if (index + count > _items.Count) throw new ArgumentException();
             }
 
-            private int _binarySearch(int index, int count, EntryKey key)
+            private int _binarySearch(int index, int count, IconEntryKey key)
             {
                 int low = index, high = index + count - 1;
 
@@ -1478,7 +1478,7 @@ namespace UIconEdit
             /// <returns>The index of an entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and
             /// <see cref="IconEntry.BitDepth"/> as <paramref name="key"/>, if found; otherwise, the bitwise complement of the
             /// index where <paramref name="key"/> would be.</returns>
-            public int BinarySearchSimilar(EntryKey key)
+            public int BinarySearchSimilar(IconEntryKey key)
             {
                 return _binarySearch(0, _items.Count, key);
             }
@@ -1499,7 +1499,7 @@ namespace UIconEdit
             /// <exception cref="ArgumentException">
             /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
             /// </exception>
-            public int BinarySearchSimilar(int index, int count, EntryKey key)
+            public int BinarySearchSimilar(int index, int count, IconEntryKey key)
             {
                 _binarySearchCheck(index, count);
                 return _binarySearch(index, count, key);
@@ -1517,10 +1517,10 @@ namespace UIconEdit
             /// <see cref="IconEntry.BitDepth"/> as <paramref name="width"/>, <paramref name="height"/>, and <paramref name="bitDepth"/>,
             /// if found; otherwise, the bitwise complement of the index of where <paramref name="width"/>, <paramref name="height"/>,
             /// and <paramref name="bitDepth"/> would be.</returns>
-            public int BinarySearchSimilar(short width, short height, BitDepth bitDepth)
+            public int BinarySearchSimilar(short width, short height, IconBitDepth bitDepth)
             {
-                if (!EntryKey.IsValid(width, height, bitDepth)) return ~0;
-                return BinarySearchSimilar(new EntryKey(width, height, bitDepth));
+                if (!IconEntryKey.IsValid(width, height, bitDepth)) return ~0;
+                return BinarySearchSimilar(new IconEntryKey(width, height, bitDepth));
             }
 
             /// <summary>
@@ -1543,10 +1543,10 @@ namespace UIconEdit
             /// <exception cref="ArgumentException">
             /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
             /// </exception>
-            public int BinarySearchSimilar(int index, int count, short width, short height, BitDepth bitDepth)
+            public int BinarySearchSimilar(int index, int count, short width, short height, IconBitDepth bitDepth)
             {
-                if (!EntryKey.IsValid(width, height, bitDepth)) return -1;
-                return BinarySearchSimilar(index, count, new EntryKey(width, height, bitDepth));
+                if (!IconEntryKey.IsValid(width, height, bitDepth)) return -1;
+                return BinarySearchSimilar(index, count, new IconEntryKey(width, height, bitDepth));
             }
 
             /// <summary>

@@ -161,15 +161,13 @@ namespace UIconEdit.Maker
 
         public struct FileToken : IDisposable
         {
-            private static readonly EntryKey _baseKey = new EntryKey(48, 48, BitDepth.Depth32BitsPerPixel);
-
             public FileToken(IconFileBase file, SettingsFile settings, int index)
             {
                 _settings = settings;
                 _index = index;
                 _count = file.Entries.Count;
                 var entries = file.Entries.OrderBy(_orderBy);
-                IconEntry curEntry = entries.Where(i => i.Width >= _baseKey.Width && i.Height >= _baseKey.Height).FirstOrDefault();
+                IconEntry curEntry = entries.Where(i => i.Width >= _baseSize && i.Height >= _baseSize).FirstOrDefault();
                 if (curEntry == null)
                     curEntry = entries.FirstOrDefault();
 
@@ -177,7 +175,7 @@ namespace UIconEdit.Maker
             }
 
             const int _baseSize = 48;
-            const int _baseDepth = ((int)BitDepth.Depth32BitsPerPixel << 4);
+            const int _baseDepth = ((int)IconBitDepth.Depth32BitsPerPixel << 4);
 
             private static int _orderBy(IconEntry i)
             {

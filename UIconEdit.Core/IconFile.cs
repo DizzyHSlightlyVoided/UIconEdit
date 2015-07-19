@@ -207,13 +207,13 @@ namespace UIconEdit
         {
             switch (entry.BitDepth)
             {
-                case BitDepth.Depth2Color:
+                case IconBitDepth.Depth2Color:
                     return 1;
-                case BitDepth.Depth16Color:
+                case IconBitDepth.Depth16Color:
                     return 4;
-                case BitDepth.Depth256Color:
+                case IconBitDepth.Depth256Color:
                     return 8;
-                case BitDepth.Depth24BitsPerPixel:
+                case IconBitDepth.Depth24BitsPerPixel:
                     return 24;
                 default:
                     return 32;

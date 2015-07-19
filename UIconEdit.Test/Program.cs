@@ -40,13 +40,13 @@ namespace UIconEdit.Test
         static void Main(string[] args)
         {
             {
-                string[] strings = new string[] { "32", "64", "29", "Depth32", "32Bit", "32Color", "16777216Color", "Depth4294967296Color", BitDepth.Depth256Color.ToString() };
+                string[] strings = new string[] { "32", "64", "29", "Depth32", "32Bit", "32Color", "16777216Color", "Depth4294967296Color", IconBitDepth.Depth256Color.ToString() };
 
                 foreach (string str in strings)
                 {
                     Console.Write(string.Format("Testing string \"{0}\": ", str));
 
-                    BitDepth result;
+                    IconBitDepth result;
                     if (IconEntry.TryParseBitDepth(str, out result))
                     {
                         Console.WriteLine("Succeeded! BitDepth." + result);

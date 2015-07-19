@@ -58,7 +58,7 @@ namespace UIconEdit
         /// </summary>
         public const byte DefaultAlphaThreshold = 96;
 
-        private void _initValues(short width, short height, BitDepth bitDepth)
+        private void _initValues(short width, short height, IconBitDepth bitDepth)
         {
             if (width < MinDimension || width > MaxDimension)
                 throw new ArgumentOutOfRangeException("width");
@@ -67,18 +67,18 @@ namespace UIconEdit
                 throw new ArgumentOutOfRangeException("height");
 
             if (!_validateBitDepth(bitDepth))
-                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
+                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
         }
 
-        private static bool _validateBitDepth(BitDepth value)
+        private static bool _validateBitDepth(IconBitDepth value)
         {
             switch (value)
             {
-                case BitDepth.Depth1BitsPerPixel:
-                case BitDepth.Depth4BitsPerPixel:
-                case BitDepth.Depth8BitsPerPixel:
-                case BitDepth.Depth24BitsPerPixel:
-                case BitDepth.Depth32BitsPerPixel:
+                case IconBitDepth.Depth1BitsPerPixel:
+                case IconBitDepth.Depth4BitsPerPixel:
+                case IconBitDepth.Depth8BitsPerPixel:
+                case IconBitDepth.Depth24BitsPerPixel:
+                case IconBitDepth.Depth32BitsPerPixel:
                     return true;
             }
             return false;
@@ -101,12 +101,12 @@ namespace UIconEdit
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
+        public IconEntry(BitmapSource baseImage, short width, short height, IconBitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
         {
             if (baseImage == null) throw new ArgumentNullException("baseImage");
             _initValues(width, height, bitDepth);
@@ -132,12 +132,12 @@ namespace UIconEdit
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, byte alphaThreshold)
+        public IconEntry(BitmapSource baseImage, short width, short height, IconBitDepth bitDepth, byte alphaThreshold)
             : this(baseImage, width, height, bitDepth, 0, 0, alphaThreshold)
         {
         }
@@ -157,12 +157,12 @@ namespace UIconEdit
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+        public IconEntry(BitmapSource baseImage, short width, short height, IconBitDepth bitDepth, ushort hotspotX, ushort hotspotY)
             : this(baseImage, width, height, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
         }
@@ -178,12 +178,12 @@ namespace UIconEdit
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, short width, short height, BitDepth bitDepth)
+        public IconEntry(BitmapSource baseImage, short width, short height, IconBitDepth bitDepth)
             : this(baseImage, width, height, bitDepth, 0, 0, DefaultAlphaThreshold)
         {
         }
@@ -203,18 +203,18 @@ namespace UIconEdit
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
+        public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
         {
             if (baseImage == null) throw new ArgumentNullException("baseImage");
             if (baseImage.PixelWidth < MinDimension || baseImage.PixelWidth > MaxDimension || baseImage.PixelHeight < MinDimension || baseImage.PixelHeight > MaxDimension)
                 throw new ArgumentException("The image size is out of the supported range.", "baseImage");
             if (!_validateBitDepth(bitDepth))
-                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
+                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
             BaseImage = baseImage;
             _depth = bitDepth;
             _width = (short)baseImage.PixelWidth;
@@ -237,12 +237,12 @@ namespace UIconEdit
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+        public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth, ushort hotspotX, ushort hotspotY)
             : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
         }
@@ -259,12 +259,12 @@ namespace UIconEdit
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, BitDepth bitDepth, byte alphaThreshold)
+        public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth, byte alphaThreshold)
             : this(baseImage, bitDepth, 0, 0, alphaThreshold)
         {
         }
@@ -278,24 +278,24 @@ namespace UIconEdit
         /// <paramref name="baseImage"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, BitDepth bitDepth)
+        public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth)
             : this(baseImage, bitDepth, 0, 0, DefaultAlphaThreshold)
         {
         }
 
-        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, BitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth, ushort hotspotX, ushort hotspotY)
             : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
             AlphaImage = alphaImage;
             SetValue(IsQuantizedPropertyKey, true);
         }
 
-        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, BitDepth bitDepth)
+        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth)
             : this(baseImage, alphaImage, bitDepth, 0, 0)
         {
         }
@@ -310,13 +310,13 @@ namespace UIconEdit
         public const short MaxDimension = 768;
         /// <summary>
         /// Gets and sets the maximum width or height at which an icon entry will be saved as a BMP file when <see cref="BitDepth"/> is
-        /// <see cref="UIconEdit.BitDepth.Depth32BitsPerPixel"/>; all entries with a width or height greater than this will be saved as PNG.
+        /// <see cref="IconBitDepth.Depth32BitsPerPixel"/>; all entries with a width or height greater than this will be saved as PNG.
         /// 96 pixels.
         /// </summary>
         public const short MaxBmp32 = 96;
         /// <summary>
         /// Gets and sets the maximum width or height at which an icon entry will be saved as a BMP file when <see cref="BitDepth"/> is any value except
-        /// <see cref="UIconEdit.BitDepth.Depth32BitsPerPixel"/>; all entries with a width or height greater than this will be saved as PNG.
+        /// <see cref="IconBitDepth.Depth32BitsPerPixel"/>; all entries with a width or height greater than this will be saved as PNG.
         /// 255 pixels.
         /// </summary>
         public const short MaxBmp = byte.MaxValue;
@@ -419,7 +419,7 @@ namespace UIconEdit
         {
             get
             {
-                if (_depth == BitDepth.Depth32BitsPerPixel)
+                if (_depth == IconBitDepth.Depth32BitsPerPixel)
                     return _width > 96 || _height > 96;
                 return _width > MaxBmp32 || _height > MaxBmp32;
             }
@@ -429,7 +429,7 @@ namespace UIconEdit
         /// Gets a key for the icon entry.
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
-        public EntryKey EntryKey { get { return new EntryKey(_width, _height, _depth); } }
+        public IconEntryKey EntryKey { get { return new IconEntryKey(_width, _height, _depth); } }
 
         private readonly short _width;
         /// <summary>
@@ -452,12 +452,12 @@ namespace UIconEdit
         }
 
         #region BitDepth
-        private readonly BitDepth _depth;
+        private readonly IconBitDepth _depth;
         /// <summary>
         /// Gets the bit depth of the current instance.
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
-        public BitDepth BitDepth
+        public IconBitDepth BitDepth
         {
             get { return _depth; }
         }
@@ -470,7 +470,7 @@ namespace UIconEdit
         public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register("AlphaThreshold", typeof(byte), typeof(BitmapImage));
 
         /// <summary>
-        /// Gets and sets a value indicating the threshold of alpha values at <see cref="BitDepth"/>s below <see cref="UIconEdit.BitDepth.Depth32BitsPerPixel"/>.
+        /// Gets and sets a value indicating the threshold of alpha values at <see cref="BitDepth"/>s below <see cref="IconBitDepth.Depth32BitsPerPixel"/>.
         /// Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
         /// </summary>
         public byte AlphaThreshold
@@ -587,31 +587,31 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Returns the number of bits per pixel associated with the specified <see cref="UIconEdit.BitDepth"/> value.
+        /// Returns the number of bits per pixel associated with the specified <see cref="IconBitDepth"/> value.
         /// </summary>
-        /// <param name="bitDepth">The <see cref="UIconEdit.BitDepth"/> to check.</param>
-        /// <returns>1 for <see cref="BitDepth.Depth1BitsPerPixel"/>; 4 for <see cref="BitDepth.Depth4BitsPerPixel"/>;
-        /// 8 for <see cref="BitDepth.Depth8BitsPerPixel"/>; 24 for <see cref="BitDepth.Depth24BitsPerPixel"/>; or
-        /// 32 for <see cref="BitDepth.Depth32BitsPerPixel"/>.</returns>
+        /// <param name="bitDepth">The <see cref="IconBitDepth"/> to check.</param>
+        /// <returns>1 for <see cref="IconBitDepth.Depth1BitsPerPixel"/>; 4 for <see cref="IconBitDepth.Depth4BitsPerPixel"/>;
+        /// 8 for <see cref="IconBitDepth.Depth8BitsPerPixel"/>; 24 for <see cref="IconBitDepth.Depth24BitsPerPixel"/>; or
+        /// 32 for <see cref="IconBitDepth.Depth32BitsPerPixel"/>.</returns>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
-        public static ushort GetBitsPerPixel(BitDepth bitDepth)
+        public static ushort GetBitsPerPixel(IconBitDepth bitDepth)
         {
             switch (bitDepth)
             {
-                case BitDepth.Depth1BitPerPixel:
+                case IconBitDepth.Depth1BitPerPixel:
                     return 1;
-                case BitDepth.Depth4BitsPerPixel:
+                case IconBitDepth.Depth4BitsPerPixel:
                     return 4;
-                case BitDepth.Depth8BitsPerPixel:
+                case IconBitDepth.Depth8BitsPerPixel:
                     return 8;
-                case BitDepth.Depth24BitsPerPixel:
+                case IconBitDepth.Depth24BitsPerPixel:
                     return 24;
-                case BitDepth.Depth32BitsPerPixel:
+                case IconBitDepth.Depth32BitsPerPixel:
                     return 32;
                 default:
-                    throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
+                    throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
             }
         }
 
@@ -625,94 +625,94 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Gets the maximum color count associated with the specified <see cref="UIconEdit.BitDepth"/>.
+        /// Gets the maximum color count associated with the specified <see cref="IconBitDepth"/>.
         /// </summary>
-        /// <param name="bitDepth">The <see cref="UIconEdit.BitDepth"/> to check.</param>
-        /// <returns>21 for <see cref="BitDepth.Depth2Color"/>; 16 for <see cref="BitDepth.Depth16Color"/>;
-        /// 256 for <see cref="BitDepth.Depth256Color"/>; 16777216 for <see cref="BitDepth.Depth24BitsPerPixel"/>; or
-        /// 4294967296 for <see cref="BitDepth.Depth32BitsPerPixel"/>.</returns>
+        /// <param name="bitDepth">The <see cref="IconBitDepth"/> to check.</param>
+        /// <returns>21 for <see cref="IconBitDepth.Depth2Color"/>; 16 for <see cref="IconBitDepth.Depth16Color"/>;
+        /// 256 for <see cref="IconBitDepth.Depth256Color"/>; 16777216 for <see cref="IconBitDepth.Depth24BitsPerPixel"/>; or
+        /// 4294967296 for <see cref="IconBitDepth.Depth32BitsPerPixel"/>.</returns>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
-        public static long GetColorCount(BitDepth bitDepth)
+        public static long GetColorCount(IconBitDepth bitDepth)
         {
             switch (bitDepth)
             {
-                case BitDepth.Depth2Color:
+                case IconBitDepth.Depth2Color:
                     return 2;
-                case BitDepth.Depth16Color:
+                case IconBitDepth.Depth16Color:
                     return 16;
-                case BitDepth.Depth256Color:
+                case IconBitDepth.Depth256Color:
                     return 256;
-                case BitDepth.Depth24BitsPerPixel:
+                case IconBitDepth.Depth24BitsPerPixel:
                     return 0x1000000;
-                case BitDepth.Depth32BitsPerPixel:
+                case IconBitDepth.Depth32BitsPerPixel:
                     return uint.MaxValue + 1L;
                 default:
-                    throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
+                    throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
             }
         }
 
         /// <summary>
-        /// Returns the <see cref="UIconEdit.BitDepth"/> associated with the specified numeric value.
+        /// Returns the <see cref="IconBitDepth"/> associated with the specified numeric value.
         /// </summary>
         /// <param name="value">The color count or number of bits per pixel to use.</param>
-        /// <returns><see cref="UIconEdit.BitDepth.Depth1BitPerPixel"/> if <paramref name="value"/> is 1 or 2;
-        /// <see cref="UIconEdit.BitDepth.Depth4BitsPerPixel"/> if <paramref name="value"/> is 4 or 16;
-        /// <see cref="UIconEdit.BitDepth.Depth8BitsPerPixel"/> if <paramref name="value"/> is 8 or 256;
-        /// <see cref="UIconEdit.BitDepth.Depth24BitsPerPixel"/> if <paramref name="value"/> is 24 or 16777216; or
-        /// <see cref="UIconEdit.BitDepth.Depth32BitsPerPixel"/> if <paramref name="value"/> is 32 or 4294967296.</returns>
+        /// <returns><see cref="IconBitDepth.Depth1BitPerPixel"/> if <paramref name="value"/> is 1 or 2;
+        /// <see cref="IconBitDepth.Depth4BitsPerPixel"/> if <paramref name="value"/> is 4 or 16;
+        /// <see cref="IconBitDepth.Depth8BitsPerPixel"/> if <paramref name="value"/> is 8 or 256;
+        /// <see cref="IconBitDepth.Depth24BitsPerPixel"/> if <paramref name="value"/> is 24 or 16777216; or
+        /// <see cref="IconBitDepth.Depth32BitsPerPixel"/> if <paramref name="value"/> is 32 or 4294967296.</returns>
         /// <exception cref="ArgumentException">
         /// <paramref name="value"/> is not one of the specified parameter values.
         /// </exception>
-        public static BitDepth GetBitDepth(long value)
+        public static IconBitDepth GetBitDepth(long value)
         {
             switch (value)
             {
                 case 1:
                 case 2:
-                    return BitDepth.Depth1BitPerPixel;
+                    return IconBitDepth.Depth1BitPerPixel;
                 case 4:
                 case 16:
-                    return BitDepth.Depth4BitsPerPixel;
+                    return IconBitDepth.Depth4BitsPerPixel;
                 case 8:
                 case 256:
-                    return BitDepth.Depth8BitsPerPixel;
+                    return IconBitDepth.Depth8BitsPerPixel;
                 case 24:
                 case 0x1000000:
-                    return BitDepth.Depth24BitsPerPixel;
+                    return IconBitDepth.Depth24BitsPerPixel;
                 case 32:
                 case uint.MaxValue + 1L:
-                    return BitDepth.Depth32BitsPerPixel;
+                    return IconBitDepth.Depth32BitsPerPixel;
                 default:
                     throw new ArgumentException("Not a valid color count or bits-per-pixel value.", "value");
             }
         }
 
         /// <summary>
-        /// Returns the <see cref="PixelFormat"/> associated with the specified <see cref="UIconEdit.BitDepth"/>.
+        /// Returns the <see cref="PixelFormat"/> associated with the specified <see cref="IconBitDepth"/>.
         /// </summary>
         /// <param name="depth">The bit depth from which to get the pixel format.</param>
         /// <returns>The pixel format associated with <paramref name="depth"/>.</returns>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="depth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="depth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
-        public static PixelFormat GetPixelFormat(BitDepth depth)
+        public static PixelFormat GetPixelFormat(IconBitDepth depth)
         {
             switch (depth)
             {
-                case BitDepth.Depth1BitPerPixel:
+                case IconBitDepth.Depth1BitPerPixel:
                     return PixelFormats.Indexed1;
-                case BitDepth.Depth4BitsPerPixel:
+                case IconBitDepth.Depth4BitsPerPixel:
                     return PixelFormats.Indexed4;
-                case BitDepth.Depth8BitsPerPixel:
+                case IconBitDepth.Depth8BitsPerPixel:
                     return PixelFormats.Indexed8;
-                case BitDepth.Depth24BitsPerPixel:
+                case IconBitDepth.Depth24BitsPerPixel:
                     return PixelFormats.Bgr24;
-                case BitDepth.Depth32BitsPerPixel:
+                case IconBitDepth.Depth32BitsPerPixel:
                     return PixelFormats.Bgra32;
                 default:
-                    throw new InvalidEnumArgumentException("depth", (int)depth, typeof(BitDepth));
+                    throw new InvalidEnumArgumentException("depth", (int)depth, typeof(IconBitDepth));
             }
         }
 
@@ -725,7 +725,7 @@ namespace UIconEdit
         {
             BitmapSource alphaMask;
 
-            return GetQuantized(true, BitDepth.Depth32BitsPerPixel, out alphaMask);
+            return GetQuantized(true, IconBitDepth.Depth32BitsPerPixel, out alphaMask);
         }
 
         internal IconFileBase File;
@@ -817,7 +817,7 @@ namespace UIconEdit
             return GetQuantized(isPng, _depth, out alphaMask);
         }
 
-        private WriteableBitmap GetQuantized(bool isPng, BitDepth _depth, out BitmapSource alphaMask)
+        private WriteableBitmap GetQuantized(bool isPng, IconBitDepth _depth, out BitmapSource alphaMask)
         {
             bool isQuantized = IsQuantized;
             BitmapSource alphaImage = AlphaImage;
@@ -892,7 +892,7 @@ namespace UIconEdit
                 alphaMask = new FormatConvertedBitmap(alphaImage, PixelFormats.Indexed1, AlphaPalette, 0);
             }
 
-            if (_depth == BitDepth.Depth32BitsPerPixel)
+            if (_depth == IconBitDepth.Depth32BitsPerPixel)
                 return GetBitmap(_width, _height, pixels);
 
             for (int i = 0; i < pixels.Length; i++)
@@ -908,14 +908,14 @@ namespace UIconEdit
             ushort paletteCount;
             switch (_depth)
             {
-                case BitDepth.Depth24BitsPerPixel:
+                case IconBitDepth.Depth24BitsPerPixel:
                     if (isPng) return GetBitmap(_width, _height, pixels);
                     return GetBitmap(_width, _height, pixels, DPixelFormat.Format24bppRgb);
-                case BitDepth.Depth2Color:
+                case IconBitDepth.Depth2Color:
                     paletteCount = 2;
                     pFormat = isPng ? DPixelFormat.Format8bppIndexed : DPixelFormat.Format1bppIndexed;
                     break;
-                case BitDepth.Depth16Color:
+                case IconBitDepth.Depth16Color:
                     paletteCount = 16;
                     pFormat = isPng ? DPixelFormat.Format8bppIndexed : DPixelFormat.Format4bppIndexed;
                     break;
@@ -1207,26 +1207,26 @@ namespace UIconEdit
         #endregion
 
         /// <summary>
-        /// Parses the specified string as a <see cref="UIconEdit.BitDepth"/> value.
+        /// Parses the specified string as a <see cref="IconBitDepth"/> value.
         /// </summary>
         /// <param name="value">The value to parse.</param>
-        /// <returns>The parsed <see cref="UIconEdit.BitDepth"/> value.</returns>
+        /// <returns>The parsed <see cref="IconBitDepth"/> value.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="value"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <para><paramref name="value"/> is an empty string or contains only whitespace.</para>
         /// <para>-OR-</para>
-        /// <para><paramref name="value"/> does not translate to a valid <see cref="UIconEdit.BitDepth"/> value.</para>
+        /// <para><paramref name="value"/> does not translate to a valid <see cref="IconBitDepth"/> value.</para>
         /// </exception>
         /// <remarks>
         /// <para><paramref name="value"/> is parsed in a case-insensitive manner which works differently from <see cref="Enum.Parse(Type, string, bool)"/>.</para>
         /// <para>First of all, all non-alphanumeric characters are stripped. If <paramref name="value"/> is entirely numeric, or begins with "Depth"
         /// followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the
-        /// integer <see cref="UIconEdit.BitDepth"/> value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits
+        /// integer <see cref="IconBitDepth"/> value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits
         /// per pixel, whereas 2, 16, 256, 16777216, and 4294967296 always refer to the number of colors.</para>
         /// <para>Otherwise, "Depth" is prepended to the beginning, and it attempts to ensure that the value ends with either "Color" or "BitsPerPixel"
-        /// (or "BitPerPixel" in the case of <see cref="UIconEdit.BitDepth.Depth1BitPerPixel"/>).</para>
+        /// (or "BitPerPixel" in the case of <see cref="IconBitDepth.Depth1BitPerPixel"/>).</para>
         /// </remarks>
         /// <example>
         /// <code>
@@ -1248,30 +1248,30 @@ namespace UIconEdit
         /// //Succeeded: BitDepth.Depth256Color
         /// </code>
         /// </example>
-        public static BitDepth ParseBitDepth(string value)
+        public static IconBitDepth ParseBitDepth(string value)
         {
             if (value == null) throw new ArgumentNullException("value");
-            BitDepth result;
+            IconBitDepth result;
             TryParseBitDepth(value, true, out result);
             return result;
         }
 
         /// <summary>
-        /// Parses the specified string as a <see cref="UIconEdit.BitDepth"/> value.
+        /// Parses the specified string as a <see cref="IconBitDepth"/> value.
         /// </summary>
         /// <param name="value">The value to parse.</param>
-        /// <param name="result">When this method returns, contains the parsed <see cref="UIconEdit.BitDepth"/> result, or
-        /// the default value for type <see cref="UIconEdit.BitDepth"/> if <paramref name="value"/> could not be parsed.
+        /// <param name="result">When this method returns, contains the parsed <see cref="IconBitDepth"/> result, or
+        /// the default value for type <see cref="IconBitDepth"/> if <paramref name="value"/> could not be parsed.
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if <paramref name="value"/> was successfully parsed; <c>false</c> otherwise.</returns>
         /// <remarks>
         /// <para><paramref name="value"/> is parsed in a case-insensitive manner which works differently from <see cref="Enum.TryParse{TEnum}(string, bool, out TEnum)"/>.</para>
         /// <para>First of all, all non-alphanumeric characters are stripped. If <paramref name="value"/> is entirely numeric, or begins with "Depth"
         /// followed by an entirely numeric value, it is parsed according to the number of colors or the number of bits per pixel, rather than the
-        /// integer <see cref="UIconEdit.BitDepth"/> value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits
+        /// integer <see cref="IconBitDepth"/> value. There is fortunately no overlap; 1, 4, 8, 24, and 32 always refer to the number of bits
         /// per pixel, whereas 2, 16, 256, 16777216, and 4294967296 always refer to the number of colors.</para>
         /// <para>Otherwise, "Depth" is prepended to the beginning, and it attempts to ensure that the value ends with either "Color" or "BitsPerPixel"
-        /// (or "BitPerPixel" in the case of <see cref="UIconEdit.BitDepth.Depth1BitPerPixel"/>).</para>
+        /// (or "BitPerPixel" in the case of <see cref="IconBitDepth.Depth1BitPerPixel"/>).</para>
         /// </remarks>
         /// <example>
         /// <code>
@@ -1293,7 +1293,7 @@ namespace UIconEdit
         /// //Succeeded: BitDepth.Depth256Color
         /// </code>
         /// </example>
-        public static bool TryParseBitDepth(string value, out BitDepth result)
+        public static bool TryParseBitDepth(string value, out IconBitDepth result)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -1304,10 +1304,10 @@ namespace UIconEdit
             return TryParseBitDepth(value, false, out result);
         }
 
-        private static bool TryParseBitDepth(string value, bool throwError, out BitDepth result)
+        private static bool TryParseBitDepth(string value, bool throwError, out IconBitDepth result)
         {
             if (throwError && string.IsNullOrWhiteSpace(value))
-                Enum.Parse(typeof(BitDepth), value, true);
+                Enum.Parse(typeof(IconBitDepth), value, true);
 
             value = value.Trim();
 
@@ -1323,34 +1323,34 @@ namespace UIconEdit
                 switch (intVal)
                 {
                     case 1:
-                        result = BitDepth.Depth1BitsPerPixel;
+                        result = IconBitDepth.Depth1BitsPerPixel;
                         return true;
                     case 2:
-                        result = BitDepth.Depth2Color;
+                        result = IconBitDepth.Depth2Color;
                         return true;
                     case 4:
-                        result = BitDepth.Depth4BitsPerPixel;
+                        result = IconBitDepth.Depth4BitsPerPixel;
                         return true;
                     case 8:
-                        result = BitDepth.Depth8BitsPerPixel;
+                        result = IconBitDepth.Depth8BitsPerPixel;
                         return true;
                     case 16:
-                        result = BitDepth.Depth16Color;
+                        result = IconBitDepth.Depth16Color;
                         return true;
                     case 24:
-                        result = BitDepth.Depth24BitsPerPixel;
+                        result = IconBitDepth.Depth24BitsPerPixel;
                         return true;
                     case 32:
-                        result = BitDepth.Depth32BitsPerPixel;
+                        result = IconBitDepth.Depth32BitsPerPixel;
                         return true;
                     case 256:
-                        result = BitDepth.Depth256Color;
+                        result = IconBitDepth.Depth256Color;
                         return true;
                     case 16777216:
-                        result = BitDepth.Depth24BitsPerPixel;
+                        result = IconBitDepth.Depth24BitsPerPixel;
                         return true;
                     case uint.MaxValue + 1L:
-                        result = BitDepth.Depth32BitsPerPixel;
+                        result = IconBitDepth.Depth32BitsPerPixel;
                         return true;
                     default:
                         if (throwError)
@@ -1359,7 +1359,7 @@ namespace UIconEdit
 
                             try
                             {
-                                result = (BitDepth)Enum.Parse(typeof(BitDepth), stripValue, true);
+                                result = (IconBitDepth)Enum.Parse(typeof(IconBitDepth), stripValue, true);
                             }
                             catch (ArgumentException e)
                             {
@@ -1386,12 +1386,12 @@ namespace UIconEdit
 
             if (stripValue.Equals("depth16777216color", StringComparison.OrdinalIgnoreCase))
             {
-                result = BitDepth.Depth24BitsPerPixel;
+                result = IconBitDepth.Depth24BitsPerPixel;
                 return true;
             }
             else if (stripValue.Equals("depth4294967296color", StringComparison.OrdinalIgnoreCase))
             {
-                result = BitDepth.Depth32BitsPerPixel;
+                result = IconBitDepth.Depth32BitsPerPixel;
                 return true;
             }
 
@@ -1404,7 +1404,7 @@ namespace UIconEdit
                 {
                     stripValue += "!!+";
 
-                    result = (BitDepth)Enum.Parse(typeof(BitDepth), stripValue, true);
+                    result = (IconBitDepth)Enum.Parse(typeof(IconBitDepth), stripValue, true);
                 }
                 catch (ArgumentException e)
                 {
@@ -1420,9 +1420,9 @@ namespace UIconEdit
     /// Represents a simplified key for an icon entry.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct EntryKey : IEquatable<EntryKey>, IComparable<EntryKey>
+    public struct IconEntryKey : IEquatable<IconEntryKey>, IComparable<IconEntryKey>
     {
-        internal static bool IsValid(short width, short height, BitDepth bitDepth)
+        internal static bool IsValid(short width, short height, IconBitDepth bitDepth)
         {
             return width >= IconEntry.MinDimension && width <= IconEntry.MaxDimension && height >= IconEntry.MinDimension && height <= IconEntry.MaxDimension
                 && _isValid(bitDepth);
@@ -1438,31 +1438,31 @@ namespace UIconEdit
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
-        public EntryKey(short width, short height, BitDepth bitDepth)
+        public IconEntryKey(short width, short height, IconBitDepth bitDepth)
         {
             if (width < IconEntry.MinDimension || width > IconEntry.MaxDimension)
                 throw new ArgumentOutOfRangeException("width");
             if (height < IconEntry.MinDimension || height > IconEntry.MaxDimension)
                 throw new ArgumentOutOfRangeException("height");
             if (!_isValid(bitDepth))
-                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(BitDepth));
+                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
 
             _width = width;
             _height = height;
             _bitDepth = bitDepth;
         }
 
-        private static bool _isValid(BitDepth bitDepth)
+        private static bool _isValid(IconBitDepth bitDepth)
         {
             switch (bitDepth)
             {
-                case BitDepth.Depth32BitsPerPixel:
-                case BitDepth.Depth24BitsPerPixel:
-                case BitDepth.Depth8BitsPerPixel:
-                case BitDepth.Depth4BitsPerPixel:
-                case BitDepth.Depth1BitPerPixel:
+                case IconBitDepth.Depth32BitsPerPixel:
+                case IconBitDepth.Depth24BitsPerPixel:
+                case IconBitDepth.Depth8BitsPerPixel:
+                case IconBitDepth.Depth4BitsPerPixel:
+                case IconBitDepth.Depth1BitPerPixel:
                     return true;
                 default:
                     return false;
@@ -1505,34 +1505,34 @@ namespace UIconEdit
             }
         }
 
-        private BitDepth _bitDepth;
+        private IconBitDepth _bitDepth;
         /// <summary>
         /// Indicates the bit depth of the icon entry.
         /// </summary>
         /// <exception cref="InvalidEnumArgumentException">
-        /// In a set operation, the specified value is not a valid <see cref="UIconEdit.BitDepth"/> value.
+        /// In a set operation, the specified value is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
-        public BitDepth BitDepth
+        public IconBitDepth BitDepth
         {
             get { return _isValid(_bitDepth) ? _bitDepth : 0; }
             set
             {
                 if (!_isValid(value))
-                    throw new InvalidEnumArgumentException(null, (int)value, typeof(BitDepth));
+                    throw new InvalidEnumArgumentException(null, (int)value, typeof(IconBitDepth));
                 _bitDepth = value;
             }
         }
 
         /// <summary>
-        /// Compares the current instance to the specified other <see cref="EntryKey"/> object. First
+        /// Compares the current instance to the specified other <see cref="IconEntryKey"/> object. First
         /// <see cref="BitDepth"/> is compared, then <see cref="Height"/>, then <see cref="Width"/> (with
         /// higher color-counts and larger elements first).
         /// </summary>
-        /// <param name="other">The other <see cref="EntryKey"/> to compare.</param>
+        /// <param name="other">The other <see cref="IconEntryKey"/> to compare.</param>
         /// <returns>A value less than 0 if the current value comes before <paramref name="other"/>; 
         /// a value greater than 0 if the current value comes after <paramref name="other"/>; or
         /// 0 if the current instance is equal to <paramref name="other"/>.</returns>
-        public int CompareTo(EntryKey other)
+        public int CompareTo(IconEntryKey other)
         {
             int compare = (int)BitDepth - (int)other.BitDepth;
             if (compare != 0) return compare;
@@ -1544,13 +1544,13 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// An <see cref="EntryKey"/> value which will occur earliest according to <see cref="CompareTo(EntryKey)"/>.
+        /// An <see cref="IconEntryKey"/> value which will occur earliest according to <see cref="CompareTo(IconEntryKey)"/>.
         /// </summary>
-        public static readonly EntryKey Earliest = new EntryKey(IconEntry.MaxDimension, IconEntry.MaxDimension, BitDepth.Depth32BitsPerPixel);
+        public static readonly IconEntryKey Earliest = new IconEntryKey(IconEntry.MaxDimension, IconEntry.MaxDimension, IconBitDepth.Depth32BitsPerPixel);
         /// <summary>
-        /// An <see cref="EntryKey"/> value which will occur last according to <see cref="CompareTo(EntryKey)"/>.
+        /// An <see cref="IconEntryKey"/> value which will occur last according to <see cref="CompareTo(IconEntryKey)"/>.
         /// </summary>
-        public static readonly EntryKey Last = new EntryKey(IconEntry.MinDimension, IconEntry.MinDimension, BitDepth.Depth1BitPerPixel);
+        public static readonly IconEntryKey Last = new IconEntryKey(IconEntry.MinDimension, IconEntry.MinDimension, IconBitDepth.Depth1BitPerPixel);
 
         /// <summary>
         /// Returns a string representation of the current value.
@@ -1562,56 +1562,56 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Compares two <see cref="EntryKey"/> objects.
+        /// Compares two <see cref="IconEntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
-        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is less than <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator <(EntryKey f1, EntryKey f2)
+        public static bool operator <(IconEntryKey f1, IconEntryKey f2)
         {
             return f1.CompareTo(f2) < 0;
         }
 
         /// <summary>
-        /// Compares two <see cref="EntryKey"/> objects.
+        /// Compares two <see cref="IconEntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
-        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is greater than <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator >(EntryKey f1, EntryKey f2)
+        public static bool operator >(IconEntryKey f1, IconEntryKey f2)
         {
             return f1.CompareTo(f2) > 0;
         }
 
         /// <summary>
-        /// Compares two <see cref="EntryKey"/> objects.
+        /// Compares two <see cref="IconEntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
-        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is less than or equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator <=(EntryKey f1, EntryKey f2)
+        public static bool operator <=(IconEntryKey f1, IconEntryKey f2)
         {
             return f1.CompareTo(f2) <= 0;
         }
 
         /// <summary>
-        /// Compares two <see cref="EntryKey"/> objects.
+        /// Compares two <see cref="IconEntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
-        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is less than or equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator >=(EntryKey f1, EntryKey f2)
+        public static bool operator >=(IconEntryKey f1, IconEntryKey f2)
         {
             return f1.CompareTo(f2) >= 0;
         }
 
 
         /// <summary>
-        /// Determines if the current instance is equal to the specified other <see cref="EntryKey"/> value.
+        /// Determines if the current instance is equal to the specified other <see cref="IconEntryKey"/> value.
         /// </summary>
-        /// <param name="other">The other <see cref="EntryKey"/> to compare.</param>
+        /// <param name="other">The other <see cref="IconEntryKey"/> to compare.</param>
         /// <returns><c>true</c> if the current instance is equal to <paramref name="other"/>; <c>false</c> otherwise.</returns>
-        public bool Equals(EntryKey other)
+        public bool Equals(IconEntryKey other)
         {
             return Width == other.Width && Height == other.Height && BitDepth == other.BitDepth;
         }
@@ -1623,7 +1623,7 @@ namespace UIconEdit
         /// <returns><c>true</c> if the current instance is equal to <paramref name="obj"/>; <c>false</c> otherwise.</returns>
         public override bool Equals(object obj)
         {
-            return obj is EntryKey && Equals((EntryKey)obj);
+            return obj is IconEntryKey && Equals((IconEntryKey)obj);
         }
 
         /// <summary>
@@ -1636,23 +1636,23 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Determines equality of two <see cref="EntryKey"/> objects.
+        /// Determines equality of two <see cref="IconEntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
-        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator ==(EntryKey f1, EntryKey f2)
+        public static bool operator ==(IconEntryKey f1, IconEntryKey f2)
         {
             return f1.Equals(f2);
         }
 
         /// <summary>
-        /// Determines inequality of two <see cref="EntryKey"/> objects.
+        /// Determines inequality of two <see cref="IconEntryKey"/> objects.
         /// </summary>
-        /// <param name="f1">An <see cref="EntryKey"/> to compare.</param>
-        /// <param name="f2">An <see cref="EntryKey"/> to compare.</param>
+        /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
+        /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
         /// <returns><c>true</c> if <paramref name="f1"/> is not equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
-        public static bool operator !=(EntryKey f1, EntryKey f2)
+        public static bool operator !=(IconEntryKey f1, IconEntryKey f2)
         {
             return !f1.Equals(f2);
         }
@@ -1688,7 +1688,7 @@ namespace UIconEdit
     /// <summary>
     /// Indicates the bit depth of an icon entry.
     /// </summary>
-    public enum BitDepth : short
+    public enum IconBitDepth : short
     {
         /// <summary>
         /// Indicates that the entry is full color with alpha (32 bits per pixel).

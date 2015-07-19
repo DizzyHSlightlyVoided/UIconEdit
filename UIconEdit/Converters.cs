@@ -73,7 +73,7 @@ namespace UIconEdit.Maker
         public static BitmapSource Convert(IconEntry entry)
         {
             if (entry == null) return null;
-            if (entry.AlphaImage == null || entry.BitDepth == BitDepth.Depth32BitsPerPixel) return entry.BaseImage;
+            if (entry.AlphaImage == null || entry.BitDepth == IconBitDepth.Depth32BitsPerPixel) return entry.BaseImage;
 
             uint[] bmpPixels = new uint[entry.Width * entry.Height];
             uint[] alphaPixels = new uint[bmpPixels.Length];

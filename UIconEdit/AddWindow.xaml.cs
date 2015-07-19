@@ -44,7 +44,7 @@ namespace UIconEdit.Maker
         private static readonly ScalingFilter[] _filters = (ScalingFilter[])Enum.GetValues(typeof(ScalingFilter));
         public static ScalingFilter[] Filters { get { return _filters; } }
 
-        public AddWindow(MainWindow mainWindow, bool duplicated, bool newFile, BitmapSource image, BitDepth bitDepth)
+        public AddWindow(MainWindow mainWindow, bool duplicated, bool newFile, BitmapSource image, IconBitDepth bitDepth)
         {
             Owner = _mainWindow = mainWindow;
             LoadedImage = image;
@@ -140,16 +140,16 @@ namespace UIconEdit.Maker
                 default: //Depth32BitsPerPixel
                     rad32bit.IsChecked = true;
                     break;
-                case BitDepth.Depth24BitsPerPixel:
+                case IconBitDepth.Depth24BitsPerPixel:
                     rad24bit.IsChecked = true;
                     break;
-                case BitDepth.Depth8BitsPerPixel:
+                case IconBitDepth.Depth8BitsPerPixel:
                     rad8bit.IsChecked = true;
                     break;
-                case BitDepth.Depth4BitsPerPixel:
+                case IconBitDepth.Depth4BitsPerPixel:
                     rad4bit.IsChecked = true;
                     break;
-                case BitDepth.Depth1BitPerPixel:
+                case IconBitDepth.Depth1BitPerPixel:
                     rad1bit.IsChecked = true;
                     break;
             }
@@ -197,28 +197,28 @@ namespace UIconEdit.Maker
         #endregion
 
         #region BitDepth
-        private static readonly DependencyPropertyKey BitDepthPropertyKey = DependencyProperty.RegisterReadOnly("BitDepth", typeof(BitDepth), typeof(AddWindow),
-            new PropertyMetadata(BitDepth.Depth32BitsPerPixel, BitDepthChanged));
+        private static readonly DependencyPropertyKey BitDepthPropertyKey = DependencyProperty.RegisterReadOnly("BitDepth", typeof(IconBitDepth), typeof(AddWindow),
+            new PropertyMetadata(IconBitDepth.Depth32BitsPerPixel, BitDepthChanged));
 
         private static void BitDepthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             AddWindow a = (AddWindow)d;
 
-            switch ((BitDepth)e.NewValue)
+            switch ((IconBitDepth)e.NewValue)
             {
                 default: //Depth32BitsPerPixel
                     a.rad32bit.IsChecked = true;
                     break;
-                case BitDepth.Depth24BitsPerPixel:
+                case IconBitDepth.Depth24BitsPerPixel:
                     a.rad24bit.IsChecked = true;
                     break;
-                case BitDepth.Depth8BitsPerPixel:
+                case IconBitDepth.Depth8BitsPerPixel:
                     a.rad8bit.IsChecked = true;
                     break;
-                case BitDepth.Depth4BitsPerPixel:
+                case IconBitDepth.Depth4BitsPerPixel:
                     a.rad4bit.IsChecked = true;
                     break;
-                case BitDepth.Depth1BitsPerPixel:
+                case IconBitDepth.Depth1BitsPerPixel:
                     a.rad1bit.IsChecked = true;
                     break;
             }
@@ -226,9 +226,9 @@ namespace UIconEdit.Maker
 
         public static readonly DependencyProperty BitDepthProperty = BitDepthPropertyKey.DependencyProperty;
 
-        public BitDepth BitDepth
+        public IconBitDepth BitDepth
         {
-            get { return (BitDepth)GetValue(BitDepthProperty); }
+            get { return (IconBitDepth)GetValue(BitDepthProperty); }
             private set { SetValue(BitDepthPropertyKey, value); }
         }
         #endregion
@@ -338,15 +338,15 @@ namespace UIconEdit.Maker
         private void bit_Checked(object sender, RoutedEventArgs e)
         {
             if (sender == rad24bit)
-                BitDepth = BitDepth.Depth24BitsPerPixel;
+                BitDepth = IconBitDepth.Depth24BitsPerPixel;
             else if (sender == rad8bit)
-                BitDepth = BitDepth.Depth8BitsPerPixel;
+                BitDepth = IconBitDepth.Depth8BitsPerPixel;
             else if (sender == rad4bit)
-                BitDepth = BitDepth.Depth4BitsPerPixel;
+                BitDepth = IconBitDepth.Depth4BitsPerPixel;
             else if (sender == rad1bit)
-                BitDepth = BitDepth.Depth1BitPerPixel;
+                BitDepth = IconBitDepth.Depth1BitPerPixel;
             else
-                BitDepth = BitDepth.Depth32BitsPerPixel;
+                BitDepth = IconBitDepth.Depth32BitsPerPixel;
         }
 
         private void size_Checked(object sender, RoutedEventArgs e)

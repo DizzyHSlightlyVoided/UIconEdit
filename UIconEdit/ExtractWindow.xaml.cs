@@ -33,7 +33,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
@@ -44,32 +43,83 @@ namespace UIconEdit.Maker
     /// </summary>
     partial class ExtractWindow : IDisposable
     {
-        public ExtractWindow(MainWindow owner, IconFile[] icons, CursorFile[] cursors)
+        public ExtractWindow(MainWindow owner, string path, int iconCount, int cursorCount)
         {
             Owner = owner;
-            var settingsFile = SettingsFile;
-            Func<IconFileBase, int, FileToken> selector = (file, i) => new FileToken(file, settingsFile, i + 1);
 
-            _icons = new ObservableCollection<FileToken>(icons.Select(selector));
-            _cursors = new ObservableCollection<FileToken>(cursors.Select(selector));
+            _path = path;
+            _iconCount = iconCount;
+            _cursorCount = cursorCount;
 
-            SetValue(HasIconsPropertyKey, (icons.Length != 0));
-            SetValue(HasCursorsPropertyKey, (cursors.Length != 0));
+            SetValue(HasIconsPropertyKey, (iconCount != 0));
+            SetValue(HasCursorsPropertyKey, (cursorCount != 0));
 
             InitializeComponent();
+        }
+
+        private void window_Loaded(object sender, RoutedEventArgs e)
+        {
+            var settingsFile = SettingsFile;
+
+            if (HasIcons)
+            {
+                try
+                {
+                    IconExtraction.ExtractIconsForEach(_path, GetCallback<IconFile>(_icons, settingsFile, 0), _handler, _handler);
+                    SetValue(HasIconsPropertyKey, _icons.Count != 0);
+                }
+                catch
+                {
+                    SetValue(HasIconsPropertyKey, false);
+                }
+            }
+
+            if (HasCursors)
+            {
+                try
+                {
+                    IconExtraction.ExtractCursorsForEach(_path, GetCallback<CursorFile>(_cursors, settingsFile, _iconCount), _handler, _handler);
+                    SetValue(HasCursorsPropertyKey, _cursors.Count != 0);
+                }
+                catch
+                {
+                    SetValue(HasCursorsPropertyKey, false);
+                }
+            }
+
+            Mouse.OverrideCursor = null;
+
             if (HasIcons)
                 listIcons.SelectedIndex = 0;
-            else
-                tabControl.SelectedIndex = 1;
+            else if (!HasCursors)
+            {
+                ErrorWindow.Show((MainWindow)Owner, this, string.Format(settingsFile.LanguageFile.IconExtractNone, _path));
+                DialogResult = false;
+                return;
+            }
+            else tabControl.SelectedIndex = 1;
 
             if (HasCursors)
                 listCursors.SelectedIndex = 0;
         }
 
+        private static IconExtractCallback<TIconFile> GetCallback<TIconFile>(ObservableCollection<FileToken> collection, SettingsFile settingsFile, int add)
+            where TIconFile : IconFileBase
+        {
+            return delegate (int index, TIconFile file)
+            {
+                collection.Add(new FileToken(file, settingsFile, index));
+                file.Dispose();
+            };
+        }
+
+        private string _path;
+
+        private int _iconCount, _cursorCount;
         [Bindable(true)]
         public SettingsFile SettingsFile { get { return ((MainWindow)Owner).SettingsFile; } }
 
-        private static void _handler(IconExtractException e) { }
+        private static void _handler(IconExtractException e) { System.Diagnostics.Debug.WriteLine("{0}: {1}", e.GetType(), e.Message); }
 
         #region IsFullyLoaded
         private static readonly DependencyPropertyKey IsFullyLoadedPropertyKey = DependencyProperty.RegisterReadOnly("IsFullyLoaded", typeof(bool), typeof(ExtractWindow),
@@ -95,11 +145,11 @@ namespace UIconEdit.Maker
         public bool HasCursors { get { return (bool)GetValue(HasCursorsProperty); } }
         #endregion
 
-        private static ObservableCollection<FileToken> _icons;
+        private static ObservableCollection<FileToken> _icons = new ObservableCollection<FileToken>();
         [Bindable(true)]
         public ObservableCollection<FileToken> IconFiles { get { return _icons; } }
 
-        private static ObservableCollection<FileToken> _cursors;
+        private static ObservableCollection<FileToken> _cursors = new ObservableCollection<FileToken>();
         [Bindable(true)]
         public ObservableCollection<FileToken> CursorFiles { get { return _cursors; } }
 
@@ -111,14 +161,13 @@ namespace UIconEdit.Maker
             {
                 _settings = settings;
                 _index = index;
-                File = file;
                 _count = file.Entries.Count;
                 var entries = file.Entries.OrderBy(i => Math.Abs(i.EntryKey.CompareTo(_baseKey)));
                 IconEntry curEntry = entries.Where(i => i.Width >= _baseKey.Width && i.Height >= _baseKey.Height).FirstOrDefault();
                 if (curEntry == null)
                     curEntry = entries.FirstOrDefault();
 
-                _image = curEntry.CombineAlpha();
+                _image = new WriteableBitmap(curEntry.CombineAlpha());
             }
 
             public BitmapSource _image;
@@ -137,40 +186,37 @@ namespace UIconEdit.Maker
             [Bindable(true)]
             public int Count { get { return _count; } }
 
-            public IconFileBase File;
-
             public override string ToString()
             {
                 string format;
                 if (_settings == null) format = "#{0} ({1})";
                 else format = _settings.LanguageFile.ExtractFrameCount;
-                return string.Format(format, _index, _count);
+                return string.Format(format, _index + 1, _count);
             }
 
             public void Dispose()
             {
-                File.Dispose();
                 _image = null;
                 _settings = null;
             }
         }
 
-        public IconFileBase GetFile()
+        public IconFileBase GetFileAndDispose()
         {
             FileToken token;
             if (tabCur.IsSelected)
             {
                 token = (FileToken)listCursors.SelectedItem;
-                _cursors.Remove(token);
-            }
-            else
-            {
-                token = (FileToken)listIcons.SelectedItem;
-                _icons.Remove(token);
+                Dispose();
+                return IconExtraction.ExtractCursorSingle(_path, token.Index, _handler);
             }
 
-            return token.File;
+            token = (FileToken)listIcons.SelectedItem;
+            Dispose();
+            return IconExtraction.ExtractIconSingle(_path, token.Index, _handler);
         }
+
+        private static void _handler(IconLoadException e) { System.Diagnostics.Debug.WriteLine("{0}: {1}", e.GetType(), e.Message); }
 
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {

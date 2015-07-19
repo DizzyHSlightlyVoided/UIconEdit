@@ -928,6 +928,7 @@ namespace UIconEdit
         public void Dispose()
         {
             Dispose(true);
+            GC.Collect();
         }
 
         /// <summary>
@@ -942,10 +943,8 @@ namespace UIconEdit
                 curEntry.Dispose();
 
             _entries.Clear();
-
             _isDisposed = true;
         }
-        #endregion
 
         /// <summary>
         /// Destructor.
@@ -954,6 +953,7 @@ namespace UIconEdit
         {
             Dispose(false);
         }
+        #endregion
 
         /// <summary>
         /// Represents a list of icon entries. Entries with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and

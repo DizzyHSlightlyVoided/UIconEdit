@@ -168,12 +168,24 @@ namespace UIconEdit.Maker
                 _settings = settings;
                 _index = index;
                 _count = file.Entries.Count;
-                var entries = file.Entries.OrderBy(i => Math.Abs(i.EntryKey.CompareTo(_baseKey)));
+                var entries = file.Entries.OrderBy(_orderBy);
                 IconEntry curEntry = entries.Where(i => i.Width >= _baseKey.Width && i.Height >= _baseKey.Height).FirstOrDefault();
                 if (curEntry == null)
                     curEntry = entries.FirstOrDefault();
 
                 _image = new WriteableBitmap(curEntry.CombineAlpha());
+            }
+
+            const int _baseSize = 48;
+            const int _baseDepth = ((int)BitDepth.Depth32BitsPerPixel << 4);
+
+            private static int _orderBy(IconEntry i)
+            {
+                var key = i.EntryKey;
+
+                int result = (key.Width - _baseSize) + (key.Height - _baseSize) + ((((int)key.BitDepth) << 4) - _baseDepth);
+
+                return Math.Abs(result);
             }
 
             public BitmapSource _image;

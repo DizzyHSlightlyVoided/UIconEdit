@@ -32,8 +32,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 namespace UIconEdit.Maker
@@ -43,16 +45,14 @@ namespace UIconEdit.Maker
     /// </summary>
     partial class ExtractWindow : IDisposable
     {
-        public ExtractWindow(MainWindow owner, string path, int iconCount, int cursorCount)
+        public ExtractWindow(MainWindow owner, string path, int iconCount)
         {
             Owner = owner;
 
             _path = path;
             _iconCount = iconCount;
-            _cursorCount = cursorCount;
 
             SetValue(HasIconsPropertyKey, (iconCount != 0));
-            SetValue(HasCursorsPropertyKey, (cursorCount != 0));
 
             InitializeComponent();
         }
@@ -63,63 +63,36 @@ namespace UIconEdit.Maker
 
             if (HasIcons)
             {
-                try
+                for (int i = 0; i < _iconCount; i++)
                 {
-                    IconExtraction.ExtractIconsForEach(_path, GetCallback<IconFile>(_icons, settingsFile, 0), _handler, _handler);
-                    SetValue(HasIconsPropertyKey, _icons.Count != 0);
+                    try
+                    {
+                        _icons.Add(new FileToken(_path, settingsFile, i));
+                    }
+                    catch { }
                 }
-                catch
-                {
-                    SetValue(HasIconsPropertyKey, false);
-                }
-            }
-
-            if (HasCursors)
-            {
-                try
-                {
-                    IconExtraction.ExtractCursorsForEach(_path, GetCallback<CursorFile>(_cursors, settingsFile, _iconCount), _handler, _handler);
-                    SetValue(HasCursorsPropertyKey, _cursors.Count != 0);
-                }
-                catch
-                {
-                    SetValue(HasCursorsPropertyKey, false);
-                }
+                SetValue(HasIconsPropertyKey, _icons.Count != 0);
             }
 
             Mouse.OverrideCursor = null;
 
             if (HasIcons)
                 listIcons.SelectedIndex = 0;
-            else if (!HasCursors)
+            else
             {
                 ErrorWindow.Show((MainWindow)Owner, this, string.Format(settingsFile.LanguageFile.IconExtractNone, _path));
                 DialogResult = false;
                 return;
             }
-            else tabControl.SelectedIndex = 1;
-
-            if (HasCursors)
-                listCursors.SelectedIndex = 0;
-        }
-
-        private static IconExtractCallback<TIconFile> GetCallback<TIconFile>(ObservableCollection<FileToken> collection, SettingsFile settingsFile, int add)
-            where TIconFile : IconFileBase
-        {
-            return delegate (int index, TIconFile file)
-            {
-                collection.Add(new FileToken(file, settingsFile, index));
-                file.Dispose();
-            };
         }
 
         private string _path;
 
-        private int _iconCount, _cursorCount;
+        private int _iconCount;
         [Bindable(true)]
         public SettingsFile SettingsFile { get { return ((MainWindow)Owner).SettingsFile; } }
 
-        private static void _handler(IconExtractException e) { System.Diagnostics.Debug.WriteLine("{0}: {1}", e.GetType(), e.Message); }
+        private static void _handler(IconExtractException e) { }
 
         #region IsFullyLoaded
         private static readonly DependencyPropertyKey IsFullyLoadedPropertyKey = DependencyProperty.RegisterReadOnly("IsFullyLoaded", typeof(bool), typeof(ExtractWindow),
@@ -137,14 +110,6 @@ namespace UIconEdit.Maker
         public bool HasIcons { get { return (bool)GetValue(HasIconsProperty); } }
         #endregion
 
-        #region HasCursors
-        private static readonly DependencyPropertyKey HasCursorsPropertyKey = DependencyProperty.RegisterReadOnly("HasCursors", typeof(bool), typeof(ExtractWindow),
-            new PropertyMetadata(false));
-        public static DependencyProperty HasCursorsProperty = HasCursorsPropertyKey.DependencyProperty;
-
-        public bool HasCursors { get { return (bool)GetValue(HasCursorsProperty); } }
-        #endregion
-
         private static ObservableCollection<FileToken> _icons = new ObservableCollection<FileToken>();
         [Bindable(true)]
         public ObservableCollection<FileToken> IconFiles { get { return _icons; } }
@@ -153,38 +118,34 @@ namespace UIconEdit.Maker
         [Bindable(true)]
         public ObservableCollection<FileToken> CursorFiles { get { return _cursors; } }
 
-        IconTypeCode _type;
-        public IconTypeCode IconType { get { return _type; } }
-
-        private int _iconIndex;
-        public int IconIndex { get { return _iconIndex; } }
+        public int IconIndex { get { return listIcons.SelectedIndex; } }
 
         public struct FileToken : IDisposable
         {
-            public FileToken(IconFileBase file, SettingsFile settings, int index)
+            public FileToken(string path, SettingsFile settings, int index)
             {
+                IntPtr hIcon = IntPtr.Zero;
+                try
+                {
+                    hIcon = ExtractIcon(System.Diagnostics.Process.GetCurrentProcess().Handle, path, index);
+                    _count = 0; //TODO: Fix this!
+                    if (hIcon == IntPtr.Zero) throw new Win32Exception();
+                    _image = new WriteableBitmap(Imaging.CreateBitmapSourceFromHIcon(hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()));
+                }
+                finally
+                {
+                    if (hIcon != IntPtr.Zero)
+                        DestroyIcon(hIcon);
+                }
                 _settings = settings;
                 _index = index;
-                _count = file.Entries.Count;
-                var entries = file.Entries.OrderBy(_orderBy);
-                IconEntry curEntry = entries.Where(i => i.Width >= _baseSize && i.Height >= _baseSize).FirstOrDefault();
-                if (curEntry == null)
-                    curEntry = entries.FirstOrDefault();
-
-                _image = new WriteableBitmap(curEntry.CombineAlpha());
             }
 
-            const int _baseSize = 48;
-            const int _baseDepth = ((int)IconBitDepth.Depth32BitsPerPixel << 4);
+            [DllImport("shell32.dll")]
+            private static extern IntPtr ExtractIcon(IntPtr hInst, string lpszExeFileName, int nIconIndex);
 
-            private static int _orderBy(IconEntry i)
-            {
-                var key = i.EntryKey;
-
-                int result = (key.Width - _baseSize) + (key.Height - _baseSize) + ((((int)key.BitDepth) << 4) - _baseDepth);
-
-                return Math.Abs(result);
-            }
+            [DllImport("user32.dll")]
+            private static extern bool DestroyIcon(IntPtr hIcon);
 
             public BitmapSource _image;
             [Bindable(true)]
@@ -217,26 +178,7 @@ namespace UIconEdit.Maker
             }
         }
 
-        public IconFileBase GetFileAndDispose()
-        {
-            FileToken token;
-            if (tabCur.IsSelected)
-            {
-                _type = IconTypeCode.Cursor;
-                token = (FileToken)listCursors.SelectedItem;
-                _iconIndex = token.Index;
-                Dispose();
-                return IconExtraction.ExtractCursorSingle(_path, token.Index, _handler);
-            }
-
-            _type = IconTypeCode.Icon;
-            token = (FileToken)listIcons.SelectedItem;
-            _iconIndex = token.Index;
-            Dispose();
-            return IconExtraction.ExtractIconSingle(_path, token.Index, _handler);
-        }
-
-        private static void _handler(IconLoadException e) { System.Diagnostics.Debug.WriteLine("{0}: {1}", e.GetType(), e.Message); }
+        private static void _handler(IconLoadException e) { }
 
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
@@ -244,7 +186,7 @@ namespace UIconEdit.Maker
             Close();
         }
 
-        private void tab_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void listIcons_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             DialogResult = true;
             Close();

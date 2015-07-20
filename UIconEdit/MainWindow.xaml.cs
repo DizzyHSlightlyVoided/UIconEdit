@@ -150,30 +150,27 @@ namespace UIconEdit.Maker
             try
             {
                 int iconCount = IconExtraction.ExtractIconCount(path);
-                int cursorCount = IconExtraction.ExtractCursorCount(path);
 
-                if (iconCount == 0 && cursorCount == 0)
+                if (iconCount == 0)
                     throw new InvalidDataException();
 
-                using (ExtractWindow extractWindow = new ExtractWindow(this, path, iconCount, cursorCount))
+                using (ExtractWindow extractWindow = new ExtractWindow(this, path, iconCount))
                 {
                     bool? result = extractWindow.ShowDialog();
                     if (!result.HasValue || !result.Value) return;
                     try
                     {
-                        LoadedFile = extractWindow.GetFileAndDispose();
+                        LoadedFile = IconExtraction.ExtractIconSingle(path, extractWindow.IconIndex);
                     }
                     catch
                     {
-                        ErrorWindow.Show(this, string.Format(extractWindow.IconType == IconTypeCode.Cursor ?
-                            _settings.LanguageFile.CursorExtractError : _settings.LanguageFile.IconExtractError,
-                            extractWindow.IconIndex, path));
+                        ErrorWindow.Show(this, string.Format(_settings.LanguageFile.IconExtractError, extractWindow.IconIndex, path));
                         return;
                     }
-                    listbox.SelectedIndex = 0;
-                    IsModified = false;
-                    scrollEntries.ScrollToTop();
                 }
+                listbox.SelectedIndex = 0;
+                IsModified = false;
+                scrollEntries.ScrollToTop();
             }
             catch (Exception)
             {

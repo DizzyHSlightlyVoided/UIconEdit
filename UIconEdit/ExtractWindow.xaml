@@ -6,62 +6,36 @@
         xmlns:local="clr-namespace:UIconEdit.Maker" Icon="GradientEdit.ico" WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         mc:Ignorable="d" x:Name="window" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
         Title="{Binding SettingsFile.LanguageFile.Extract, ElementName=window, FallbackValue=Extract}" Loaded="window_Loaded"
-        MinWidth="626" MinHeight="400" Width="626" Height="400">
-    <Window.Resources>
-        <Style TargetType="ListBox">
-            <Setter Property="ItemsPanel">
-                <Setter.Value>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Width="Auto"/>
-                    </ItemsPanelTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="ItemTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <Grid Margin="1">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Border BorderThickness="1" Background="{StaticResource TransparentTiles}" HorizontalAlignment="Center" 
-                                    BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" MinWidth="54" MinHeight="54">
-                                <Image HorizontalAlignment="Center" MaxWidth="48" MaxHeight="48" Margin="2" Source="{Binding Image}"
-                                       Width="{Binding Image.PixelWidth}" Height="{Binding Image.PixelHeight}"/>
-                            </Border>
-                            <TextBlock Text="{Binding}" HorizontalAlignment="Center" Grid.Row="1"/>
-                        </Grid>
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-        </Style>
-    </Window.Resources>
+        MinWidth="640" MinHeight="400" Width="640" Height="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <TabControl Grid.Row="0" x:Name="tabControl">
-            <TabItem Header="{Binding SettingsFile.LanguageFile.ExtractIco, ElementName=window, FallbackValue=Icons}" x:Name="tabIco"
-                     IsEnabled="{Binding HasIcons, ElementName=window}" MouseDoubleClick="tab_MouseDoubleClick">
-                <Border BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="1">
-                    <ScrollViewer Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-                                  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
-                        <ListBox ItemsSource="{Binding IconFiles, ElementName=window}" x:Name="listIcons"/>
-                    </ScrollViewer>
-                </Border>
-            </TabItem>
-            <TabItem Header="{Binding SettingsFile.LanguageFile.ExtractCur, ElementName=window, FallbackValue=Cursors}" x:Name="tabCur"
-                     IsEnabled="{Binding HasCursors, ElementName=window}" MouseDoubleClick="tab_MouseDoubleClick">
-                <Border BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="1">
-                    <ScrollViewer Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-                                  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
-                        <ListBox ItemsSource="{Binding CursorFiles, ElementName=window}" x:Name="listCursors"/>
-                    </ScrollViewer>
-                </Border>
-            </TabItem>
-        </TabControl>
+        <ListBox ItemsSource="{Binding IconFiles, ElementName=window}" x:Name="listIcons" MouseDoubleClick="listIcons_MouseDoubleClick"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Width="Auto"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border BorderThickness="1" Background="{StaticResource TransparentTiles}" HorizontalAlignment="Center" 
+                                BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" MinWidth="56" MinHeight="56">
+                            <Image HorizontalAlignment="Center" MaxWidth="48" MaxHeight="48" Margin="2" Source="{Binding Image}"
+                                   Width="{Binding Image.PixelWidth}" Height="{Binding Image.PixelHeight}"/>
+                        </Border>
+                        <TextBlock Text="{Binding}" HorizontalAlignment="Center" Grid.Row="1"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <StackPanel Orientation="Horizontal" Grid.Row="1" FlowDirection="RightToLeft">
             <Button Content="{Binding SettingsFile.LanguageFile.ButtonCancel, ElementName=window, FallbackValue=_Cancel}" MinWidth="75"
                     IsCancel="true" x:Name="btnCancel" Margin="5"/>

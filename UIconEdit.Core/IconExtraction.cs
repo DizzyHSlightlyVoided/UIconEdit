@@ -33,8 +33,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security;
 
 namespace UIconEdit
 {
@@ -43,79 +41,7 @@ namespace UIconEdit
     /// </summary>
     public static class IconExtraction
     {
-        #region Extern
-        private const uint LOAD_LIBRARY_AS_DATAFILE = 0x00000002;
-        private const int RT_CURSOR = 1;
-        private const int RT_ICON = 3;
-        private const int RT_GROUP_CURSOR = RT_CURSOR + 11;
-        private const int RT_GROUP_ICON = RT_ICON + 11;
-
-        private const int ERROR_RESOURCE_TYPE_NOT_FOUND = 1813;
-        private const int ERROR_RESOURCE_NAME_NOT_FOUND = 1814;
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        [SuppressUnmanagedCodeSecurity]
-        private static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hFile, uint dwFlags);
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        [SuppressUnmanagedCodeSecurity]
-        private static extern bool EnumResourceNames(IntPtr hModule, IntPtr lpszType, ENUMRESNAMEPROC lpEnumFunc, IntPtr lParam);
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        [SuppressUnmanagedCodeSecurity]
-        private static extern IntPtr FindResource(IntPtr hModule, IntPtr lpName, IntPtr lpType);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [SuppressUnmanagedCodeSecurity]
-        private static extern IntPtr LoadResource(IntPtr hModule, IntPtr hResInfo);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [SuppressUnmanagedCodeSecurity]
-        private static extern IntPtr LockResource(IntPtr hResData);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [SuppressUnmanagedCodeSecurity]
-        private static extern uint SizeofResource(IntPtr hModule, IntPtr hResInfo);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [SuppressUnmanagedCodeSecurity]
-        private static extern bool FreeLibrary(IntPtr hModule);
-        #endregion
-
-        private static MemoryStream ExtractData(IntPtr hModule, IntPtr type, IntPtr name)
-        {
-            try
-            {
-                IntPtr hResInfo = FindResource(hModule, name, type);
-                if (hResInfo == IntPtr.Zero)
-                    throw new Win32Exception();
-
-                IntPtr hResData = LoadResource(hModule, hResInfo);
-                if (hResData == IntPtr.Zero)
-                    throw new Win32Exception();
-
-                IntPtr pResData = LockResource(hResData);
-                if (pResData == IntPtr.Zero)
-                    throw new Win32Exception();
-
-                uint size = SizeofResource(hModule, hResInfo);
-                if (size == 0)
-                    throw new Win32Exception();
-
-                byte[] data = new byte[size];
-                Marshal.Copy(pResData, data, 0, data.Length);
-
-                return new MemoryStream(data, 0, data.Length, false, true);
-            }
-            catch (Win32Exception xc)
-            {
-                if (xc.NativeErrorCode == ERROR_RESOURCE_NAME_NOT_FOUND)
-                    throw new KeyNotFoundException();
-                throw;
-            }
-        }
-
-        private static int _extractCount(string path, IntPtr lpszType)
+        private static int _extractCount(string path, int lpszType)
         {
             if (path == null) throw new ArgumentNullException("path");
 
@@ -123,21 +49,21 @@ namespace UIconEdit
             int iconCount = 0;
             try
             {
-                hModule = LoadLibraryEx(path, IntPtr.Zero, LOAD_LIBRARY_AS_DATAFILE);
+                hModule = Win32Funcs.LoadLibraryEx(path, IntPtr.Zero, Win32Funcs.LOAD_LIBRARY_AS_DATAFILE);
 
                 if (hModule == IntPtr.Zero)
                     throw new Win32Exception();
 
-                ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, IntPtr t, IntPtr name, IntPtr l)
+                ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, int t, IntPtr name, IntPtr l)
                 {
                     iconCount++;
                     return true;
                 };
 
-                if (!EnumResourceNames(hModule, lpszType, lpEnumFunc, IntPtr.Zero))
+                if (!Win32Funcs.EnumResourceNames(hModule, lpszType, lpEnumFunc, 0))
                 {
                     var xc = new Win32Exception();
-                    if (xc.NativeErrorCode == ERROR_RESOURCE_TYPE_NOT_FOUND)
+                    if (xc.NativeErrorCode == Win32Funcs.ERROR_RESOURCE_TYPE_NOT_FOUND)
                         return 0;
                     throw xc;
                 }
@@ -146,7 +72,7 @@ namespace UIconEdit
             finally
             {
                 if (hModule != IntPtr.Zero)
-                    FreeLibrary(hModule);
+                    Win32Funcs.FreeLibrary(hModule);
             }
         }
 
@@ -163,7 +89,7 @@ namespace UIconEdit
         /// </exception>
         public static int ExtractIconCount(string path)
         {
-            return _extractCount(path, (IntPtr)RT_GROUP_ICON);
+            return _extractCount(path, Win32Funcs.RT_GROUP_ICON);
         }
 
         /// <summary>
@@ -179,17 +105,17 @@ namespace UIconEdit
         /// </exception>
         public static int ExtractCursorCount(string path)
         {
-            return _extractCount(path, (IntPtr)RT_GROUP_CURSOR);
+            return _extractCount(path, Win32Funcs.RT_GROUP_CURSOR);
         }
 
-        private static IconFileBase _extractSingle(IntPtr hModule, IntPtr lpszType, IntPtr name, IconTypeCode typeCode, IconLoadExceptionHandler handler)
+        private static IconFileBase _extractSingle(IntPtr hModule, int lpszType, IntPtr name, IconTypeCode typeCode, IconLoadExceptionHandler handler)
         {
-            using (MemoryStream dirStream = ExtractData(hModule, lpszType, name))
+            using (MemoryStream dirStream = Win32Funcs.ExtractData(hModule, lpszType, name))
             using (BinaryReader dirReader = new BinaryReader(dirStream))
             {
                 uint head = dirReader.ReadUInt32();
                 ushort entryCount = dirReader.ReadUInt16();
-                IntPtr tSingle = lpszType - 11;
+                int tSingle = lpszType - 11;
 
                 int iconLength = 6 + (entryCount * 16), picOffset = iconLength;
                 for (int i = 0; i < entryCount; i++)
@@ -217,7 +143,7 @@ namespace UIconEdit
                         dirStream.Seek(dOff + 12, SeekOrigin.Begin);
                         ushort id = dirReader.ReadUInt16();
 
-                        using (MemoryStream picStream = ExtractData(hModule, tSingle, (IntPtr)id))
+                        using (MemoryStream picStream = Win32Funcs.ExtractData(hModule, tSingle, (IntPtr)id))
                         {
                             iconStream.Seek(iOff, SeekOrigin.Begin);
                             iconStream.Write(dirStream.GetBuffer(), dOff, 8); //First 8 bytes are the same.
@@ -237,7 +163,7 @@ namespace UIconEdit
             }
         }
 
-        private static IconFileBase _extractSingle(string path, int index, IntPtr lpszType, IconTypeCode typeCode, IconLoadExceptionHandler handler)
+        private static IconFileBase _extractSingle(string path, int index, int lpszType, IconTypeCode typeCode, IconLoadExceptionHandler handler)
         {
             if (path == null) throw new ArgumentNullException("path");
             if (index < 0) throw new ArgumentOutOfRangeException("index");
@@ -245,13 +171,13 @@ namespace UIconEdit
             IntPtr hModule = IntPtr.Zero;
             try
             {
-                hModule = LoadLibraryEx(path, IntPtr.Zero, LOAD_LIBRARY_AS_DATAFILE);
+                hModule = Win32Funcs.LoadLibraryEx(path, IntPtr.Zero, Win32Funcs.LOAD_LIBRARY_AS_DATAFILE);
                 if (hModule == IntPtr.Zero)
                     throw new Win32Exception();
 
                 IconFileBase returner = null;
                 Exception x = null;
-                ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, IntPtr t, IntPtr name, IntPtr l)
+                ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, int t, IntPtr name, IntPtr l)
                 {
                     try
                     {
@@ -273,7 +199,7 @@ namespace UIconEdit
                     return true;
                 };
 
-                if (EnumResourceNames(hModule, lpszType, lpEnumFunc, IntPtr.Zero))
+                if (Win32Funcs.EnumResourceNames(hModule, lpszType, lpEnumFunc, 0))
                     throw new ArgumentOutOfRangeException("index");
 
                 if (returner != null) return returner;
@@ -283,7 +209,7 @@ namespace UIconEdit
             finally
             {
                 if (hModule != IntPtr.Zero)
-                    FreeLibrary(hModule);
+                    Win32Funcs.FreeLibrary(hModule);
             }
         }
 
@@ -312,7 +238,7 @@ namespace UIconEdit
         /// </exception>
         public static IconFile ExtractIconSingle(string path, int index, IconLoadExceptionHandler handler)
         {
-            return (IconFile)_extractSingle(path, index, (IntPtr)RT_GROUP_ICON, IconTypeCode.Icon, handler);
+            return (IconFile)_extractSingle(path, index, Win32Funcs.RT_GROUP_ICON, IconTypeCode.Icon, handler);
         }
 
         /// <summary>
@@ -366,7 +292,7 @@ namespace UIconEdit
         /// </exception>
         public static CursorFile ExtractCursorSingle(string path, int index, IconLoadExceptionHandler handler)
         {
-            return (CursorFile)_extractSingle(path, index, (IntPtr)RT_GROUP_CURSOR, IconTypeCode.Cursor, handler);
+            return (CursorFile)_extractSingle(path, index, Win32Funcs.RT_GROUP_CURSOR, IconTypeCode.Cursor, handler);
         }
 
         /// <summary>
@@ -395,7 +321,7 @@ namespace UIconEdit
             return ExtractCursorSingle(path, index, null);
         }
 
-        private static void _forEachIcon<TIconFile>(string path, IntPtr lpszType, IconTypeCode typeCode, IconExtractCallback<TIconFile> callback,
+        private static void _forEachIcon<TIconFile>(string path, int lpszType, IconTypeCode typeCode, IconExtractCallback<TIconFile> callback,
             IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
             where TIconFile : IconFileBase
         {
@@ -406,10 +332,10 @@ namespace UIconEdit
             int curIndex = 0;
             try
             {
-                hModule = LoadLibraryEx(path, IntPtr.Zero, LOAD_LIBRARY_AS_DATAFILE);
+                hModule = Win32Funcs.LoadLibraryEx(path, IntPtr.Zero, Win32Funcs.LOAD_LIBRARY_AS_DATAFILE);
 
                 IconExtractException x = null;
-                ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, IntPtr t, IntPtr name, IntPtr l)
+                ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, int t, IntPtr name, IntPtr l)
                 {
                     try
                     {
@@ -438,7 +364,7 @@ namespace UIconEdit
                     }
                 };
 
-                if (!EnumResourceNames(hModule, lpszType, lpEnumFunc, IntPtr.Zero))
+                if (!Win32Funcs.EnumResourceNames(hModule, lpszType, lpEnumFunc, 0))
                 {
                     if (x == null) throw new Win32Exception();
                     throw x;
@@ -447,11 +373,11 @@ namespace UIconEdit
             finally
             {
                 if (hModule != null)
-                    FreeLibrary(hModule);
+                    Win32Funcs.FreeLibrary(hModule);
             }
         }
 
-        private static TIconFile[] _extractAll<TIconFile>(string path, IntPtr lpszType, IconTypeCode typeCode,
+        private static TIconFile[] _extractAll<TIconFile>(string path, int lpszType, IconTypeCode typeCode,
             IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
             where TIconFile : IconFileBase
         {
@@ -485,7 +411,7 @@ namespace UIconEdit
         /// </exception>
         public static IconFile[] ExtractAllIcons(string path, IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
         {
-            return _extractAll<IconFile>(path, (IntPtr)RT_GROUP_ICON, IconTypeCode.Icon, singleHandler, allHandler);
+            return _extractAll<IconFile>(path, Win32Funcs.RT_GROUP_ICON, IconTypeCode.Icon, singleHandler, allHandler);
         }
 
         /// <summary>
@@ -533,7 +459,7 @@ namespace UIconEdit
         /// </exception>
         public static CursorFile[] ExtractAllCursors(string path, IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
         {
-            return _extractAll<CursorFile>(path, (IntPtr)RT_GROUP_CURSOR, IconTypeCode.Cursor, singleHandler, allHandler);
+            return _extractAll<CursorFile>(path, Win32Funcs.RT_GROUP_CURSOR, IconTypeCode.Cursor, singleHandler, allHandler);
         }
 
         /// <summary>
@@ -585,7 +511,7 @@ namespace UIconEdit
             if (path == null) throw new ArgumentNullException("path");
             if (callback == null) throw new ArgumentNullException("callback");
 
-            _forEachIcon(path, (IntPtr)RT_GROUP_ICON, IconTypeCode.Icon, callback, singleHandler, allHandler);
+            _forEachIcon(path, Win32Funcs.RT_GROUP_ICON, IconTypeCode.Icon, callback, singleHandler, allHandler);
         }
 
         /// <summary>
@@ -637,7 +563,7 @@ namespace UIconEdit
             if (path == null) throw new ArgumentNullException("path");
             if (callback == null) throw new ArgumentNullException("callback");
 
-            _forEachIcon(path, (IntPtr)RT_GROUP_CURSOR, IconTypeCode.Cursor, callback, singleHandler, allHandler);
+            _forEachIcon(path, Win32Funcs.RT_GROUP_CURSOR, IconTypeCode.Cursor, callback, singleHandler, allHandler);
         }
 
         /// <summary>
@@ -671,8 +597,4 @@ namespace UIconEdit
     /// <param name="iconFile">The cursor or icon which was extracted.</param>
     public delegate void IconExtractCallback<TIconFile>(int index, TIconFile iconFile)
         where TIconFile : IconFileBase;
-
-    [UnmanagedFunctionPointer(CallingConvention.Winapi, SetLastError = true, CharSet = CharSet.Unicode)]
-    [SuppressUnmanagedCodeSecurity]
-    internal delegate bool ENUMRESNAMEPROC(IntPtr hModule, IntPtr lpszType, IntPtr lpszName, IntPtr lParam);
 }

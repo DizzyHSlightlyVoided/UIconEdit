@@ -391,7 +391,7 @@ namespace UIconEdit
 
                         loadedAlpha = new WriteableBitmap(curFrame.PixelWidth, curFrame.PixelHeight, 0, 0, PixelFormats.Bgra32, null);
                         loadedAlpha.WritePixels(fullRect, alphaPixels, stride, 0);
-                        loadedAlpha = new WriteableBitmap(new FormatConvertedBitmap(loadedAlpha, PixelFormats.Indexed2, IconEntry.AlphaPalette, 0));
+                        loadedAlpha = new WriteableBitmap(new FormatConvertedBitmap(loadedAlpha, PixelFormats.Indexed1, IconEntry.AlphaPalette, 0));
                     }
                     //TODO: Attempt to glean alpha-image from thumbnail?
 

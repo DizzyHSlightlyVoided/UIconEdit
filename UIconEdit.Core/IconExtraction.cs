@@ -230,7 +230,7 @@ namespace UIconEdit
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when loading the icon.
         /// </exception>
         /// <exception cref="IOException">
@@ -256,7 +256,7 @@ namespace UIconEdit
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when loading the icon.
         /// </exception>
         /// <exception cref="IOException">
@@ -284,7 +284,7 @@ namespace UIconEdit
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when loading the icon.
         /// </exception>
         /// <exception cref="IOException">
@@ -310,7 +310,7 @@ namespace UIconEdit
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when loading the icon.
         /// </exception>
         /// <exception cref="IOException">

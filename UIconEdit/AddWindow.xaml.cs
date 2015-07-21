@@ -58,9 +58,14 @@ namespace UIconEdit.Maker
             SetValue(NewFilePropertyKey, newFile);
 
             short width = 32, height = 32;
-            if (image.PixelWidth >= IconEntry.MinDimension && image.PixelWidth <= IconEntry.MaxDimension)
+            if (image.PixelWidth > IconEntry.MaxDimension)
+                width = IconEntry.MaxDimension;
+            else if (image.PixelWidth >= IconEntry.MinDimension)
                 width = (short)image.PixelWidth;
-            if (image.PixelHeight >= IconEntry.MinDimension && image.PixelHeight <= IconEntry.MaxDimension)
+
+            if (image.PixelHeight > IconEntry.MaxDimension)
+                height = IconEntry.MaxDimension;
+            else if (image.PixelHeight >= IconEntry.MinDimension)
                 height = (short)image.PixelHeight;
 
             EntryWidth = width;

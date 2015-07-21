@@ -103,12 +103,9 @@
   "IconError1": "The file is not a valid cursor or icon file.",
   "IconError2icon": "The icon file does not contain any valid entries.",
   "IconError2cursor": "The cursor file does not contain any valid valid entries.",
-  "IconError6icon": "A cursor file was expected, but the file is an icon file.",
-  "IconError6cursor": "An icon file was expected, but the file is a cursor file.",
-  "IconError1000icon": "Invalid icon entry.",
-  "IconError1000cursor": "Invalid cursor entry.",
+  "IconError3icon": "A cursor file was expected, but the file is an icon file.",
+  "IconError3cursor": "An icon file was expected, but the file is a cursor file.",
   "IconError1001": "{0}-bit images are not allowed!", //{0} = number of bits per pixel.
-  "IconError1102": "An icon frame of size {0}x{1} is out of bounds!", //{0} = width, {1} = height
 
   "ScalingFilter": "Scaling filter:",
   "ScalingFilterMatrix": "Simple",

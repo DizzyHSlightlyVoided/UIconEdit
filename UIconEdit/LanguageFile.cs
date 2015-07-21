@@ -284,9 +284,6 @@ namespace UIconEdit.Maker
             switch (e.Code)
             {
                 case IconErrorCode.InvalidFormat:
-                case IconErrorCode.ResourceTooSmall:
-                case IconErrorCode.ResourceTooEarly:
-                case IconErrorCode.ResourceOverlap:
                     eCode = IconErrorCode.InvalidFormat;
                     break;
                 case IconErrorCode.ZeroEntries:
@@ -296,23 +293,8 @@ namespace UIconEdit.Maker
                 case IconErrorCode.WrongType:
                     eCode = IconErrorCode.WrongType;
                     break;
-                case IconErrorCode.InvalidEntryType:
-                case IconErrorCode.InvalidPngFile:
-                case IconErrorCode.PngSizeMismatch:
-                case IconErrorCode.PngBitDepthMismatch:
-                case IconErrorCode.InvalidBmpFile:
-                case IconErrorCode.BmpSizeMismatch:
-                case IconErrorCode.InvalidBmpHeightOdd:
-                case IconErrorCode.BmpBitDepthMismatch:
-                    eCode = IconErrorCode.InvalidEntryType;
-                    break;
                 case IconErrorCode.InvalidBitDepth:
-                case IconErrorCode.InvalidBmpBitDepth:
                     eCode = IconErrorCode.InvalidBitDepth;
-                    break;
-                case IconErrorCode.InvalidBmpSize:
-                case IconErrorCode.InvalidPngSize:
-                    eCode = IconErrorCode.InvalidBmpSize;
                     break;
                 default:
                     eCode = IconErrorCode.Unknown;

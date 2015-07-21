@@ -27,7 +27,7 @@ Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) imp
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `input` is closed.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -54,7 +54,7 @@ Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) imp
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `input` is closed.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -99,7 +99,7 @@ The caller does not have the required permission.
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -143,7 +143,7 @@ The caller does not have the required permission.
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -162,7 +162,7 @@ When overridden in a derived class, returns a duplicate of the current instance.
 
 Returns a duplicate of the current instance as an [`IconFile`](#type-public-class-uiconediticonfile)
 
-**Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): An [`IconFile`](#type-public-class-uiconediticonfile) containing copies of every icon entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) in [`IconFileBase.Entries`](#property-public-uiconediticonfilebaseentrylist-entries--get-), and with each entry's [`IconEntry.HotspotX`](#property-public-systemuint16-hotspotx--get-set-) and [`IconEntry.HotspotY`](#property-public-systemuint16-hotspoty--get-set-) values set to 0.
+**Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): An [`IconFile`](#type-public-class-uiconediticonfile) containing copies of every icon entry and clones of each entry's [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) in [`IconFileBase.Entries`](#property-public-uiconediticonfilebaseentrylist-entries--get-), and with each entry's [`IconEntry.HotspotX`](#property-public-systemint32-hotspotx--get-set-) and [`IconEntry.HotspotY`](#property-public-systemint32-hotspoty--get-set-) values set to 0.
 
 
 --------------------------------------------------
@@ -251,7 +251,7 @@ Releases all unmanaged resources used by the current instance, and optionally re
 --------------------------------------------------
 # Type: `class UIconEdit.IconFileBase.EntryList`
 
-Represents a list of icon entries. Entries with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) cannot be added to the list; however, there may be duplicates if an icon loaded from an external icon file contained them.
+Represents a list of icon entries. Entries with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) cannot be added to the list; however, there may be duplicates if an icon loaded from an external icon file contained them.
 
 --------------------------------------------------
 ## CollectionChanged`
@@ -281,7 +281,7 @@ In a set operation, the specified value is `null`.
 
 
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
-In a set operation, an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists in the list at a different index, or the specified value is already associated with a different icon file.
+In a set operation, an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists in the list at a different index, or the specified value is already associated with a different icon file.
 
 --------------------------------------------------
 ## Property: `public virtual System.Int32 Count { get; }`
@@ -294,7 +294,7 @@ Gets the number of elements in the list.
 Adds the specified icon entry to the list.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null` or disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null` or disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists in the list.
 
 
 --------------------------------------------------
@@ -304,7 +304,7 @@ Adds the specified icon entry to the list at the specified index.
 * `index`: The index at which to insert the icon entry.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null` or disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null` or disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists in the list.
 
 
 ### Exceptions
@@ -319,7 +319,7 @@ Sets the value at the specified index.
 * `index`: The index of the value to set.
 * `item`: The item to set at the specified index.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null` or disposed, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists at a different index.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null` or disposed, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists at a different index.
 
 
 --------------------------------------------------
@@ -348,7 +348,7 @@ Removes the specified icon entry from the list.
 Removes an icon entry similar to the specified value from the list.
 * `item`: The icon entry to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `item` was successfully found and removed; `false` if no such icon entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `item` was successfully found and removed; `false` if no such icon entry was found in the list.
 
 
 --------------------------------------------------
@@ -357,7 +357,7 @@ Removes an icon entry similar to the specified value from the list.
 Removes an icon entry similar to the specified value from the list.
 * `key`: The entry key to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key` was successfully found and removed; `false` if no such icon entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key` was successfully found and removed; `false` if no such icon entry was found in the list.
 
 
 --------------------------------------------------
@@ -368,7 +368,7 @@ Removes an icon entry similar to the specified values from the list.
 * `height`: The height of the icon entry to search for.
 * `bitDepth`: The bit depth of the icon entry to search for.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `bitDepth` was successfully found and removed;`false` if no such icon entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint32-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `bitDepth` was successfully found and removed;`false` if no such icon entry was found in the list.
 
 
 --------------------------------------------------
@@ -391,7 +391,7 @@ Determines if the specified element exists in the list.
 Determines if an element similar to the specified icon entry exists in the list.
 * `item`: The icon entry to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `item` exists in the list; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `item` exists in the list; `false` otherwise.
 
 
 --------------------------------------------------
@@ -400,7 +400,7 @@ Determines if an element similar to the specified icon entry exists in the list.
 Determines if an element similar to the specified value exists in the list.
 * `key`: The entry key to compare.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key` exists in the list; `false` otherwise.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key` exists in the list; `false` otherwise.
 
 
 --------------------------------------------------
@@ -411,7 +411,7 @@ Determines if an element similar to the specified values exists in the list.
 * `height`: The height of the icon entry to search for.
 * `bitDepth`: The bit depth of the icon entry to search for.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `bitDepth` was found;`false` if no such icon entry was found in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint32-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `bitDepth` was found;`false` if no such icon entry was found in the list.
 
 
 --------------------------------------------------
@@ -429,7 +429,7 @@ Gets the index of the specified item.
 Gets the index of an element similar to the specified item.
 * `item`: The icon entry to compare.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `item`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `item`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -438,7 +438,7 @@ Gets the index of an element similar to the specified item.
 Gets the index of an element similar to the specified value.
 * `key`: The entry key to compare.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -449,7 +449,7 @@ Gets the index of an element similar to the specified values.
 * `height`: The height of the icon entry to search for.
 * `bitDepth`: The bit depth of the icon entry to search for.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint16-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `bitDepth`, if found; otherwise, -1.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint32-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `bitDepth`, if found; otherwise, -1.
 
 
 --------------------------------------------------
@@ -501,21 +501,21 @@ Performs a binary search for the specified entry within the specified range of e
 --------------------------------------------------
 ## Method: `public System.Int32 BinarySearchSimilar(UIconEdit.IconEntry entry)`
 
-Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified entry within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified entry within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
 * `entry`: The icon entry to search for.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `entry`, if found; otherwise, the bitwise complement of the index where `entry` would be.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `entry`, if found; otherwise, the bitwise complement of the index where `entry` would be.
 
 
 --------------------------------------------------
 ## Method: `public System.Int32 BinarySearchSimilar(System.Int32 index, System.Int32 count, UIconEdit.IconEntry entry)`
 
-Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified entry within the specified range of elements. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified entry within the specified range of elements. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
 * `index`: The index in the list at which the search begins.
 * `count`: The number of elements to search.
 * `entry`: The icon entry to search for.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `entry`, if found; otherwise, the bitwise complement of the index where `entry` would be.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `entry`, if found; otherwise, the bitwise complement of the index where `entry` would be.
 
 
 ### Exceptions
@@ -529,16 +529,16 @@ Performs a binary search for an entry with the same [`IconEntry.Width`](#propert
 --------------------------------------------------
 ## Method: `public System.Int32 BinarySearchSimilar(UIconEdit.IconEntryKey key)`
 
-Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
 * `key`: The entry key to search for.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key`, if found; otherwise, the bitwise complement of the index where `key` would be.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key`, if found; otherwise, the bitwise complement of the index where `key` would be.
 
 
 --------------------------------------------------
 ## Method: `public System.Int32 BinarySearchSimilar(System.Int32 index, System.Int32 count, UIconEdit.IconEntryKey key)`
 
-Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified key within the specified range of elements. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified key within the specified range of elements. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
 * `index`: The index in the list at which the search begins.
 * `count`: The number of elements to search.
 * `key`: The entry key to search for.
@@ -557,25 +557,25 @@ Performs a binary search for an entry with the same [`IconEntry.Width`](#propert
 --------------------------------------------------
 ## Method: `public System.Int32 BinarySearchSimilar(System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth)`
 
-Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
 * `width`: The width of the icon entry to search for.
 * `height`: The height of the icon entry to search for.
 * `bitDepth`: The bit depth of the icon entry to search for.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `width`, `height`, and `bitDepth`, if found; otherwise, the bitwise complement of the index of where `width`, `height`, and `bitDepth` would be.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `width`, `height`, and `bitDepth`, if found; otherwise, the bitwise complement of the index of where `width`, `height`, and `bitDepth` would be.
 
 
 --------------------------------------------------
 ## Method: `public System.Int32 BinarySearchSimilar(System.Int32 index, System.Int32 count, System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth)`
 
-Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
+Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
 * `index`: The index in the list at which the search begins.
 * `count`: The number of elements to search.
 * `width`: The width of the icon entry to search for.
 * `height`: The height of the icon entry to search for.
 * `bitDepth`: The bit depth of the icon entry to search for.
 
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint16-width--get-), [`IconEntry.Height`](#property-public-systemint16-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `width`, `height`, and `bitDepth`, if found; otherwise, the bitwise complement of the index of where `width`, `height`, and `bitDepth` would be.
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `width`, `height`, and `bitDepth`, if found; otherwise, the bitwise complement of the index of where `width`, `height`, and `bitDepth` would be.
 
 
 ### Exceptions
@@ -767,7 +767,7 @@ Loads a [`CursorFile`](#type-public-class-uiconeditcursorfile) from the specifie
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `input` is closed.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the cursor file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -794,7 +794,7 @@ Loads a [`CursorFile`](#type-public-class-uiconeditcursorfile) from the specifie
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `input` is closed.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the cursor file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -839,7 +839,7 @@ The caller does not have the required permission.
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the cursor file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -883,7 +883,7 @@ The caller does not have the required permission.
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the cursor file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -932,7 +932,7 @@ Loads a [`IconFile`](#type-public-class-uiconediticonfile) from the specified st
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `input` is closed.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -959,7 +959,7 @@ Loads a [`IconFile`](#type-public-class-uiconediticonfile) from the specified st
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `input` is closed.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -1004,7 +1004,7 @@ The caller does not have the required permission.
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -1048,7 +1048,7 @@ The caller does not have the required permission.
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -1078,7 +1078,7 @@ Represents a single entry in an icon.
 The default [`IconEntry.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-) value.
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY, System.Byte alphaThreshold)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth, System.Int32 hotspotX, System.Int32 hotspotY, System.Byte alphaThreshold)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -1101,7 +1101,7 @@ Creates a new instance with the specified image.
 `width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth, System.Byte alphaThreshold)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth, System.Byte alphaThreshold)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -1122,7 +1122,7 @@ Creates a new instance with the specified image.
 `width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth, System.Int32 hotspotX, System.Int32 hotspotY)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -1144,7 +1144,7 @@ Creates a new instance with the specified image.
 `width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -1164,7 +1164,7 @@ Creates a new instance with the specified image.
 `width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.IconBitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY, System.Byte alphaThreshold)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.IconBitDepth bitDepth, System.Int32 hotspotX, System.Int32 hotspotY, System.Byte alphaThreshold)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -1185,7 +1185,7 @@ Creates a new instance with the specified image.
 The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.IconBitDepth bitDepth, System.UInt16 hotspotX, System.UInt16 hotspotY)`
+## Constructor: `public IconEntry(System.Windows.Media.Imaging.BitmapSource baseImage, UIconEdit.IconBitDepth bitDepth, System.Int32 hotspotX, System.Int32 hotspotY)`
 
 Creates a new instance with the specified image.
 * `baseImage`: The image associated with the current instance.
@@ -1310,12 +1310,12 @@ Gets a value indicating whether the current instance will be saved as a PNG imag
 Gets a key for the icon entry.
 
 --------------------------------------------------
-## Property: `public System.Int16 Width { get; }`
+## Property: `public System.Int32 Width { get; }`
 
 Gets the resampled width of the icon.
 
 --------------------------------------------------
-## Property: `public System.Int16 Height { get; }`
+## Property: `public System.Int32 Height { get; }`
 
 Gets the resampled height of the icon.
 
@@ -1337,22 +1337,22 @@ Gets and sets a value indicating the threshold of alpha values at [`IconEntry.Bi
 --------------------------------------------------
 ## Field: `public static readonly System.Windows.DependencyProperty HotspotXProperty`
 
-The dependency property for the [`IconEntry.HotspotX`](#property-public-systemuint16-hotspotx--get-set-) property.
+The dependency property for the [`IconEntry.HotspotX`](#property-public-systemint32-hotspotx--get-set-) property.
 
 --------------------------------------------------
-## Property: `public System.UInt16 HotspotX { get; set; }`
+## Property: `public System.Int32 HotspotX { get; set; }`
 
-In a cursor, gets the horizontal offset in pixels of the cursor's hotspot from the left side. Constrained to greater than or equal to 0 and less than or equal to [`IconEntry.Width`](#property-public-systemint16-width--get-).
+In a cursor, gets the horizontal offset in pixels of the cursor's hotspot from the left side. Constrained to greater than or equal to 0 and less than or equal to [`IconEntry.Width`](#property-public-systemint32-width--get-).
 
 --------------------------------------------------
 ## Field: `public static readonly System.Windows.DependencyProperty HotspotYProperty`
 
-The dependency property for the [`IconEntry.HotspotY`](#property-public-systemuint16-hotspoty--get-set-) property.
+The dependency property for the [`IconEntry.HotspotY`](#property-public-systemint32-hotspoty--get-set-) property.
 
 --------------------------------------------------
-## Property: `public System.UInt16 HotspotY { get; set; }`
+## Property: `public System.Int32 HotspotY { get; set; }`
 
-In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the top side. Constrained to greater than or equal to 0 and less than or equal to [`IconEntry.Height`](#property-public-systemint16-height--get-).
+In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the top side. Constrained to greater than or equal to 0 and less than or equal to [`IconEntry.Height`](#property-public-systemint32-height--get-).
 
 --------------------------------------------------
 ## Field: `public static readonly System.Windows.DependencyProperty ScalingFilterProperty`
@@ -1370,17 +1370,17 @@ Gets and sets the scaling mode used to resize [`IconEntry.BaseImage`](#property-
 In a set operation, the specified value is not a valid [`ScalingFilter`](#type-public-enum-uiconeditscalingfilter) value.
 
 --------------------------------------------------
-## Property: `public System.UInt16 BitsPerPixel { get; }`
+## Property: `public System.Int32 BitsPerPixel { get; }`
 
 Gets the number of bits per pixel specified by [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-).
 
 --------------------------------------------------
-## Method: `public static System.UInt16 GetBitsPerPixel(UIconEdit.IconBitDepth bitDepth)`
+## Method: `public static System.Int32 GetBitsPerPixel(UIconEdit.IconBitDepth bitDepth)`
 
 Returns the number of bits per pixel associated with the specified [`IconBitDepth`](#type-public-enum-uiconediticonbitdepth) value.
 * `bitDepth`: The [`IconBitDepth`](#type-public-enum-uiconediticonbitdepth) to check.
 
-**Returns:** Type [`UInt16`](https://msdn.microsoft.com/en-us/library/system.uint16.aspx): 1 for [`IconBitDepth.Depth1BitsPerPixel`](#field-iconbitdepthdepth1bitsperpixel--4); 4 for [`IconBitDepth.Depth4BitsPerPixel`](#field-iconbitdepthdepth4bitsperpixel--3); 8 for [`IconBitDepth.Depth8BitsPerPixel`](#field-iconbitdepthdepth8bitsperpixel--2); 24 for [`IconBitDepth.Depth24BitsPerPixel`](#field-iconbitdepthdepth24bitsperpixel--1); or 32 for [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0).
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): 1 for [`IconBitDepth.Depth1BitsPerPixel`](#field-iconbitdepthdepth1bitsperpixel--4); 4 for [`IconBitDepth.Depth4BitsPerPixel`](#field-iconbitdepthdepth4bitsperpixel--3); 8 for [`IconBitDepth.Depth8BitsPerPixel`](#field-iconbitdepthdepth8bitsperpixel--2); 24 for [`IconBitDepth.Depth24BitsPerPixel`](#field-iconbitdepthdepth24bitsperpixel--1); or 32 for [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0).
 
 
 ### Exceptions
@@ -1440,7 +1440,7 @@ Returns the [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.wind
 
 Applies [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) to [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-).
 
-**Returns:** Type [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx): A new [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx), sized according to [`IconEntry.Width`](#property-public-systemint16-width--get-) and [`IconEntry.Height`](#property-public-systemint16-height--get-), consisting of [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) applied to [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and with pixel format [`PixelFormats.Bgra32`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformats.bgra32.aspx)
+**Returns:** Type [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx): A new [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx), sized according to [`IconEntry.Width`](#property-public-systemint32-width--get-) and [`IconEntry.Height`](#property-public-systemint32-height--get-), consisting of [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) applied to [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and with pixel format [`PixelFormats.Bgra32`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformats.bgra32.aspx)
 
 
 --------------------------------------------------
@@ -1603,43 +1603,35 @@ else Console.WriteLine("Failed");
 Represents a simplified key for an icon entry.
 
 --------------------------------------------------
-## Constructor: `public IconEntryKey(System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth)`
+## Constructor: `public IconEntryKey(System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
 
 Creates a new instance.
 * `width`: The width of the icon entry.
 * `height`: The height of the icon entry.
 * `bitDepth`: The bit depth of the icon entry.
 
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`width` or `height` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
-
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-`bitDepth` is not a valid [`IconBitDepth`](#type-public-enum-uiconediticonbitdepth) value.
-
 --------------------------------------------------
-## Property: `public System.Int16 Width { get; set; }`
+## Field: `public System.Int32 Width`
 
 Indicates the width of the icon entry.
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768)
+In a set operation, the specified value is less than or equal to 0.
 
 --------------------------------------------------
-## Property: `public System.Int16 Height { get; set; }`
+## Field: `public System.Int32 Height`
 
 Indicates the height of the icon entry.
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768)
+In a set operation, the specified value is less than or equal to 0.
 
 --------------------------------------------------
-## Property: `public UIconEdit.IconBitDepth BitDepth { get; set; }`
+## Field: `public UIconEdit.IconBitDepth BitDepth`
 
 Indicates the bit depth of the icon entry.
 
@@ -1651,21 +1643,16 @@ In a set operation, the specified value is not a valid [`IconBitDepth`](#type-pu
 --------------------------------------------------
 ## Method: `public System.Int32 CompareTo(UIconEdit.IconEntryKey other)`
 
-Compares the current instance to the specified other [`IconEntryKey`](#type-public-struct-uiconediticonentrykey) object. First [`IconEntryKey.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-set-) is compared, then [`IconEntryKey.Height`](#property-public-systemint16-height--get-set-), then [`IconEntryKey.Width`](#property-public-systemint16-width--get-set-) (with higher color-counts and larger elements first).
+Compares the current instance to the specified other [`IconEntryKey`](#type-public-struct-uiconediticonentrykey) object. First [`IconEntryKey.BitDepth`](#field-public-uiconediticonbitdepth-bitdepth) is compared, then [`IconEntryKey.Height`](#field-public-systemint32-height), then [`IconEntryKey.Width`](#field-public-systemint32-width) (with higher color-counts and larger elements first).
 * `other`: The other [`IconEntryKey`](#type-public-struct-uiconediticonentrykey) to compare.
 
 **Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): A value less than 0 if the current value comes before `other`; a value greater than 0 if the current value comes after `other`; or 0 if the current instance is equal to `other`.
 
 
 --------------------------------------------------
-## Field: `public static readonly UIconEdit.IconEntryKey Earliest`
+## Field: `public static readonly UIconEdit.IconEntry Empty`
 
-An [`IconEntryKey`](#type-public-struct-uiconediticonentrykey) value which will occur earliest according to [`IconEntryKey.CompareTo(UIconEdit.IconEntryKey)`](#method-public-systemint32-comparetouiconediticonentrykey-other).
-
---------------------------------------------------
-## Field: `public static readonly UIconEdit.IconEntryKey Last`
-
-An [`IconEntryKey`](#type-public-struct-uiconediticonentrykey) value which will occur last according to [`IconEntryKey.CompareTo(UIconEdit.IconEntryKey)`](#method-public-systemint32-comparetouiconediticonentrykey-other).
+Returns an invalid [`IconEntryKey`](#type-public-struct-uiconediticonentrykey) with all values equal to 0.
 
 --------------------------------------------------
 ## Method: `public System.String ToString()`
@@ -1852,16 +1839,6 @@ Specifies high-quality bicubic interpolation. Prefiltering is performed to ensur
 The exception that is thrown when an icon file contains invalid data.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value, System.Int32 index)`
-
-Creates a new instance using a message which describes the error and the specified error code.
-* `message`: A message describing the error.
-* `code`: The error code used to identify the cause of the error.
-* `typeCode`: The type code of the file which caused the error.
-* `value`: The value which caused the error.
-* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
-
---------------------------------------------------
 ## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value)`
 
 Creates a new instance using a message which describes the error and the specified error code.
@@ -1871,30 +1848,19 @@ Creates a new instance using a message which describes the error and the specifi
 * `value`: The value which caused the error.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Int32 index)`
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode)`
 
 Creates a new instance using a message which describes the error and the specified error code.
 * `message`: A message describing the error.
 * `code`: The error code used to identify the cause of the error.
 * `typeCode`: The type code of the file which caused the error.
-* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value, System.Int32 index)`
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode)`
 
 Creates a new instance with the default message and the specified error code.
 * `code`: The error code used to identify the cause of the error.
 * `typeCode`: The type code of the file which caused the error.
-* `value`: The value which caused the error.
-* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
-
---------------------------------------------------
-## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Int32 index)`
-
-Creates a new instance with the default message and the specified error code.
-* `code`: The error code used to identify the cause of the error.
-* `typeCode`: The type code of the file which caused the error.
-* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
 
 --------------------------------------------------
 ## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value)`
@@ -1905,19 +1871,11 @@ Creates a new instance with the default message and the specified error code.
 * `value`: The value which caused the error.
 
 --------------------------------------------------
-## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode)`
-
-Creates a new instance with the default message and the specified error code.
-* `code`: The error code used to identify the cause of the error.
-* `typeCode`: The type code of the file which caused the error.
-
---------------------------------------------------
-## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode index, System.Int32 innerException, System.Exception typeCode)`
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode innerException, System.Exception typeCode)`
 
 Creates a new instance with the specified message and error code and a reference to the exception which caused this error.
 * `message`: A message describing the error.
 * `code`: The error code used to identify the cause of the error.
-* `index`: The index of the entry in the icon file which caused this error, or -1 if it occurred before processing the icon entries.
 * `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
 * `typeCode`: The type code of the file which caused the error.
 
@@ -1937,11 +1895,6 @@ Gets a message describing the error.
 ## Property: `public UIconEdit.IconErrorCode Code { get; }`
 
 Gets an error code describing the icon error.
-
---------------------------------------------------
-## Property: `public System.Int32 Index { get; }`
-
-Gets the index in the icon file of the icon entry which caused this exception, or -1 if it occurred before the icon entries were processed.
 
 --------------------------------------------------
 ## Property: `public System.Object Value { get; }`
@@ -1989,89 +1942,19 @@ Code 0x1: The file is not a valid cursor or icon format. This is a fatal error, 
 Code 0x2: The icon contains zero entries. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
-## Field: `IconErrorCode.ResourceTooSmall = 3`
+## Field: `IconErrorCode.WrongType = 3`
 
-Code 0x3: One of the icon directory entries has a length less than or equal to 40 bytes, which is logically too small for either a BMP or a PNG file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the length. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.ResourceTooEarly = 4`
-
-Code 0x4: One of the icon directory entries has a starting offset which would overlap with the list of entries. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the offset. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.ResourceOverlap = 5`
-
-Code 0x5: One or more of the icon directory entries have overlapping offset/length combinations. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.WrongType = 6`
-
-Code 0x6: An icon was expected but a cursor was loaded, or vice versa. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the expected value. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidEntryType = 4096`
-
-Code 0x1000: the file type of an entry is invalid.
+Code 0x3: An icon was expected but a cursor was loaded, or vice versa. [`IconLoadException.TypeCode`](#property-public-uiconediticontypecode-typecode--get-) contains the expected value, and [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the actual value. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.InvalidBitDepth = 4097`
 
-Code 0x1001: the file is an icon, and an icon directory entry has a bit depth with any value other than 0, 1, 4, 8, 24, or 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
+Code 0x1001: The bit depth of an individual entry is not 1, 4, 8, 24, or 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
 
 --------------------------------------------------
 ## Field: `IconErrorCode.ZeroValidEntries = 4098`
 
-There are no remaining valid entries after processing. This is a fatal error, and the icon file cannot continue processing when it occurs.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidPngFile = 4352`
-
-Code 0x1100: an error occurred when attempting to load a PNG entry. The inner exception may contain more information.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidPngSize = 4354`
-
-Code 0x1102: the width or height of a PNG entry is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768). [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the size of the image.
-
---------------------------------------------------
-## Field: `IconErrorCode.PngSizeMismatch = 4355`
-
-Code 0x1105: the width or height of a PNG entry does not match the width or height listed in the icon directory entry.
-
---------------------------------------------------
-## Field: `IconErrorCode.PngBitDepthMismatch = 4357`
-
-Code 0x1205: there is a mismatch between the bit depth of a PNG entry and the expected bit depth of the file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the bit depth listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the bit depth listed in the PNG entry.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpFile = 4608`
-
-Code 0x1200: an error occurred when attempting to process a BMP entry. The inner exception may contain more information.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpBitDepth = 4609`
-
-Code 0x1201: the bit depth of a BMP entry is not supported. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpSize = 4610`
-
-Code 0x1202: the width or height of a BMP entry is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768). The maximum height is doubled in images with a bit depth less than 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the size of the image.
-
---------------------------------------------------
-## Field: `IconErrorCode.BmpSizeMismatch = 4611`
-
-Code 0x1203: the width or height of a BMP entry does not match the width or height listed in the icon directory entry. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the size listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the actual size.
-
---------------------------------------------------
-## Field: `IconErrorCode.InvalidBmpHeightOdd = 4612`
-
-Code 0x1204: the height of a BMP entry is an odd number, indicating that there is no AND (transparency) mask. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the [`BitmapSource.PixelHeight`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.pixelheight.aspx) of the image.
-
---------------------------------------------------
-## Field: `IconErrorCode.BmpBitDepthMismatch = 4613`
-
-Code 0x1205: there is a mismatch between the bit depth of a BMP entry and the expected bit depth of the file. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains a [`Tuple<T1,T2>`](https://msdn.microsoft.com/en-us/library/dd268536.aspx) in which the [`System.Tuple<T1,T2>.Item1`](https://msdn.microsoft.com/en-us/library/dd386940.aspx) is the bit depth listed in the icon directory entry, and [`System.Tuple<T1,T2>.Item2`](https://msdn.microsoft.com/en-us/library/dd386892.aspx) is the bit depth listed in the BMP entry.
+Code 0x1002: There are no remaining valid entries after processing. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
 # Type: `public abstract class UIconEdit.IconExtraction`
@@ -2134,7 +2017,7 @@ Extracts a single icon from the specified EXE or DLL file.
 ##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
 An error occurred when attempting to load resources from `path`.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when loading the icon.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -2161,7 +2044,7 @@ Extracts a single icon from the specified EXE or DLL file.
 ##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
 An error occurred when attempting to load resources from `path`.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when loading the icon.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -2189,7 +2072,7 @@ Extracts a single cursor from the specified EXE or DLL file.
 ##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
 An error occurred when attempting to load resources from `path`.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when loading the icon.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -2216,7 +2099,7 @@ Extracts a single cursor from the specified EXE or DLL file.
 ##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
 An error occurred when attempting to load resources from `path`.
 
-##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when loading the icon.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)

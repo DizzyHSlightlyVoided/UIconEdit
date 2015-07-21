@@ -58,7 +58,7 @@ namespace UIconEdit
         /// </summary>
         public const byte DefaultAlphaThreshold = 96;
 
-        private void _initValues(short width, short height, IconBitDepth bitDepth)
+        private void _initValues(int width, int height, IconBitDepth bitDepth)
         {
             if (width < MinDimension || width > MaxDimension)
                 throw new ArgumentOutOfRangeException("width");
@@ -106,7 +106,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, short width, short height, IconBitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
+        public IconEntry(BitmapSource baseImage, int width, int height, IconBitDepth bitDepth, int hotspotX, int hotspotY, byte alphaThreshold)
         {
             if (baseImage == null) throw new ArgumentNullException("baseImage");
             _initValues(width, height, bitDepth);
@@ -137,7 +137,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, short width, short height, IconBitDepth bitDepth, byte alphaThreshold)
+        public IconEntry(BitmapSource baseImage, int width, int height, IconBitDepth bitDepth, byte alphaThreshold)
             : this(baseImage, width, height, bitDepth, 0, 0, alphaThreshold)
         {
         }
@@ -162,7 +162,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, short width, short height, IconBitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+        public IconEntry(BitmapSource baseImage, int width, int height, IconBitDepth bitDepth, int hotspotX, int hotspotY)
             : this(baseImage, width, height, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
         }
@@ -183,7 +183,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, short width, short height, IconBitDepth bitDepth)
+        public IconEntry(BitmapSource baseImage, int width, int height, IconBitDepth bitDepth)
             : this(baseImage, width, height, bitDepth, 0, 0, DefaultAlphaThreshold)
         {
         }
@@ -208,7 +208,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth, ushort hotspotX, ushort hotspotY, byte alphaThreshold)
+        public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth, int hotspotX, int hotspotY, byte alphaThreshold)
         {
             if (baseImage == null) throw new ArgumentNullException("baseImage");
             if (baseImage.PixelWidth < MinDimension || baseImage.PixelWidth > MaxDimension || baseImage.PixelHeight < MinDimension || baseImage.PixelHeight > MaxDimension)
@@ -242,7 +242,7 @@ namespace UIconEdit
         /// <exception cref="ArgumentException">
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
-        public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth, ushort hotspotX, ushort hotspotY)
+        public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth, int hotspotX, int hotspotY)
             : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
         {
         }
@@ -288,10 +288,15 @@ namespace UIconEdit
         {
         }
 
-        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth, ushort hotspotX, ushort hotspotY)
-            : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
+        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth, int hotspotX, int hotspotY)
         {
+            BaseImage = baseImage;
             AlphaImage = alphaImage;
+            _depth = bitDepth;
+            _width = baseImage.PixelWidth;
+            _height = baseImage.PixelHeight;
+            HotspotX = hotspotX;
+            HotspotY = hotspotY;
             SetValue(IsQuantizedPropertyKey, true);
         }
 
@@ -431,22 +436,22 @@ namespace UIconEdit
         [Bindable(true, BindingDirection.OneWay)]
         public IconEntryKey EntryKey { get { return new IconEntryKey(_width, _height, _depth); } }
 
-        private readonly short _width;
+        private readonly int _width;
         /// <summary>
         /// Gets the resampled width of the icon.
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
-        public short Width
+        public int Width
         {
             get { return _width; }
         }
 
-        private readonly short _height;
+        private readonly int _height;
         /// <summary>
         /// Gets the resampled height of the icon.
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
-        public short Height
+        public int Height
         {
             get { return _height; }
         }
@@ -484,15 +489,15 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="HotspotX"/> property.
         /// </summary>
-        public static readonly DependencyProperty HotspotXProperty = DependencyProperty.Register("HotspotX", typeof(ushort), typeof(IconEntry),
-            new PropertyMetadata(ushort.MinValue, null, HotspotXCoerce));
+        public static readonly DependencyProperty HotspotXProperty = DependencyProperty.Register("HotspotX", typeof(int), typeof(IconEntry),
+            new PropertyMetadata(0, null, HotspotXCoerce));
 
         private static object HotspotXCoerce(DependencyObject d, object baseValue)
         {
             IconEntry i = (IconEntry)d;
 
-            ushort value = (ushort)baseValue;
-            if (value > i._width) return (ushort)i._width;
+            int value = (int)baseValue;
+            if (value > i._width) return (int)i._width;
 
             return baseValue;
         }
@@ -501,9 +506,9 @@ namespace UIconEdit
         /// In a cursor, gets the horizontal offset in pixels of the cursor's hotspot from the left side.
         /// Constrained to greater than or equal to 0 and less than or equal to <see cref="Width"/>.
         /// </summary>
-        public ushort HotspotX
+        public int HotspotX
         {
-            get { return (ushort)GetValue(HotspotXProperty); }
+            get { return (int)GetValue(HotspotXProperty); }
             set { SetValue(HotspotXProperty, value); }
         }
         #endregion
@@ -512,15 +517,15 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="HotspotY"/> property.
         /// </summary>
-        public static readonly DependencyProperty HotspotYProperty = DependencyProperty.Register("HotspotY", typeof(ushort), typeof(IconEntry),
-            new PropertyMetadata(ushort.MinValue, null, HotspotYCoerce));
+        public static readonly DependencyProperty HotspotYProperty = DependencyProperty.Register("HotspotY", typeof(int), typeof(IconEntry),
+            new PropertyMetadata(0, null, HotspotYCoerce));
 
         private static object HotspotYCoerce(DependencyObject d, object baseValue)
         {
             IconEntry e = (IconEntry)d;
 
-            ushort value = (ushort)baseValue;
-            if (value > e._height) return (ushort)e._height;
+            int value = (int)baseValue;
+            if (value > e._height) return (int)e._height;
 
             return baseValue;
         }
@@ -529,9 +534,9 @@ namespace UIconEdit
         /// In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the top side.
         /// Constrained to greater than or equal to 0 and less than or equal to <see cref="Height"/>.
         /// </summary>
-        public ushort HotspotY
+        public int HotspotY
         {
-            get { return (ushort)GetValue(HotspotYProperty); }
+            get { return (int)GetValue(HotspotYProperty); }
             set { SetValue(HotspotYProperty, value); }
         }
         #endregion
@@ -581,7 +586,7 @@ namespace UIconEdit
         /// Gets the number of bits per pixel specified by <see cref="BitDepth"/>.
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
-        public ushort BitsPerPixel
+        public int BitsPerPixel
         {
             get { return GetBitsPerPixel(_depth); }
         }
@@ -596,7 +601,7 @@ namespace UIconEdit
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
-        public static ushort GetBitsPerPixel(IconBitDepth bitDepth)
+        public static int GetBitsPerPixel(IconBitDepth bitDepth)
         {
             switch (bitDepth)
             {
@@ -1422,36 +1427,17 @@ namespace UIconEdit
     [StructLayout(LayoutKind.Sequential)]
     public struct IconEntryKey : IEquatable<IconEntryKey>, IComparable<IconEntryKey>
     {
-        internal static bool IsValid(short width, short height, IconBitDepth bitDepth)
-        {
-            return width >= IconEntry.MinDimension && width <= IconEntry.MaxDimension && height >= IconEntry.MinDimension && height <= IconEntry.MaxDimension
-                && _isValid(bitDepth);
-        }
-
         /// <summary>
         /// Creates a new instance.
         /// </summary>
         /// <param name="width">The width of the icon entry.</param>
         /// <param name="height">The height of the icon entry.</param>
         /// <param name="bitDepth">The bit depth of the icon entry.</param>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="IconEntry.MinDimension"/> or is greater than <see cref="IconEntry.MaxDimension"/>.
-        /// </exception>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
-        /// </exception>
-        public IconEntryKey(short width, short height, IconBitDepth bitDepth)
+        public IconEntryKey(int width, int height, IconBitDepth bitDepth)
         {
-            if (width < IconEntry.MinDimension || width > IconEntry.MaxDimension)
-                throw new ArgumentOutOfRangeException("width");
-            if (height < IconEntry.MinDimension || height > IconEntry.MaxDimension)
-                throw new ArgumentOutOfRangeException("height");
-            if (!_isValid(bitDepth))
-                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
-
-            _width = width;
-            _height = height;
-            _bitDepth = bitDepth;
+            Width = width;
+            Height = height;
+            BitDepth = bitDepth;
         }
 
         private static bool _isValid(IconBitDepth bitDepth)
@@ -1469,59 +1455,29 @@ namespace UIconEdit
             }
         }
 
-        private short _width;
         /// <summary>
         /// Indicates the width of the icon entry.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than <see cref="IconEntry.MinDimension"/> or greater than <see cref="IconEntry.MaxDimension"/>
+        /// In a set operation, the specified value is less than or equal to 0.
         /// </exception>
-        public short Width
-        {
-            get { return _width < IconEntry.MinDimension || _width > IconEntry.MaxDimension ? IconEntry.MinDimension : _width; }
-            set
-            {
-                if (value < IconEntry.MinDimension || value > IconEntry.MaxDimension)
-                    throw new ArgumentOutOfRangeException();
-                _width = value;
-            }
-        }
+        public int Width;
 
-        private short _height;
         /// <summary>
         /// Indicates the height of the icon entry.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than <see cref="IconEntry.MinDimension"/> or greater than <see cref="IconEntry.MaxDimension"/>
+        /// In a set operation, the specified value is less than or equal to 0.
         /// </exception>
-        public short Height
-        {
-            get { return _height; }
-            set
-            {
-                if (value < IconEntry.MinDimension || value > IconEntry.MaxDimension)
-                    throw new ArgumentOutOfRangeException();
-                _height = value;
-            }
-        }
+        public int Height;
 
-        private IconBitDepth _bitDepth;
         /// <summary>
         /// Indicates the bit depth of the icon entry.
         /// </summary>
         /// <exception cref="InvalidEnumArgumentException">
         /// In a set operation, the specified value is not a valid <see cref="IconBitDepth"/> value.
         /// </exception>
-        public IconBitDepth BitDepth
-        {
-            get { return _isValid(_bitDepth) ? _bitDepth : 0; }
-            set
-            {
-                if (!_isValid(value))
-                    throw new InvalidEnumArgumentException(null, (int)value, typeof(IconBitDepth));
-                _bitDepth = value;
-            }
-        }
+        public IconBitDepth BitDepth;
 
         /// <summary>
         /// Compares the current instance to the specified other <see cref="IconEntryKey"/> object. First
@@ -1544,13 +1500,11 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// An <see cref="IconEntryKey"/> value which will occur earliest according to <see cref="CompareTo(IconEntryKey)"/>.
+        /// Returns an invalid <see cref="IconEntryKey"/> with all values equal to 0.
         /// </summary>
-        public static readonly IconEntryKey Earliest = new IconEntryKey(IconEntry.MaxDimension, IconEntry.MaxDimension, IconBitDepth.Depth32BitsPerPixel);
-        /// <summary>
-        /// An <see cref="IconEntryKey"/> value which will occur last according to <see cref="CompareTo(IconEntryKey)"/>.
-        /// </summary>
-        public static readonly IconEntryKey Last = new IconEntryKey(IconEntry.MinDimension, IconEntry.MinDimension, IconBitDepth.Depth1BitPerPixel);
+        public static readonly IconEntry Empty;
+        
+        internal bool IsValid { get { return Width >= IconEntry.MinDimension && Height >= IconEntry.MinDimension && _isValid(BitDepth); } }
 
         /// <summary>
         /// Returns a string representation of the current value.
@@ -1632,7 +1586,7 @@ namespace UIconEdit
         /// <returns>A hash code for the current value.</returns>
         public override int GetHashCode()
         {
-            return ((ushort)Width | ((ushort)Height << 16)) ^ ((int)BitDepth << 12);
+            return Width + Height + (int)BitDepth;
         }
 
         /// <summary>

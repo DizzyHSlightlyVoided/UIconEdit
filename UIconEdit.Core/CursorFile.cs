@@ -59,7 +59,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="input"/> is closed.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when processing the cursor file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -86,7 +86,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="input"/> is closed.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when processing the cursor file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -128,7 +128,7 @@ namespace UIconEdit
         /// <exception cref="NotSupportedException">
         /// <paramref name="path"/> is in an invalid format.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when processing the cursor file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -169,7 +169,7 @@ namespace UIconEdit
         /// <exception cref="NotSupportedException">
         /// <paramref name="path"/> is in an invalid format.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when processing the cursor file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -195,12 +195,16 @@ namespace UIconEdit
 
         internal override ushort GetImgX(IconEntry entry)
         {
-            return entry.HotspotX;
+            var hotspot = entry.HotspotX;
+            if (hotspot > ushort.MaxValue) return ushort.MaxValue;
+            return (ushort)hotspot;
         }
 
         internal override ushort GetImgY(IconEntry entry)
         {
-            return entry.HotspotY;
+            var hotspot = entry.HotspotY;
+            if (hotspot > ushort.MaxValue) return ushort.MaxValue;
+            return (ushort)hotspot;
         }
 
         /// <summary>

@@ -114,6 +114,9 @@ namespace UIconEdit.Maker
                     return;
                 }
             }
+            catch (FileFormatException)
+            {
+            }
             catch (Exception)
             {
                 ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageLoadError, path));
@@ -158,6 +161,7 @@ namespace UIconEdit.Maker
                 {
                     bool? result = extractWindow.ShowDialog();
                     if (!result.HasValue || !result.Value) return;
+                    Mouse.OverrideCursor = Cursors.Wait;
                     try
                     {
                         LoadedFile = IconExtraction.ExtractIconSingle(path, extractWindow.IconIndex);

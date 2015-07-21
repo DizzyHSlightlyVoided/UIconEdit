@@ -59,7 +59,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="input"/> is closed.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -86,7 +86,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="input"/> is closed.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -128,7 +128,7 @@ namespace UIconEdit
         /// <exception cref="NotSupportedException">
         /// <paramref name="path"/> is in an invalid format.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -169,7 +169,7 @@ namespace UIconEdit
         /// <exception cref="NotSupportedException">
         /// <paramref name="path"/> is in an invalid format.
         /// </exception>
-        /// <exception cref="IconLoadException">
+        /// <exception cref="FileFormatException">
         /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">

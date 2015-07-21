@@ -393,7 +393,6 @@ namespace UIconEdit
                         loadedAlpha.WritePixels(fullRect, alphaPixels, stride, 0);
                         loadedAlpha = new WriteableBitmap(new FormatConvertedBitmap(loadedAlpha, PixelFormats.Indexed1, IconEntry.AlphaPalette, 0));
                     }
-                    //TODO: Attempt to glean alpha-image from thumbnail?
 
                     IconEntry curEntry;
 

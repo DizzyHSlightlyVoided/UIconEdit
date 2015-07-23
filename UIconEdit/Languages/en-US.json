@@ -12,7 +12,8 @@
   "CursorExtractError": "Could not load cursor #{0} in \"{1}\".",
   "IconExtractNone": "No valid icons or cursors were loaded from \"{0}\".",
 
-  "FilenameSuffix": "{0}bpp{1}x{2}",
+  "FilenameSuffix": "{0}bpp{1}x{2}", //{0} = bits per pixel, {1} = width, {2} = height
+  "FilenameSuffixEx": "-{0}", //{0} = the number of other files with the same bits per pixel, width, and height
 
   "MenuFile": "_File",
   "MenuFileOpen": "_Open",

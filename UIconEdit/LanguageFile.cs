@@ -182,6 +182,7 @@ namespace UIconEdit.Maker
         public string IconExtractNone { get { return _text["IconExtractNone"]; } }
 
         public string FilenameSuffix { get { return _text["FilenameSuffix"]; } }
+        public string FilenameSuffixEx { get { return _text["FilenameSuffixEx"]; } }
 
         public string MenuFile { get { return _text["MenuFile"]; } }
         public string MenuFileNew { get { return _text["MenuFileNew"]; } }

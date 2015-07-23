@@ -29,6 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -600,9 +601,23 @@ namespace UIconEdit.Maker
                 if (filePath.EndsWith(png, StringComparison.OrdinalIgnoreCase))
                     filePath = filePath.Substring(0, filePath.Length - 4);
 
-                entries = LoadedFile.Entries.Select(curEntry => new Tuple<string, IconEntry>(filePath +
-                    string.Format(_settings.LanguageFile.FilenameSuffix, curEntry.BitsPerPixel, curEntry.Width, curEntry.Height) + png,
-                    curEntry)).ToArray();
+                Dictionary<IconEntryKey, int> entryCount = new Dictionary<IconEntryKey, int>();
+
+                entries = LoadedFile.Entries.Select(delegate (IconEntry curEntry)
+                {
+                    string curPath = string.Format(_settings.LanguageFile.FilenameSuffix, curEntry.BitsPerPixel, curEntry.Width, curEntry.Height);
+                    var curKey = curEntry.EntryKey;
+
+                    int curCount;
+                    if (entryCount.TryGetValue(curKey, out curCount))
+                    {
+                        curPath += string.Format(_settings.LanguageFile.FilenameSuffixEx, curCount);
+                        entryCount[curKey] = curCount + 1;
+                    }
+                    else entryCount.Add(curKey, 0);
+
+                    return new Tuple<string, IconEntry>(filePath + curPath + png, curEntry);
+                }).ToArray();
 
                 bool overwriteAll = false;
                 foreach (var curTuple in entries)

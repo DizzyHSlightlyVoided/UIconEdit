@@ -172,8 +172,9 @@ namespace UIconEdit.Maker
                         return;
                     }
                 }
+                IsModified = true;
+                FilePath = null;
                 listbox.SelectedIndex = 0;
-                IsModified = false;
                 scrollEntries.ScrollToTop();
             }
             catch (Exception)
@@ -689,8 +690,12 @@ namespace UIconEdit.Maker
             QuestionWindow window = new QuestionWindow(this, _settings.LanguageFile.ModifiedMessage, _settings.LanguageFile.ModifiedCaption);
             window.ButtonYesEnabled = true;
             window.ButtonYesMessage = _settings.LanguageFile.MenuFileSave;
-            window.ButtonOKEnabled = true;
-            window.ButtonOKMessage = _settings.LanguageFile.MenuFileSaveAs;
+            if (FilePath == null) window.ButtonOKEnabled = false;
+            else
+            {
+                window.ButtonOKEnabled = true;
+                window.ButtonOKMessage = _settings.LanguageFile.MenuFileSaveAs;
+            }
             window.ButtonNoEnabled = true;
             window.ButtonNoMessage = _settings.LanguageFile.ButtonNoSave;
             window.ButtonCancelEnabled = true;

@@ -1262,19 +1262,9 @@ Gets and sets the maximum width or height at which an icon entry will be saved a
 Gets and sets the maximum width or height at which an icon entry will be saved as a BMP file when [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) is any value except [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0); all entries with a width or height greater than this will be saved as PNG. 255 pixels.
 
 --------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty IsQuantizedProperty`
-
-The dependency property for the read-only [`IconEntry.IsQuantized`](#property-public-systemboolean-isquantized--get-) property.
-
---------------------------------------------------
 ## Property: `public System.Boolean IsQuantized { get; }`
 
 Gets a value indicating whether [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) are known to be already quantized.
-
---------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty BaseImageProperty`
-
-The dependency property for the [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) property.
 
 --------------------------------------------------
 ## Property: `public System.Windows.Media.Imaging.BitmapSource BaseImage { get; set; }`
@@ -1290,14 +1280,14 @@ The current instance is disposed.
 In a set operation, the specified value is `null`.
 
 --------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty AlphaImageProperty`
-
-The dependency property for the [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) property.
-
---------------------------------------------------
 ## Property: `public System.Windows.Media.Imaging.BitmapSource AlphaImage { get; set; }`
 
 Gets and sets an image to be used as the alpha mask, or `null` to derive the alpha mask from [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-). Black pixels are transparent; white pixels are opaque.
+
+### Exceptions
+
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+The current instance is disposed.
 
 --------------------------------------------------
 ## Property: `public System.Boolean IsPng { get; }`
@@ -1325,49 +1315,47 @@ Gets the resampled height of the icon.
 Gets the bit depth of the current instance.
 
 --------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty AlphaThresholdProperty`
-
-The dependency property for the [`IconEntry.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-) property.
-
---------------------------------------------------
 ## Property: `public System.Byte AlphaThreshold { get; set; }`
 
 Gets and sets a value indicating the threshold of alpha values at [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-)s below [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0). Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
 
---------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty HotspotXProperty`
+### Exceptions
 
-The dependency property for the [`IconEntry.HotspotX`](#property-public-systemint32-hotspotx--get-set-) property.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+In a set operation, the current instance is disposed.
 
 --------------------------------------------------
 ## Property: `public System.Int32 HotspotX { get; set; }`
 
 In a cursor, gets the horizontal offset in pixels of the cursor's hotspot from the left side. Constrained to greater than or equal to 0 and less than or equal to [`IconEntry.Width`](#property-public-systemint32-width--get-).
 
---------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty HotspotYProperty`
+### Exceptions
 
-The dependency property for the [`IconEntry.HotspotY`](#property-public-systemint32-hotspoty--get-set-) property.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+In a set operation, the current instance is disposed.
 
 --------------------------------------------------
 ## Property: `public System.Int32 HotspotY { get; set; }`
 
 In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the top side. Constrained to greater than or equal to 0 and less than or equal to [`IconEntry.Height`](#property-public-systemint32-height--get-).
 
---------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty ScalingFilterProperty`
+### Exceptions
 
-The dependency property for the [`IconEntry.ScalingFilter`](#property-public-uiconeditscalingfilter-scalingfilter--get-set-) property.
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+In a set operation, the current instance is disposed.
 
 --------------------------------------------------
-## Property: `public UIconEdit.ScalingFilter ScalingFilter { get; set; }`
+## Property: `public UIconEdit.IconScalingFilter ScalingFilter { get; set; }`
 
 Gets and sets the scaling mode used to resize [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) when quantizing.
 
 ### Exceptions
 
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+In a set operation, the current instance is disposed.
+
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-In a set operation, the specified value is not a valid [`ScalingFilter`](#type-public-enum-uiconeditscalingfilter) value.
+In a set operation, the specified value is not a valid [`IconScalingFilter`](#type-public-enum-uiconediticonscalingfilter) value.
 
 --------------------------------------------------
 ## Property: `public System.Int32 BitsPerPixel { get; }`
@@ -1451,6 +1439,11 @@ Returns a duplicate of the current instance.
 **Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A duplicate of the current instance, with its own clone of [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-).
 
 
+### Exceptions
+
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+The current instance is dipsosed.
+
 --------------------------------------------------
 ## Method: `public System.Windows.Media.Imaging.BitmapSource GetQuantizedPng()`
 
@@ -1489,6 +1482,11 @@ Returns a string representation of the current instance.
 
 **Returns:** Type [`String`](https://msdn.microsoft.com/en-us/library/system.string.aspx): A string representation of the current instance.
 
+
+--------------------------------------------------
+## PropertyChanged`
+
+Called when a property on the current instance changes.
 
 --------------------------------------------------
 ## Property: `public System.Boolean IsDisposed { get; }`
@@ -1799,37 +1797,37 @@ Indicates that the entry is 2-color (1 bit per pixel). Same value as [`IconBitDe
 Indicates that the entry is 2-color (1 bit per pixel). Same value as [`IconBitDepth.Depth2Color`](#field-iconbitdepthdepth2color--4).
 
 --------------------------------------------------
-# Type: `public enum UIconEdit.ScalingFilter`
+# Type: `public enum UIconEdit.IconScalingFilter`
 
 Indicates options for resizing [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) when quantizing.
 
 --------------------------------------------------
-## Field: `ScalingFilter.Matrix = 0`
+## Field: `IconScalingFilter.Matrix = 0`
 
 Resizes using a transformation matrix.
 
 --------------------------------------------------
-## Field: `ScalingFilter.Bilinear = 1`
+## Field: `IconScalingFilter.Bilinear = 1`
 
 Specifies bilinear interpolation.
 
 --------------------------------------------------
-## Field: `ScalingFilter.Bicubic = 2`
+## Field: `IconScalingFilter.Bicubic = 2`
 
 Specifies bicubic interpolation.
 
 --------------------------------------------------
-## Field: `ScalingFilter.NearestNeighbor = 3`
+## Field: `IconScalingFilter.NearestNeighbor = 3`
 
 Specifies nearest-neighbor interpolation.
 
 --------------------------------------------------
-## Field: `ScalingFilter.HighQualityBilinear = 4`
+## Field: `IconScalingFilter.HighQualityBilinear = 4`
 
 Specifies high-quality bilinear interpolation. Prefiltering is performed to ensure high-quality transformation.
 
 --------------------------------------------------
-## Field: `ScalingFilter.HighQualityBicubic = 5`
+## Field: `IconScalingFilter.HighQualityBicubic = 5`
 
 Specifies high-quality bicubic interpolation. Prefiltering is performed to ensure high-quality transformation.
 

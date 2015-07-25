@@ -184,10 +184,10 @@ namespace UIconEdit.Maker
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values.Length < 2 || !(values[0] is ScalingFilter))
+            if (values.Length < 2 || !(values[0] is IconScalingFilter))
                 return "";
 
-            ScalingFilter filter = (ScalingFilter)values[0];
+            IconScalingFilter filter = (IconScalingFilter)values[0];
             LanguageFile langFile = values[1] as LanguageFile;
 
             if (langFile == null) return filter.ToString();

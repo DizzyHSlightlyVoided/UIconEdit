@@ -41,8 +41,8 @@ namespace UIconEdit.Maker
     /// </summary>
     partial class AddWindow
     {
-        private static readonly ScalingFilter[] _filters = (ScalingFilter[])Enum.GetValues(typeof(ScalingFilter));
-        public static ScalingFilter[] Filters { get { return _filters; } }
+        private static readonly IconScalingFilter[] _filters = (IconScalingFilter[])Enum.GetValues(typeof(IconScalingFilter));
+        public static IconScalingFilter[] Filters { get { return _filters; } }
 
         public AddWindow(MainWindow mainWindow, bool duplicated, bool newFile, BitmapSource image, IconBitDepth bitDepth)
         {
@@ -165,7 +165,7 @@ namespace UIconEdit.Maker
         public IconEntry GetIconEntry()
         {
             var entry = new IconEntry(LoadedImage, EntryWidth, EntryHeight, BitDepth, AlphaThreshold);
-            entry.ScalingFilter = (ScalingFilter)cmbFilter.SelectedValue;
+            entry.ScalingFilter = (IconScalingFilter)cmbFilter.SelectedValue;
             entry.SetQuantized();
             return entry;
         }

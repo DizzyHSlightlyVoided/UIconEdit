@@ -317,7 +317,7 @@ namespace UIconEdit.Maker
             return _text[s];
         }
 
-        public string GetScalingFilter(ScalingFilter e)
+        public string GetScalingFilter(IconScalingFilter e)
         {
             string s = e.ToString();
             string result;

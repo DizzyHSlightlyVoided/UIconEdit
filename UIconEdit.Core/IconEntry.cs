@@ -336,7 +336,7 @@ namespace UIconEdit
         public bool IsQuantized
         {
             get { return _isQuantized; }
-            private set { _changeValue(_isQuantized, ref _isQuantized, "IsQuantized"); }
+            private set { _changeValue(value, ref _isQuantized, "IsQuantized"); }
         }
         #endregion
 

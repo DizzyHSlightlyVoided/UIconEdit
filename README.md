@@ -14,11 +14,11 @@ UIconEdit app's functionality
 * Icon sizes up to 768x768 (the maximum as of Windows 10).
 * Opening .ICO, .CUR, and image files as a command-line parameter.
 * Getting and setting a cursor's hotspot.
+* Extracting icons from .DLL and .EXE files.
 
 Planned functionality
 ---------------------
 ### UIconEdit
-* Extracting icons from .DLL and .EXE files.
 * File associations.
 
 ### UIconEdit.Core

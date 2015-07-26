@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -50,10 +51,6 @@ namespace UIconEdit.Maker
             Owner = owner;
 
             _path = path;
-            _iconCount = iconCount;
-
-            SetValue(HasIconsPropertyKey, (iconCount != 0));
-
             InitializeComponent();
         }
 
@@ -61,22 +58,47 @@ namespace UIconEdit.Maker
         {
             var settingsFile = SettingsFile;
 
-            if (HasIcons)
+            int curIndex = 0;
+            ENUMRESNAMEPROC proc = delegate (IntPtr h, int type, IntPtr name, IntPtr param)
             {
-                for (int i = 0; i < _iconCount; i++)
+                try
                 {
-                    try
+                    using (MemoryStream ms = Win32Funcs.ExtractData(h, type, name))
+                    using (BinaryReader br = new BinaryReader(ms))
                     {
-                        _icons.Add(new FileToken(_path, settingsFile, i));
+                        ms.Seek(4, SeekOrigin.Begin);
+                        _icons.Add(new FileToken(_path, settingsFile, curIndex, br.ReadUInt16()));
                     }
-                    catch { }
                 }
-                SetValue(HasIconsPropertyKey, _icons.Count != 0);
+                catch { }
+                finally
+                {
+                    curIndex++;
+                }
+                return true;
+            };
+
+            IntPtr hModule = IntPtr.Zero;
+            try
+            {
+                hModule = Win32Funcs.LoadLibraryEx(_path, IntPtr.Zero, Win32Funcs.LOAD_LIBRARY_AS_DATAFILE);
+                if (hModule == IntPtr.Zero)
+                    throw new Win32Exception();
+
+                if (!Win32Funcs.EnumResourceNames(hModule, Win32Funcs.RT_GROUP_ICON, proc, 0))
+                    throw new Win32Exception();
+            }
+            catch { }
+            finally
+            {
+                if (hModule != IntPtr.Zero)
+                    Win32Funcs.FreeLibrary(hModule);
+                SetValue(IsFullyLoadedPropertyKey, true);
             }
 
             Mouse.OverrideCursor = null;
 
-            if (HasIcons)
+            if (_icons.Count != 0)
                 listIcons.SelectedIndex = 0;
             else
             {
@@ -88,7 +110,6 @@ namespace UIconEdit.Maker
 
         private string _path;
 
-        private int _iconCount;
         [Bindable(true)]
         public SettingsFile SettingsFile { get { return ((MainWindow)Owner).SettingsFile; } }
 
@@ -100,14 +121,6 @@ namespace UIconEdit.Maker
         public static DependencyProperty IsFullyLoadedProperty = IsFullyLoadedPropertyKey.DependencyProperty;
 
         public bool IsFullyLoaded { get { return (bool)GetValue(IsFullyLoadedProperty); } }
-        #endregion
-
-        #region HasIcons
-        private static readonly DependencyPropertyKey HasIconsPropertyKey = DependencyProperty.RegisterReadOnly("HasIcons", typeof(bool), typeof(ExtractWindow),
-            new PropertyMetadata(false));
-        public static DependencyProperty HasIconsProperty = HasIconsPropertyKey.DependencyProperty;
-
-        public bool HasIcons { get { return (bool)GetValue(HasIconsProperty); } }
         #endregion
 
         private static ObservableCollection<FileToken> _icons = new ObservableCollection<FileToken>();
@@ -122,13 +135,13 @@ namespace UIconEdit.Maker
 
         public struct FileToken : IDisposable
         {
-            public FileToken(string path, SettingsFile settings, int index)
+            public FileToken(string path, SettingsFile settings, int index, int count)
             {
                 IntPtr hIcon = IntPtr.Zero;
                 try
                 {
                     hIcon = ExtractIcon(System.Diagnostics.Process.GetCurrentProcess().Handle, path, index);
-                    _count = 0; //TODO: Fix this!
+                    _count = count;
                     if (hIcon == IntPtr.Zero) throw new Win32Exception();
                     _image = new WriteableBitmap(Imaging.CreateBitmapSourceFromHIcon(hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()));
                 }

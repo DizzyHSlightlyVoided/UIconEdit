@@ -150,6 +150,35 @@ namespace UIconEdit.Maker
         }
     }
 
+    [ValueConversion(typeof(bool), typeof(Visibility))]
+    internal class BooleanToInvisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool bVal = false;
+            if (value is bool?)
+            {
+                bool? nVal = (bool?)value;
+                bVal = nVal.HasValue && nVal.Value;
+            }
+            else if (value is bool)
+                bVal = (bool)value;
+
+            if (bVal) return Visibility.Collapsed;
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Visibility)
+            {
+                if ((Visibility)value == Visibility.Visible)
+                    return false;
+            }
+            return true;
+        }
+    }
+
     internal class ZoomConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

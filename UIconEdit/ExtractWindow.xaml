@@ -7,12 +7,19 @@
         mc:Ignorable="d" x:Name="window" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
         Title="{Binding SettingsFile.LanguageFile.Extract, ElementName=window, FallbackValue=Extract}" Loaded="window_Loaded"
         MinWidth="640" MinHeight="400" Width="640" Height="400">
+    <Window.Resources>
+        <local:BooleanToInvisibilityConverter x:Key="BooleanToInvisibilityConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <ListBox ItemsSource="{Binding IconFiles, ElementName=window}" x:Name="listIcons" MouseDoubleClick="listIcons_MouseDoubleClick"
+        <Border Grid.Row="0" Visibility="{Binding IsFullyLoaded, ElementName=window, Converter={StaticResource BooleanToInvisibilityConverter}}">
+            <ProgressBar x:Name="progressBar" Height="20" Margin="10"/>
+        </Border>
+        <ListBox ItemsSource="{Binding IconFiles, ElementName=window}" x:Name="listIcons" MouseDoubleClick="listIcons_MouseDoubleClick" Grid.Row="1"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -31,16 +38,16 @@
                             <Image HorizontalAlignment="Center" MaxWidth="48" MaxHeight="48" Margin="2" Source="{Binding Image}"
                                    Width="{Binding Image.PixelWidth}" Height="{Binding Image.PixelHeight}"/>
                         </Border>
-                        <TextBlock Text="{Binding}" HorizontalAlignment="Center" Grid.Row="1"/>
+                        <TextBlock Text="{Binding}" HorizontalAlignment="Center" Grid.Row="2"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel Orientation="Horizontal" Grid.Row="1" FlowDirection="RightToLeft">
+        <StackPanel Orientation="Horizontal" Grid.Row="2" FlowDirection="RightToLeft">
             <Button Content="{Binding SettingsFile.LanguageFile.ButtonCancel, ElementName=window, FallbackValue=_Cancel}" MinWidth="75"
-                    IsCancel="true" x:Name="btnCancel" Margin="5"/>
+                    IsCancel="true" x:Name="btnCancel" Margin="5" Click="btnCancel_Click"/>
             <Button Content="{Binding SettingsFile.LanguageFile.ButtonOK, ElementName=window, FallbackValue=_OK}" MinWidth="75"
-                    IsCancel="true" x:Name="btnOK" Margin="5" Click="btnOK_Click"/>
+                    IsDefault="true" x:Name="btnOK" Margin="5" Click="btnOK_Click" IsEnabled="{Binding IsFullyLoaded, ElementName=window}"/>
         </StackPanel>
     </Grid>
 </Window>

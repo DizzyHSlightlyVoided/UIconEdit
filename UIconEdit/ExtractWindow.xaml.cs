@@ -52,6 +52,7 @@ namespace UIconEdit.Maker
 
             _path = path;
             InitializeComponent();
+            progressBar.Maximum = iconCount;
         }
 
         private void window_Loaded(object sender, RoutedEventArgs e)
@@ -63,6 +64,8 @@ namespace UIconEdit.Maker
             {
                 try
                 {
+                    if (_cancelled) return false;
+
                     using (MemoryStream ms = Win32Funcs.ExtractData(h, type, name))
                     using (BinaryReader br = new BinaryReader(ms))
                     {
@@ -74,6 +77,7 @@ namespace UIconEdit.Maker
                 finally
                 {
                     curIndex++;
+                    progressBar.Value++;
                 }
                 return true;
             };
@@ -107,6 +111,8 @@ namespace UIconEdit.Maker
                 return;
             }
         }
+
+        private bool _cancelled;
 
         private string _path;
 
@@ -211,6 +217,13 @@ namespace UIconEdit.Maker
                 curToken.Dispose();
             _icons.Clear();
             _cursors.Clear();
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            _cancelled = true;
+            DialogResult = null;
+            Close();
         }
     }
 }

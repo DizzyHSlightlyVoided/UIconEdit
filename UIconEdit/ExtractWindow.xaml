@@ -9,6 +9,7 @@
         MinWidth="640" MinHeight="400" Width="640" Height="400">
     <Window.Resources>
         <local:BooleanToInvisibilityConverter x:Key="BooleanToInvisibilityConverter"/>
+        <local:StringFormatConverter x:Key="StringFormatConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -38,7 +39,15 @@
                             <Image HorizontalAlignment="Center" MaxWidth="48" MaxHeight="48" Margin="2" Source="{Binding Image}"
                                    Width="{Binding Image.PixelWidth}" Height="{Binding Image.PixelHeight}"/>
                         </Border>
-                        <TextBlock Text="{Binding}" HorizontalAlignment="Center" Grid.Row="2"/>
+                        <TextBlock HorizontalAlignment="Center" Grid.Row="2">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                                    <Binding Path="SettingsFile.LanguageFile.ExtractFrameCount" ElementName="window" FallbackValue="#{0} ({1})"/>
+                                    <Binding Path="Index"/>
+                                    <Binding Path="Count"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

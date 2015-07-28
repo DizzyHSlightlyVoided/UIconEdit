@@ -57,8 +57,6 @@ namespace UIconEdit.Maker
 
         private void window_Loaded(object sender, RoutedEventArgs e)
         {
-            var settingsFile = SettingsFile;
-
             int curIndex = 0;
             ENUMRESNAMEPROC proc = delegate (IntPtr h, int type, IntPtr name, IntPtr param)
             {
@@ -70,7 +68,7 @@ namespace UIconEdit.Maker
                     using (BinaryReader br = new BinaryReader(ms))
                     {
                         ms.Seek(4, SeekOrigin.Begin);
-                        _icons.Add(new FileToken(_path, settingsFile, curIndex, br.ReadUInt16()));
+                        _icons.Add(new FileToken(_path, curIndex, br.ReadUInt16()));
                     }
                 }
                 catch { }
@@ -106,7 +104,7 @@ namespace UIconEdit.Maker
                 listIcons.SelectedIndex = 0;
             else
             {
-                ErrorWindow.Show((MainWindow)Owner, this, string.Format(settingsFile.LanguageFile.IconExtractNone, _path));
+                ErrorWindow.Show((MainWindow)Owner, this, string.Format(SettingsFile.LanguageFile.IconExtractNone, _path));
                 DialogResult = false;
                 return;
             }
@@ -141,7 +139,7 @@ namespace UIconEdit.Maker
 
         public struct FileToken : IDisposable
         {
-            public FileToken(string path, SettingsFile settings, int index, int count)
+            public FileToken(string path, int index, int count)
             {
                 IntPtr hIcon = IntPtr.Zero;
                 try
@@ -156,7 +154,6 @@ namespace UIconEdit.Maker
                     if (hIcon != IntPtr.Zero)
                         DestroyIcon(hIcon);
                 }
-                _settings = settings;
                 _index = index;
             }
 
@@ -170,10 +167,6 @@ namespace UIconEdit.Maker
             [Bindable(true)]
             public BitmapSource Image { get { return _image; } }
 
-            public SettingsFile _settings;
-            [Bindable(true)]
-            public SettingsFile Settings { get { return _settings; } }
-
             public int _index;
             [Bindable(true)]
             public int Index { get { return _index; } }
@@ -182,18 +175,9 @@ namespace UIconEdit.Maker
             [Bindable(true)]
             public int Count { get { return _count; } }
 
-            public override string ToString()
-            {
-                string format;
-                if (_settings == null) format = "#{0} ({1})";
-                else format = _settings.LanguageFile.ExtractFrameCount;
-                return string.Format(format, _index, _count);
-            }
-
             public void Dispose()
             {
                 _image = null;
-                _settings = null;
             }
         }
 

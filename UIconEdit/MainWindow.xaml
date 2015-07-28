@@ -29,8 +29,7 @@
     </Window.InputBindings>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <local:BPSStringConverter x:Key="BPSStringConverter"/>
-        <local:SizeStringConverter x:Key="SizeStringConverter"/>
+        <local:StringFormatConverter x:Key="StringFormatConverter"/>
         <local:AlphaImageConverter x:Key="AlphaImageConverter"/>
         <local:IsCursorConverter x:Key="IsCursorConverter"/>
         <local:CanUseHotspotConverter x:Key="CanUseHotspotConverter"/>
@@ -184,16 +183,16 @@
                                 </Border>
                                 <TextBlock Grid.Row="1" HorizontalAlignment="Center">
                                     <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource BPSStringConverter}">
-                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.FormatBitsPerPixel"/>
+                                        <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.FormatBitsPerPixel" FallbackValue="{}{0}bps"/>
                                             <Binding Path="BitsPerPixel"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
                                 <TextBlock Grid.Row="2" HorizontalAlignment="Center">
                                     <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource SizeStringConverter}">
-                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.FormatSize"/>
+                                        <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.FormatSize" FallbackValue="{}{0}x{1}"/>
                                             <Binding Path="Width"/>
                                             <Binding Path="Height"/>
                                         </MultiBinding>

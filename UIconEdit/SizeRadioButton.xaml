@@ -7,9 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <RadioButton.Resources>
-        <local:SizeStringConverter x:Key="SizeStringConverter"/>
+        <local:StringFormatConverter x:Key="StringFormatConverter"/>
     </RadioButton.Resources>
-    <MultiBinding Converter="{StaticResource SizeStringConverter}">
+    <MultiBinding Converter="{StaticResource StringFormatConverter}">
         <Binding ElementName="control" Path="LanguageFile.FormatSize" FallbackValue="{}{0}x{1}"/>
         <Binding ElementName="control" Path="EntryWidth"/>
         <Binding ElementName="control" Path="EntryHeight"/>

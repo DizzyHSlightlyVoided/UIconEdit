@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -37,37 +38,6 @@ using System.Windows.Media.Imaging;
 
 namespace UIconEdit.Maker
 {
-
-    internal class SizeStringConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            string format = (string)values[0];
-            object width = values[1];
-            object height = (values.Length < 3) ? width : values[2];
-            return string.Format(format, width, height);
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    internal class BPSStringConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            string format = (string)values[0];
-            return string.Format(format, values[1]);
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
     internal class AlphaImageConverter : IValueConverter
     {
         public static BitmapSource Convert(IconEntry entry)
@@ -221,6 +191,22 @@ namespace UIconEdit.Maker
 
             if (langFile == null) return filter.ToString();
             return langFile.GetScalingFilter(filter);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    internal class StringFormatConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values.Length == 0) return string.Empty;
+            if (values[0] is string)
+                return string.Format((string)values[0], new ArraySegment<object>(values, 1, values.Length - 1).ToArray());
+            return string.Concat(values);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

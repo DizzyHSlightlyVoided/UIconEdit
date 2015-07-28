@@ -202,219 +202,360 @@ namespace UIconEdit
 #else
             BinaryReader reader = new BinaryReader(input, new UTF8Encoding());
 #endif
-            using (MemoryStream copyStream = new MemoryStream())
-            using (BinaryWriter copyWriter = new BinaryWriter(copyStream))
             {
-                IconTypeCode loadedId;
-                ushort head = reader.ReadUInt16(), entryCount = 0;
-                long end;
-                Dictionary<Size, LinkedList<Point>> hotDict = null;
+                if (reader.ReadInt16() != 0) throw new IconLoadException(IconErrorCode.InvalidFormat, 0);
+
+                IconTypeCode loadedId = (IconTypeCode)reader.ReadInt16();
+                if (id.HasValue && loadedId != id.Value) throw new IconLoadException(IconErrorCode.WrongType, loadedId, id.Value);
+
                 IconFileBase returner;
 
-                if (head == 0)
+                switch (loadedId)
                 {
-                    loadedId = (IconTypeCode)reader.ReadInt16();
-                    if (id.HasValue && loadedId != id.Value)
-                        throw new IconLoadException(IconErrorCode.WrongType, loadedId, id.Value);
-
-                    switch (loadedId)
-                    {
-                        case IconTypeCode.Cursor:
-                            returner = new CursorFile();
-                            break;
-                        case IconTypeCode.Icon:
-                            returner = new IconFile();
-                            break;
-                        default:
-                            throw new FileFormatException();
-                    }
-
-                    entryCount = reader.ReadUInt16();
-
-                    if (entryCount == 0) throw new IconLoadException(IconErrorCode.ZeroEntries, loadedId);
-                    copyWriter.Write(ushort.MinValue);
-                    copyWriter.Write((short)IconTypeCode.Icon);
-                    copyWriter.Write(entryCount);
-
-                    if (loadedId == IconTypeCode.Cursor)
-                    {
-                        IconDirEntry[] entryList = new IconDirEntry[entryCount];
-                        long offset = (IconDirEntry.Size * entryCount) + 6;
-
-                        hotDict = new Dictionary<Size, LinkedList<Point>>();
-
-                        for (int i = 0; i < entryCount; i++)
-                        {
-                            byte[] buffer = reader.ReadBytes(IconDirEntry.Size);
-                            if (buffer.Length < IconDirEntry.Size)
-                                throw new EndOfStreamException();
-
-                            IconDirEntry entry = new IconDirEntry(buffer);
-                            if (entry.ResourceLength < MinDibSize)
-                                throw new FileFormatException();
-                            if (entry.ImageOffset < offset)
-                                throw new FileFormatException();
-
-                            entryList[i] = entry;
-                            copyWriter.Write(buffer);
-
-                            Size size = new Size(entry.BWidth, entry.BHeight);
-                            LinkedList<Point> curList;
-                            if (!hotDict.TryGetValue(size, out curList))
-                            {
-                                curList = new LinkedList<Point>();
-                                hotDict.Add(size, curList);
-                            }
-                            curList.AddLast(new Point(entry.XPlanes, entry.YBitsPerpixel));
-                        }
-
-                        Array.Sort(entryList);
-
-                        end = entryList[entryList.Length - 1].End - offset;
-                    }
-                    else end = long.MaxValue;
+                    case IconTypeCode.Cursor:
+                        returner = new CursorFile();
+                        break;
+                    case IconTypeCode.Icon:
+                        returner = new IconFile();
+                        break;
+                    default:
+                        throw new IconLoadException(IconErrorCode.InvalidFormat, IconTypeCode.Unknown, loadedId);
                 }
-                else
-                {
-                    if (id.HasValue && id.Value != IconTypeCode.Icon)
-                        throw new IconLoadException(IconErrorCode.WrongType, IconTypeCode.Icon, id.Value);
 
-                    returner = new IconFile();
-                    end = long.MaxValue;
-                    copyWriter.Write(head);
-                    loadedId = IconTypeCode.Icon;
+                ushort entryCount = reader.ReadUInt16();
+
+                if (entryCount == 0) throw new IconLoadException(IconErrorCode.ZeroEntries, loadedId);
+
+                IconDirEntry[] entryList = new IconDirEntry[entryCount];
+                long offset = (IconDirEntry.Size * entryCount) + 6;
+
+                for (int i = 0; i < entryCount; i++)
+                {
+                    IconDirEntry entry = new IconDirEntry();
+                    entry.BWidth = reader.ReadByte();
+                    entry.BHeight = reader.ReadByte();
+                    entry.ColorCount = reader.ReadByte();
+                    reader.ReadByte();
+                    entry.XPlanes = reader.ReadUInt16();
+                    entry.YBitsPerpixel = reader.ReadUInt16();
+                    entry.ResourceLength = reader.ReadUInt32();
+                    if (entry.ResourceLength < MinDibSize)
+                        throw new FileFormatException();
+                    entry.ImageOffset = reader.ReadUInt32();
+                    if (entry.ImageOffset < offset)
+                        throw new FileFormatException();
+                    entryList[i] = entry;
                 }
-                List<IconEntry> entries = new List<IconEntry>(entryCount);
 
-                IconBitmapDecoder icoDecoder;
-                using (OffsetStream offStream = new OffsetStream(input, end, true))
-                using (MemoryStream ms = new MemoryStream())
+                Array.Sort(entryList);
+
+                const int bufferSize = 8192;
+
+                List<IconEntry> entries = new List<IconEntry>(entryList.Length);
+
+                foreach (IconDirEntry entry in entryList)
                 {
-                    copyStream.Seek(0, SeekOrigin.Begin);
-                    copyStream.CopyTo(ms);
-                    offStream.CopyTo(ms);
-                    ms.Seek(0, SeekOrigin.Begin);
                     try
                     {
-                        icoDecoder = new IconBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-                    }
-                    catch (NotSupportedException e)
-                    {
-                        throw new FileFormatException(e.Message);
-                    }
-                }
+                        long gapLength = entry.ImageOffset - offset;
+                        byte[] curBuffer = new byte[bufferSize];
+                        while (gapLength > 0)
+                            gapLength -= input.Read(curBuffer, 0, (int)Math.Min(gapLength, bufferSize));
 
-                foreach (BitmapFrame curFrame in icoDecoder.Frames)
-                {
-                    int bps = (curFrame.Thumbnail == null) ? 32 : curFrame.Thumbnail.Format.BitsPerPixel;
+                        WriteableBitmap loadedImage, alphaMask;
 
-                    switch (bps)
-                    {
-                        case 1:
-                        case 4:
-                        case 8:
-                        case 24:
-                        case 32:
-                            break;
-                        default:
-                            IconLoadException e = new IconLoadException(IconErrorCode.InvalidBitDepth, loadedId, bps);
-                            if (handler == null) throw e;
-                            handler(e);
-                            continue;
-                    }
+                        int dibSize = reader.ReadInt32();
 
-                    WriteableBitmap loadedImage, loadedAlpha = null;
+                        IconBitDepth bitDepth;
 
-                    Int32Rect fullRect = new Int32Rect(0, 0, curFrame.PixelWidth, curFrame.PixelHeight);
-
-                    if (bps == 32)
-                    {
-                        loadedImage = new WriteableBitmap(curFrame);
-                    }
-                    else if (curFrame.Thumbnail.Palette == null)
-                        loadedImage = new WriteableBitmap(curFrame.Thumbnail);
-                    else
-                    {
-                        var colors = curFrame.Thumbnail.Palette.Colors;
-                        Color[] colorList = new Color[colors.Count];
-
-                        for (int i = 0; i < colorList.Length; i++)
+                        const int pngLittleEndian = 0x474e5089; //"\u0089PNG"  in little-endian order.
+                        if (dibSize == pngLittleEndian)
                         {
-                            Color curColor = colors[i];
-                            colorList[i] = Color.FromRgb(curColor.R, curColor.G, curColor.B);
-                        }
+                            #region Load Png
+                            alphaMask = null;
 
-                        BitmapPalette newPalette = new BitmapPalette(colorList);
-                        loadedImage = new WriteableBitmap(curFrame.PixelWidth, curFrame.PixelHeight, 0, 0, curFrame.Thumbnail.Format, newPalette);
-                        int stride = loadedImage.BackBufferStride;
-                        byte[] bytes = new byte[curFrame.PixelHeight * stride];
-                        curFrame.Thumbnail.CopyPixels(bytes, stride, 0);
-
-                        loadedImage.WritePixels(fullRect, bytes, stride, 0);
-                    }
-
-                    if (bps < 32 && curFrame.PixelWidth < IconEntry.MaxBmp && curFrame.PixelHeight < IconEntry.MaxBmp)
-                    {
-                        const uint fullAlpha = 0xFF000000;
-
-                        uint[] palette = null;
-                        if (loadedImage.Palette != null)
-                        {
-                            var palColors = loadedImage.Palette.Colors;
-                            palette = new uint[palColors.Count];
-                            for (int i = 0; i < palette.Length; i++)
+                            using (OffsetStream os = new OffsetStream(input, new byte[] { 0x89, 0x50, 0x4e, 0x47 }, entry.ResourceLength - 4, true))
+                            using (MemoryStream ms = new MemoryStream())
                             {
-                                var c = palColors[i];
-                                palette[i] = fullAlpha | ((uint)c.R << 16) | ((uint)c.G << 8) | c.B;
+                                os.CopyTo(ms);
+                                ms.Seek(0, SeekOrigin.Begin);
+                                try
+                                {
+                                    PngBitmapDecoder decoder = new PngBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                                    BitmapSource frame = decoder.Frames[0];
+                                    var pFormat = frame.Format;
+
+                                    switch (frame.Format.BitsPerPixel)
+                                    {
+                                        case 2:
+                                        case 4:
+                                        case 8:
+                                        case 24:
+                                        case 32:
+                                            bitDepth = IconEntry.GetBitDepth(frame.Format.BitsPerPixel);
+                                            break;
+                                        default:
+                                            bitDepth = IconBitDepth.Depth32BitsPerPixel;
+                                            frame = new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 1);
+                                            break;
+                                    }
+                                    loadedImage = new WriteableBitmap(frame);
+                                }
+                                catch (FileFormatException)
+                                {
+                                    loadedImage = null;
+                                    //Nothing to do here, just dump it
+                                    continue;
+                                }
                             }
+                            #endregion
                         }
-
-                        int stride = curFrame.PixelWidth * sizeof(uint);
-
-                        uint[] colorPixels = new uint[curFrame.PixelWidth * curFrame.PixelHeight];
-                        uint[] alphaPixels = new uint[colorPixels.Length];
-                        curFrame.CopyPixels(colorPixels, stride, 0);
-
-                        for (int i = 0; i < colorPixels.Length; i++)
+                        else if (dibSize == MinDibSize)
                         {
-                            uint curColor = colorPixels[i];
-                            if ((curColor & fullAlpha) == fullAlpha)
+                            #region Load Bmp
+                            using (OffsetStream ms = new OffsetStream(input, entry.ResourceLength - 4, true))
+                            using (BinaryReader curReader = new BinaryReader(ms))
                             {
-                                alphaPixels[i] = uint.MaxValue;
+                                int width = curReader.ReadInt32(); //8
+                                int height = curReader.ReadInt32(); //12
+
+                                ushort colorPanes = curReader.ReadUInt16(); //14
+                                ushort bitsPerPixel = curReader.ReadUInt16(); //16
+                                int bmpStride, alphaStride = (width + 7) / 8;
+                                _catchStride(ref alphaStride);
+
+                                PixelFormat pFormat;
+
+                                switch (bitsPerPixel)
+                                {
+                                    case 1:
+                                        bmpStride = alphaStride;
+                                        pFormat = PixelFormats.Indexed1;
+                                        break;
+                                    case 4:
+                                        bmpStride = (width + 1) >> 1;
+                                        pFormat = PixelFormats.Indexed4;
+                                        break;
+                                    case 8:
+                                        bmpStride = width;
+                                        pFormat = PixelFormats.Indexed8;
+                                        break;
+                                    case 24:
+                                        bmpStride = width * 3;
+                                        pFormat = PixelFormats.Bgr24;
+                                        break;
+                                    case 32:
+                                        bmpStride = width * 4;
+                                        pFormat = PixelFormats.Bgra32;
+                                        break;
+                                    default:
+                                        //Nothing to do here, just dump it
+                                        continue;
+                                }
+                                _catchStride(ref bmpStride);
+
+                                bitDepth = IconEntry.GetBitDepth(bitsPerPixel);
+
+                                int actualHeight;
+
+                                if (bitDepth == IconBitDepth.Depth32BitsPerPixel && entry.BHeight != 0 && entry.BHeight == height)
+                                {
+                                    actualHeight = height;
+                                }
+                                else
+                                {
+                                    if ((height & 1) == 1)
+                                        //Nothing to do here, just dump it
+                                        continue;
+                                    actualHeight = height >> 1;
+                                }
+
+                                if (reader.ReadInt32() != 0)
+                                    //Nothing to do here, just dump it
+                                    continue;
+
+                                int dataLength = reader.ReadInt32();
+                                int bmpLength, alphaLength;
+
+                                if (dataLength == 0)
+                                {
+                                    bmpLength = actualHeight * bmpStride;
+                                    alphaLength = (actualHeight == height) ? 0 : actualHeight * alphaStride;
+                                    dataLength = bmpLength + alphaLength;
+                                }
+                                else if (actualHeight == height)
+                                {
+                                    alphaLength = 0;
+                                    bmpLength = dataLength;
+                                }
+                                else
+                                {
+                                    alphaLength = actualHeight * alphaStride;
+                                    bmpLength = dataLength - alphaLength;
+                                }
+
+                                reader.ReadInt64(); //Skip next eight bytes.
+
+                                int palCount = reader.ReadInt32();
+                                if (palCount == 0 && bitDepth != IconBitDepth.Depth32BitsPerPixel && bitDepth != IconBitDepth.Depth24BitsPerPixel)
+                                    palCount = (int)IconEntry.GetColorCount(bitDepth);
+
+                                reader.ReadInt32(); //Skip next 4 bytes
+
+                                BitmapPalette palette;
+
+                                if (palCount == 0)
+                                    palette = null;
+                                else
+                                {
+                                    List<Color> colors = new List<Color>(palCount);
+                                    for (int p = 0; p < palCount; p++)
+                                    {
+                                        byte b = reader.ReadByte();
+                                        byte g = reader.ReadByte();
+                                        byte r = reader.ReadByte();
+                                        reader.ReadByte();
+                                        colors.Add(Color.FromRgb(r, g, b));
+                                    }
+                                    palette = new BitmapPalette(colors);
+                                }
+
+                                byte[] bmpData = _readBmpLines(reader, bmpStride, actualHeight);
+
+                                loadedImage = new WriteableBitmap(BitmapSource.Create(width, actualHeight, 0, 0, pFormat, palette, bmpData, bmpStride));
+
+                                if (actualHeight == height)
+                                    alphaMask = null;
+                                else
+                                {
+                                    byte[] alphaData = _readBmpLines(reader, alphaStride, actualHeight);
+
+                                    alphaMask = new WriteableBitmap(BitmapSource.Create(width, actualHeight, 0, 0, PixelFormats.Indexed1,
+                                        IconEntry.AlphaPalette, alphaData, alphaStride));
+                                }
+                            }
+                            #endregion
+                        }
+                        else
+                        {
+                            #region Unknown Format
+                            const int bufferLimit = IconDirEntry.Size + 10;
+                            byte[] buffer = new byte[bufferLimit];
+                            buffer[2] = buffer[4] = 1;
+                            buffer[22] = (byte)dibSize;
+                            buffer[23] = (byte)(dibSize >> 8);
+                            buffer[24] = (byte)(dibSize >> 16);
+                            buffer[25] = (byte)(dibSize >> 24);
+                            var gEntry = entry;
+                            gEntry.ImageOffset = 6 + IconDirEntry.Size;
+                            gEntry.CopyTo(buffer, 6);
+
+                            IconBitmapDecoder decoder;
+                            try
+                            {
+                                using (OffsetStream os = new OffsetStream(input, buffer, entry.ResourceLength - 4, true))
+                                using (MemoryStream ms = new MemoryStream())
+                                {
+                                    os.CopyTo(ms);
+                                    ms.Seek(0, SeekOrigin.Begin);
+                                    decoder = new IconBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                                }
+                            }
+                            catch
+                            {
+                                //Nothing to do here, just dump it.
+                                continue;
+                            }
+                            BitmapFrame getFrame = decoder.Frames[0];
+
+                            if (getFrame.Thumbnail == null || getFrame.Thumbnail.Format.BitsPerPixel == 32)
+                            {
+                                bitDepth = IconBitDepth.Depth32BitsPerPixel;
+                                loadedImage = new WriteableBitmap(getFrame);
+                                alphaMask = null;
                             }
                             else
                             {
-                                curColor |= fullAlpha;
-                                alphaPixels[i] = fullAlpha;
+                                try
+                                {
+                                    Int32Rect fullRect = new Int32Rect(0, 0, getFrame.PixelWidth, getFrame.PixelHeight);
+
+                                    if (getFrame.Thumbnail.Format.BitsPerPixel == 24)
+                                    {
+                                        bitDepth = IconBitDepth.Depth24BitsPerPixel;
+                                        loadedImage = new WriteableBitmap(getFrame.Thumbnail);
+                                    }
+                                    else
+                                    {
+                                        bitDepth = IconEntry.GetBitDepth(getFrame.Thumbnail.Format.BitsPerPixel);
+                                        Color[] colors = getFrame.Thumbnail.Palette.Colors.ToArray();
+
+                                        for (int i = 0; i < colors.Length; i++)
+                                            colors[i].A = byte.MaxValue;
+
+                                        loadedImage = new WriteableBitmap(getFrame.PixelWidth, getFrame.PixelHeight, 0, 0, getFrame.Thumbnail.Format, new BitmapPalette(colors));
+
+                                        byte[] thumbBytes = new byte[loadedImage.BackBufferStride * loadedImage.PixelHeight];
+
+                                        getFrame.Thumbnail.CopyPixels(thumbBytes, loadedImage.BackBufferStride, 0);
+                                        loadedImage.WritePixels(fullRect, thumbBytes, loadedImage.BackBufferStride, 0);
+                                    }
+                                    alphaMask = new WriteableBitmap(getFrame.PixelWidth, getFrame.PixelHeight, 0, 0, PixelFormats.Bgra32, null);
+
+                                    uint[] pixels = new uint[alphaMask.PixelWidth * alphaMask.PixelHeight];
+                                    getFrame.CopyPixels(pixels, alphaMask.BackBufferStride, 0);
+
+                                    for (int i = 0; i < pixels.Length; i++)
+                                    {
+                                        if (pixels[i] >> 24 == 0)
+                                            pixels[i] = 0xFF000000;
+                                        else
+                                            pixels[i] = uint.MaxValue;
+                                    }
+
+                                    alphaMask.WritePixels(fullRect, pixels, alphaMask.BackBufferStride, 0);
+                                    alphaMask = new WriteableBitmap(new FormatConvertedBitmap(alphaMask, PixelFormats.Indexed2, IconEntry.AlphaPalette, 0));
+                                }
+                                catch
+                                {
+                                    bitDepth = IconBitDepth.Depth32BitsPerPixel;
+                                    alphaMask = null;
+                                    loadedImage = new WriteableBitmap(new FormatConvertedBitmap(getFrame, PixelFormats.Bgra32, null, 1));
+                                }
                             }
+                            #endregion
                         }
 
-                        loadedAlpha = new WriteableBitmap(curFrame.PixelWidth, curFrame.PixelHeight, 0, 0, PixelFormats.Bgra32, null);
-                        loadedAlpha.WritePixels(fullRect, alphaPixels, stride, 0);
-                        loadedAlpha = new WriteableBitmap(new FormatConvertedBitmap(loadedAlpha, PixelFormats.Indexed1, IconEntry.AlphaPalette, 0));
+                        if (loadedImage == null) continue;
+
+                        IconEntry resultEntry;
+
+                        if (loadedId == IconTypeCode.Cursor)
+                            resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth, entry.XPlanes, entry.YBitsPerpixel);
+                        else
+                            resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth);
+
+                        entries.Add(resultEntry);
                     }
-
-                    IconEntry curEntry;
-
-                    if (loadedId == IconTypeCode.Cursor)
+                    catch (IconLoadException e)
                     {
-                        Size size = new Size(curFrame.PixelWidth > byte.MaxValue ? 0 : curFrame.PixelWidth, curFrame.PixelHeight > byte.MaxValue ? 0 : curFrame.PixelHeight);
-                        LinkedList<Point> curPoint;
-                        if (hotDict.TryGetValue(size, out curPoint))
-                        {
-                            Point hotspot = curPoint.First.Value;
-                            curPoint.RemoveFirst();
-                            if (curPoint.Count == 0)
-                                hotDict.Remove(size);
-
-                            curEntry = new IconEntry(loadedImage, loadedAlpha, IconEntry.GetBitDepth(bps), (ushort)hotspot.X, (ushort)hotspot.Y);
-                        }
-                        else curEntry = new IconEntry(loadedImage, loadedAlpha, IconEntry.GetBitDepth(bps));
+                        if (handler == null)
+#if DEBUG
+                            throw new IconLoadException(e);
+#else
+                            throw;
+#endif
+                        handler(e);
                     }
-                    else curEntry = new IconEntry(loadedImage, loadedAlpha, IconEntry.GetBitDepth(bps));
-
-                    entries.Add(curEntry);
+                    finally
+                    {
+                        offset += entry.ResourceLength;
+                    }
                 }
+#if DEBUG && MESSAGE
+                sw.Stop();
+                Debug.WriteLine("Finished processing all entries in {0}ms.", sw.Elapsed.TotalMilliseconds);
+#endif
                 if (entries.Count == 0)
                     throw new IconLoadException(IconErrorCode.ZeroValidEntries, loadedId);
 
@@ -424,6 +565,27 @@ namespace UIconEdit
 
                 return returner;
             }
+        }
+
+        private static byte[] _readBmpLines(BinaryReader reader, int stride, int height)
+        {
+            byte[] bmpData = new byte[stride * height];
+
+            for (int y = height - 1; y >= 0; y--)
+            {
+                int yOff = stride * y;
+                int count = stride;
+                while (count > 0)
+                {
+                    int read = reader.Read(bmpData, yOff, count);
+                    if (read == 0)
+                        throw new EndOfStreamException();
+                    yOff += read;
+                    count -= read;
+                }
+            }
+
+            return bmpData;
         }
 
         [DebuggerDisplay("ImageOffset = {ImageOffset}, ResourceLength = {ResourceLength}, End = {End}")]
@@ -467,6 +629,13 @@ namespace UIconEdit
                 if (other.End <= ImageOffset) return 1; //If the other's end comes before this offset
 
                 throw new FileFormatException(); //If there's any kind of overlap, someone's wrong.
+            }
+
+            public void CopyTo(byte[] buffer, int index)
+            {
+                IntPtr ptr = Marshal.AllocHGlobal(Size);
+                Marshal.StructureToPtr(this, ptr, false);
+                Marshal.Copy(ptr, buffer, index, Size);
             }
         }
         #endregion

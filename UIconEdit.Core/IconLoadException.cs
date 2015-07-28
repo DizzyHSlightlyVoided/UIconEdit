@@ -31,8 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows;
-using System.Windows.Media.Imaging;
 
 namespace UIconEdit
 {
@@ -42,7 +40,27 @@ namespace UIconEdit
     /// </summary>
     public class IconLoadException : FileFormatException
     {
-        private static string DefaultMessage { get { return new InvalidDataException().Message; } }
+        internal static string DefaultMessage { get { return new InvalidDataException().Message; } }
+
+        private const int DefaultIndex = -1;
+
+        /// <summary>
+        /// Creates a new instance using a message which describes the error and the specified error code.
+        /// </summary>
+        /// <param name="message">A message describing the error.</param>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="typeCode">The type code of the file which caused the error.</param>
+        /// <param name="value">The value which caused the error.</param>
+        /// <param name="entryIndex">The index in the icon file of the entry in the icon directory which caused the exception,
+        /// or a value less than 0 if the error was not caused by an icon entry.</param>
+        public IconLoadException(string message, IconErrorCode code, IconTypeCode typeCode, object value, int entryIndex)
+            : base(message)
+        {
+            _code = code;
+            _value = value;
+            _typeCode = typeCode;
+            _index = entryIndex;
+        }
 
         /// <summary>
         /// Creates a new instance using a message which describes the error and the specified error code.
@@ -52,11 +70,21 @@ namespace UIconEdit
         /// <param name="typeCode">The type code of the file which caused the error.</param>
         /// <param name="value">The value which caused the error.</param>
         public IconLoadException(string message, IconErrorCode code, IconTypeCode typeCode, object value)
-            : base(message)
+            : this(message, code, typeCode, value, DefaultIndex)
         {
-            _code = code;
-            _value = value;
-            _typeCode = typeCode;
+        }
+
+        /// <summary>
+        /// Creates a new instance using a message which describes the error and the specified error code.
+        /// </summary>
+        /// <param name="message">A message describing the error.</param>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="typeCode">The type code of the file which caused the error.</param>
+        /// <param name="entryIndex">The index in the icon file of the entry in the icon directory which caused the exception,
+        /// or a value less than 0 if the error was not caused by an icon entry.</param>
+        public IconLoadException(string message, IconErrorCode code, IconTypeCode typeCode, int entryIndex)
+            : this(message, code, typeCode, null, entryIndex)
+        {
         }
 
         /// <summary>
@@ -66,7 +94,19 @@ namespace UIconEdit
         /// <param name="code">The error code used to identify the cause of the error.</param>
         /// <param name="typeCode">The type code of the file which caused the error.</param>
         public IconLoadException(string message, IconErrorCode code, IconTypeCode typeCode)
-            : this(message, code, typeCode, null)
+            : this(message, code, typeCode, null, DefaultIndex)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the default message and the specified error code.
+        /// </summary>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="typeCode">The type code of the file which caused the error.</param>
+        /// <param name="entryIndex">The index in the icon file of the entry in the icon directory which caused the exception,
+        /// or a value less than 0 if the error was not caused by an icon entry.</param>
+        public IconLoadException(IconErrorCode code, IconTypeCode typeCode, int entryIndex)
+            : this(DefaultMessage, code, typeCode, null, entryIndex)
         {
         }
 
@@ -76,7 +116,20 @@ namespace UIconEdit
         /// <param name="code">The error code used to identify the cause of the error.</param>
         /// <param name="typeCode">The type code of the file which caused the error.</param>
         public IconLoadException(IconErrorCode code, IconTypeCode typeCode)
-            : this(DefaultMessage, code, typeCode, null)
+            : this(DefaultMessage, code, typeCode, null, DefaultIndex)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the default message and the specified error code.
+        /// </summary>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="typeCode">The type code of the file which caused the error.</param>
+        /// <param name="value">The value which caused the error.</param>
+        /// <param name="entryIndex">The index in the icon file of the entry in the icon directory which caused the exception,
+        /// or a value less than 0 if the error was not caused by an icon entry.</param>
+        public IconLoadException(IconErrorCode code, IconTypeCode typeCode, object value, int entryIndex)
+            : this(DefaultMessage, code, typeCode, value, entryIndex)
         {
         }
 
@@ -87,8 +140,26 @@ namespace UIconEdit
         /// <param name="typeCode">The type code of the file which caused the error.</param>
         /// <param name="value">The value which caused the error.</param>
         public IconLoadException(IconErrorCode code, IconTypeCode typeCode, object value)
-            : this(DefaultMessage, code, typeCode, value)
+            : this(DefaultMessage, code, typeCode, value, DefaultIndex)
         {
+        }
+
+        /// <summary>
+        /// Creates a new instance with the specified message and error code and a reference to the exception which caused this error.
+        /// </summary>
+        /// <param name="message">A message describing the error.</param>
+        /// <param name="code">The error code used to identify the cause of the error.</param>
+        /// <param name="typeCode">The type code of the file which caused the error.</param>
+        /// <param name="entryIndex">The index in the icon file of the entry in the icon directory which caused the exception,
+        /// or a value less than 0 if the error was not caused by an icon entry.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException"/> parameter
+        /// is not <c>null</c>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
+        public IconLoadException(string message, IconErrorCode code, IconTypeCode typeCode, int entryIndex, Exception innerException)
+            : base(message, innerException)
+        {
+            _code = code;
+            _typeCode = typeCode;
+            _index = entryIndex;
         }
 
         /// <summary>
@@ -100,10 +171,8 @@ namespace UIconEdit
         /// is not <c>null</c>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
         /// <param name="typeCode">The type code of the file which caused the error.</param>
         public IconLoadException(string message, IconErrorCode code, IconTypeCode typeCode, Exception innerException)
-            : base(message, innerException)
+            : this(message, code, typeCode, DefaultIndex, innerException)
         {
-            _code = code;
-            _typeCode = typeCode;
         }
 
         /// <summary>
@@ -115,6 +184,14 @@ namespace UIconEdit
         public IconLoadException(string message, Exception innerException)
             : base(message, innerException)
         {
+            IconLoadException iloe = innerException as IconLoadException;
+            if (iloe != null)
+            {
+                _code = iloe._code;
+                _typeCode = iloe._typeCode;
+                _index = iloe._index;
+                _value = iloe._value;
+            }
         }
 
         internal IconLoadException(IconLoadException e)
@@ -127,6 +204,7 @@ namespace UIconEdit
             _code = e._code;
             _value = e._value;
             _typeCode = e._typeCode;
+            _index = e._index;
         }
 
         internal string BaseMessage { get { return base.Message; } }
@@ -145,6 +223,8 @@ namespace UIconEdit
                     messages.Add(string.Format("Code: 0x{0:x}, {1}", (int)_code, _code));
                 if (_value != null)
                     messages.Add("Value: " + _value);
+                if (_index >= 0)
+                    messages.Add("Index: " + _index);
                 switch (messages.Count)
                 {
                     case 0: return base.Message;
@@ -153,6 +233,17 @@ namespace UIconEdit
                 }
             }
         }
+
+        private int _index;
+        /// <summary>
+        /// Gets the index in the icon file of the entry in the icon directory which caused the exception,
+        /// or a value less than 0 if the error was not caused by an icon entry.
+        /// </summary>
+        /// <remarks>
+        /// This refers to the index of the entry within the list of icon directory entries; it may not refer to the position of the image
+        /// within the rest of the icon file.
+        /// </remarks>
+        public int EntryIndex { get { return _index; } }
 
         private IconErrorCode _code;
         /// <summary>
@@ -200,7 +291,7 @@ namespace UIconEdit
 
         private int _index;
         /// <summary>
-        /// Gets the index in the DLL or EXE file of the loaded icon or cursor.
+        /// Gets the index in the DLL or EXE file of the icon or cursor which caused the error.
         /// </summary>
         public int ExtractIndex { get { return _index; } }
     }
@@ -231,6 +322,10 @@ namespace UIconEdit
         /// </summary>
         WrongType = 3,
         /// <summary>
+        /// Code 0x1000: an error occurred when attempting to parse an icon frame.
+        /// </summary>
+        EntryParseError = 0x1000,
+        /// <summary>
         /// Code 0x1001: The bit depth of an individual entry is not 1, 4, 8, 24, or 32.
         /// <see cref="IconLoadException.Value"/> contains the bit depth.
         /// </summary>
@@ -241,4 +336,16 @@ namespace UIconEdit
         /// </summary>
         ZeroValidEntries = 0x1002,
     }
+
+    /// <summary>
+    /// A delegate function for handling <see cref="IconLoadException"/> errors.
+    /// </summary>
+    /// <param name="e">An <see cref="IconLoadException"/> containing information about the error.</param>
+    public delegate void IconLoadExceptionHandler(IconLoadException e);
+
+    /// <summary>
+    /// A delegate function for handling <see cref="IconExtractException"/> errors.
+    /// </summary>
+    /// <param name="e">An <see cref="IconExtractException"/> containing information about the error.</param>
+    public delegate void IconExtractExceptionHandler(IconExtractException e);
 }

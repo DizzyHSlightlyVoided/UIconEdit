@@ -285,17 +285,14 @@ namespace UIconEdit.Maker
             switch (e.Code)
             {
                 case IconErrorCode.InvalidFormat:
-                    eCode = IconErrorCode.InvalidFormat;
-                    break;
+                case IconErrorCode.EntryParseError:
                 case IconErrorCode.ZeroEntries:
+                case IconErrorCode.WrongType:
+                case IconErrorCode.InvalidBitDepth:
+                    eCode = e.Code;
+                    break;
                 case IconErrorCode.ZeroValidEntries:
                     eCode = IconErrorCode.ZeroEntries;
-                    break;
-                case IconErrorCode.WrongType:
-                    eCode = IconErrorCode.WrongType;
-                    break;
-                case IconErrorCode.InvalidBitDepth:
-                    eCode = IconErrorCode.InvalidBitDepth;
                     break;
                 default:
                     eCode = IconErrorCode.Unknown;

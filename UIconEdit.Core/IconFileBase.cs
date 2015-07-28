@@ -73,7 +73,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="input"/> is closed.
         /// </exception>
-        /// <exception cref="FileFormatException">
+        /// <exception cref="IconLoadException">
         /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -100,7 +100,7 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="input"/> is closed.
         /// </exception>
-        /// <exception cref="FileFormatException">
+        /// <exception cref="IconLoadException">
         /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -141,7 +141,7 @@ namespace UIconEdit
         /// <exception cref="NotSupportedException">
         /// <paramref name="path"/> is in an invalid format.
         /// </exception>
-        /// <exception cref="FileFormatException">
+        /// <exception cref="IconLoadException">
         /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -181,7 +181,7 @@ namespace UIconEdit
         /// <exception cref="NotSupportedException">
         /// <paramref name="path"/> is in an invalid format.
         /// </exception>
-        /// <exception cref="FileFormatException">
+        /// <exception cref="IconLoadException">
         /// An error occurred when processing the icon file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -226,7 +226,7 @@ namespace UIconEdit
 
                 if (entryCount == 0) throw new IconLoadException(IconErrorCode.ZeroEntries, loadedId);
 
-                IconDirEntry[] entryList = new IconDirEntry[entryCount];
+                KeyValuePair<int, IconDirEntry>[] entryList = new KeyValuePair<int, IconDirEntry>[entryCount];
                 long offset = (IconDirEntry.Size * entryCount) + 6;
 
                 for (int i = 0; i < entryCount; i++)
@@ -240,21 +240,22 @@ namespace UIconEdit
                     entry.YBitsPerpixel = reader.ReadUInt16();
                     entry.ResourceLength = reader.ReadUInt32();
                     if (entry.ResourceLength < MinDibSize)
-                        throw new FileFormatException();
+                        throw new IconLoadException(IconErrorCode.InvalidFormat, loadedId);
                     entry.ImageOffset = reader.ReadUInt32();
                     if (entry.ImageOffset < offset)
-                        throw new FileFormatException();
-                    entryList[i] = entry;
+                        throw new IconLoadException(IconErrorCode.InvalidFormat, loadedId);
+                    entryList[i] = new KeyValuePair<int, IconDirEntry>(i, entry);
                 }
 
-                Array.Sort(entryList);
+                Array.Sort(entryList, new IconDirEntryComparer(loadedId));
 
                 const int bufferSize = 8192;
 
                 List<IconEntry> entries = new List<IconEntry>(entryList.Length);
 
-                foreach (IconDirEntry entry in entryList)
+                foreach (var curKVP in entryList)
                 {
+                    IconDirEntry entry = curKVP.Value;
                     try
                     {
                         long gapLength = entry.ImageOffset - offset;
@@ -274,40 +275,44 @@ namespace UIconEdit
                             #region Load Png
                             alphaMask = null;
 
-                            using (OffsetStream os = new OffsetStream(input, new byte[] { 0x89, 0x50, 0x4e, 0x47 }, entry.ResourceLength - 4, true))
+                            PngBitmapDecoder decoder;
+                            using (OffsetStream os = new OffsetStream(input,
+                                new byte[]
+                                {
+                                    unchecked((byte)pngLittleEndian),
+                                    unchecked((byte)(pngLittleEndian >> 8)),
+                                    unchecked((byte)(pngLittleEndian >> 16)),
+                                    (pngLittleEndian >> 24)
+                                }, entry.ResourceLength - 4, true))
                             using (MemoryStream ms = new MemoryStream())
                             {
                                 os.CopyTo(ms);
                                 ms.Seek(0, SeekOrigin.Begin);
                                 try
                                 {
-                                    PngBitmapDecoder decoder = new PngBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-                                    BitmapSource frame = decoder.Frames[0];
-                                    var pFormat = frame.Format;
-
-                                    switch (frame.Format.BitsPerPixel)
-                                    {
-                                        case 2:
-                                        case 4:
-                                        case 8:
-                                        case 24:
-                                        case 32:
-                                            bitDepth = IconEntry.GetBitDepth(frame.Format.BitsPerPixel);
-                                            break;
-                                        default:
-                                            bitDepth = IconBitDepth.Depth32BitsPerPixel;
-                                            frame = new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 1);
-                                            break;
-                                    }
-                                    loadedImage = new WriteableBitmap(frame);
+                                    decoder = new PngBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
                                 }
-                                catch (FileFormatException)
+                                catch (Exception e)
                                 {
-                                    loadedImage = null;
-                                    //Nothing to do here, just dump it
-                                    continue;
+                                    throw new IconLoadException(IconLoadException.DefaultMessage, IconErrorCode.EntryParseError, loadedId, curKVP.Key, e);
                                 }
                             }
+                            BitmapSource frame = decoder.Frames[0];
+                            var pFormat = frame.Format;
+
+                            switch (frame.Format.BitsPerPixel)
+                            {
+                                case 1:
+                                case 4:
+                                case 8:
+                                case 24:
+                                case 32:
+                                    bitDepth = IconEntry.GetBitDepth(frame.Format.BitsPerPixel);
+                                    break;
+                                default:
+                                    throw new IconLoadException(IconErrorCode.InvalidBitDepth, loadedId, frame.Format.BitsPerPixel, curKVP.Key);
+                            }
+                            loadedImage = new WriteableBitmap(frame);
                             #endregion
                         }
                         else if (dibSize == MinDibSize)
@@ -349,8 +354,7 @@ namespace UIconEdit
                                         pFormat = PixelFormats.Bgra32;
                                         break;
                                     default:
-                                        //Nothing to do here, just dump it
-                                        continue;
+                                        throw new IconLoadException(IconErrorCode.InvalidBitDepth, loadedId, bitsPerPixel, curKVP.Key);
                                 }
                                 _catchStride(ref bmpStride);
 
@@ -365,14 +369,12 @@ namespace UIconEdit
                                 else
                                 {
                                     if ((height & 1) == 1)
-                                        //Nothing to do here, just dump it
-                                        continue;
+                                        throw new IconLoadException(IconErrorCode.EntryParseError, loadedId, curKVP.Key);
                                     actualHeight = height >> 1;
                                 }
 
                                 if (reader.ReadInt32() != 0)
-                                    //Nothing to do here, just dump it
-                                    continue;
+                                    throw new IconLoadException(IconErrorCode.EntryParseError, loadedId, curKVP.Key);
 
                                 int dataLength = reader.ReadInt32();
                                 int bmpLength, alphaLength;
@@ -461,10 +463,9 @@ namespace UIconEdit
                                     decoder = new IconBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
                                 }
                             }
-                            catch
+                            catch (Exception e)
                             {
-                                //Nothing to do here, just dump it.
-                                continue;
+                                throw new IconLoadException(IconLoadException.DefaultMessage, IconErrorCode.EntryParseError, loadedId, curKVP.Key, e);
                             }
                             BitmapFrame getFrame = decoder.Frames[0];
 
@@ -493,7 +494,8 @@ namespace UIconEdit
                                         for (int i = 0; i < colors.Length; i++)
                                             colors[i].A = byte.MaxValue;
 
-                                        loadedImage = new WriteableBitmap(getFrame.PixelWidth, getFrame.PixelHeight, 0, 0, getFrame.Thumbnail.Format, new BitmapPalette(colors));
+                                        loadedImage = new WriteableBitmap(getFrame.PixelWidth, getFrame.PixelHeight, 0, 0, getFrame.Thumbnail.Format,
+                                            new BitmapPalette(colors));
 
                                         byte[] thumbBytes = new byte[loadedImage.BackBufferStride * loadedImage.PixelHeight];
 
@@ -525,8 +527,6 @@ namespace UIconEdit
                             }
                             #endregion
                         }
-
-                        if (loadedImage == null) continue;
 
                         IconEntry resultEntry;
 
@@ -590,7 +590,7 @@ namespace UIconEdit
 
         [DebuggerDisplay("ImageOffset = {ImageOffset}, ResourceLength = {ResourceLength}, End = {End}")]
         [StructLayout(LayoutKind.Explicit)]
-        private struct IconDirEntry : IComparable<IconDirEntry>
+        private struct IconDirEntry
         {
             public IconDirEntry(byte[] buffer)
             {
@@ -623,19 +623,34 @@ namespace UIconEdit
 
             public const int Size = 16;
 
-            public int CompareTo(IconDirEntry other)
-            {
-                if (End <= other.ImageOffset) return -1; //If this end is comes before the other's offset
-                if (other.End <= ImageOffset) return 1; //If the other's end comes before this offset
-
-                throw new FileFormatException(); //If there's any kind of overlap, someone's wrong.
-            }
 
             public void CopyTo(byte[] buffer, int index)
             {
                 IntPtr ptr = Marshal.AllocHGlobal(Size);
                 Marshal.StructureToPtr(this, ptr, false);
                 Marshal.Copy(ptr, buffer, index, Size);
+            }
+        }
+
+        private struct IconDirEntryComparer : IComparer<IconDirEntry>, IComparer<KeyValuePair<int, IconDirEntry>>
+        {
+            private IconTypeCode loadedId;
+            public IconDirEntryComparer(IconTypeCode code)
+            {
+                loadedId = code;
+            }
+
+            public int Compare(KeyValuePair<int, IconDirEntry> x, KeyValuePair<int, IconDirEntry> y)
+            {
+                return Compare(x.Value, y.Value);
+            }
+
+            public int Compare(IconDirEntry x, IconDirEntry y)
+            {
+                if (x.End <= y.ImageOffset) return -1;
+                if (y.End <= x.ImageOffset) return 1;
+
+                throw new IconLoadException(IconErrorCode.InvalidFormat, loadedId);
             }
         }
         #endregion
@@ -1879,16 +1894,4 @@ namespace UIconEdit
         /// </summary>
         Cursor = 2,
     }
-
-    /// <summary>
-    /// A delegate function for handling <see cref="IconLoadException"/> errors.
-    /// </summary>
-    /// <param name="e">An <see cref="IconLoadException"/> containing information about the error.</param>
-    public delegate void IconLoadExceptionHandler(IconLoadException e);
-
-    /// <summary>
-    /// A delegate function for handling <see cref="IconExtractException"/> errors.
-    /// </summary>
-    /// <param name="e">An <see cref="IconExtractException"/> containing information about the error.</param>
-    public delegate void IconExtractExceptionHandler(IconExtractException e);
 }

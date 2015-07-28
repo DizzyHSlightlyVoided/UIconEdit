@@ -106,6 +106,7 @@
   "IconError2cursor": "The cursor file does not contain any valid valid entries.",
   "IconError3icon": "A cursor file was expected, but the file is an icon file.",
   "IconError3cursor": "An icon file was expected, but the file is a cursor file.",
+  "IconError1000": "An error occurred when attempting to parse an icon image.",
   "IconError1001": "{0}-bit images are not allowed!", //{0} = number of bits per pixel.
 
   "ScalingFilter": "Scaling filter:",

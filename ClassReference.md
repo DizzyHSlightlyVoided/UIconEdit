@@ -27,7 +27,7 @@ Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) imp
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `input` is closed.
 
-##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -54,7 +54,7 @@ Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) imp
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `input` is closed.
 
-##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -99,7 +99,7 @@ The caller does not have the required permission.
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
 
-##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -143,7 +143,7 @@ The caller does not have the required permission.
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
 
-##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
 An error occurred when processing the icon file's format.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
@@ -724,18 +724,6 @@ Indicates an icon (.ICO) file.
 ## Field: `IconTypeCode.Cursor = 2`
 
 Indicates a cursor (.CUR) file.
-
---------------------------------------------------
-# Type: `public class UIconEdit.IconLoadExceptionHandler`
-
-A delegate function for handling [`IconLoadException`](#type-public-class-uiconediticonloadexception) errors.
-* `e`: An [`IconLoadException`](#type-public-class-uiconediticonloadexception) containing information about the error.
-
---------------------------------------------------
-# Type: `public class UIconEdit.IconExtractExceptionHandler`
-
-A delegate function for handling [`IconExtractException`](#type-public-class-uiconediticonextractexception) errors.
-* `e`: An [`IconExtractException`](#type-public-class-uiconediticonextractexception) containing information about the error.
 
 --------------------------------------------------
 # Type: `public class UIconEdit.CursorFile`
@@ -1837,6 +1825,16 @@ Specifies high-quality bicubic interpolation. Prefiltering is performed to ensur
 The exception that is thrown when an icon file contains invalid data.
 
 --------------------------------------------------
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value, System.Int32 entryIndex)`
+
+Creates a new instance using a message which describes the error and the specified error code.
+* `message`: A message describing the error.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+* `value`: The value which caused the error.
+* `entryIndex`: The index in the icon file of the entry in the icon directory which caused the exception, or a value less than 0 if the error was not caused by an icon entry.
+
+--------------------------------------------------
 ## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value)`
 
 Creates a new instance using a message which describes the error and the specified error code.
@@ -1844,6 +1842,15 @@ Creates a new instance using a message which describes the error and the specifi
 * `code`: The error code used to identify the cause of the error.
 * `typeCode`: The type code of the file which caused the error.
 * `value`: The value which caused the error.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Int32 entryIndex)`
+
+Creates a new instance using a message which describes the error and the specified error code.
+* `message`: A message describing the error.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+* `entryIndex`: The index in the icon file of the entry in the icon directory which caused the exception, or a value less than 0 if the error was not caused by an icon entry.
 
 --------------------------------------------------
 ## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode)`
@@ -1854,11 +1861,28 @@ Creates a new instance using a message which describes the error and the specifi
 * `typeCode`: The type code of the file which caused the error.
 
 --------------------------------------------------
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Int32 entryIndex)`
+
+Creates a new instance with the default message and the specified error code.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+* `entryIndex`: The index in the icon file of the entry in the icon directory which caused the exception, or a value less than 0 if the error was not caused by an icon entry.
+
+--------------------------------------------------
 ## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode)`
 
 Creates a new instance with the default message and the specified error code.
 * `code`: The error code used to identify the cause of the error.
 * `typeCode`: The type code of the file which caused the error.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value, System.Int32 entryIndex)`
+
+Creates a new instance with the default message and the specified error code.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+* `value`: The value which caused the error.
+* `entryIndex`: The index in the icon file of the entry in the icon directory which caused the exception, or a value less than 0 if the error was not caused by an icon entry.
 
 --------------------------------------------------
 ## Constructor: `public IconLoadException(UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Object value)`
@@ -1867,6 +1891,16 @@ Creates a new instance with the default message and the specified error code.
 * `code`: The error code used to identify the cause of the error.
 * `typeCode`: The type code of the file which caused the error.
 * `value`: The value which caused the error.
+
+--------------------------------------------------
+## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode typeCode, System.Int32 entryIndex, System.Exception innerException)`
+
+Creates a new instance with the specified message and error code and a reference to the exception which caused this error.
+* `message`: A message describing the error.
+* `code`: The error code used to identify the cause of the error.
+* `typeCode`: The type code of the file which caused the error.
+* `entryIndex`: The index in the icon file of the entry in the icon directory which caused the exception, or a value less than 0 if the error was not caused by an icon entry.
+* `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
 
 --------------------------------------------------
 ## Constructor: `public IconLoadException(System.String message, UIconEdit.IconErrorCode code, UIconEdit.IconTypeCode innerException, System.Exception typeCode)`
@@ -1888,6 +1922,14 @@ Creates a new instance with the specified message and a reference to the excepti
 ## Property: `public virtual System.String Message { get; }`
 
 Gets a message describing the error.
+
+--------------------------------------------------
+## Property: `public System.Int32 EntryIndex { get; }`
+
+Gets the index in the icon file of the entry in the icon directory which caused the exception, or a value less than 0 if the error was not caused by an icon entry.
+### Remarks
+
+This refers to the index of the entry within the list of icon directory entries; it may not refer to the position of the image within the rest of the icon file.
 
 --------------------------------------------------
 ## Property: `public UIconEdit.IconErrorCode Code { get; }`
@@ -1917,7 +1959,7 @@ Gets a message describing the error.
 --------------------------------------------------
 ## Property: `public System.Int32 ExtractIndex { get; }`
 
-Gets the index in the DLL or EXE file of the loaded icon or cursor.
+Gets the index in the DLL or EXE file of the icon or cursor which caused the error.
 
 --------------------------------------------------
 # Type: `public enum UIconEdit.IconErrorCode`
@@ -1945,6 +1987,11 @@ Code 0x2: The icon contains zero entries. This is a fatal error, and the icon fi
 Code 0x3: An icon was expected but a cursor was loaded, or vice versa. [`IconLoadException.TypeCode`](#property-public-uiconediticontypecode-typecode--get-) contains the expected value, and [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the actual value. This is a fatal error, and the icon file cannot continue processing when it occurs.
 
 --------------------------------------------------
+## Field: `IconErrorCode.EntryParseError = 4096`
+
+Code 0x1000: an error occurred when attempting to parse an icon frame.
+
+--------------------------------------------------
 ## Field: `IconErrorCode.InvalidBitDepth = 4097`
 
 Code 0x1001: The bit depth of an individual entry is not 1, 4, 8, 24, or 32. [`IconLoadException.Value`](#property-public-systemobject-value--get-) contains the bit depth.
@@ -1953,6 +2000,18 @@ Code 0x1001: The bit depth of an individual entry is not 1, 4, 8, 24, or 32. [`I
 ## Field: `IconErrorCode.ZeroValidEntries = 4098`
 
 Code 0x1002: There are no remaining valid entries after processing. This is a fatal error, and the icon file cannot continue processing when it occurs.
+
+--------------------------------------------------
+# Type: `public class UIconEdit.IconLoadExceptionHandler`
+
+A delegate function for handling [`IconLoadException`](#type-public-class-uiconediticonloadexception) errors.
+* `e`: An [`IconLoadException`](#type-public-class-uiconediticonloadexception) containing information about the error.
+
+--------------------------------------------------
+# Type: `public class UIconEdit.IconExtractExceptionHandler`
+
+A delegate function for handling [`IconExtractException`](#type-public-class-uiconediticonextractexception) errors.
+* `e`: An [`IconExtractException`](#type-public-class-uiconediticonextractexception) containing information about the error.
 
 --------------------------------------------------
 # Type: `public abstract class UIconEdit.IconExtraction`

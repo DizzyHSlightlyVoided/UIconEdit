@@ -679,7 +679,7 @@ namespace UIconEdit
             IconFile copy = new IconFile();
             foreach (IconEntry curEntry in _entries)
             {
-                var newEntry = curEntry.Clone();
+                var newEntry = (IconEntry)curEntry.Clone();
                 newEntry.HotspotX = 0;
                 newEntry.HotspotY = 0;
                 copy._entries.Add(newEntry);
@@ -696,7 +696,7 @@ namespace UIconEdit
         {
             CursorFile copy = new CursorFile();
             foreach (IconEntry curEntry in _entries)
-                copy._entries.Add(curEntry.Clone());
+                copy._entries.Add((IconEntry)curEntry.Clone());
             return copy;
         }
 
@@ -714,7 +714,7 @@ namespace UIconEdit
 
         internal virtual bool IsValid(IconEntry entry)
         {
-            return entry != null && !entry.IsDisposed;
+            return entry != null;
         }
 
         internal abstract ushort GetImgX(IconEntry entry);
@@ -845,7 +845,7 @@ namespace UIconEdit
 
             bool isPng = entry.IsPng;
 
-            if (image.Width > byte.MaxValue || image.Height > byte.MaxValue)
+            if (entry.Width > byte.MaxValue || entry.Height > byte.MaxValue)
                 writer.Write(ushort.MinValue); //2
             else
             {
@@ -1006,9 +1006,6 @@ namespace UIconEdit
         {
             if (_isDisposed) return;
 
-            foreach (IconEntry curEntry in _entries)
-                curEntry.Dispose();
-
             _entries.Clear();
             _isDisposed = true;
         }
@@ -1141,7 +1138,7 @@ namespace UIconEdit
             /// Adds the specified icon entry to the list.
             /// </summary>
             /// <param name="item">The icon entry to add to the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c> or disposed,
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
             /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
             public bool Add(IconEntry item)
@@ -1165,7 +1162,7 @@ namespace UIconEdit
             /// </summary>
             /// <param name="index">The index at which to insert the icon entry.</param>
             /// <param name="item">The icon entry to add to the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c> or disposed,
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
             /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
             /// <exception cref="ArgumentOutOfRangeException">
@@ -1210,7 +1207,7 @@ namespace UIconEdit
             /// </summary>
             /// <param name="index">The index of the value to set.</param>
             /// <param name="item">The item to set at the specified index.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c> or disposed,
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c>,
             /// is already associated with a different icon file, or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
             /// and <see cref="IconEntry.BitDepth"/> already exists at a different index.</returns>
             public bool SetValue(int index, IconEntry item)

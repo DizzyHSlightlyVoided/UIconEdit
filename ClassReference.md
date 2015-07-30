@@ -294,7 +294,7 @@ Gets the number of elements in the list.
 Adds the specified icon entry to the list.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null` or disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists in the list.
 
 
 --------------------------------------------------
@@ -304,7 +304,7 @@ Adds the specified icon entry to the list at the specified index.
 * `index`: The index at which to insert the icon entry.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null` or disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists in the list.
 
 
 ### Exceptions
@@ -319,7 +319,7 @@ Sets the value at the specified index.
 * `index`: The index of the value to set.
 * `item`: The item to set at the specified index.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null` or disposed, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists at a different index.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) already exists at a different index.
 
 
 --------------------------------------------------
@@ -1230,6 +1230,41 @@ Creates a new instance with the specified image.
 The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
+## Method: `protected virtual System.Windows.Freezable CreateInstanceCore()`
+
+Creates a new default [`IconEntry`](#type-public-class-uiconediticonentry) instance.
+
+**Returns:** Type [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx): A default [`IconEntry`](#type-public-class-uiconediticonentry) instance.
+
+### See Also
+* [`Freezable.CreateInstanceCore()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.createinstancecore.aspx)
+
+
+--------------------------------------------------
+## Method: `protected virtual void CloneCore(System.Windows.Freezable sourceFreezable)`
+
+Makes the current instance a deep copy of the specified other object.
+* `sourceFreezable`: The object to clone.
+
+--------------------------------------------------
+## Method: `protected virtual void CloneCurrentValueCore(System.Windows.Freezable sourceFreezable)`
+
+Makes the current instance a deep copy of the specified other object's value.
+* `sourceFreezable`: The object to clone.
+
+--------------------------------------------------
+## Method: `protected virtual void GetAsFrozenCore(System.Windows.Freezable sourceFreezable)`
+
+Makes the current instance a frozen copy of the specified other object.
+* `sourceFreezable`: The object to clone.
+
+--------------------------------------------------
+## Method: `protected virtual void GetCurrentValueAsFrozenCore(System.Windows.Freezable sourceFreezable)`
+
+Makes the current instance a frozen copy of the specified other object's value.
+* `sourceFreezable`: The object to clone.
+
+--------------------------------------------------
 ## Field: `public const System.Int16 MinDimension = 1`
 
 The minimum dimensions of an icon. 1 pixels.
@@ -1250,9 +1285,19 @@ Gets and sets the maximum width or height at which an icon entry will be saved a
 Gets and sets the maximum width or height at which an icon entry will be saved as a BMP file when [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) is any value except [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0); all entries with a width or height greater than this will be saved as PNG. 255 pixels.
 
 --------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty IsQuantizedProperty`
+
+The dependency property for the read-only [`IconEntry.IsQuantized`](#property-public-systemboolean-isquantized--get-) property.
+
+--------------------------------------------------
 ## Property: `public System.Boolean IsQuantized { get; }`
 
 Gets a value indicating whether [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) are known to be already quantized.
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty BaseImageProperty`
+
+The dependency property for the [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) property.
 
 --------------------------------------------------
 ## Property: `public System.Windows.Media.Imaging.BitmapSource BaseImage { get; set; }`
@@ -1261,21 +1306,18 @@ Gets and sets the image associated with the current instance.
 
 ### Exceptions
 
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-The current instance is disposed.
-
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 In a set operation, the specified value is `null`.
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty AlphaImageProperty`
+
+The dependency property for the [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) property.
 
 --------------------------------------------------
 ## Property: `public System.Windows.Media.Imaging.BitmapSource AlphaImage { get; set; }`
 
 Gets and sets an image to be used as the alpha mask, or `null` to derive the alpha mask from [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-). Black pixels are transparent; white pixels are opaque.
-
-### Exceptions
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-The current instance is disposed.
 
 --------------------------------------------------
 ## Property: `public System.Boolean IsPng { get; }`
@@ -1288,9 +1330,19 @@ Gets a value indicating whether the current instance will be saved as a PNG imag
 Gets a key for the icon entry.
 
 --------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty WidthProperty`
+
+The dependency property for the read-only [`IconEntry.Width`](#property-public-systemint32-width--get-) property.
+
+--------------------------------------------------
 ## Property: `public System.Int32 Width { get; }`
 
 Gets the resampled width of the icon.
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty HeightProperty`
+
+The dependency property for the read-only [`IconEntry.Height`](#property-public-systemint32-height--get-) property.
 
 --------------------------------------------------
 ## Property: `public System.Int32 Height { get; }`
@@ -1298,39 +1350,49 @@ Gets the resampled width of the icon.
 Gets the resampled height of the icon.
 
 --------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty BitDepthProperty`
+
+The dependency property for the read-only [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) property.
+
+--------------------------------------------------
 ## Property: `public UIconEdit.IconBitDepth BitDepth { get; }`
 
 Gets the bit depth of the current instance.
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty AlphaThresholdProperty`
+
+The dependency property for the [`IconEntry.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-) property.
 
 --------------------------------------------------
 ## Property: `public System.Byte AlphaThreshold { get; set; }`
 
 Gets and sets a value indicating the threshold of alpha values at [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-)s below [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0). Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
 
-### Exceptions
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty HotspotXProperty`
 
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-In a set operation, the current instance is disposed.
+The dependency property for the [`IconEntry.HotspotX`](#property-public-systemint32-hotspotx--get-set-) property.
 
 --------------------------------------------------
 ## Property: `public System.Int32 HotspotX { get; set; }`
 
 In a cursor, gets the horizontal offset in pixels of the cursor's hotspot from the left side. Constrained to greater than or equal to 0 and less than or equal to [`IconEntry.Width`](#property-public-systemint32-width--get-).
 
-### Exceptions
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty HotspotYProperty`
 
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-In a set operation, the current instance is disposed.
+The dependency property for the [`IconEntry.HotspotY`](#property-public-systemint32-hotspoty--get-set-) property.
 
 --------------------------------------------------
 ## Property: `public System.Int32 HotspotY { get; set; }`
 
 In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the top side. Constrained to greater than or equal to 0 and less than or equal to [`IconEntry.Height`](#property-public-systemint32-height--get-).
 
-### Exceptions
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty IconScalingFilterProperty`
 
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-In a set operation, the current instance is disposed.
+The dependency property for the [`IconScalingFilter`](#type-public-enum-uiconediticonscalingfilter) property.
 
 --------------------------------------------------
 ## Property: `public UIconEdit.IconScalingFilter ScalingFilter { get; set; }`
@@ -1338,9 +1400,6 @@ In a set operation, the current instance is disposed.
 Gets and sets the scaling mode used to resize [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) when quantizing.
 
 ### Exceptions
-
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-In a set operation, the current instance is disposed.
 
 ##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
 In a set operation, the specified value is not a valid [`IconScalingFilter`](#type-public-enum-uiconediticonscalingfilter) value.
@@ -1422,15 +1481,50 @@ Applies [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitma
 --------------------------------------------------
 ## Method: `public UIconEdit.IconEntry Clone()`
 
-Returns a duplicate of the current instance.
+Returns a modifiable copy of the current instance. When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
 
-**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A duplicate of the current instance, with its own clone of [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-).
+**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A modifiable copy of the current instance.
+
+### See Also
+* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
+* [`Freezable.Clone()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.clone.aspx)
 
 
-### Exceptions
+--------------------------------------------------
+## Method: `public UIconEdit.IconEntry CloneCurrentValue()`
 
-##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
-The current instance is dipsosed.
+Returns a modifiable copy of the current instance using its curent values.
+
+**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A modifiable copy of the current instance.
+
+### See Also
+* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
+* [`Freezable.CloneCurrentValue()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.clonecurrentvalue.aspx)
+
+
+--------------------------------------------------
+## Method: `public UIconEdit.IconEntry GetAsFrozen()`
+
+Creates a frozen copy of the current instance, using base (non-animated) property values.
+
+**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A frozen copy of the current instance.
+
+### See Also
+* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
+* [`Freezable.GetAsFrozen()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.getasfrozen.aspx)
+
+
+--------------------------------------------------
+## Method: `public UIconEdit.IconEntry GetCurrentValueAsFrozen()`
+
+Creates a frozen copy of the current instance, using current property values.
+
+**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A frozen copy of the current instance.
+
+### See Also
+* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
+* [`Freezable.GetCurrentValueAsFrozen()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.getcurrentvalueasfrozen.aspx)
+
 
 --------------------------------------------------
 ## Method: `public System.Windows.Media.Imaging.BitmapSource GetQuantizedPng()`
@@ -1446,6 +1540,11 @@ Returns color quantization of the current instance as it would appear for a PNG 
 Sets [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) equal to their quantized equivalent, in a form indicated by the specified value.
 * `isPng`: If `true`, [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) will be set `null` and [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) will be quantized as if it was a PNG icon entry. If `false`, [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) will be quantized as if for a BMP entry.
 
+### Exceptions
+
+##### [`InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx)
+The current instance is frozen.
+
 --------------------------------------------------
 ## Method: `public void SetQuantized()`
 
@@ -1453,6 +1552,11 @@ Sets [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsou
 ### Remarks
 
 Performs the same action as [`IconEntry.SetQuantized(System.Boolean)`](#method-public-void-setquantizedsystemboolean-ispng), with [`IconEntry.IsPng`](#property-public-systemboolean-ispng--get-) passed as the parameter.
+
+### Exceptions
+
+##### [`InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx)
+The current instance is frozen.
 
 --------------------------------------------------
 ## Method: `IconEntry.GetQuantized(out System.Windows.Media.Imaging.BitmapSource alphaMask)`
@@ -1470,27 +1574,6 @@ Returns a string representation of the current instance.
 
 **Returns:** Type [`String`](https://msdn.microsoft.com/en-us/library/system.string.aspx): A string representation of the current instance.
 
-
---------------------------------------------------
-## PropertyChanged`
-
-Called when a property on the current instance changes.
-
---------------------------------------------------
-## Property: `public System.Boolean IsDisposed { get; }`
-
-Gets a value indicating whether the current instance has been disposed. Intended to be set in [`IconEntry.Dispose(System.Boolean)`](#method-public-virtual-void-disposesystemboolean-disposing).
-
---------------------------------------------------
-## Method: `public virtual void Dispose()`
-
-Releases all managed and unmanaged resources used by the current instance.
-
---------------------------------------------------
-## Method: `public virtual void Dispose(System.Boolean disposing)`
-
-Releases all unmanaged resources used by the current instance, and optionally releases managed resources.
-* `disposing`: `true` to release both managed and unmanaged resources; `false` to release only unmanaged resources.
 
 --------------------------------------------------
 ## Method: `public static UIconEdit.IconBitDepth ParseBitDepth(System.String value)`

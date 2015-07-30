@@ -165,13 +165,13 @@
             </StackPanel>
         </ToolBar>
         <StatusBar DockPanel.Dock="Bottom" Height="26">
-            <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Margin="0,0,2,0">
+            <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
                 <StackPanel Orientation="Horizontal" Margin="1">
                     <TextBlock Text="{Binding FilePathStatus, ElementName=window, FallbackValue=-}"/>
                     <TextBlock Text="*" Visibility="{Binding IsModified, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </StackPanel>
             </Border>
-            <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Margin="0,0,2,0"
+            <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
                     Visibility="{Binding ShowMouseCoords, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock Margin="1">
                     <TextBlock.Text>

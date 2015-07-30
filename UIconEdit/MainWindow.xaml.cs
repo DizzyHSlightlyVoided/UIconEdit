@@ -161,20 +161,18 @@ namespace UIconEdit.Maker
                 if (iconCount == 0)
                     throw new InvalidDataException();
 
-                using (ExtractWindow extractWindow = new ExtractWindow(this, path, iconCount))
+                ExtractWindow extractWindow = new ExtractWindow(this, path, iconCount);
+                bool? result = extractWindow.ShowDialog();
+                if (!result.HasValue || !result.Value) return;
+                Mouse.OverrideCursor = Cursors.Wait;
+                try
                 {
-                    bool? result = extractWindow.ShowDialog();
-                    if (!result.HasValue || !result.Value) return;
-                    Mouse.OverrideCursor = Cursors.Wait;
-                    try
-                    {
-                        LoadedFile = IconExtraction.ExtractIconSingle(path, extractWindow.IconIndex);
-                    }
-                    catch
-                    {
-                        ErrorWindow.Show(this, string.Format(_settings.LanguageFile.IconExtractError, extractWindow.IconIndex, path));
-                        return;
-                    }
+                    LoadedFile = IconExtraction.ExtractIconSingle(path, extractWindow.IconIndex);
+                }
+                catch
+                {
+                    ErrorWindow.Show(this, string.Format(_settings.LanguageFile.IconExtractError, extractWindow.IconIndex, path));
+                    return;
                 }
                 IsModified = true;
                 FilePath = null;
@@ -313,8 +311,10 @@ namespace UIconEdit.Maker
             DependencyPropertyKey ZoomedHeightPropertyKey, DependencyPropertyKey ZoomScaleModePropertyKey)
         {
             int val = (int)w.GetValue(ZoomProperty);
-            w.SetValue(ZoomedWidthPropertyKey, Math.Floor(image.PixelWidth * (val / 100.0)));
-            w.SetValue(ZoomedHeightPropertyKey, Math.Floor(image.PixelHeight * (val / 100.0)));
+            PresentationSource source = PresentationSource.FromVisual(w);
+
+            w.SetValue(ZoomedWidthPropertyKey, Math.Floor(image.PixelWidth * source.CompositionTarget.TransformToDevice.M11 * (val / 100.0)));
+            w.SetValue(ZoomedHeightPropertyKey, Math.Floor(image.PixelHeight * source.CompositionTarget.TransformToDevice.M22 * (val / 100.0)));
             w.SetValue(ZoomScaleModePropertyKey, val >= 100 ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality);
         }
 

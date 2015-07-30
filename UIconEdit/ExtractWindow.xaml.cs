@@ -31,12 +31,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 namespace UIconEdit.Maker
@@ -44,7 +42,7 @@ namespace UIconEdit.Maker
     /// <summary>
     /// Interaction logic for ExtractWindow.xaml
     /// </summary>
-    partial class ExtractWindow : IDisposable
+    partial class ExtractWindow
     {
         public ExtractWindow(MainWindow owner, string path, int iconCount)
         {
@@ -64,7 +62,7 @@ namespace UIconEdit.Maker
         [Bindable(true, BindingDirection.OneWay)]
         public ThreadTask Task { get { return _task; } }
 
-        internal class ThreadTask : INotifyPropertyChanged, IDisposable
+        internal class ThreadTask : INotifyPropertyChanged
         {
             private ExtractWindow _owner;
 
@@ -77,44 +75,33 @@ namespace UIconEdit.Maker
                 _backgroundWorker.DoWork += _backgroundWorker_DoWork;
             }
 
+            private double _transformX, _transformY;
+
             private void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
             {
-                ENUMRESNAMEPROC proc = delegate (IntPtr h, int type, IntPtr name, IntPtr param)
-                {
-                    try
-                    {
-                        if (_owner._cancelled) return false;
-
-                        using (MemoryStream ms = Win32Funcs.ExtractData(h, type, name))
-                        using (BinaryReader br = new BinaryReader(ms))
-                        {
-                            ms.Seek(4, SeekOrigin.Begin);
-                            _icons.Add(new FileToken(_owner._path, curIndex, br.ReadUInt16()));
-                        }
-                    }
-                    catch { }
-                    finally
-                    {
-                        curIndex++;
-                        OnPropertyChanged("Value");
-                    }
-                    return true;
-                };
-
-                IntPtr hModule = IntPtr.Zero;
                 try
                 {
-                    hModule = Win32Funcs.LoadLibraryEx(_owner._path, IntPtr.Zero, Win32Funcs.LOAD_LIBRARY_AS_DATAFILE);
-                    if (hModule == IntPtr.Zero)
-                        throw new Win32Exception();
-
-                    Win32Funcs.EnumResourceNames(hModule, Win32Funcs.RT_GROUP_ICON, proc, 0);
+                    IconExtraction.ExtractIconsForEach(_owner._path, delegate (int dex, IconFile iconFile, CancelEventArgs cE)
+                    {
+                        if (_owner._cancelled)
+                        {
+                            cE.Cancel = true;
+                            return;
+                        }
+                        try
+                        {
+                            _icons.Add(new FileToken(iconFile, dex, _transformX, _transformY));
+                        }
+                        finally
+                        {
+                            curIndex = dex;
+                            OnPropertyChanged("Value");
+                        }
+                    }, _handler, _handler);
                 }
                 catch { }
                 finally
                 {
-                    if (hModule != IntPtr.Zero)
-                        Win32Funcs.FreeLibrary(hModule);
                     _finished = true;
                     OnPropertyChanged("IsFinished");
                     _iconArray = _icons.ToArray();
@@ -152,13 +139,11 @@ namespace UIconEdit.Maker
 
             public void Start()
             {
-                _backgroundWorker.RunWorkerAsync();
-            }
+                PresentationSource source = PresentationSource.FromVisual(_owner);
+                _transformX = source.CompositionTarget.TransformFromDevice.M11;
+                _transformY = source.CompositionTarget.TransformFromDevice.M22;
 
-            public void Dispose()
-            {
-                foreach (FileToken curToken in _icons)
-                    curToken.Dispose();
+                _backgroundWorker.RunWorkerAsync();
             }
         }
 
@@ -204,31 +189,36 @@ namespace UIconEdit.Maker
 
         public int IconIndex { get { return listIcons.SelectedIndex; } }
 
-        public struct FileToken : IDisposable
+        public struct FileToken
         {
-            public FileToken(string path, int index, int count)
+            public FileToken(IconFileBase iconFile, int index, double transformX, double transformY)
             {
-                IntPtr hIcon = IntPtr.Zero;
-                try
-                {
-                    hIcon = ExtractIcon(System.Diagnostics.Process.GetCurrentProcess().Handle, path, index);
-                    _count = count;
-                    if (hIcon == IntPtr.Zero) throw new Win32Exception();
-                    _image = (BitmapSource)Imaging.CreateBitmapSourceFromHIcon(hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()).GetAsFrozen();
-                }
-                finally
-                {
-                    if (hIcon != IntPtr.Zero)
-                        DestroyIcon(hIcon);
-                }
                 _index = index;
+                _count = iconFile.Entries.Count;
+
+                const double size = 48;
+                double width = size * transformX;
+                double height = size * transformY;
+
+                var entries = iconFile.Entries.OrderBy(delegate (IconEntry e)
+                {
+                    double distance = Math.Abs(e.BitsPerPixel - 32) << 8;
+
+                    distance += Math.Abs(e.Width - width);
+                    distance += Math.Abs(e.Height - height);
+
+                    return Math.Abs(distance);
+                });
+
+                IconEntry entry = entries.Where(e => e.Width >= width && e.Height >= height).FirstOrDefault();
+
+                if (entry == null)
+                    entry = entries.FirstOrDefault();
+
+                if (entry == null)
+                    throw new InvalidOperationException();
+                _image = (BitmapSource)entry.CombineAlpha().GetAsFrozen();
             }
-
-            [DllImport("shell32.dll")]
-            private static extern IntPtr ExtractIcon(IntPtr hInst, string lpszExeFileName, int nIconIndex);
-
-            [DllImport("user32.dll")]
-            private static extern bool DestroyIcon(IntPtr hIcon);
 
             public BitmapSource _image;
             [Bindable(true)]
@@ -241,11 +231,6 @@ namespace UIconEdit.Maker
             public int _count;
             [Bindable(true)]
             public int Count { get { return _count; } }
-
-            public void Dispose()
-            {
-                _image = null;
-            }
         }
 
         private static void _handler(IconLoadException e) { }
@@ -260,11 +245,6 @@ namespace UIconEdit.Maker
         {
             DialogResult = true;
             Close();
-        }
-
-        public void Dispose()
-        {
-            _task.Dispose();
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)

@@ -22,7 +22,7 @@
                          Value="{Binding Task.Value, ElementName=window, Mode=OneWay}"/>
         </Border>
         <ListBox ItemsSource="{Binding Task.Icons, ElementName=window}" x:Name="listIcons" MouseDoubleClick="listIcons_MouseDoubleClick" Grid.Row="1"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" IsEnabled="{Binding IsFullyLoaded, ElementName=window}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Width="Auto"/>

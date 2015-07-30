@@ -18,9 +18,10 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Border Grid.Row="0" Visibility="{Binding IsFullyLoaded, ElementName=window, Converter={StaticResource BooleanToInvisibilityConverter}}">
-            <ProgressBar x:Name="progressBar" Height="20" Margin="10"/>
+            <ProgressBar Height="20" Margin="10" Maximum="{Binding Task.Maximum, ElementName=window, Mode=OneWay}"
+                         Value="{Binding Task.Value, ElementName=window, Mode=OneWay}"/>
         </Border>
-        <ListBox ItemsSource="{Binding IconFiles, ElementName=window}" x:Name="listIcons" MouseDoubleClick="listIcons_MouseDoubleClick" Grid.Row="1"
+        <ListBox ItemsSource="{Binding Task.Icons, ElementName=window}" x:Name="listIcons" MouseDoubleClick="listIcons_MouseDoubleClick" Grid.Row="1"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>

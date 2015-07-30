@@ -29,12 +29,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
@@ -48,66 +48,123 @@ namespace UIconEdit.Maker
     {
         public ExtractWindow(MainWindow owner, string path, int iconCount)
         {
+            Mouse.OverrideCursor = null;
             Owner = owner;
-
+            {
+                _task = new ThreadTask(this, iconCount);
+                Binding taskBinding = new Binding("Task.IsFinished");
+                taskBinding.ElementName = "window";
+                SetBinding(IsFullyLoadedProperty, taskBinding);
+            }
             _path = path;
             InitializeComponent();
-            progressBar.Maximum = iconCount;
         }
 
-        private void window_Loaded(object sender, RoutedEventArgs e)
+        private ThreadTask _task;
+        [Bindable(true, BindingDirection.OneWay)]
+        public ThreadTask Task { get { return _task; } }
+
+        internal class ThreadTask : INotifyPropertyChanged, IDisposable
         {
-            int curIndex = 0;
-            ENUMRESNAMEPROC proc = delegate (IntPtr h, int type, IntPtr name, IntPtr param)
+            private ExtractWindow _owner;
+
+            internal ThreadTask(ExtractWindow owner, int iconCount)
             {
+                _owner = owner;
+                _iconCount = iconCount;
+                _backgroundWorker = new BackgroundWorker();
+                _backgroundWorker.WorkerSupportsCancellation = true;
+                _backgroundWorker.DoWork += _backgroundWorker_DoWork;
+            }
+
+            private void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+            {
+                ENUMRESNAMEPROC proc = delegate (IntPtr h, int type, IntPtr name, IntPtr param)
+                {
+                    try
+                    {
+                        if (_owner._cancelled) return false;
+
+                        using (MemoryStream ms = Win32Funcs.ExtractData(h, type, name))
+                        using (BinaryReader br = new BinaryReader(ms))
+                        {
+                            ms.Seek(4, SeekOrigin.Begin);
+                            _icons.Add(new FileToken(_owner._path, curIndex, br.ReadUInt16()));
+                        }
+                    }
+                    catch { }
+                    finally
+                    {
+                        curIndex++;
+                        OnPropertyChanged("Value");
+                    }
+                    return true;
+                };
+
+                IntPtr hModule = IntPtr.Zero;
                 try
                 {
-                    if (_cancelled) return false;
+                    hModule = Win32Funcs.LoadLibraryEx(_owner._path, IntPtr.Zero, Win32Funcs.LOAD_LIBRARY_AS_DATAFILE);
+                    if (hModule == IntPtr.Zero)
+                        throw new Win32Exception();
 
-                    using (MemoryStream ms = Win32Funcs.ExtractData(h, type, name))
-                    using (BinaryReader br = new BinaryReader(ms))
-                    {
-                        ms.Seek(4, SeekOrigin.Begin);
-                        _icons.Add(new FileToken(_path, curIndex, br.ReadUInt16()));
-                    }
+                    Win32Funcs.EnumResourceNames(hModule, Win32Funcs.RT_GROUP_ICON, proc, 0);
                 }
                 catch { }
                 finally
                 {
-                    curIndex++;
-                    progressBar.Value++;
+                    if (hModule != IntPtr.Zero)
+                        Win32Funcs.FreeLibrary(hModule);
+                    _finished = true;
+                    OnPropertyChanged("IsFinished");
+                    _iconArray = _icons.ToArray();
+                    OnPropertyChanged("Icons");
                 }
-                return true;
-            };
-
-            IntPtr hModule = IntPtr.Zero;
-            try
-            {
-                hModule = Win32Funcs.LoadLibraryEx(_path, IntPtr.Zero, Win32Funcs.LOAD_LIBRARY_AS_DATAFILE);
-                if (hModule == IntPtr.Zero)
-                    throw new Win32Exception();
-
-                if (!Win32Funcs.EnumResourceNames(hModule, Win32Funcs.RT_GROUP_ICON, proc, 0))
-                    throw new Win32Exception();
-            }
-            catch { }
-            finally
-            {
-                if (hModule != IntPtr.Zero)
-                    Win32Funcs.FreeLibrary(hModule);
-                SetValue(IsFullyLoadedPropertyKey, true);
             }
 
-            Mouse.OverrideCursor = null;
+            private BackgroundWorker _backgroundWorker;
 
-            if (_icons.Count != 0)
-                listIcons.SelectedIndex = 0;
-            else
+            private int _iconCount;
+            [Bindable(true, BindingDirection.OneWay)]
+            public int Maximum { get { return _iconCount; } }
+
+            private int curIndex;
+            [Bindable(true, BindingDirection.OneWay)]
+            public int Value { get { return curIndex; } }
+
+            private bool _finished;
+            [Bindable(true, BindingDirection.OneWay)]
+            public bool IsFinished { get { return _finished; } }
+
+            private List<FileToken> _icons = new List<FileToken>();
+
+            private FileToken[] _iconArray = null;
+            [Bindable(true, BindingDirection.OneWay)]
+            public FileToken[] Icons { get { return _iconArray; } }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private void OnPropertyChanged(string propertyName)
             {
-                ErrorWindow.Show((MainWindow)Owner, this, string.Format(SettingsFile.LanguageFile.IconExtractNone, _path));
-                DialogResult = false;
-                return;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+
+            public void Start()
+            {
+                _backgroundWorker.RunWorkerAsync();
+            }
+
+            public void Dispose()
+            {
+                foreach (FileToken curToken in _icons)
+                    curToken.Dispose();
+            }
+        }
+
+        private void window_Loaded(object sender, RoutedEventArgs e)
+        {
+            _task.Start();
         }
 
         private bool _cancelled;
@@ -120,20 +177,30 @@ namespace UIconEdit.Maker
         private static void _handler(IconExtractException e) { }
 
         #region IsFullyLoaded
-        private static readonly DependencyPropertyKey IsFullyLoadedPropertyKey = DependencyProperty.RegisterReadOnly("IsFullyLoaded", typeof(bool), typeof(ExtractWindow),
-            new PropertyMetadata(false));
-        public static DependencyProperty IsFullyLoadedProperty = IsFullyLoadedPropertyKey.DependencyProperty;
+        public static DependencyProperty IsFullyLoadedProperty = DependencyProperty.Register("IsFullyLoaded", typeof(bool), typeof(ExtractWindow),
+            new PropertyMetadata(false, IsFullyLoadedChanged));
+
+        private static void IsFullyLoadedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(bool)e.NewValue) return;
+
+            ExtractWindow w = (ExtractWindow)d;
+
+            if (w._task.Icons.Length == 0)
+            {
+                ErrorWindow.Show((MainWindow)w.Owner, w, string.Format(w.SettingsFile.LanguageFile.IconExtractNone, w._path));
+                w.DialogResult = false;
+                w.Close();
+                return;
+            }
+            else
+            {
+                w.listIcons.SelectedIndex = 0;
+            }
+        }
 
         public bool IsFullyLoaded { get { return (bool)GetValue(IsFullyLoadedProperty); } }
         #endregion
-
-        private static ObservableCollection<FileToken> _icons = new ObservableCollection<FileToken>();
-        [Bindable(true)]
-        public ObservableCollection<FileToken> IconFiles { get { return _icons; } }
-
-        private static ObservableCollection<FileToken> _cursors = new ObservableCollection<FileToken>();
-        [Bindable(true)]
-        public ObservableCollection<FileToken> CursorFiles { get { return _cursors; } }
 
         public int IconIndex { get { return listIcons.SelectedIndex; } }
 
@@ -147,7 +214,7 @@ namespace UIconEdit.Maker
                     hIcon = ExtractIcon(System.Diagnostics.Process.GetCurrentProcess().Handle, path, index);
                     _count = count;
                     if (hIcon == IntPtr.Zero) throw new Win32Exception();
-                    _image = new WriteableBitmap(Imaging.CreateBitmapSourceFromHIcon(hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()));
+                    _image = (BitmapSource)Imaging.CreateBitmapSourceFromHIcon(hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()).GetAsFrozen();
                 }
                 finally
                 {
@@ -197,10 +264,7 @@ namespace UIconEdit.Maker
 
         public void Dispose()
         {
-            foreach (FileToken curToken in _cursors.Concat(_icons))
-                curToken.Dispose();
-            _icons.Clear();
-            _cursors.Clear();
+            _task.Dispose();
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)

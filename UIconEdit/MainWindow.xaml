@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UIconEdit.Maker"
         mc:Ignorable="d" x:Name="window" Icon="GradientEdit.ico" SnapsToDevicePixels="True"
         Title="{Binding SettingsFile.LanguageFile.Title, ElementName=window, FallbackValue=UIconEdit}"
-        MinHeight="626" MinWidth="800" Height="626" Width="800" Loaded="window_Loaded" Closing="window_Closing" Closed="window_Closed">
+        MinHeight="652" MinWidth="800" Height="652" Width="800" ContentRendered="window_ContentRendered" Closing="window_Closing" Closed="window_Closed">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open" CanExecute="CommandBinding_CanExecute" Executed="Open_Executed"/>
         <CommandBinding Command="ApplicationCommands.New" CanExecute="CommandBinding_CanExecute" Executed="New_Executed"/>
@@ -164,6 +164,26 @@
                 <TextBox x:Name="txtHotY" VerticalAlignment="Center" Width="50" Text="{Binding SelectedItem.HotspotY, ElementName=listbox}"/>
             </StackPanel>
         </ToolBar>
+        <StatusBar DockPanel.Dock="Bottom" Height="26">
+            <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Margin="0,0,2,0">
+                <StackPanel Orientation="Horizontal" Margin="1">
+                    <TextBlock Text="{Binding FilePathStatus, ElementName=window, FallbackValue=-}"/>
+                    <TextBlock Text="*" Visibility="{Binding IsModified, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </StackPanel>
+            </Border>
+            <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" Margin="0,0,2,0"
+                    Visibility="{Binding ShowMouseCoords, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Margin="1">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                            <Binding Path="SettingsFile.LanguageFile.Position" ElementName="window" FallbackValue="{}{0},{1}"/>
+                            <Binding Path="MousePosX" ElementName="window"/>
+                            <Binding Path="MousePosY" ElementName="window"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </Border>
+        </StatusBar>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" DockPanel.Dock="Left">
             <ScrollViewer x:Name="scrollEntries" PreviewMouseWheel="listbox_PreviewMouseWheel">
                 <ListBox SelectionMode="Single" x:Name="listbox" ItemsSource="{Binding LoadedFile.Entries, ElementName=window}" Width="80"
@@ -213,7 +233,7 @@
                     <Grid>
                         <Image Source="{Binding SelectedItem, ElementName=listbox, Converter={StaticResource AlphaImageConverter}}"
                                RenderOptions.BitmapScalingMode="{Binding ZoomScaleMode, ElementName=window}" x:Name="imgIcon"
-                               MouseMove="Image_MouseMove" MouseDown="imgIcon_MouseDown"
+                               MouseMove="imgIcon_MouseMove" MouseDown="imgIcon_MouseDown" MouseEnter="imgIcon_MouseEnter" MouseLeave="imgIcon_MouseLeave"
                                Width="{Binding ZoomedWidth, ElementName=window}" Height="{Binding ZoomedHeight, ElementName=window}"/>
                         <Grid Width="{Binding ZoomedWidth, ElementName=window}" Height="{Binding ZoomedHeight, ElementName=window}">
                             <Grid.Visibility>
@@ -224,7 +244,7 @@
                             </Grid.Visibility>
                             <Line StrokeThickness="1" Y1="0" Y2="{Binding ZoomedHeight, ElementName=window}" x:Name="lineVert" Opacity="0.5"
                                   Stroke="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" X2="{Binding X1, ElementName=lineVert, Mode=OneWay}"
-                                  MouseMove="Image_MouseMove"  MouseDown="imgIcon_MouseDown" Fill="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
+                                  MouseMove="imgIcon_MouseMove"  MouseDown="imgIcon_MouseDown" Fill="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
                                 <Line.X1>
                                     <MultiBinding Converter="{StaticResource ZoomConverter}">
                                         <Binding Path="Zoom" ElementName="window"/>
@@ -234,7 +254,7 @@
                             </Line>
                             <Line StrokeThickness="1" X1="0" X2="{Binding ZoomedWidth, ElementName=window}" x:Name="lineHoriz" Opacity="0.5"
                                   Stroke="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Y2="{Binding Y1, ElementName=lineHoriz, Mode=OneWay}"
-                                  MouseMove="Image_MouseMove"  MouseDown="imgIcon_MouseDown" Fill="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
+                                  MouseMove="imgIcon_MouseMove"  MouseDown="imgIcon_MouseDown" Fill="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
                                 <Line.Y1>
                                     <MultiBinding Converter="{StaticResource ZoomConverter}">
                                         <Binding Path="Zoom" ElementName="window"/>

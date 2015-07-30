@@ -65,6 +65,9 @@ namespace UIconEdit.Maker
                 _settings.LanguageName = LanguageFile.DefaultShortName;
 
             _settings.Save();
+
+            SetValue(FilePathStatusPropertyKey, _settings.LanguageFile.FilePathNew);
+
             Mouse.OverrideCursor = null;
         }
 
@@ -72,7 +75,7 @@ namespace UIconEdit.Maker
         [Bindable(true)]
         public SettingsFile SettingsFile { get { return _settings; } }
 
-        private void window_Loaded(object sender, RoutedEventArgs e)
+        private void window_ContentRendered(object sender, EventArgs e)
         {
             string[] args = Environment.GetCommandLineArgs();
             args = new ArraySegment<string>(args, 1, args.Length - 1).ToArray();
@@ -252,7 +255,14 @@ namespace UIconEdit.Maker
         #endregion
 
         #region FilePath
-        public static readonly DependencyProperty FilePathProperty = DependencyProperty.Register("FilePath", typeof(string), typeof(MainWindow));
+        public static readonly DependencyProperty FilePathProperty = DependencyProperty.Register("FilePath", typeof(string), typeof(MainWindow),
+            new PropertyMetadata(null, FilePathChanged));
+
+        private static void FilePathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            MainWindow w = (MainWindow)d;
+            w.SetValue(FilePathStatusPropertyKey, (string)e.NewValue ?? w._settings.LanguageFile.FilePathNew);
+        }
 
         public string FilePath
         {
@@ -261,12 +271,44 @@ namespace UIconEdit.Maker
         }
         #endregion
 
+        #region FilePathStatus
+        private static readonly DependencyPropertyKey FilePathStatusPropertyKey = DependencyProperty.RegisterReadOnly("FilePathStatus", typeof(string), typeof(MainWindow),
+            new PropertyMetadata());
+        public static DependencyProperty FilePathStatusProperty = FilePathStatusPropertyKey.DependencyProperty;
+
+        public string FilePathStatus { get { return (string)GetValue(FilePathStatusProperty); } }
+        #endregion
+
         #region IsLoadedAndSelected
-        public static readonly DependencyPropertyKey IsLoadedAndSelectedPropertyKey = DependencyProperty.RegisterReadOnly("IsLoadedAndSelected",
+        private static readonly DependencyPropertyKey IsLoadedAndSelectedPropertyKey = DependencyProperty.RegisterReadOnly("IsLoadedAndSelected",
             typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
         public static readonly DependencyProperty IsLoadedAndSelectedProperty = IsLoadedAndSelectedPropertyKey.DependencyProperty;
 
         public bool IsLoadedAndSelected { get { return (bool)GetValue(IsLoadedAndSelectedProperty); } }
+        #endregion
+
+        #region ShowMouseCoords
+        private static readonly DependencyPropertyKey ShowMouseCoordsPropertyKey = DependencyProperty.RegisterReadOnly("ShowMouseCoords",
+            typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+        public static readonly DependencyProperty ShowMouseCoordsProperty = ShowMouseCoordsPropertyKey.DependencyProperty;
+
+        public bool ShowMouseCoords { get { return (bool)GetValue(ShowMouseCoordsProperty); } }
+        #endregion
+
+        #region MousePosX
+        private static readonly DependencyPropertyKey MousePosXPropertyKey = DependencyProperty.RegisterReadOnly("MousePosX", typeof(int),
+            typeof(MainWindow), new PropertyMetadata());
+        public static readonly DependencyProperty MousePosXProperty = MousePosXPropertyKey.DependencyProperty;
+
+        public int MousePosX { get { return (int)GetValue(MousePosXProperty); } }
+        #endregion
+
+        #region MousePosY
+        private static readonly DependencyPropertyKey MousePosYPropertyKey = DependencyProperty.RegisterReadOnly("MousePosY", typeof(int),
+            typeof(MainWindow), new PropertyMetadata());
+        public static readonly DependencyProperty MousePosYProperty = MousePosYPropertyKey.DependencyProperty;
+
+        public int MousePosY { get { return (int)GetValue(MousePosYProperty); } }
         #endregion
 
         internal static void ZoomSet(Window w, BitmapSource image, DependencyProperty ZoomProperty, DependencyPropertyKey ZoomedWidthPropertyKey,
@@ -802,8 +844,20 @@ namespace UIconEdit.Maker
             listbox.ScrollIntoView(listbox.SelectedIndex);
         }
 
-        private void Image_MouseMove(object sender, MouseEventArgs e)
+        private void _setMousePos(MouseEventArgs e)
         {
+            var position = e.GetPosition(imgIcon);
+
+            IconEntry curEntry = listbox.SelectedItem as IconEntry;
+
+            SetValue(MousePosXPropertyKey, (int)(position.X * curEntry.Width / ZoomedWidth));
+            SetValue(MousePosYPropertyKey, (int)(position.Y * curEntry.Height / ZoomedHeight));
+
+        }
+
+        private void imgIcon_MouseMove(object sender, MouseEventArgs e)
+        {
+            _setMousePos(e);
             if (e.LeftButton == MouseButtonState.Released || !chkHotspot.IsEnabled || !chkHotspot.IsChecked.HasValue || !chkHotspot.IsChecked.Value)
             {
                 listbox.Focus();
@@ -814,8 +868,8 @@ namespace UIconEdit.Maker
 
             IconEntry curEntry = listbox.SelectedItem as IconEntry;
 
-            curEntry.HotspotX = (ushort)(position.X * curEntry.Width / ZoomedWidth);
-            curEntry.HotspotY = (ushort)(position.Y * curEntry.Height / ZoomedHeight);
+            curEntry.HotspotX = (int)(position.X * curEntry.Width / ZoomedWidth);
+            curEntry.HotspotY = (int)(position.Y * curEntry.Height / ZoomedHeight);
 
             IsModified = true;
             listbox.Focus();
@@ -823,8 +877,19 @@ namespace UIconEdit.Maker
 
         private void imgIcon_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Image_MouseMove(sender, e);
+            imgIcon_MouseMove(sender, e);
             listbox.Focus();
+        }
+
+        private void imgIcon_MouseEnter(object sender, MouseEventArgs e)
+        {
+            SetValue(ShowMouseCoordsPropertyKey, true);
+            _setMousePos(e);
+        }
+
+        private void imgIcon_MouseLeave(object sender, MouseEventArgs e)
+        {
+            SetValue(ShowMouseCoordsPropertyKey, false);
         }
 
         private void listbox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)

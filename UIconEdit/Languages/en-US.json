@@ -94,6 +94,8 @@
   "Hotspot": "Hotspot",
   "HotspotX": "X:",
   "HotspotY": "Y:",
+  "Position": "{0},{1}", //{0} = x position, {1} = y position
+  "FilePathNew": "New File",
 
   "Extract": "Extract",
   "ExtractFrameCount": "#{0} ({1})", //{0} = icon index, {1} = number of images within that file

@@ -206,8 +206,6 @@ namespace UIconEdit.Maker
         private static void LoadedFileChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             MainWindow m = (MainWindow)d;
-            if (e.OldValue != null)
-                ((IDisposable)e.OldValue).Dispose();
 
             m.SetValue(IsFileLoadedPropertyKey, e.NewValue != null);
             m.SetValue(IsModifiedPropertyKey, false);

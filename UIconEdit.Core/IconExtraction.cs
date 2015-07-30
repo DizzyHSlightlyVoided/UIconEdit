@@ -333,7 +333,7 @@ namespace UIconEdit
             try
             {
                 hModule = Win32Funcs.LoadLibraryEx(path, IntPtr.Zero, Win32Funcs.LOAD_LIBRARY_AS_DATAFILE);
-
+                CancelEventArgs cancelArgs = new CancelEventArgs(false);
                 IconExtractException x = null;
                 ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, int t, IntPtr name, IntPtr l)
                 {
@@ -341,7 +341,11 @@ namespace UIconEdit
                     {
                         if (singleHandler != null)
                             sHandler = e => singleHandler(new IconExtractException(e, curIndex));
-                        callback(curIndex, (TIconFile)_extractSingle(h, t, name, typeCode, sHandler));
+                        callback(curIndex, (TIconFile)_extractSingle(h, t, name, typeCode, sHandler), cancelArgs);
+
+                        if (cancelArgs.Cancel)
+                            return false;
+
                         return true;
                     }
                     catch (Exception e)
@@ -364,7 +368,7 @@ namespace UIconEdit
                     }
                 };
 
-                if (!Win32Funcs.EnumResourceNames(hModule, lpszType, lpEnumFunc, 0))
+                if (!Win32Funcs.EnumResourceNames(hModule, lpszType, lpEnumFunc, 0) && !cancelArgs.Cancel)
                 {
                     if (x == null) throw new Win32Exception();
                     throw x;
@@ -383,7 +387,7 @@ namespace UIconEdit
         {
             LinkedList<TIconFile> allItems = new LinkedList<TIconFile>();
 
-            _forEachIcon<TIconFile>(path, lpszType, typeCode, (curDex, icon) => allItems.AddLast(icon), singleHandler, allHandler);
+            _forEachIcon<TIconFile>(path, lpszType, typeCode, (i, file, e) => allItems.AddLast(file), singleHandler, allHandler);
 
             return allItems.ToArray();
         }
@@ -595,6 +599,7 @@ namespace UIconEdit
     /// <typeparam name="TIconFile">The type of the <see cref="IconFileBase"/> implementation.</typeparam>
     /// <param name="index">The index of the current cursor or icon to process.</param>
     /// <param name="iconFile">The cursor or icon which was extracted.</param>
-    public delegate void IconExtractCallback<TIconFile>(int index, TIconFile iconFile)
+    /// <param name="e">A <see cref="CancelEventArgs"/> object which is used to cancel </param>
+    public delegate void IconExtractCallback<TIconFile>(int index, TIconFile iconFile, CancelEventArgs e)
         where TIconFile : IconFileBase;
 }

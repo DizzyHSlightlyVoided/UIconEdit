@@ -42,13 +42,14 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace UIconEdit
 {
     /// <summary>
     /// Base class for icon and cursor files.
     /// </summary>
-    public abstract class IconFileBase : DependencyObject, ICloneable, IDisposable
+    public abstract class IconFileBase : DispatcherObject, ICloneable
     {
         /// <summary>
         /// Initializes a new instance.
@@ -679,7 +680,7 @@ namespace UIconEdit
             IconFile copy = new IconFile();
             foreach (IconEntry curEntry in _entries)
             {
-                var newEntry = (IconEntry)curEntry.Clone();
+                var newEntry = curEntry.Clone();
                 newEntry.HotspotX = 0;
                 newEntry.HotspotY = 0;
                 copy._entries.Add(newEntry);
@@ -696,7 +697,7 @@ namespace UIconEdit
         {
             CursorFile copy = new CursorFile();
             foreach (IconEntry curEntry in _entries)
-                copy._entries.Add((IconEntry)curEntry.Clone());
+                copy._entries.Add(curEntry.Clone());
             return copy;
         }
 
@@ -977,48 +978,6 @@ namespace UIconEdit
         }
         #endregion
 
-        #region Disposal
-        private bool _isDisposed;
-        /// <summary>
-        /// Gets a value indicating whether the current instance has been disposed.
-        /// Intended to be set in <see cref="Dispose(bool)"/>.
-        /// </summary>
-        public bool IsDisposed
-        {
-            get { return _isDisposed; }
-            protected set { _isDisposed |= value; }
-        }
-
-        /// <summary>
-        /// Releases all managed and unmanaged resources used by the current instance.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.Collect();
-        }
-
-        /// <summary>
-        /// Releases all unmanaged resources used by the current instance, and optionally releases managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_isDisposed) return;
-
-            _entries.Clear();
-            _isDisposed = true;
-        }
-
-        /// <summary>
-        /// Destructor.
-        /// </summary>
-        ~IconFileBase()
-        {
-            Dispose(false);
-        }
-        #endregion
-
         /// <summary>
         /// Represents a list of icon entries. Entries with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and
         /// <see cref="IconEntry.BitDepth"/> cannot be added to the list; however, there may be duplicates if an icon loaded from an
@@ -1171,7 +1130,7 @@ namespace UIconEdit
             public bool Insert(int index, IconEntry item)
             {
                 if (index < 0 || index > _items.Count) throw new ArgumentOutOfRangeException("index");
-                if (_file._isDisposed || _items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item.EntryKey))
+                if (_items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item.EntryKey))
                     return false;
                 item.File = _file;
                 _items.Insert(index, item);
@@ -1190,7 +1149,6 @@ namespace UIconEdit
 
             private bool _setValue(int index, IconEntry value, bool setter)
             {
-                if (_file._isDisposed) return false;
                 if (setter && index == _items.Count)
                     return Add(value);
                 var oldItem = _items[index];

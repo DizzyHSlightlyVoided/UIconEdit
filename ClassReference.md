@@ -2435,3 +2435,4 @@ An I/O error occurred.
 A delegate function to perform on each cursor or icon extracted from a DLL or EXE file.The type of the [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation.
 * `index`: The index of the current cursor or icon to process.
 * `iconFile`: The cursor or icon which was extracted.
+* `e`: A [`CancelEventArgs`](https://msdn.microsoft.com/en-us/library/system.componentmodel.canceleventargs.aspx) object which is used to cancel

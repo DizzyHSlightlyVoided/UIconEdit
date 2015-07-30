@@ -543,21 +543,21 @@ namespace UIconEdit
 
         #region ScalingFilter
         /// <summary>
-        /// The dependency property for the <see cref="ScalingFilter"/> property.
+        /// The dependency property for the <see cref="IconScalingFilter"/> property.
         /// </summary>
-        public static readonly DependencyProperty ScalingFilterProperty = DependencyProperty.Register("ScalingFilter", typeof(ScalingFilter), typeof(IconEntry),
-            new PropertyMetadata(ScalingFilter.Matrix), ScalingFilterValidate);
+        public static readonly DependencyProperty IconScalingFilterProperty = DependencyProperty.Register("ScalingFilter", typeof(IconScalingFilter), typeof(IconEntry),
+            new PropertyMetadata(IconScalingFilter.Matrix), ScalingFilterValidate);
 
         private static bool ScalingFilterValidate(object value)
         {
-            switch ((ScalingFilter)value)
+            switch ((IconScalingFilter)value)
             {
-                case ScalingFilter.Matrix:
-                case ScalingFilter.Bicubic:
-                case ScalingFilter.Bilinear:
-                case ScalingFilter.HighQualityBicubic:
-                case ScalingFilter.HighQualityBilinear:
-                case ScalingFilter.NearestNeighbor:
+                case IconScalingFilter.Matrix:
+                case IconScalingFilter.Bicubic:
+                case IconScalingFilter.Bilinear:
+                case IconScalingFilter.HighQualityBicubic:
+                case IconScalingFilter.HighQualityBilinear:
+                case IconScalingFilter.NearestNeighbor:
                     return true;
                 default:
                     return false;
@@ -568,16 +568,16 @@ namespace UIconEdit
         /// Gets and sets the scaling mode used to resize <see cref="BaseImage"/> and <see cref="AlphaImage"/> when quantizing.
         /// </summary>
         /// <exception cref="InvalidEnumArgumentException">
-        /// In a set operation, the specified value is not a valid <see cref="UIconEdit.ScalingFilter"/> value.
+        /// In a set operation, the specified value is not a valid <see cref="IconScalingFilter"/> value.
         /// </exception>
-        public ScalingFilter ScalingFilter
+        public IconScalingFilter ScalingFilter
         {
-            get { return (ScalingFilter)GetValue(ScalingFilterProperty); }
+            get { return (IconScalingFilter)GetValue(IconScalingFilterProperty); }
             set
             {
                 if (!ScalingFilterValidate(value))
-                    throw new InvalidEnumArgumentException(null, (int)value, typeof(ScalingFilter));
-                SetValue(ScalingFilterProperty, value);
+                    throw new InvalidEnumArgumentException(null, (int)value, typeof(IconScalingFilter));
+                SetValue(IconScalingFilterProperty, value);
             }
         }
         #endregion
@@ -833,7 +833,7 @@ namespace UIconEdit
                 return new WriteableBitmap(BaseImage);
             }
 
-            ScalingFilter scaleMode = ScalingFilter;
+            IconScalingFilter scaleMode = ScalingFilter;
 
             uint[] pixels = _scaleBitmap(scaleMode, BaseImage);
             const uint opaqueAlpha = 0xFF000000u;
@@ -882,7 +882,7 @@ namespace UIconEdit
             {
                 if (alphaImage.PixelWidth != _width || alphaImage.PixelHeight != _height)
                 {
-                    if (scaleMode == ScalingFilter.Matrix)
+                    if (scaleMode == IconScalingFilter.Matrix)
                     {
                         alphaImage = new TransformedBitmap(alphaImage, new ScaleTransform((double)_width / alphaImage.PixelWidth,
                             (double)_height / alphaImage.PixelHeight));
@@ -949,7 +949,7 @@ namespace UIconEdit
             return GetBitmap(_width, _height, pixels);
         }
 
-        private uint[] _scaleBitmap(ScalingFilter scaleMode, BitmapSource image)
+        private uint[] _scaleBitmap(IconScalingFilter scaleMode, BitmapSource image)
         {
             uint[] pixels = new uint[_width * _height];
             FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
@@ -957,7 +957,7 @@ namespace UIconEdit
             {
                 formatBmp.CopyPixels(pixels, _width * sizeof(uint), 0);
             }
-            else if (scaleMode == ScalingFilter.Matrix)
+            else if (scaleMode == IconScalingFilter.Matrix)
             {
                 TransformedBitmap transBmp = new TransformedBitmap(formatBmp, new ScaleTransform((double)_width / formatBmp.PixelWidth,
                     (double)_height / formatBmp.PixelHeight));
@@ -968,7 +968,7 @@ namespace UIconEdit
             return pixels;
         }
 
-        private void _scaleBitmap(ScalingFilter scaleMode, FormatConvertedBitmap image, uint[] pixels)
+        private void _scaleBitmap(IconScalingFilter scaleMode, FormatConvertedBitmap image, uint[] pixels)
         {
             using (DBitmap dBitmap = new DBitmap(image.PixelWidth, image.PixelHeight, DPixelFormat.Format32bppArgb))
             {
@@ -987,19 +987,19 @@ namespace UIconEdit
 
                         switch (scaleMode)
                         {
-                            case ScalingFilter.Bicubic:
+                            case IconScalingFilter.Bicubic:
                                 g.InterpolationMode = InterpolationMode.Bicubic;
                                 break;
-                            case ScalingFilter.Bilinear:
+                            case IconScalingFilter.Bilinear:
                                 g.InterpolationMode = InterpolationMode.Bilinear;
                                 break;
-                            case ScalingFilter.HighQualityBicubic:
+                            case IconScalingFilter.HighQualityBicubic:
                                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                                 break;
-                            case ScalingFilter.HighQualityBilinear:
+                            case IconScalingFilter.HighQualityBilinear:
                                 g.InterpolationMode = InterpolationMode.HighQualityBilinear;
                                 break;
-                            case ScalingFilter.NearestNeighbor:
+                            case IconScalingFilter.NearestNeighbor:
                                 g.InterpolationMode = InterpolationMode.NearestNeighbor;
                                 break;
                         }
@@ -1685,7 +1685,7 @@ namespace UIconEdit
     /// <summary>
     /// Indicates options for resizing <see cref="IconEntry.BaseImage"/> and <see cref="IconEntry.AlphaImage"/> when quantizing.
     /// </summary>
-    public enum ScalingFilter
+    public enum IconScalingFilter
     {
         /// <summary>
         /// Resizes using a transformation matrix.

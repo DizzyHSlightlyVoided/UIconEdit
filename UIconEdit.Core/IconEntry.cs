@@ -51,7 +51,7 @@ namespace UIconEdit
     /// <summary>
     /// Represents a single entry in an icon.
     /// </summary>
-    public class IconEntry : INotifyPropertyChanged, IDisposable
+    public class IconEntry : DependencyObject, IDisposable
     {
         /// <summary>
         /// The default <see cref="AlphaThreshold"/> value.
@@ -113,8 +113,8 @@ namespace UIconEdit
             _depth = bitDepth;
             _width = width;
             _height = height;
-            _baseImage = baseImage;
-            _alphaThreshold = alphaThreshold;
+            BaseImage = baseImage;
+            AlphaThreshold = alphaThreshold;
             HotspotX = hotspotX;
             HotspotY = hotspotY;
         }
@@ -215,11 +215,11 @@ namespace UIconEdit
                 throw new ArgumentException("The image size is out of the supported range.", "baseImage");
             if (!_validateBitDepth(bitDepth))
                 throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
-            _baseImage = baseImage;
+            BaseImage = baseImage;
             _depth = bitDepth;
             _width = (short)baseImage.PixelWidth;
             _height = (short)baseImage.PixelHeight;
-            _alphaThreshold = alphaThreshold;
+            AlphaThreshold = alphaThreshold;
             HotspotX = hotspotX;
             HotspotY = hotspotY;
         }
@@ -290,14 +290,14 @@ namespace UIconEdit
 
         internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth, int hotspotX, int hotspotY)
         {
-            _baseImage = baseImage;
-            _alphaImage = alphaImage;
+            BaseImage = baseImage;
+            AlphaImage = alphaImage;
             _depth = bitDepth;
             _width = baseImage.PixelWidth;
             _height = baseImage.PixelHeight;
             HotspotX = hotspotX;
             HotspotY = hotspotY;
-            _isQuantized = true;
+            SetValue(IsQuantizedPropertyKey, true);
         }
 
         internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth)
@@ -329,19 +329,42 @@ namespace UIconEdit
         internal static readonly BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.White, Colors.Black });
 
         #region IsQuantized
-        private bool _isQuantized;
+        private static readonly DependencyPropertyKey IsQuantizedPropertyKey = DependencyProperty.RegisterReadOnly("IsQuantized", typeof(bool), typeof(IconEntry),
+            new PropertyMetadata(false));
+        /// <summary>
+        /// The dependency property for the read-only <see cref="IsQuantized"/> property.
+        /// </summary>
+        public static readonly DependencyProperty IsQuantizedProperty = IsQuantizedPropertyKey.DependencyProperty;
+
         /// <summary>
         /// Gets a value indicating whether <see cref="BaseImage"/> and <see cref="AlphaImage"/> are known to be already quantized.
         /// </summary>
-        public bool IsQuantized
-        {
-            get { return _isQuantized; }
-            private set { _changeValue(value, ref _isQuantized, "IsQuantized"); }
-        }
+        public bool IsQuantized { get { return (bool)GetValue(IsQuantizedProperty); } }
         #endregion
 
         #region BaseImage
-        private BitmapSource _baseImage;
+        /// <summary>
+        /// The dependency property for the <see cref="BaseImage"/> property.
+        /// </summary>
+        public static readonly DependencyProperty BaseImageProperty = DependencyProperty.Register("BaseImage", typeof(BitmapSource), typeof(IconEntry),
+            new PropertyMetadata(new WriteableBitmap(1, 1, 0, 0, PixelFormats.Indexed1, AlphaPalette), BaseImageChanged, BaseImageCoerce), BaseImageValidate);
+
+        private static object BaseImageCoerce(DependencyObject d, object baseValue)
+        {
+            if (((IconEntry)d)._isDisposed) throw new ObjectDisposedException(null);
+            return baseValue;
+        }
+
+        private static void BaseImageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            d.SetValue(IsQuantizedPropertyKey, false);
+        }
+
+        private static bool BaseImageValidate(object value)
+        {
+            return value != null;
+        }
+
         /// <summary>
         /// Gets and sets the image associated with the current instance.
         /// </summary>
@@ -351,44 +374,44 @@ namespace UIconEdit
         /// <exception cref="ArgumentNullException">
         /// In a set operation, the specified value is <c>null</c>.
         /// </exception>
-        [Bindable(true, BindingDirection.TwoWay)]
         public BitmapSource BaseImage
         {
             get
             {
                 if (_isDisposed) throw new ObjectDisposedException(null);
-                return _baseImage;
+                return (BitmapSource)GetValue(BaseImageProperty);
             }
             set
             {
+                if (_isDisposed) throw new ObjectDisposedException(null);
                 if (value == null) throw new ArgumentNullException();
-                _changeObject(value, ref _baseImage, "BaseImage");
-                IsQuantized = false;
+                SetValue(BaseImageProperty, value);
             }
         }
         #endregion
 
         #region AlphaImage
-        private BitmapSource _alphaImage;
+        /// <summary>
+        /// The dependency property for the <see cref="AlphaImage"/> property.
+        /// </summary>
+        public static readonly DependencyProperty AlphaImageProperty = DependencyProperty.Register("AlphaImage", typeof(BitmapSource), typeof(IconEntry),
+            new PropertyMetadata(null, BaseImageChanged, BaseImageCoerce));
+
         /// <summary>
         /// Gets and sets an image to be used as the alpha mask, or <c>null</c> to derive the alpha mask from <see cref="BaseImage"/>.
         /// Black pixels are transparent; white pixels are opaque.
         /// </summary>
-        /// <exception cref="ObjectDisposedException">
-        /// The current instance is disposed.
-        /// </exception>
-        [Bindable(true, BindingDirection.TwoWay)]
         public BitmapSource AlphaImage
         {
             get
             {
                 if (_isDisposed) throw new ObjectDisposedException(null);
-                return _alphaImage;
+                return (BitmapSource)GetValue(AlphaImageProperty);
             }
             set
             {
-                _changeObject(value, ref _alphaImage, "AlphaImage");
-                IsQuantized = false;
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                SetValue(AlphaImageProperty, value);
             }
         }
         #endregion
@@ -402,8 +425,8 @@ namespace UIconEdit
             get
             {
                 if (_depth == IconBitDepth.Depth32BitsPerPixel)
-                    return _width > MaxBmp32 || _height > MaxBmp32;
-                return _width > MaxBmp || _height > MaxBmp;
+                    return _width > 96 || _height > 96;
+                return _width > MaxBmp32 || _height > MaxBmp32;
             }
         }
 
@@ -413,7 +436,6 @@ namespace UIconEdit
         [Bindable(true, BindingDirection.OneWay)]
         public IconEntryKey EntryKey { get { return new IconEntryKey(_width, _height, _depth); } }
 
-        #region Width
         private readonly int _width;
         /// <summary>
         /// Gets the resampled width of the icon.
@@ -423,9 +445,7 @@ namespace UIconEdit
         {
             get { return _width; }
         }
-        #endregion
 
-        #region Height
         private readonly int _height;
         /// <summary>
         /// Gets the resampled height of the icon.
@@ -435,7 +455,6 @@ namespace UIconEdit
         {
             get { return _height; }
         }
-        #endregion
 
         #region BitDepth
         private readonly IconBitDepth _depth;
@@ -450,99 +469,115 @@ namespace UIconEdit
         #endregion
 
         #region AlphaThreshold
-        private byte _alphaThreshold;
+        /// <summary>
+        /// The dependency property for the <see cref="AlphaThreshold"/> property.
+        /// </summary>
+        public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register("AlphaThreshold", typeof(byte), typeof(BitmapImage));
+
         /// <summary>
         /// Gets and sets a value indicating the threshold of alpha values at <see cref="BitDepth"/>s below <see cref="IconBitDepth.Depth32BitsPerPixel"/>.
         /// Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
         /// </summary>
-        /// <exception cref="ObjectDisposedException">
-        /// In a set operation, the current instance is disposed.
-        /// </exception>
-        [Bindable(true, BindingDirection.TwoWay)]
         public byte AlphaThreshold
         {
-            get { return _alphaThreshold; }
-            set { _changeValue(value, ref _alphaThreshold, "AlphaThreshold"); }
+            get { return (byte)GetValue(AlphaThresholdProperty); }
+            set { SetValue(AlphaThresholdProperty, value); }
         }
         #endregion
 
-        private int _clamp(int dimension, int value)
+        #region HotspotX
+        /// <summary>
+        /// The dependency property for the <see cref="HotspotX"/> property.
+        /// </summary>
+        public static readonly DependencyProperty HotspotXProperty = DependencyProperty.Register("HotspotX", typeof(int), typeof(IconEntry),
+            new PropertyMetadata(0, null, HotspotXCoerce));
+
+        private static object HotspotXCoerce(DependencyObject d, object baseValue)
         {
-            if (value < 0) return 0;
-            if (value > dimension) return dimension;
-            return value;
+            IconEntry i = (IconEntry)d;
+
+            int value = (int)baseValue;
+            if (value > i._width) return (int)i._width;
+
+            return baseValue;
         }
 
-        #region HotspotX
-        private int _hotspotX;
         /// <summary>
         /// In a cursor, gets the horizontal offset in pixels of the cursor's hotspot from the left side.
         /// Constrained to greater than or equal to 0 and less than or equal to <see cref="Width"/>.
         /// </summary>
-        /// <exception cref="ObjectDisposedException">
-        /// In a set operation, the current instance is disposed.
-        /// </exception>
-        [Bindable(true, BindingDirection.TwoWay)]
         public int HotspotX
         {
-            get { return _hotspotX; }
-            set { _changeValue(_clamp(_width, value), ref _hotspotX, "HotspotX"); }
+            get { return (int)GetValue(HotspotXProperty); }
+            set { SetValue(HotspotXProperty, value); }
         }
         #endregion
 
         #region HotspotY
-        private int _hotspotY;
+        /// <summary>
+        /// The dependency property for the <see cref="HotspotY"/> property.
+        /// </summary>
+        public static readonly DependencyProperty HotspotYProperty = DependencyProperty.Register("HotspotY", typeof(int), typeof(IconEntry),
+            new PropertyMetadata(0, null, HotspotYCoerce));
+
+        private static object HotspotYCoerce(DependencyObject d, object baseValue)
+        {
+            IconEntry e = (IconEntry)d;
+
+            int value = (int)baseValue;
+            if (value > e._height) return (int)e._height;
+
+            return baseValue;
+        }
+
         /// <summary>
         /// In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the top side.
         /// Constrained to greater than or equal to 0 and less than or equal to <see cref="Height"/>.
         /// </summary>
-        /// <exception cref="ObjectDisposedException">
-        /// In a set operation, the current instance is disposed.
-        /// </exception>
-        [Bindable(true, BindingDirection.TwoWay)]
         public int HotspotY
         {
-            get { return _hotspotY; }
-            set { _changeValue(_clamp(_height, value), ref _hotspotY, "HotspotY"); }
+            get { return (int)GetValue(HotspotYProperty); }
+            set { SetValue(HotspotYProperty, value); }
         }
         #endregion
 
         #region ScalingFilter
-        private static bool ScalingFilterValidate(IconScalingFilter value)
+        /// <summary>
+        /// The dependency property for the <see cref="ScalingFilter"/> property.
+        /// </summary>
+        public static readonly DependencyProperty ScalingFilterProperty = DependencyProperty.Register("ScalingFilter", typeof(ScalingFilter), typeof(IconEntry),
+            new PropertyMetadata(ScalingFilter.Matrix), ScalingFilterValidate);
+
+        private static bool ScalingFilterValidate(object value)
         {
-            switch (value)
+            switch ((ScalingFilter)value)
             {
-                case IconScalingFilter.Matrix:
-                case IconScalingFilter.Bicubic:
-                case IconScalingFilter.Bilinear:
-                case IconScalingFilter.HighQualityBicubic:
-                case IconScalingFilter.HighQualityBilinear:
-                case IconScalingFilter.NearestNeighbor:
+                case ScalingFilter.Matrix:
+                case ScalingFilter.Bicubic:
+                case ScalingFilter.Bilinear:
+                case ScalingFilter.HighQualityBicubic:
+                case ScalingFilter.HighQualityBilinear:
+                case ScalingFilter.NearestNeighbor:
                     return true;
                 default:
                     return false;
             }
         }
 
-        private IconScalingFilter _scaleFilter;
         /// <summary>
         /// Gets and sets the scaling mode used to resize <see cref="BaseImage"/> and <see cref="AlphaImage"/> when quantizing.
         /// </summary>
-        /// <exception cref="ObjectDisposedException">
-        /// In a set operation, the current instance is disposed.
-        /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
-        /// In a set operation, the specified value is not a valid <see cref="IconScalingFilter"/> value.
+        /// In a set operation, the specified value is not a valid <see cref="UIconEdit.ScalingFilter"/> value.
         /// </exception>
-        [Bindable(true, BindingDirection.TwoWay)]
-        public IconScalingFilter ScalingFilter
+        public ScalingFilter ScalingFilter
         {
-            get { return _scaleFilter; }
+            get { return (ScalingFilter)GetValue(ScalingFilterProperty); }
             set
             {
                 if (!ScalingFilterValidate(value))
-                    throw new InvalidEnumArgumentException(null, (int)value, typeof(IconScalingFilter));
-                _changeValue(value, ref _scaleFilter, "ScalingFilter");
+                    throw new InvalidEnumArgumentException(null, (int)value, typeof(ScalingFilter));
+                SetValue(ScalingFilterProperty, value);
             }
         }
         #endregion
@@ -700,21 +735,33 @@ namespace UIconEdit
 
         internal IconFileBase File;
 
+        private static readonly Dictionary<string, DependencyPropertyKey> propertyKeys =
+            typeof(IconEntry).GetFields(BindingFlags.Static | BindingFlags.NonPublic).Where(i => i.FieldType == typeof(DependencyPropertyKey))
+            .ToDictionary(k => k.Name, v => (DependencyPropertyKey)v.GetValue(null));
+
         /// <summary>
         /// Returns a duplicate of the current instance.
         /// </summary>
         /// <returns>A duplicate of the current instance, with its own clone of <see cref="BaseImage"/>.</returns>
-        /// <exception cref="ObjectDisposedException">
-        /// The current instance is dipsosed.
-        /// </exception>
         public IconEntry Clone()
         {
-            if (_isDisposed) throw new ObjectDisposedException(null);
             IconEntry copy = (IconEntry)MemberwiseClone();
 
-            copy._baseImage = _baseImage.Clone();
-            if (_alphaImage != null) copy._alphaImage = _alphaImage.Clone();
-            copy.PropertyChanged = null;
+            LocalValueEnumerator enumerator = GetLocalValueEnumerator();
+            while (enumerator.MoveNext())
+            {
+                LocalValueEntry curEntry = enumerator.Current;
+
+                object value = curEntry.Value;
+                ICloneable cloneable = value as ICloneable;
+                if (cloneable != null) value = cloneable.Clone();
+
+                DependencyPropertyKey key;
+                if (propertyKeys.TryGetValue(curEntry.Property.Name + "PropertyKey", out key))
+                    copy.SetValue(key, value);
+                else
+                    copy.SetValue(curEntry.Property, value);
+            }
 
             copy.File = null;
             return copy;
@@ -742,7 +789,7 @@ namespace UIconEdit
             BitmapSource alphaMask, baseImage = GetQuantized(isPng, out alphaMask);
             BaseImage = baseImage;
             AlphaImage = alphaMask;
-            IsQuantized = true;
+            SetValue(IsQuantizedPropertyKey, true);
         }
 
         /// <summary>
@@ -786,7 +833,7 @@ namespace UIconEdit
                 return new WriteableBitmap(BaseImage);
             }
 
-            IconScalingFilter scaleMode = ScalingFilter;
+            ScalingFilter scaleMode = ScalingFilter;
 
             uint[] pixels = _scaleBitmap(scaleMode, BaseImage);
             const uint opaqueAlpha = 0xFF000000u;
@@ -835,7 +882,7 @@ namespace UIconEdit
             {
                 if (alphaImage.PixelWidth != _width || alphaImage.PixelHeight != _height)
                 {
-                    if (scaleMode == IconScalingFilter.Matrix)
+                    if (scaleMode == ScalingFilter.Matrix)
                     {
                         alphaImage = new TransformedBitmap(alphaImage, new ScaleTransform((double)_width / alphaImage.PixelWidth,
                             (double)_height / alphaImage.PixelHeight));
@@ -902,7 +949,7 @@ namespace UIconEdit
             return GetBitmap(_width, _height, pixels);
         }
 
-        private uint[] _scaleBitmap(IconScalingFilter scaleMode, BitmapSource image)
+        private uint[] _scaleBitmap(ScalingFilter scaleMode, BitmapSource image)
         {
             uint[] pixels = new uint[_width * _height];
             FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
@@ -910,7 +957,7 @@ namespace UIconEdit
             {
                 formatBmp.CopyPixels(pixels, _width * sizeof(uint), 0);
             }
-            else if (scaleMode == IconScalingFilter.Matrix)
+            else if (scaleMode == ScalingFilter.Matrix)
             {
                 TransformedBitmap transBmp = new TransformedBitmap(formatBmp, new ScaleTransform((double)_width / formatBmp.PixelWidth,
                     (double)_height / formatBmp.PixelHeight));
@@ -921,7 +968,7 @@ namespace UIconEdit
             return pixels;
         }
 
-        private void _scaleBitmap(IconScalingFilter scaleMode, FormatConvertedBitmap image, uint[] pixels)
+        private void _scaleBitmap(ScalingFilter scaleMode, FormatConvertedBitmap image, uint[] pixels)
         {
             using (DBitmap dBitmap = new DBitmap(image.PixelWidth, image.PixelHeight, DPixelFormat.Format32bppArgb))
             {
@@ -940,19 +987,19 @@ namespace UIconEdit
 
                         switch (scaleMode)
                         {
-                            case IconScalingFilter.Bicubic:
+                            case ScalingFilter.Bicubic:
                                 g.InterpolationMode = InterpolationMode.Bicubic;
                                 break;
-                            case IconScalingFilter.Bilinear:
+                            case ScalingFilter.Bilinear:
                                 g.InterpolationMode = InterpolationMode.Bilinear;
                                 break;
-                            case IconScalingFilter.HighQualityBicubic:
+                            case ScalingFilter.HighQualityBicubic:
                                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                                 break;
-                            case IconScalingFilter.HighQualityBilinear:
+                            case ScalingFilter.HighQualityBilinear:
                                 g.InterpolationMode = InterpolationMode.HighQualityBilinear;
                                 break;
-                            case IconScalingFilter.NearestNeighbor:
+                            case ScalingFilter.NearestNeighbor:
                                 g.InterpolationMode = InterpolationMode.NearestNeighbor;
                                 break;
                         }
@@ -1114,36 +1161,6 @@ namespace UIconEdit
             return string.Format("{0}, BaseImage:{1}", EntryKey, BaseImage);
         }
 
-        /// <summary>
-        /// Called when a property on the current instance changes.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void _onPropertyChanged(bool changed, string propertyName)
-        {
-            if (changed && PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void _changeObject<T>(T value, ref T curValue, string propertyName)
-            where T : class
-        {
-            if (_isDisposed) throw new ObjectDisposedException(null);
-            object oldValue = curValue;
-            curValue = value;
-
-            _onPropertyChanged(!ReferenceEquals(oldValue, value) && (value == null || oldValue == null || !value.Equals(oldValue)), propertyName);
-        }
-
-        private void _changeValue<T>(T value, ref T curValue, string propertyName)
-            where T : struct
-        {
-            if (_isDisposed) throw new ObjectDisposedException(null);
-            T oldValue = curValue;
-            curValue = value;
-            _onPropertyChanged(value.Equals(oldValue), propertyName);
-        }
-
         #region Disposal
         private bool _isDisposed;
         /// <summary>
@@ -1153,7 +1170,7 @@ namespace UIconEdit
         public bool IsDisposed
         {
             get { return _isDisposed; }
-            protected set { _changeValue(value | _isDisposed, ref _isDisposed, "IsDisposed"); }
+            protected set { _isDisposed |= value; }
         }
 
         /// <summary>
@@ -1171,9 +1188,18 @@ namespace UIconEdit
         public virtual void Dispose(bool disposing)
         {
             if (_isDisposed) return;
-            _changeObject(null, ref _baseImage, "BaseImage");
-            AlphaImage = null;
-            _isDisposed = true;
+            try
+            {
+                SetValue(BaseImageProperty, BaseImageProperty.DefaultMetadata.DefaultValue);
+                SetValue(AlphaImageProperty, null);
+            }
+            catch (Exception) //Should only happen if you dispose in the wrong thread
+            {
+            }
+            finally
+            {
+                _isDisposed = true;
+            }
         }
 
         /// <summary>
@@ -1477,7 +1503,7 @@ namespace UIconEdit
         /// Returns an invalid <see cref="IconEntryKey"/> with all values equal to 0.
         /// </summary>
         public static readonly IconEntry Empty;
-
+        
         internal bool IsValid { get { return Width >= IconEntry.MinDimension && Height >= IconEntry.MinDimension && _isValid(BitDepth); } }
 
         /// <summary>
@@ -1659,7 +1685,7 @@ namespace UIconEdit
     /// <summary>
     /// Indicates options for resizing <see cref="IconEntry.BaseImage"/> and <see cref="IconEntry.AlphaImage"/> when quantizing.
     /// </summary>
-    public enum IconScalingFilter
+    public enum ScalingFilter
     {
         /// <summary>
         /// Resizes using a transformation matrix.

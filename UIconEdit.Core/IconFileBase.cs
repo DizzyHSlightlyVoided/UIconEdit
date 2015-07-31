@@ -597,11 +597,7 @@ namespace UIconEdit
             {
                 IntPtr ptr = Marshal.AllocHGlobal(Size);
                 Marshal.Copy(buffer, 0, ptr, Size);
-#if MARSHALTYPE
-                this = Marshal.PtrToStructure<IconDirEntry>(ptr);
-#else
                 this = (IconDirEntry)Marshal.PtrToStructure(ptr, typeof(IconDirEntry));
-#endif
                 Marshal.FreeHGlobal(ptr);
             }
 

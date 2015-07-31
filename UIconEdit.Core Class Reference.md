@@ -233,22 +233,6 @@ The specified path is invalid.
 An I/O error occurred.
 
 --------------------------------------------------
-## Property: `public System.Boolean IsDisposed { get; }`
-
-Gets a value indicating whether the current instance has been disposed. Intended to be set in [`IconFileBase.Dispose(System.Boolean)`](#method-protected-virtual-void-disposesystemboolean-disposing).
-
---------------------------------------------------
-## Method: `public virtual void Dispose()`
-
-Releases all managed and unmanaged resources used by the current instance.
-
---------------------------------------------------
-## Method: `protected virtual void Dispose(System.Boolean disposing)`
-
-Releases all unmanaged resources used by the current instance, and optionally releases managed resources.
-* `disposing`: `true` to release both managed and unmanaged resources; `false` to release only unmanaged resources.
-
---------------------------------------------------
 # Type: `class UIconEdit.IconFileBase.EntryList`
 
 Represents a list of icon entries. Entries with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) cannot be added to the list; however, there may be duplicates if an icon loaded from an external icon file contained them.

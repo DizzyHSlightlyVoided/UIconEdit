@@ -12,6 +12,12 @@
     </Window.Resources>
     <DockPanel>
         <ToolBar DockPanel.Dock="Top" Height="Auto">
+            <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.AlphaThreshold, ElementName=window,FallbackValue='Alpha Threshold:'}"
+                       VerticalAlignment="Center"/>
+            <Border VerticalAlignment="Center" Margin="5,0,0,0">
+                <TextBox Width="65" Text="{Binding Owner.AlphaThreshold, ElementName=window}" VerticalAlignment="Center"/>
+            </Border>
+            <Separator/>
             <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.ScalingFilter, ElementName=window, FallbackValue='Scaling filter:'}"
                        VerticalAlignment="Center" IsEnabled="{Binding Owner.DifferentSize, ElementName=window}"/>
             <Border Margin="5,0,0,0" VerticalAlignment="Center">

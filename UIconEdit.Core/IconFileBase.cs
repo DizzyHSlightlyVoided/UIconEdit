@@ -261,14 +261,37 @@ namespace UIconEdit
                     {
                         long gapLength = entry.ImageOffset - offset;
                         byte[] curBuffer = new byte[bufferSize];
+
                         while (gapLength > 0)
-                            gapLength -= input.Read(curBuffer, 0, (int)Math.Min(gapLength, bufferSize));
+                        {
+                            int read = input.Read(curBuffer, 0, (int)Math.Min(gapLength, bufferSize));
+                            if (read == 0)
+                                throw new EndOfStreamException();
+                            gapLength -= read;
+                        }
 
                         WriteableBitmap loadedImage, alphaMask;
 
                         int dibSize = reader.ReadInt32();
 
-                        IconBitDepth bitDepth;
+                        IconBitDepth? bitDepth = null;
+
+                        if (loadedId != IconTypeCode.Cursor)
+                        {
+                            switch (entry.YBitsPerpixel)
+                            {
+                                case 1:
+                                case 4:
+                                case 8:
+                                case 24:
+                                case 32:
+                                    bitDepth = IconEntry.GetBitDepth(entry.YBitsPerpixel);
+                                    break;
+                                default:
+                                    bitDepth = null;
+                                    break;
+                            }
+                        }
 
                         const int pngLittleEndian = 0x474e5089; //"\u0089PNG"  in little-endian order.
                         if (dibSize == pngLittleEndian)
@@ -307,8 +330,11 @@ namespace UIconEdit
                                 case 4:
                                 case 8:
                                 case 24:
-                                case 32:
                                     bitDepth = IconEntry.GetBitDepth(frame.Format.BitsPerPixel);
+                                    break;
+                                case 32:
+                                    if (!bitDepth.HasValue)
+                                        bitDepth = IconEntry.GetBitDepth(frame.Format.BitsPerPixel);
                                     break;
                                 default:
                                     throw new IconLoadException(IconErrorCode.InvalidBitDepth, loadedId, frame.Format.BitsPerPixel, curKVP.Key);
@@ -401,7 +427,7 @@ namespace UIconEdit
 
                                 int palCount = reader.ReadInt32();
                                 if (palCount == 0 && bitDepth != IconBitDepth.Depth32BitsPerPixel && bitDepth != IconBitDepth.Depth24BitsPerPixel)
-                                    palCount = (int)IconEntry.GetColorCount(bitDepth);
+                                    palCount = (int)IconEntry.GetColorCount(bitDepth.Value);
 
                                 reader.ReadInt32(); //Skip next 4 bytes
 
@@ -532,9 +558,9 @@ namespace UIconEdit
                         IconEntry resultEntry;
 
                         if (loadedId == IconTypeCode.Cursor)
-                            resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth, entry.XPlanes, entry.YBitsPerpixel);
+                            resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth.Value, entry.XPlanes, entry.YBitsPerpixel);
                         else
-                            resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth);
+                            resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth.Value);
 
                         entries.Add(resultEntry);
                     }

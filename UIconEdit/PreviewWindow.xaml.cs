@@ -44,7 +44,7 @@ namespace UIconEdit.Maker
         public PreviewWindow(AddWindow owner)
         {
             Owner = owner;
-            SourceImage = owner.GetIconEntry().CombineAlpha();
+            SourceImage = owner.GetIconEntry().GetCombinedAlpha();
             InitializeComponent();
         }
 
@@ -113,7 +113,7 @@ namespace UIconEdit.Maker
         private void cmbFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            SourceImage = ((AddWindow)Owner).GetIconEntry().CombineAlpha();
+            SourceImage = ((AddWindow)Owner).GetIconEntry().GetCombinedAlpha();
             Mouse.OverrideCursor = null;
         }
     }

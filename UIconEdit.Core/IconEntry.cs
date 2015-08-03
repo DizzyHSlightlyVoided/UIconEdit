@@ -109,9 +109,9 @@ namespace UIconEdit
         {
             if (baseImage == null) throw new ArgumentNullException("baseImage");
             _initValues(width, height, bitDepth);
-            SetValue(WidthPropertyKey, width);
-            SetValue(HeightPropertyKey, height);
-            SetValue(BitDepthPropertyKey, bitDepth);
+            _width = width;
+            _height = height;
+            _depth = bitDepth;
             BaseImage = baseImage;
             AlphaThreshold = alphaThreshold;
             HotspotX = hotspotX;
@@ -216,9 +216,9 @@ namespace UIconEdit
                 throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
             BaseImage = baseImage;
 
-            SetValue(WidthPropertyKey, baseImage.PixelWidth);
-            SetValue(HeightPropertyKey, baseImage.PixelHeight);
-            SetValue(BitDepthPropertyKey, bitDepth);
+            _width = baseImage.PixelWidth;
+            _height = baseImage.PixelHeight;
+            _depth = bitDepth;
             AlphaThreshold = alphaThreshold;
             HotspotX = hotspotX;
             HotspotY = hotspotY;
@@ -292,9 +292,9 @@ namespace UIconEdit
         {
             BaseImage = baseImage;
             AlphaImage = alphaImage;
-            SetValue(WidthPropertyKey, baseImage.PixelWidth);
-            SetValue(HeightPropertyKey, baseImage.PixelHeight);
-            SetValue(BitDepthPropertyKey, bitDepth);
+            _width = baseImage.PixelWidth;
+            _height = baseImage.PixelHeight;
+            _depth = bitDepth;
             HotspotX = hotspotX;
             HotspotY = hotspotY;
             SetValue(IsQuantizedPropertyKey, true);
@@ -318,9 +318,9 @@ namespace UIconEdit
 
         private void _copy(IconEntry sourceEntry)
         {
-            SetValue(WidthPropertyKey, sourceEntry.Width);
-            SetValue(HeightPropertyKey, sourceEntry.Height);
-            SetValue(BitDepthPropertyKey, sourceEntry.BitDepth);
+            _width = sourceEntry._width;
+            _height = sourceEntry._height;
+            _depth = sourceEntry._depth;
             SetValue(IsQuantizedPropertyKey, sourceEntry.IsQuantized);
         }
 
@@ -362,6 +362,51 @@ namespace UIconEdit
         {
             _copy((IconEntry)sourceFreezable);
             base.GetCurrentValueAsFrozenCore(sourceFreezable);
+        }
+
+        /// <summary>
+        /// Returns a modifiable copy of the current instance.
+        /// When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
+        /// </summary>
+        /// <returns>A modifiable copy of the current instance.</returns>
+        /// <seealso cref="Freezable"/>
+        /// <seealso cref="Freezable.Clone()"/>
+        public new IconEntry Clone()
+        {
+            return (IconEntry)base.Clone();
+        }
+
+        /// <summary>
+        /// Returns a modifiable copy of the current instance using its curent values.
+        /// </summary>
+        /// <returns>A modifiable copy of the current instance.</returns>
+        /// <seealso cref="Freezable"/>
+        /// <seealso cref="Freezable.CloneCurrentValue()"/>
+        public new IconEntry CloneCurrentValue()
+        {
+            return (IconEntry)base.CloneCurrentValue();
+        }
+
+        /// <summary>
+        /// Creates a frozen copy of the current instance, using base (non-animated) property values.
+        /// </summary>
+        /// <returns>A frozen copy of the current instance.</returns>
+        /// <seealso cref="Freezable"/>
+        /// <seealso cref="Freezable.GetAsFrozen()"/>
+        public new IconEntry GetAsFrozen()
+        {
+            return (IconEntry)base.GetAsFrozen();
+        }
+
+        /// <summary>
+        /// Creates a frozen copy of the current instance, using current property values.
+        /// </summary>
+        /// <returns>A frozen copy of the current instance.</returns>
+        /// <seealso cref="Freezable"/>
+        /// <seealso cref="Freezable.GetCurrentValueAsFrozen()"/>
+        public new IconEntry GetCurrentValueAsFrozen()
+        {
+            return (IconEntry)base.GetCurrentValueAsFrozen();
         }
         #endregion
 
@@ -462,9 +507,9 @@ namespace UIconEdit
         {
             get
             {
-                if (BitDepth == IconBitDepth.Depth32BitsPerPixel)
-                    return Width > MaxBmp32 || Height > MaxBmp32;
-                return Width > MaxBmp || Height > MaxBmp;
+                if (_depth == IconBitDepth.Depth32BitsPerPixel)
+                    return _width > MaxBmp32 || _height > MaxBmp32;
+                return _width > MaxBmp || _height > MaxBmp;
             }
         }
 
@@ -472,56 +517,41 @@ namespace UIconEdit
         /// Gets a key for the icon entry.
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
-        public IconEntryKey EntryKey { get { return new IconEntryKey(Width, Height, BitDepth); } }
+        public IconEntryKey EntryKey { get { return new IconEntryKey(_width, _height, _depth); } }
 
         #region Width
-        private static readonly DependencyPropertyKey WidthPropertyKey = DependencyProperty.RegisterReadOnly("Width", typeof(int), typeof(IconEntry),
-            new PropertyMetadata());
-        /// <summary>
-        /// The dependency property for the read-only <see cref="Width"/> property.
-        /// </summary>
-        public static readonly DependencyProperty WidthProperty = WidthPropertyKey.DependencyProperty;
+        private int _width;
         /// <summary>
         /// Gets the resampled width of the icon.
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public int Width
         {
-            get { return (int)GetValue(WidthProperty); }
+            get { return _width; }
         }
         #endregion
 
         #region Height
-        private static readonly DependencyPropertyKey HeightPropertyKey = DependencyProperty.RegisterReadOnly("Height", typeof(int), typeof(IconEntry),
-            new PropertyMetadata());
-        /// <summary>
-        /// The dependency property for the read-only <see cref="Height"/> property.
-        /// </summary>
-        public static readonly DependencyProperty HeightProperty = HeightPropertyKey.DependencyProperty;
+        private int _height;
         /// <summary>
         /// Gets the resampled height of the icon.
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public int Height
         {
-            get { return (int)GetValue(HeightProperty); }
+            get { return _height; }
         }
         #endregion
 
         #region BitDepth
-        private static readonly DependencyPropertyKey BitDepthPropertyKey = DependencyProperty.RegisterReadOnly("BitDepth", typeof(IconBitDepth), typeof(IconEntry),
-            new PropertyMetadata());
-        /// <summary>
-        /// The dependency property for the read-only <see cref="BitDepth"/> property.
-        /// </summary>
-        public static readonly DependencyProperty BitDepthProperty = BitDepthPropertyKey.DependencyProperty;
+        private IconBitDepth _depth;
         /// <summary>
         /// Gets the bit depth of the current instance.
         /// </summary>
         [Bindable(true, BindingDirection.OneWay)]
         public IconBitDepth BitDepth
         {
-            get { return (IconBitDepth)GetValue(BitDepthProperty); }
+            get { return _depth; }
         }
         #endregion
 
@@ -554,9 +584,10 @@ namespace UIconEdit
             IconEntry i = (IconEntry)d;
 
             int value = (int)baseValue;
-            if (value > i.Width) return i.Width;
+            if (value < 0) return 0;
+            if (value > i._width) return i._width;
 
-            return baseValue;
+            return value;
         }
 
         /// <summary>
@@ -582,9 +613,10 @@ namespace UIconEdit
             IconEntry e = (IconEntry)d;
 
             int value = (int)baseValue;
-            if (value > e.Height) return e.Height;
+            if (value < 0) return 0;
+            if (value > e._height) return e._height;
 
-            return baseValue;
+            return value;
         }
 
         /// <summary>
@@ -645,7 +677,7 @@ namespace UIconEdit
         [Bindable(true, BindingDirection.OneWay)]
         public int BitsPerPixel
         {
-            get { return GetBitsPerPixel(BitDepth); }
+            get { return GetBitsPerPixel(_depth); }
         }
 
         /// <summary>
@@ -683,7 +715,7 @@ namespace UIconEdit
         [Bindable(true, BindingDirection.OneWay)]
         public long ColorCount
         {
-            get { return GetColorCount(BitDepth); }
+            get { return GetColorCount(_depth); }
         }
 
         /// <summary>
@@ -778,73 +810,18 @@ namespace UIconEdit
             }
         }
 
+        internal IconFileBase File;
+
         /// <summary>
         /// Applies <see cref="AlphaImage"/> to <see cref="BaseImage"/>.
         /// </summary>
         /// <returns>A new <see cref="BitmapSource"/>, sized according to <see cref="Width"/> and <see cref="Height"/>, consisting of
-        /// <see cref="AlphaImage"/> applied to <see cref="BaseImage"/> and with pixel format <see cref="PixelFormats.Bgra32"/></returns>
-        public BitmapSource CombineAlpha()
+        /// <see cref="AlphaImage"/> applied to <see cref="BaseImage"/> and with a 32-bit pixel format.</returns>
+        public BitmapSource GetCombinedAlpha()
         {
             BitmapSource alphaMask;
 
             return GetQuantized(true, IconBitDepth.Depth32BitsPerPixel, out alphaMask);
-        }
-
-        internal IconFileBase File;
-
-        /// <summary>
-        /// Returns a modifiable copy of the current instance.
-        /// When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
-        /// </summary>
-        /// <returns>A modifiable copy of the current instance.</returns>
-        /// <seealso cref="Freezable"/>
-        /// <seealso cref="Freezable.Clone()"/>
-        public new IconEntry Clone()
-        {
-            return (IconEntry)base.Clone();
-        }
-
-        /// <summary>
-        /// Returns a modifiable copy of the current instance using its curent values.
-        /// </summary>
-        /// <returns>A modifiable copy of the current instance.</returns>
-        /// <seealso cref="Freezable"/>
-        /// <seealso cref="Freezable.CloneCurrentValue()"/>
-        public new IconEntry CloneCurrentValue()
-        {
-            return (IconEntry)base.CloneCurrentValue();
-        }
-
-        /// <summary>
-        /// Creates a frozen copy of the current instance, using base (non-animated) property values.
-        /// </summary>
-        /// <returns>A frozen copy of the current instance.</returns>
-        /// <seealso cref="Freezable"/>
-        /// <seealso cref="Freezable.GetAsFrozen()"/>
-        public new IconEntry GetAsFrozen()
-        {
-            return (IconEntry)base.GetAsFrozen();
-        }
-
-        /// <summary>
-        /// Creates a frozen copy of the current instance, using current property values.
-        /// </summary>
-        /// <returns>A frozen copy of the current instance.</returns>
-        /// <seealso cref="Freezable"/>
-        /// <seealso cref="Freezable.GetCurrentValueAsFrozen()"/>
-        public new IconEntry GetCurrentValueAsFrozen()
-        {
-            return (IconEntry)base.GetCurrentValueAsFrozen();
-        }
-
-        /// <summary>
-        /// Returns color quantization of the current instance as it would appear for a PNG entry.
-        /// </summary>
-        /// <returns>A <see cref="BitmapSource"/> containing the quantized image.</returns>
-        public BitmapSource GetQuantizedPng()
-        {
-            BitmapSource alphaMask;
-            return GetQuantized(true, out alphaMask);
         }
 
         /// <summary>
@@ -881,6 +858,16 @@ namespace UIconEdit
             SetQuantized(IsPng);
         }
 
+        /// <summary>
+        /// Returns color quantization of the current instance as it would appear for a PNG entry.
+        /// </summary>
+        /// <returns>A <see cref="BitmapSource"/> containing the quantized image.</returns>
+        public BitmapSource GetQuantizedPng()
+        {
+            BitmapSource alphaMask;
+            return GetQuantized(true, out alphaMask);
+        }
+
         #region Get Quantized
         /// <summary>
         /// Returns color quantization of the current instance as it would appear for a BMP entry.
@@ -896,7 +883,7 @@ namespace UIconEdit
 
         internal WriteableBitmap GetQuantized(bool isPng, out BitmapSource alphaMask)
         {
-            return GetQuantized(isPng, BitDepth, out alphaMask);
+            return GetQuantized(isPng, _depth, out alphaMask);
         }
 
         private WriteableBitmap GetQuantized(bool isPng, IconBitDepth _depth, out BitmapSource alphaMask)
@@ -916,8 +903,6 @@ namespace UIconEdit
             const uint opaqueAlpha = 0xFF000000u;
 
             byte _alphaThreshold = AlphaThreshold;
-
-            int _width = Width, _height = Height;
 
             if (isPng)
             {
@@ -1030,7 +1015,6 @@ namespace UIconEdit
 
         private uint[] _scaleBitmap(IconScalingFilter scaleMode, BitmapSource image)
         {
-            int _width = Width, _height = Height;
             uint[] pixels = new uint[_width * _height];
             FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
             if (formatBmp.PixelWidth == _width && formatBmp.PixelHeight == _height)
@@ -1050,7 +1034,6 @@ namespace UIconEdit
 
         private void _scaleBitmap(IconScalingFilter scaleMode, FormatConvertedBitmap image, uint[] pixels)
         {
-            int _width = Width, _height = Height;
             using (DBitmap dBitmap = new DBitmap(image.PixelWidth, image.PixelHeight, DPixelFormat.Format32bppArgb))
             {
                 BitmapData dData = dBitmap.LockBits(new DRectangle(0, 0, image.PixelWidth, image.PixelHeight),

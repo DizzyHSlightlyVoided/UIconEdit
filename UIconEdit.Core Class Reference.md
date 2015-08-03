@@ -1249,6 +1249,54 @@ Makes the current instance a frozen copy of the specified other object's value.
 * `sourceFreezable`: The object to clone.
 
 --------------------------------------------------
+## Method: `public UIconEdit.IconEntry Clone()`
+
+Returns a modifiable copy of the current instance. When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
+
+**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A modifiable copy of the current instance.
+
+### See Also
+* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
+* [`Freezable.Clone()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.clone.aspx)
+
+
+--------------------------------------------------
+## Method: `public UIconEdit.IconEntry CloneCurrentValue()`
+
+Returns a modifiable copy of the current instance using its curent values.
+
+**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A modifiable copy of the current instance.
+
+### See Also
+* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
+* [`Freezable.CloneCurrentValue()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.clonecurrentvalue.aspx)
+
+
+--------------------------------------------------
+## Method: `public UIconEdit.IconEntry GetAsFrozen()`
+
+Creates a frozen copy of the current instance, using base (non-animated) property values.
+
+**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A frozen copy of the current instance.
+
+### See Also
+* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
+* [`Freezable.GetAsFrozen()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.getasfrozen.aspx)
+
+
+--------------------------------------------------
+## Method: `public UIconEdit.IconEntry GetCurrentValueAsFrozen()`
+
+Creates a frozen copy of the current instance, using current property values.
+
+**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A frozen copy of the current instance.
+
+### See Also
+* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
+* [`Freezable.GetCurrentValueAsFrozen()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.getcurrentvalueasfrozen.aspx)
+
+
+--------------------------------------------------
 ## Field: `public const System.Int16 MinDimension = 1`
 
 The minimum dimensions of an icon. 1 pixels.
@@ -1314,29 +1362,14 @@ Gets a value indicating whether the current instance will be saved as a PNG imag
 Gets a key for the icon entry.
 
 --------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty WidthProperty`
-
-The dependency property for the read-only [`IconEntry.Width`](#property-public-systemint32-width--get-) property.
-
---------------------------------------------------
 ## Property: `public System.Int32 Width { get; }`
 
 Gets the resampled width of the icon.
 
 --------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty HeightProperty`
-
-The dependency property for the read-only [`IconEntry.Height`](#property-public-systemint32-height--get-) property.
-
---------------------------------------------------
 ## Property: `public System.Int32 Height { get; }`
 
 Gets the resampled height of the icon.
-
---------------------------------------------------
-## Field: `public static readonly System.Windows.DependencyProperty BitDepthProperty`
-
-The dependency property for the read-only [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) property.
 
 --------------------------------------------------
 ## Property: `public UIconEdit.IconBitDepth BitDepth { get; }`
@@ -1455,67 +1488,11 @@ Returns the [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.wind
 `depth` is not a valid [`IconBitDepth`](#type-public-enum-uiconediticonbitdepth) value.
 
 --------------------------------------------------
-## Method: `public System.Windows.Media.Imaging.BitmapSource CombineAlpha()`
+## Method: `public System.Windows.Media.Imaging.BitmapSource GetCombinedAlpha()`
 
 Applies [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) to [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-).
 
-**Returns:** Type [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx): A new [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx), sized according to [`IconEntry.Width`](#property-public-systemint32-width--get-) and [`IconEntry.Height`](#property-public-systemint32-height--get-), consisting of [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) applied to [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and with pixel format [`PixelFormats.Bgra32`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformats.bgra32.aspx)
-
-
---------------------------------------------------
-## Method: `public UIconEdit.IconEntry Clone()`
-
-Returns a modifiable copy of the current instance. When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
-
-**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A modifiable copy of the current instance.
-
-### See Also
-* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
-* [`Freezable.Clone()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.clone.aspx)
-
-
---------------------------------------------------
-## Method: `public UIconEdit.IconEntry CloneCurrentValue()`
-
-Returns a modifiable copy of the current instance using its curent values.
-
-**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A modifiable copy of the current instance.
-
-### See Also
-* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
-* [`Freezable.CloneCurrentValue()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.clonecurrentvalue.aspx)
-
-
---------------------------------------------------
-## Method: `public UIconEdit.IconEntry GetAsFrozen()`
-
-Creates a frozen copy of the current instance, using base (non-animated) property values.
-
-**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A frozen copy of the current instance.
-
-### See Also
-* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
-* [`Freezable.GetAsFrozen()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.getasfrozen.aspx)
-
-
---------------------------------------------------
-## Method: `public UIconEdit.IconEntry GetCurrentValueAsFrozen()`
-
-Creates a frozen copy of the current instance, using current property values.
-
-**Returns:** Type [`IconEntry`](#type-public-class-uiconediticonentry): A frozen copy of the current instance.
-
-### See Also
-* [`Freezable`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.aspx)
-* [`Freezable.GetCurrentValueAsFrozen()`](https://msdn.microsoft.com/en-us/library/system.windows.freezable.getcurrentvalueasfrozen.aspx)
-
-
---------------------------------------------------
-## Method: `public System.Windows.Media.Imaging.BitmapSource GetQuantizedPng()`
-
-Returns color quantization of the current instance as it would appear for a PNG entry.
-
-**Returns:** Type [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx): A [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx) containing the quantized image.
+**Returns:** Type [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx): A new [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx), sized according to [`IconEntry.Width`](#property-public-systemint32-width--get-) and [`IconEntry.Height`](#property-public-systemint32-height--get-), consisting of [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) applied to [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and with a 32-bit pixel format.
 
 
 --------------------------------------------------
@@ -1541,6 +1518,14 @@ Performs the same action as [`IconEntry.SetQuantized(System.Boolean)`](#method-p
 
 ##### [`InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx)
 The current instance is frozen.
+
+--------------------------------------------------
+## Method: `public System.Windows.Media.Imaging.BitmapSource GetQuantizedPng()`
+
+Returns color quantization of the current instance as it would appear for a PNG entry.
+
+**Returns:** Type [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx): A [`BitmapSource`](https://msdn.microsoft.com/en-us/library/system.windows.media.imaging.bitmapsource.aspx) containing the quantized image.
+
 
 --------------------------------------------------
 ## Method: `IconEntry.GetQuantized(out System.Windows.Media.Imaging.BitmapSource alphaMask)`

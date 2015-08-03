@@ -205,19 +205,7 @@ namespace UIconEdit
 
         internal override ushort GetImgY(IconEntry entry)
         {
-            switch (entry.BitDepth)
-            {
-                case IconBitDepth.Depth2Color:
-                    return 1;
-                case IconBitDepth.Depth16Color:
-                    return 4;
-                case IconBitDepth.Depth256Color:
-                    return 8;
-                case IconBitDepth.Depth24BitsPerPixel:
-                    return 24;
-                default:
-                    return 32;
-            }
+            return (ushort)entry.BitsPerPixel;
         }
     }
 }

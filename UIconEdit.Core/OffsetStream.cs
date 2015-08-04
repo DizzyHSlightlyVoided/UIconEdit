@@ -91,21 +91,23 @@ namespace UIconEdit
 
             new ArraySegment<byte>(buffer, offset, count);
 
+            int read = 0;
+
             if (_ms != null)
             {
-                int msRead = _ms.Read(buffer, offset, count);
-                count -= msRead;
-                offset += msRead;
-                if (_ms.Position >= _ms.Length || msRead == 0)
+                read = _ms.Read(buffer, offset, count);
+                count -= read;
+                offset += read;
+                if (count == 0) return read;
+                if (_ms.Position >= _ms.Length || read == 0)
                 {
                     _ms.Dispose();
                     _ms = null;
                 }
-                if (count == 0) return msRead;
             }
             if (count == 0 || _remainingLength <= 0) return 0;
 
-            int read = _stream.Read(buffer, offset, (int)Math.Min(count, _remainingLength));
+            read += _stream.Read(buffer, offset, (int)Math.Min(count, _remainingLength));
             if (read == 0) _remainingLength = 0;
             else _remainingLength -= read;
             return read;

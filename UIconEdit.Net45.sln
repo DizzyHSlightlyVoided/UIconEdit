@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit", "UIconEdit\UIconEdit.csproj", "{09B35738-A114-436E-962C-A2CB0804E539}"
 EndProject
@@ -10,6 +10,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nQuant.Core", "nQuant\nQuant.Core\nQuant.Core.csproj", "{A59307EA-FCB0-4110-BC42-0417871C24C4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit.Test.Net45", "UIconEdit.Test\UIconEdit.Test.Net45.csproj", "{902D4D9C-4500-418F-9890-5AAD7D82EEC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconDrawing.Net45", "UIconDrawing\UIconDrawing.Net45.csproj", "{7C44B786-4500-4A29-86AE-E216038F0E55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconDrawing.Test.Net45", "UIconDrawing.Test\UIconDrawing.Test.Net45.csproj", "{E9E01515-4500-4944-952A-417B78D6EA75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +37,14 @@ Global
 		{902D4D9C-4500-418F-9890-5AAD7D82EEC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{902D4D9C-4500-418F-9890-5AAD7D82EEC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{902D4D9C-4500-418F-9890-5AAD7D82EEC9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BF4D3959-3996-4268-9378-3400DE4A5185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF4D3959-3996-4268-9378-3400DE4A5185}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF4D3959-3996-4268-9378-3400DE4A5185}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF4D3959-3996-4268-9378-3400DE4A5185}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C44B786-4500-4A29-86AE-E216038F0E55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C44B786-4500-4A29-86AE-E216038F0E55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C44B786-4500-4A29-86AE-E216038F0E55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C44B786-4500-4A29-86AE-E216038F0E55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9E01515-4500-4944-952A-417B78D6EA75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9E01515-4500-4944-952A-417B78D6EA75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9E01515-4500-4944-952A-417B78D6EA75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9E01515-4500-4944-952A-417B78D6EA75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

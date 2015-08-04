@@ -34,7 +34,11 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 
+#if DRAWING
+namespace UIconDrawing
+#else
 namespace UIconEdit
+#endif
 {
     internal static class Win32Funcs
     {

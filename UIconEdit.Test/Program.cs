@@ -30,9 +30,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.IO;
+
+#if DRAWING
+using System.Drawing;
+using System.Drawing.Imaging;
+
+namespace UIconDrawing.Test
+#else
 using System.Windows.Media.Imaging;
 
 namespace UIconEdit.Test
+#endif
 {
     class Program
     {
@@ -56,8 +64,13 @@ namespace UIconEdit.Test
                 Wait();
             }
             Console.WriteLine("Loading file Gradient.ico ...");
+#if DRAWING
+            using (IconFile iconFile = IconFile.Load("Gradient.ico"))
+            {
+#else
             {
                 IconFile iconFile = IconFile.Load("Gradient.ico");
+#endif
                 foreach (IconEntry entry in iconFile.Entries)
                     Save(entry, string.Format("Gradient{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height));
                 Console.WriteLine("Saving GradientOut.ico ...");
@@ -65,8 +78,13 @@ namespace UIconEdit.Test
             }
             Console.WriteLine("Completed!");
             Console.WriteLine("Loading file Crosshair.cur ...");
+#if DRAWING
+            using (CursorFile cursorFile = CursorFile.Load("Crosshair.cur"))
+            {
+#else
             {
                 CursorFile cursorFile = CursorFile.Load("Crosshair.cur");
+#endif
                 foreach (IconEntry entry in cursorFile.Entries)
                     Save(entry, string.Format("Crosshair{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height));
 
@@ -87,10 +105,16 @@ namespace UIconEdit.Test
         private static void Save(IconEntry entry, string filename)
         {
             Console.WriteLine("Saving {0} ...", filename);
+#if DRAWING
+            using (Bitmap copy = entry.GetCombinedAlpha())
+                copy.Save(filename, ImageFormat.Png);
+#else
             PngBitmapEncoder encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(entry.GetCombinedAlpha()));
-            using (FileStream fs = File.Open(filename, FileMode.Create))
+
+            using (FileStream fs = File.Create(filename))
                 encoder.Save(fs);
+#endif
         }
     }
 }

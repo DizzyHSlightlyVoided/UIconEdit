@@ -34,6 +34,14 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
+#if DRAWING
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
+using BitmapSource = System.Drawing.Image;
+
+namespace UIconDrawing
+#else
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -44,13 +52,20 @@ using DPixelFormat = System.Drawing.Imaging.PixelFormat;
 using DRectangle = System.Drawing.Rectangle;
 using ImageLockMode = System.Drawing.Imaging.ImageLockMode;
 using InterpolationMode = System.Drawing.Drawing2D.InterpolationMode;
+using Graphics = System.Drawing.Graphics;
 
 namespace UIconEdit
+#endif
 {
     /// <summary>
     /// Represents a single entry in an icon.
     /// </summary>
-    public class IconEntry : Freezable
+    public class IconEntry :
+#if DRAWING
+        IDisposable, ICloneable
+#else
+        Freezable
+#endif
     {
         /// <summary>
         /// The default <see cref="AlphaThreshold"/> value.
@@ -210,14 +225,23 @@ namespace UIconEdit
         public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth, int hotspotX, int hotspotY, byte alphaThreshold)
         {
             if (baseImage == null) throw new ArgumentNullException("baseImage");
+#if DRAWING
+            if (baseImage.Width < MinDimension || baseImage.Width > MaxDimension || baseImage.Height < MinDimension || baseImage.Height > MaxDimension)
+#else
             if (baseImage.PixelWidth < MinDimension || baseImage.PixelWidth > MaxDimension || baseImage.PixelHeight < MinDimension || baseImage.PixelHeight > MaxDimension)
+#endif
                 throw new ArgumentException("The image size is out of the supported range.", "baseImage");
             if (!_validateBitDepth(bitDepth))
                 throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
             BaseImage = baseImage;
 
+#if DRAWING
+            _width = baseImage.Width;
+            _height = baseImage.Height;
+#else
             _width = baseImage.PixelWidth;
             _height = baseImage.PixelHeight;
+#endif
             _depth = bitDepth;
             AlphaThreshold = alphaThreshold;
             HotspotX = hotspotX;
@@ -292,12 +316,18 @@ namespace UIconEdit
         {
             BaseImage = baseImage;
             AlphaImage = alphaImage;
+#if DRAWING
+            _width = baseImage.Width;
+            _height = baseImage.Height;
+            _isQuantizedImage = _isQuantizedAlpha = true;
+#else
             _width = baseImage.PixelWidth;
             _height = baseImage.PixelHeight;
+            SetValue(IsQuantizedPropertyKey, true);
+#endif
             _depth = bitDepth;
             HotspotX = hotspotX;
             HotspotY = hotspotY;
-            SetValue(IsQuantizedPropertyKey, true);
         }
 
         internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth)
@@ -305,6 +335,74 @@ namespace UIconEdit
         {
         }
 
+#if DRAWING
+        /// <summary>
+        /// Returns a duplicate of the current instance.
+        /// </summary>
+        /// <returns>A duplicate of the current instance.</returns>
+        public IconEntry Clone()
+        {
+            IconEntry entry = (IconEntry)MemberwiseClone();
+            entry._baseImage = (BitmapSource)_baseImage.Clone();
+            if (_alphaImage != null)
+                entry._alphaImage = (BitmapSource)_alphaImage.Clone();
+
+            return entry;
+        }
+
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
+
+        #region Disposal
+        private bool _isDisposed;
+        /// <summary>
+        /// Gets a value indicating whether the current instance has been disposed.
+        /// </summary>
+        public bool IsDisposed { get { return _isDisposed; } }
+
+        /// <summary>
+        /// Immediately releases all resources used by the current instance.
+        /// </summary>
+        public void Dispose()
+        {
+            if (!_isDisposed) return;
+            Dispose(true);
+            _isDisposed = true;
+            if (Disposed != null)
+                Disposed(this, EventArgs.Empty);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (File != null)
+                    File.Entries.Remove(this);
+
+                if (_isQuantizedImage)
+                    _baseImage.Dispose();
+
+                if (_isQuantizedAlpha && _alphaImage != null)
+                    _alphaImage.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Destructor.
+        /// </summary>
+        ~IconEntry()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Raised when the current instance is disposed.
+        /// </summary>
+        public event EventHandler Disposed;
+        #endregion
+#else
         #region Freezable
         /// <summary>
         /// Creates a new default <see cref="IconEntry"/> instance.
@@ -409,7 +507,7 @@ namespace UIconEdit
             return (IconEntry)base.GetCurrentValueAsFrozen();
         }
         #endregion
-
+#endif
         /// <summary>
         /// The minimum dimensions of an icon. 1 pixels.
         /// </summary>
@@ -431,23 +529,69 @@ namespace UIconEdit
         /// </summary>
         public const short MaxBmp = byte.MaxValue;
 
+#if DRAWING
+        internal static readonly Color[] AlphaPalette = new Color[] { Color.White, Color.Black };
+#else
         internal static readonly BitmapPalette AlphaPalette = new BitmapPalette(new Color[] { Colors.White, Colors.Black });
+#endif
 
         #region IsQuantized
+#if DRAWING
+        private bool _isQuantizedImage, _isQuantizedAlpha;
+#else
         private static readonly DependencyPropertyKey IsQuantizedPropertyKey = DependencyProperty.RegisterReadOnly("IsQuantized", typeof(bool), typeof(IconEntry),
             new PropertyMetadata(false));
         /// <summary>
         /// The dependency property for the read-only <see cref="IsQuantized"/> property.
         /// </summary>
         public static readonly DependencyProperty IsQuantizedProperty = IsQuantizedPropertyKey.DependencyProperty;
-
+#endif
         /// <summary>
-        /// Gets a value indicating whether <see cref="BaseImage"/> and <see cref="AlphaImage"/> are known to be already quantized.
+        /// Gets a value indicating whether <see cref="BaseImage"/> and <see cref="AlphaImage"/> are both known to be already quantized.
         /// </summary>
-        public bool IsQuantized { get { return (bool)GetValue(IsQuantizedProperty); } }
+        public bool IsQuantized
+        {
+#if DRAWING
+            get { return _isQuantizedImage && _isQuantizedAlpha; }
+#else
+            get { return (bool)GetValue(IsQuantizedProperty); }
+#endif
+        }
         #endregion
 
         #region BaseImage
+#if DRAWING
+        private BitmapSource _baseImage;
+
+        /// <summary>
+        /// Gets and sets the image associated with the current instance.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// In a set operation, the specified value is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// The current instance is disposed.
+        /// </exception>
+        public BitmapSource BaseImage
+        {
+            get
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                return _baseImage;
+            }
+            set
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                if (value == null) throw new ArgumentNullException();
+                if (_isQuantizedImage)
+                {
+                    _baseImage.Dispose();
+                    _isQuantizedImage = false;
+                }
+                _baseImage = value;
+            }
+        }
+#else
         /// <summary>
         /// The dependency property for the <see cref="BaseImage"/> property.
         /// </summary>
@@ -479,9 +623,39 @@ namespace UIconEdit
                 SetValue(BaseImageProperty, value);
             }
         }
+#endif
         #endregion
 
         #region AlphaImage
+#if DRAWING
+        private BitmapSource _alphaImage;
+
+        /// <summary>
+        /// Gets and sets an image to be used as the alpha mask, or <c>null</c> to derive the alpha mask from <see cref="BaseImage"/>.
+        /// Black pixels are transparent; white pixels are opaque.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException">
+        /// The current image is disposed.
+        /// </exception>
+        public BitmapSource AlphaImage
+        {
+            get
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                return _alphaImage;
+            }
+            set
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                if (_isQuantizedAlpha)
+                {
+                    if (_alphaImage != null) _alphaImage.Dispose();
+                    _isQuantizedAlpha = false;
+                }
+                _alphaImage = value;
+            }
+        }
+#else
         /// <summary>
         /// The dependency property for the <see cref="AlphaImage"/> property.
         /// </summary>
@@ -497,12 +671,15 @@ namespace UIconEdit
             get { return (BitmapSource)GetValue(AlphaImageProperty); }
             set { SetValue(AlphaImageProperty, value); }
         }
+#endif
         #endregion
 
         /// <summary>
         /// Gets a value indicating whether the current instance will be saved as a PNG image within the icon structure by default.
         /// </summary>
+#if !DRAWING
         [Bindable(true, BindingDirection.OneWay)]
+#endif
         public bool IsPng
         {
             get
@@ -516,7 +693,9 @@ namespace UIconEdit
         /// <summary>
         /// Gets a key for the icon entry.
         /// </summary>
+#if !DRAWING
         [Bindable(true, BindingDirection.OneWay)]
+#endif
         public IconEntryKey EntryKey { get { return new IconEntryKey(_width, _height, _depth); } }
 
         #region Width
@@ -524,7 +703,9 @@ namespace UIconEdit
         /// <summary>
         /// Gets the resampled width of the icon.
         /// </summary>
+#if !DRAWING
         [Bindable(true, BindingDirection.OneWay)]
+#endif
         public int Width
         {
             get { return _width; }
@@ -536,7 +717,9 @@ namespace UIconEdit
         /// <summary>
         /// Gets the resampled height of the icon.
         /// </summary>
+#if !DRAWING
         [Bindable(true, BindingDirection.OneWay)]
+#endif
         public int Height
         {
             get { return _height; }
@@ -548,7 +731,9 @@ namespace UIconEdit
         /// <summary>
         /// Gets the bit depth of the current instance.
         /// </summary>
+#if !DRAWING
         [Bindable(true, BindingDirection.OneWay)]
+#endif
         public IconBitDepth BitDepth
         {
             get { return _depth; }
@@ -556,6 +741,26 @@ namespace UIconEdit
         #endregion
 
         #region AlphaThreshold
+#if DRAWING
+        private byte _alphaThreshold;
+
+        /// <summary>
+        /// Gets and sets a value indicating the threshold of alpha values at <see cref="BitDepth"/>s below <see cref="IconBitDepth.Depth32BitsPerPixel"/>.
+        /// Alpha values less than this value will be fully transparent; alpha values greater than or equal to this value will be fully opaque.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException">
+        /// In a set operation, the current instance is disposed.
+        /// </exception>
+        public byte AlphaThreshold
+        {
+            get { return _alphaThreshold; }
+            set
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                _alphaThreshold = value;
+            }
+        }
+#else
         /// <summary>
         /// The dependency property for the <see cref="AlphaThreshold"/> property.
         /// </summary>
@@ -570,9 +775,32 @@ namespace UIconEdit
             get { return (byte)GetValue(AlphaThresholdProperty); }
             set { SetValue(AlphaThresholdProperty, value); }
         }
+#endif
         #endregion
 
         #region HotspotX
+#if DRAWING
+        private int _hotspotX;
+
+        /// <summary>
+        /// In a cursor, gets the horizontal offset in pixels of the cursor's hotspot from the left side.
+        /// Constrained to greater than or equal to 0 and less than or equal to <see cref="Width"/>.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException">
+        /// In a set operation, the current instance is disposed.
+        /// </exception>
+        public int HotspotX
+        {
+            get { return _hotspotX; }
+            set
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                if (value < 0) _hotspotX = 0;
+                else if (value > _width) _hotspotX = _width;
+                else _hotspotX = value;
+            }
+        }
+#else
         /// <summary>
         /// The dependency property for the <see cref="HotspotX"/> property.
         /// </summary>
@@ -599,9 +827,32 @@ namespace UIconEdit
             get { return (int)GetValue(HotspotXProperty); }
             set { SetValue(HotspotXProperty, value); }
         }
+#endif
         #endregion
 
         #region HotspotY
+#if DRAWING
+        private int _hotspotY;
+
+        /// <summary>
+        /// In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the top side.
+        /// Constrained to greater than or equal to 0 and less than or equal to <see cref="Height"/>.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException">
+        /// In a set operation, the current instance is disposed.
+        /// </exception>
+        public int HotspotY
+        {
+            get { return _hotspotY; }
+            set
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                if (value < 0) _hotspotY = 0;
+                else if (value > _height) _hotspotY = _height;
+                else _hotspotY = value;
+            }
+        }
+#else
         /// <summary>
         /// The dependency property for the <see cref="HotspotY"/> property.
         /// </summary>
@@ -618,30 +869,38 @@ namespace UIconEdit
 
             return value;
         }
-
         /// <summary>
         /// In a cursor, gets the vertical offset in pixels of the cursor's hotspot from the top side.
         /// Constrained to greater than or equal to 0 and less than or equal to <see cref="Height"/>.
         /// </summary>
         public int HotspotY
         {
-            get { return (int)GetValue(HotspotYProperty); }
-            set { SetValue(HotspotYProperty, value); }
+            get { return (int)GetValue(HotspotXProperty); }
+            set { SetValue(HotspotXProperty, value); }
         }
+#endif
         #endregion
 
         #region ScalingFilter
+#if DRAWING
+        private IconScalingFilter _scalingFilter;
+
+        private static bool ScalingFilterValidate(IconScalingFilter value)
+        {
+            switch (value)
+            {
+#else
         /// <summary>
         /// The dependency property for the <see cref="IconScalingFilter"/> property.
         /// </summary>
         public static readonly DependencyProperty IconScalingFilterProperty = DependencyProperty.Register("ScalingFilter", typeof(IconScalingFilter), typeof(IconEntry),
             new PropertyMetadata(IconScalingFilter.Matrix), ScalingFilterValidate);
-
         private static bool ScalingFilterValidate(object value)
         {
             switch ((IconScalingFilter)value)
             {
                 case IconScalingFilter.Matrix:
+#endif
                 case IconScalingFilter.Bicubic:
                 case IconScalingFilter.Bilinear:
                 case IconScalingFilter.HighQualityBicubic:
@@ -661,12 +920,23 @@ namespace UIconEdit
         /// </exception>
         public IconScalingFilter ScalingFilter
         {
+#if DRAWING
+            get { return _scalingFilter; }
+#else
             get { return (IconScalingFilter)GetValue(IconScalingFilterProperty); }
+#endif
             set
             {
+#if DRAWING
+                if (_isDisposed) throw new ObjectDisposedException(null);
+#endif
                 if (!ScalingFilterValidate(value))
                     throw new InvalidEnumArgumentException(null, (int)value, typeof(IconScalingFilter));
+#if DRAWING
+                _scalingFilter = value;
+#else
                 SetValue(IconScalingFilterProperty, value);
+#endif
             }
         }
         #endregion
@@ -709,6 +979,20 @@ namespace UIconEdit
             }
         }
 
+#if DRAWING
+        /// <summary>
+        /// Returns the number of bits per pixel associated with the specified <see cref="PixelFormat"/> value.
+        /// </summary>
+        /// <param name="format">The format from which to get the number of bits per pixel.</param>
+        /// <returns>The number of bits per pixel associated with <paramref name="format"/>, or 0 if <paramref name="format"/>
+        /// does not specify a bits-per-pixel count.</returns>
+        public static int GetBitsPerPixel(PixelFormat format)
+        {
+            if (format == PixelFormat.Format32bppRgb) return 24;
+
+            return ((int)format >> 8) & byte.MaxValue;
+        }
+#endif
         /// <summary>
         /// Gets the maximum color count specified by <see cref="BitDepth"/>.
         /// </summary>
@@ -783,6 +1067,37 @@ namespace UIconEdit
             }
         }
 
+#if DRAWING
+        /// <summary>
+        /// Returns the <see cref="IconBitDepth"/> associated with the specified <see cref="PixelFormat"/> value.
+        /// </summary>
+        /// <param name="pFormat">The <see cref="PixelFormat"/> to check.</param>
+        /// <returns>The <see cref="IconBitDepth"/> associated with <paramref name="pFormat"/>.</returns>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="pFormat"/> does not map to an <see cref="IconBitDepth"/> value.
+        /// </exception>
+        public static IconBitDepth GetBitDepth(PixelFormat pFormat)
+        {
+            switch (pFormat)
+            {
+                case PixelFormat.Format1bppIndexed:
+                    return IconBitDepth.Depth1BitPerPixel;
+                case PixelFormat.Format4bppIndexed:
+                    return IconBitDepth.Depth4BitsPerPixel;
+                case PixelFormat.Format8bppIndexed:
+                    return IconBitDepth.Depth8BitsPerPixel;
+                case PixelFormat.Format24bppRgb:
+                case PixelFormat.Format32bppRgb:
+                    return IconBitDepth.Depth24BitsPerPixel;
+                case PixelFormat.Format32bppArgb:
+                case PixelFormat.Format32bppPArgb:
+                    return IconBitDepth.Depth32BitsPerPixel;
+                default:
+                    throw new ArgumentException("Does not map to a UIconDrawing.IconBitDepth value.", "pFormat");
+            }
+        }
+#endif
+
         /// <summary>
         /// Returns the <see cref="PixelFormat"/> associated with the specified <see cref="IconBitDepth"/>.
         /// </summary>
@@ -796,15 +1111,35 @@ namespace UIconEdit
             switch (depth)
             {
                 case IconBitDepth.Depth1BitPerPixel:
+#if DRAWING
+                    return PixelFormat.Format1bppIndexed;
+#else
                     return PixelFormats.Indexed1;
+#endif
                 case IconBitDepth.Depth4BitsPerPixel:
+#if DRAWING
+                    return PixelFormat.Format4bppIndexed;
+#else
                     return PixelFormats.Indexed4;
+#endif
                 case IconBitDepth.Depth8BitsPerPixel:
+#if DRAWING
+                    return PixelFormat.Format8bppIndexed;
+#else
                     return PixelFormats.Indexed8;
+#endif
                 case IconBitDepth.Depth24BitsPerPixel:
+#if DRAWING
+                    return PixelFormat.Format24bppRgb;
+#else
                     return PixelFormats.Bgr24;
+#endif
                 case IconBitDepth.Depth32BitsPerPixel:
+#if DRAWING
+                    return PixelFormat.Format32bppArgb;
+#else
                     return PixelFormats.Bgra32;
+#endif
                 default:
                     throw new InvalidEnumArgumentException("depth", (int)depth, typeof(IconBitDepth));
             }
@@ -812,6 +1147,440 @@ namespace UIconEdit
 
         internal IconFileBase File;
 
+        #region GetQuantized
+        private void SetScalingFilter(Graphics g)
+        {
+#if DRAWING
+            switch (_scalingFilter)
+#else
+            switch (ScalingFilter)
+#endif
+            {
+                case IconScalingFilter.Bicubic:
+                    g.InterpolationMode = InterpolationMode.Bicubic;
+                    break;
+                case IconScalingFilter.Bilinear:
+                    g.InterpolationMode = InterpolationMode.Bilinear;
+                    break;
+                case IconScalingFilter.HighQualityBicubic:
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    break;
+                case IconScalingFilter.HighQualityBilinear:
+                    g.InterpolationMode = InterpolationMode.HighQualityBilinear;
+                    break;
+                case IconScalingFilter.NearestNeighbor:
+                    g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                    break;
+            }
+        }
+
+#if DRAWING
+        #region ColorValue
+        [StructLayout(LayoutKind.Explicit)]
+        private struct ColorValue : IEquatable<ColorValue>
+        {
+            public ColorValue(int value)
+            {
+                this = new ColorValue() { Value = value };
+            }
+
+            public ColorValue(byte a, byte r, byte g, byte b)
+            {
+                this = new ColorValue() { A = a, R = r, G = g, B = b };
+            }
+
+            public ColorValue(byte r, byte g, byte b)
+                : this(byte.MaxValue, r, g, b)
+            {
+            }
+
+            public ColorValue(Color value)
+            {
+                this = new ColorValue() { Value = value.ToArgb() };
+            }
+
+            [FieldOffset(0)]
+            public int Value;
+
+            [FieldOffset(0)]
+            public byte B;
+            [FieldOffset(1)]
+            public byte G;
+            [FieldOffset(2)]
+            public byte R;
+            [FieldOffset(3)]
+            public byte A;
+
+            public static readonly ColorValue White = new ColorValue(~0), Black = new ColorValue(~0xFFFFFF), Default;
+
+            public double GetDistance(ColorValue other)
+            {
+                if (Value == other.Value) return 0;
+
+                double distance = Math.Abs(A - other.A) << 8;
+                distance *= distance;
+                double r = Math.Abs(R - other.R);
+                distance += r * r;
+                double g = Math.Abs(G - other.G);
+                distance += g * g;
+                double b = Math.Abs(B - other.B);
+                return distance = b * b;
+            }
+
+            public byte IndexOfMinDist(Color[] colors)
+            {
+                int minDistDex = -1;
+                double minDistance = double.MaxValue;
+
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    double newDistance = GetDistance(new ColorValue(colors[i]));
+                    if (newDistance == 0) return (byte)i;
+                    if (newDistance < minDistance)
+                    {
+                        minDistance = newDistance;
+                        minDistDex = i;
+                    }
+                }
+                return (byte)minDistDex;
+            }
+
+            public override string ToString()
+            {
+                return string.Format("#{0:x8}: R:{1} B:{2} G:{3} A:{4}", Value, R, B, G, A);
+            }
+
+            public override int GetHashCode()
+            {
+                return Value;
+            }
+
+            public Color GetColor()
+            {
+                return Color.FromArgb(A, R, G, B);
+            }
+
+            public bool Equals(ColorValue other)
+            {
+                return Value == other.Value;
+            }
+
+            public static ColorValue operator ~(ColorValue value)
+            {
+                return new ColorValue(~value.Value);
+            }
+
+            public static ColorValue operator &(ColorValue v1, ColorValue v2)
+            {
+                return new ColorValue(v1.Value & v2.Value);
+            }
+
+            public static ColorValue operator |(ColorValue v1, ColorValue v2)
+            {
+                return new ColorValue(v1.Value | v2.Value);
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// Applies <see cref="AlphaImage"/> to <see cref="BaseImage"/>.
+        /// </summary>
+        /// <returns>A new <see cref="Bitmap"/>, sized according to <see cref="Width"/> and <see cref="Height"/>, consisting of
+        /// <see cref="AlphaImage"/> applied to <see cref="BaseImage"/> and with a 32-bit pixel format.</returns>
+        /// <exception cref="ObjectDisposedException">
+        /// The current instance is disposed.
+        /// </exception>
+        public Bitmap GetCombinedAlpha()
+        {
+            if (_isDisposed) throw new ObjectDisposedException(null);
+
+            Bitmap alphaMask, quantized = GetQuantized(true, IconBitDepth.Depth32BitsPerPixel, out alphaMask);
+
+            if (alphaMask != null) alphaMask.Dispose();
+
+            return quantized;
+        }
+
+        /// <summary>
+        /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
+        /// in a form indicated by the specified value.
+        /// </summary>
+        /// <param name="isPng">If <c>true</c>, <see cref="AlphaImage"/> will be set <c>null</c> and <see cref="BaseImage"/> will be quantized
+        /// as if it was a PNG icon entry. If <c>false</c>, <see cref="BaseImage"/> and <see cref="AlphaImage"/> will be quantized
+        /// as if for a BMP entry.</param>
+        /// <exception cref="ObjectDisposedException">
+        /// The current instance is disposed.
+        /// </exception>
+        public void SetQuantized(bool isPng)
+        {
+            Bitmap alphaMask, baseImage = GetQuantized(isPng, out alphaMask);
+
+            BaseImage = baseImage;
+            AlphaImage = alphaMask;
+            _isQuantizedImage = _isQuantizedAlpha = true;
+        }
+
+        /// <summary>
+        /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
+        /// in a form indicated by <see cref="IsPng"/>.
+        /// </summary>
+        /// <remarks>
+        /// Performs the same action as <see cref="SetQuantized(bool)"/>, with <see cref="IsPng"/> passed as the parameter.
+        /// </remarks>
+        /// <exception cref="ObjectDisposedException">
+        /// The current instance is disposed.
+        /// </exception>
+        public void SetQuantized()
+        {
+            SetQuantized(IsPng);
+        }
+
+        /// <summary>
+        /// Returns color quantization of the current instance as it would appear for a PNG entry.
+        /// </summary>
+        /// <returns>A <see cref="Bitmap"/> containing the quantized image.</returns>
+        /// <exception cref="ObjectDisposedException">
+        /// The current instance is disposed.
+        /// </exception>
+        /// <remarks>
+        /// If <see cref="BaseImage"/> is already quantized and <see cref="AlphaImage"/> is <c>null</c>, this method returns a clone of
+        /// <see cref="BaseImage"/> which must be disposed when you're done with it.
+        /// </remarks>
+        public Bitmap GetQuantizedPng()
+        {
+            Bitmap alphaMask, quantized = GetQuantized(true, out alphaMask);
+            if (alphaMask != null) alphaMask.Dispose();
+            return quantized;
+        }
+
+        /// <summary>
+        /// Returns color quantization of the current instance as it would appear for a BMP entry.
+        /// </summary>
+        /// <param name="alphaMask">When this method returns, contains the quantized alpha mask generated using <see cref="AlphaThreshold"/>.
+        /// Black pixels are transparent; white pixels are opaque.
+        /// This parameter is passed uninitialized.</param>
+        /// <returns>A <see cref="Bitmap"/> containing the quantized image without the alpha mask.</returns>
+        /// <exception cref="ObjectDisposedException">
+        /// The current instance is disposed.
+        /// </exception>
+        /// <remarks>
+        /// If <see cref="BaseImage"/> and <see cref="AlphaImage"/> are already quantized, this method returns clones of both objects
+        /// which must be disposed after you're done with them.
+        /// </remarks>
+        public Bitmap GetQuantized(out Bitmap alphaMask)
+        {
+            return GetQuantized(false, out alphaMask);
+        }
+
+        internal Bitmap GetQuantized(bool isPng, out Bitmap alphaMask)
+        {
+            return GetQuantized(isPng, _depth, out alphaMask);
+        }
+
+        internal unsafe Bitmap GetQuantized(bool isPng, IconBitDepth _depth, out Bitmap alphaMask)
+        {
+            if (_isDisposed) throw new ObjectDisposedException(null);
+
+            if (_isQuantizedAlpha && _isQuantizedImage && isPng == (_alphaImage == null))
+            {
+                alphaMask = _alphaImage == null ? null : (Bitmap)_alphaImage.Clone();
+                return (Bitmap)_baseImage.Clone();
+            }
+
+            ColorValue[] pixels = _getPixels(_baseImage);
+
+            if (isPng)
+            {
+                alphaMask = null;
+                if (_alphaImage != null)
+                {
+                    byte[] alphaBytes = _getAlphaBytes(_alphaImage);
+
+                    for (int i = 0; i < pixels.Length; i++)
+                    {
+                        if (alphaBytes[i] == 1)
+                            pixels[i].A = 0;
+                    }
+                }
+            }
+            else
+            {
+                ColorValue[] alphaPixels;
+
+                if (_alphaImage == null)
+                {
+                    bool firstNon = !isPng;
+                    alphaPixels = new ColorValue[pixels.Length];
+                    for (int i = 0; i < pixels.Length; i++)
+                    {
+                        if (pixels[i].A < _alphaThreshold)
+                            alphaPixels[i] = ColorValue.Black;
+                        else
+                            alphaPixels[i] = ColorValue.White;
+                    }
+                }
+                else alphaPixels = _getPixels(_alphaImage);
+
+                alphaMask = GetBitmap(alphaPixels, PixelFormat.Format1bppIndexed, AlphaPalette, 2);
+            }
+
+            if (_depth == IconBitDepth.Depth32BitsPerPixel)
+                return GetBitmap(pixels, PixelFormat.Format32bppArgb, null, ushort.MaxValue);
+
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                ColorValue curPixel = pixels[i];
+                if (curPixel.A < _alphaThreshold)
+                {
+                    if (isPng)
+                        curPixel.A = 0;
+                    else
+                        curPixel = ColorValue.Black;
+                }
+                else curPixel.A = byte.MaxValue;
+
+                pixels[i] = curPixel;
+            }
+
+            Bitmap quantized = GetBitmap(pixels, isPng ? PixelFormat.Format8bppIndexed : GetPixelFormat(_depth), null, (int)GetColorCount(_depth));
+
+            if (!isPng) return quantized;
+
+            ColorValue[] otherPixels = _getPixels(quantized);
+
+            quantized.Dispose();
+
+            for (int i = 0; i < otherPixels.Length; i++)
+            {
+                var curPixel = pixels[i];
+                var otherPixel = otherPixels[i];
+                curPixel.R = otherPixel.R;
+                curPixel.G = otherPixel.G;
+                curPixel.B = otherPixel.B;
+                pixels[i] = curPixel;
+            }
+
+            return GetBitmap(pixels, PixelFormat.Format32bppArgb, null, ushort.MaxValue);
+        }
+
+        private ColorValue[] _getPixels(BitmapSource image)
+        {
+            using (Bitmap bmp = new Bitmap(_width, _height, PixelFormat.Format32bppArgb))
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                SetScalingFilter(g);
+                g.DrawImage(image, 0, 0, _width, _height);
+
+                BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+                ColorValue[] pixels = new ColorValue[bmp.Width * bmp.Height];
+
+                unsafe
+                {
+                    ColorValue* pColors = (ColorValue*)bmpData.Scan0;
+
+                    for (int i = 0; i < pixels.Length; i++)
+                        pixels[i] = pColors[i];
+                }
+
+                bmp.UnlockBits(bmpData);
+
+                return pixels;
+            }
+        }
+
+        private byte[] _getAlphaBytes(BitmapSource alpha)
+        {
+            ColorValue[] colors = _getPixels(alpha);
+            byte[] returner = new byte[colors.Length];
+            for (int i = 0; i < colors.Length; i++)
+            {
+                var curColor = colors[i];
+                var whiteDistance = curColor.GetDistance(ColorValue.White);
+                if (curColor.GetDistance(ColorValue.Black) < whiteDistance || curColor.GetDistance(ColorValue.Default) < whiteDistance)
+                    returner[i] = 1;
+            }
+            return returner;
+        }
+
+        private Bitmap GetBitmap(ColorValue[] pixels, PixelFormat pFormat, Color[] palette, int colorCount)
+        {
+            var fullRect = new Rectangle(0, 0, _width, _height);
+            if (pFormat == PixelFormat.Format24bppRgb || pFormat == PixelFormat.Format32bppArgb || palette == null)
+            {
+                Bitmap baseBmp;
+
+                unsafe
+                {
+                    fixed (ColorValue* pVals = pixels)
+                        baseBmp = new Bitmap(_width, _height, _width * sizeof(int), PixelFormat.Format32bppArgb, (IntPtr)pVals);
+                }
+
+                if (pFormat == PixelFormat.Format32bppArgb) return baseBmp;
+                Bitmap returner;
+                if (pFormat == PixelFormat.Format24bppRgb)
+                    returner = baseBmp.Clone(fullRect, PixelFormat.Format24bppRgb);
+                else
+                {
+                    switch (pFormat)
+                    {
+                        case PixelFormat.Format1bppIndexed:
+                            colorCount = Math.Min(2, colorCount);
+                            break;
+                        case PixelFormat.Format4bppIndexed:
+                            colorCount = Math.Min(16, colorCount);
+                            break;
+                        default:
+                            colorCount = Math.Min(256, colorCount);
+                            break;
+                    }
+                    nQuant.WuQuantizer quant = new nQuant.WuQuantizer();
+
+                    returner = (Bitmap)quant.QuantizeImage(baseBmp, _alphaThreshold, 70, colorCount);
+                }
+                baseBmp.Dispose();
+
+                return returner;
+            }
+
+            byte[] indices = new byte[pixels.Length];
+            Dictionary<ColorValue, byte> _getVals = new Dictionary<ColorValue, byte>();
+            for (int i = 0; i < indices.Length; i++)
+            {
+                var curPixel = pixels[i];
+                byte curDex;
+                if (_getVals.TryGetValue(curPixel, out curDex))
+                {
+                    indices[i] = curDex;
+                    continue;
+                }
+
+                _getVals[curPixel] = indices[i] = curDex = curPixel.IndexOfMinDist(palette);
+            }
+
+            Bitmap bmp8;
+            unsafe
+            {
+                fixed (byte* pVals = indices)
+                    bmp8 = new Bitmap(_width, _height, _width, PixelFormat.Format8bppIndexed, (IntPtr)pVals);
+            }
+
+            var bmp8Palette = bmp8.Palette;
+            for (int i = 0; i < palette.Length; i++)
+                bmp8Palette.Entries[i] = palette[i];
+
+            for (int i = palette.Length; i < bmp8Palette.Entries.Length; i++)
+                bmp8Palette.Entries[i] = default(Color);
+            bmp8.Palette = bmp8Palette;
+
+            if (pFormat == PixelFormat.Format8bppIndexed)
+                return bmp8;
+
+            var bmpSmaller = bmp8.Clone(fullRect, pFormat);
+            bmp8.Dispose();
+            return bmpSmaller;
+        }
+#else
         /// <summary>
         /// Applies <see cref="AlphaImage"/> to <see cref="BaseImage"/>.
         /// </summary>
@@ -868,7 +1637,6 @@ namespace UIconEdit
             return GetQuantized(true, out alphaMask);
         }
 
-        #region Get Quantized
         /// <summary>
         /// Returns color quantization of the current instance as it would appear for a BMP entry.
         /// </summary>
@@ -888,10 +1656,9 @@ namespace UIconEdit
 
         private WriteableBitmap GetQuantized(bool isPng, IconBitDepth _depth, out BitmapSource alphaMask)
         {
-            bool isQuantized = IsQuantized;
             BitmapSource alphaImage = AlphaImage;
 
-            if (isQuantized && (isPng == (alphaImage == null)))
+            if (IsQuantized && (isPng == (alphaImage == null)))
             {
                 alphaMask = alphaImage;
                 return new WriteableBitmap(BaseImage);
@@ -1045,7 +1812,7 @@ namespace UIconEdit
 
                 using (DBitmap sizeBmp = new DBitmap(_width, _height, DPixelFormat.Format32bppArgb))
                 {
-                    using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(sizeBmp))
+                    using (Graphics g = Graphics.FromImage(sizeBmp))
                     {
                         g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 
@@ -1214,6 +1981,7 @@ namespace UIconEdit
         {
             return GetBitmap(pixelWidth, pixelHeight, pixels, DPixelFormat.Format32bppArgb, ushort.MaxValue);
         }
+#endif
         #endregion
 
         /// <summary>
@@ -1701,10 +2469,12 @@ namespace UIconEdit
     /// </summary>
     public enum IconScalingFilter
     {
+#if !DRAWING
         /// <summary>
         /// Resizes using a transformation matrix.
         /// </summary>
         Matrix,
+#endif
         /// <summary>
         /// Specifies bilinear interpolation.
         /// </summary>

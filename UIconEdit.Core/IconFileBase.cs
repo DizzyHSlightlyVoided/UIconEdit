@@ -39,17 +39,32 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Media.Imaging;
+#if DRAWING
+using System.Drawing;
+using System.Drawing.Imaging;
+#else
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+#endif
 
+#if DRAWING
+namespace UIconDrawing
+#else
 namespace UIconEdit
+#endif
 {
     /// <summary>
     /// Base class for icon and cursor files.
     /// </summary>
-    public abstract class IconFileBase : DispatcherObject, ICloneable
+    public abstract class IconFileBase :
+#if DRAWING
+        IDisposable,
+#else
+        DispatcherObject,
+#endif
+        ICloneable
     {
         /// <summary>
         /// Initializes a new instance.
@@ -270,7 +285,12 @@ namespace UIconEdit
                             gapLength -= read;
                         }
 
-                        WriteableBitmap loadedImage, alphaMask;
+#if DRAWING
+                        Bitmap
+#else
+                        WriteableBitmap
+#endif
+                            loadedImage, alphaMask;
 
                         int dibSize = reader.ReadInt32();
 
@@ -298,8 +318,9 @@ namespace UIconEdit
                         {
                             #region Load Png
                             alphaMask = null;
-
+#if !DRAWING
                             PngBitmapDecoder decoder;
+#endif
                             using (OffsetStream os = new OffsetStream(input,
                                 new byte[]
                                 {
@@ -314,14 +335,52 @@ namespace UIconEdit
                                 ms.Seek(0, SeekOrigin.Begin);
                                 try
                                 {
+#if DRAWING
+                                    loadedImage = (Bitmap)Image.FromStream(ms).Clone();
+#else
                                     decoder = new PngBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+#endif
                                 }
                                 catch (Exception e)
                                 {
                                     throw new IconLoadException(IconLoadException.DefaultMessage, IconErrorCode.EntryParseError, loadedId, curKVP.Key, e);
                                 }
                             }
+#if DRAWING
+                            switch (loadedImage.PixelFormat)
+                            {
+                                case PixelFormat.Format1bppIndexed:
+                                case PixelFormat.Format4bppIndexed:
+                                case PixelFormat.Format8bppIndexed:
+                                case PixelFormat.Format24bppRgb:
+                                    bitDepth = IconEntry.GetBitDepth(loadedImage.PixelFormat);
+                                    break;
+                                case PixelFormat.Format32bppRgb:
+                                    Bitmap alterBitmap = new Bitmap(loadedImage.Width, loadedImage.Height, PixelFormat.Format24bppRgb);
+                                    using (Graphics g = Graphics.FromImage(alterBitmap))
+                                        g.DrawImage(loadedImage, 0, 0, loadedImage.Width, loadedImage.Height);
+                                    loadedImage.Dispose();
+                                    loadedImage = alterBitmap;
+                                    bitDepth = IconBitDepth.Depth24BitsPerPixel;
+                                    break;
+                                case PixelFormat.Format32bppArgb:
+                                    if (!bitDepth.HasValue)
+                                        bitDepth = IconBitDepth.Depth32BitsPerPixel;
+                                    break;
+                                case PixelFormat.Format32bppPArgb:
+                                    alterBitmap = new Bitmap(loadedImage.Width, loadedImage.Height, PixelFormat.Format32bppArgb);
+                                    using (Graphics g = Graphics.FromImage(alterBitmap))
+                                        g.DrawImage(loadedImage, 0, 0, loadedImage.Width, loadedImage.Height);
+
+                                    loadedImage.Dispose();
+                                    loadedImage = alterBitmap;
+                                    goto case PixelFormat.Format32bppArgb;
+                                default:
+                                    throw new IconLoadException(IconErrorCode.InvalidBitDepth, loadedId, IconEntry.GetBitsPerPixel(loadedImage.PixelFormat), curKVP.Key);
+                            }
+#else
                             BitmapSource frame = decoder.Frames[0];
+
                             var pFormat = frame.Format;
 
                             switch (frame.Format.BitsPerPixel)
@@ -340,6 +399,7 @@ namespace UIconEdit
                                     throw new IconLoadException(IconErrorCode.InvalidBitDepth, loadedId, frame.Format.BitsPerPixel, curKVP.Key);
                             }
                             loadedImage = new WriteableBitmap(frame);
+#endif
                             #endregion
                         }
                         else if (dibSize == MinDibSize)
@@ -362,27 +422,48 @@ namespace UIconEdit
                                 {
                                     case 1:
                                         bmpStride = alphaStride;
+#if DRAWING
+                                        pFormat = PixelFormat.Format1bppIndexed;
+#else
                                         pFormat = PixelFormats.Indexed1;
+#endif
                                         break;
                                     case 4:
                                         bmpStride = (width + 1) >> 1;
+#if DRAWING
+                                        pFormat = PixelFormat.Format4bppIndexed;
+#else
                                         pFormat = PixelFormats.Indexed4;
+#endif
                                         break;
                                     case 8:
                                         bmpStride = width;
+#if DRAWING
+                                        pFormat = PixelFormat.Format8bppIndexed;
+#else
                                         pFormat = PixelFormats.Indexed8;
+#endif
                                         break;
                                     case 24:
                                         bmpStride = width * 3;
+#if DRAWING
+                                        pFormat = PixelFormat.Format24bppRgb;
+#else
                                         pFormat = PixelFormats.Bgr24;
+#endif
                                         break;
                                     case 32:
                                         bmpStride = width * 4;
+#if DRAWING
+                                        pFormat = PixelFormat.Format32bppArgb;
+#else
                                         pFormat = PixelFormats.Bgra32;
+#endif
                                         break;
                                     default:
                                         throw new IconLoadException(IconErrorCode.InvalidBitDepth, loadedId, bitsPerPixel, curKVP.Key);
                                 }
+
                                 _catchStride(ref bmpStride);
 
                                 bitDepth = IconEntry.GetBitDepth(bitsPerPixel);
@@ -431,7 +512,12 @@ namespace UIconEdit
 
                                 reader.ReadInt32(); //Skip next 4 bytes
 
-                                BitmapPalette palette;
+#if DRAWING
+                                Color[]
+#else
+                                BitmapPalette
+#endif
+                                    palette;
 
                                 if (palCount == 0)
                                     palette = null;
@@ -444,23 +530,35 @@ namespace UIconEdit
                                         byte g = reader.ReadByte();
                                         byte r = reader.ReadByte();
                                         reader.ReadByte();
-                                        colors.Add(Color.FromRgb(r, g, b));
+                                        colors.Add(Color.FromArgb(byte.MaxValue, r, g, b));
                                     }
+#if DRAWING
+                                    palette = colors.ToArray();
+#else
                                     palette = new BitmapPalette(colors);
+#endif
                                 }
 
+#if DRAWING
+                                loadedImage = _loadBitmap(reader, bmpStride, width, actualHeight, pFormat, palette);
+#else
                                 byte[] bmpData = _readBmpLines(reader, bmpStride, actualHeight);
 
                                 loadedImage = new WriteableBitmap(BitmapSource.Create(width, actualHeight, 0, 0, pFormat, palette, bmpData, bmpStride));
+#endif
 
                                 if (actualHeight == height)
                                     alphaMask = null;
                                 else
                                 {
+#if DRAWING
+                                    alphaMask = _loadBitmap(reader, alphaStride, width, actualHeight, PixelFormat.Format1bppIndexed, IconEntry.AlphaPalette);
+#else
                                     byte[] alphaData = _readBmpLines(reader, alphaStride, actualHeight);
 
                                     alphaMask = new WriteableBitmap(BitmapSource.Create(width, actualHeight, 0, 0, PixelFormats.Indexed1,
                                         IconEntry.AlphaPalette, alphaData, alphaStride));
+#endif
                                 }
                             }
                             #endregion
@@ -475,11 +573,13 @@ namespace UIconEdit
                             buffer[23] = (byte)(dibSize >> 8);
                             buffer[24] = (byte)(dibSize >> 16);
                             buffer[25] = (byte)(dibSize >> 24);
-                            var gEntry = entry;
+                            IconDirEntry gEntry = entry;
                             gEntry.ImageOffset = 6 + IconDirEntry.Size;
                             gEntry.CopyTo(buffer, 6);
 
+#if !DRAWING
                             IconBitmapDecoder decoder;
+#endif
                             try
                             {
                                 using (OffsetStream os = new OffsetStream(input, buffer, entry.ResourceLength - 4, true))
@@ -487,13 +587,19 @@ namespace UIconEdit
                                 {
                                     os.CopyTo(ms);
                                     ms.Seek(0, SeekOrigin.Begin);
+#if DRAWING
+                                    loadedImage = new Icon(ms).ToBitmap();
+                                    alphaMask = null;
+#else
                                     decoder = new IconBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+#endif
                                 }
                             }
                             catch (Exception e)
                             {
                                 throw new IconLoadException(IconLoadException.DefaultMessage, IconErrorCode.EntryParseError, loadedId, curKVP.Key, e);
                             }
+#if !DRAWING
                             BitmapFrame getFrame = decoder.Frames[0];
 
                             if (getFrame.Thumbnail == null || getFrame.Thumbnail.Format.BitsPerPixel == 32)
@@ -552,6 +658,7 @@ namespace UIconEdit
                                     loadedImage = new WriteableBitmap(new FormatConvertedBitmap(getFrame, PixelFormats.Bgra32, null, 1));
                                 }
                             }
+#endif
                             #endregion
                         }
 
@@ -594,6 +701,32 @@ namespace UIconEdit
             }
         }
 
+#if DRAWING
+        private static Bitmap _loadBitmap(BinaryReader reader, int stride, int width, int height, PixelFormat pFormat, Color[] palette)
+        {
+            byte[] data = _readBmpLines(reader, stride, height);
+
+            Bitmap bmp = new Bitmap(width, height, pFormat);
+
+            if (palette != null)
+            {
+                var resultPalette = bmp.Palette;
+
+                for (int i = 0; i < palette.Length; i++)
+                    resultPalette.Entries[i] = palette[i];
+
+                bmp.Palette = resultPalette;
+            }
+
+            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, pFormat);
+
+            Marshal.Copy(data, 0, bmpData.Scan0, data.Length);
+
+            bmp.UnlockBits(bmpData);
+
+            return bmp;
+        }
+#endif
         private static byte[] _readBmpLines(BinaryReader reader, int stride, int height)
         {
             byte[] bmpData = new byte[stride * height];
@@ -646,12 +779,12 @@ namespace UIconEdit
 
             public const int Size = 16;
 
-
             public void CopyTo(byte[] buffer, int index)
             {
                 IntPtr ptr = Marshal.AllocHGlobal(Size);
                 Marshal.StructureToPtr(this, ptr, false);
                 Marshal.Copy(ptr, buffer, index, Size);
+                Marshal.FreeHGlobal(ptr);
             }
         }
 
@@ -670,6 +803,7 @@ namespace UIconEdit
 
             public int Compare(IconDirEntry x, IconDirEntry y)
             {
+                if (x.ImageOffset == y.ImageOffset && x.End == y.End) return 0;
                 if (x.End <= y.ImageOffset) return -1;
                 if (y.End <= x.ImageOffset) return 1;
 
@@ -745,7 +879,7 @@ namespace UIconEdit
         internal abstract ushort GetImgY(IconEntry entry);
 
         #region Save
-        internal void Save(Stream output, IEnumerable<IconEntry> entryCollection)
+        internal void _save(Stream output)
         {
 #if LEAVEOPEN
             using (BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding(), true))
@@ -753,7 +887,7 @@ namespace UIconEdit
             BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding());
 #endif
             {
-                List<IconEntry> entries = new List<IconEntry>(entryCollection);
+                List<IconEntry> entries = new List<IconEntry>(Entries);
                 entries.Sort(new IconEntryComparer());
 
                 writer.Write(ushort.MinValue);
@@ -814,7 +948,7 @@ namespace UIconEdit
             if (entries.Count == 0 || entries.Count > ushort.MaxValue) throw new InvalidOperationException();
             try
             {
-                Save(output, entries);
+                _save(output);
             }
             catch (ObjectDisposedException) { throw; }
             catch (IOException) { throw; }
@@ -848,9 +982,10 @@ namespace UIconEdit
             var entries = Entries;
             if (entries.Count == 0) throw new InvalidOperationException("At least one entry is needed.");
             using (MemoryStream ms = new MemoryStream())
+            {
                 try
                 {
-                    Save(ms, entries);
+                    _save(ms);
                     ms.Seek(0, SeekOrigin.Begin);
                     using (FileStream fs = File.Open(path, FileMode.Create))
                         ms.CopyTo(fs);
@@ -858,14 +993,13 @@ namespace UIconEdit
                 catch (ObjectDisposedException) { throw; }
                 catch (IOException) { throw; }
                 catch (Exception e) { throw new IOException(e.Message, e); }
+            }
         }
 
         const int MinDibSize = 40;
 
         private void WriteImage(BinaryWriter writer, IconEntry entry, ref uint offset, out MemoryStream writeStream)
         {
-            var image = entry.BaseImage;
-
             bool isPng = entry.IsPng;
 
             if (entry.Width > byte.MaxValue || entry.Height > byte.MaxValue)
@@ -876,13 +1010,29 @@ namespace UIconEdit
                 writer.Write((byte)entry.Height);
             }
 
+#if DRAWING
+            Bitmap alphaMask, quantized
+#else
             BitmapSource alphaMask;
-            WriteableBitmap quantized = entry.GetQuantized(isPng, out alphaMask);
+            WriteableBitmap quantized
+#endif
+                = entry.GetQuantized(isPng, out alphaMask);
 
-            if (alphaMask == null || quantized.Palette == null || quantized.Palette.Colors.Count > byte.MaxValue)
+            if (alphaMask == null || quantized.Palette == null ||
+#if DRAWING
+                quantized.Palette.Entries.Length
+#else
+                quantized.Palette.Colors.Count
+#endif
+                    > byte.MaxValue)
                 writer.Write(byte.MinValue);
             else
-                writer.Write((byte)quantized.Palette.Colors.Count); //3
+                writer.Write((byte)quantized.Palette.
+#if DRAWING
+                    Entries.Length); //3
+#else
+                    Colors.Count); //3
+#endif
 
             writer.Write(byte.MinValue); //4
 
@@ -893,9 +1043,20 @@ namespace UIconEdit
             writeStream = new MemoryStream();
             if (isPng)
             {
+#if DRAWING
+                try
+                {
+                    _savePngWPF(writeStream, quantized);
+                }
+                catch (FileNotFoundException)
+                {
+                    quantized.Save(writeStream, ImageFormat.Png);
+                }
+#else
                 PngBitmapEncoder encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(quantized.Clone()));
                 encoder.Save(writeStream);
+#endif
             }
             else
             {
@@ -906,10 +1067,19 @@ namespace UIconEdit
 #endif
                 {
                     ushort bitsPerPixel = (ushort)entry.BitsPerPixel;
+#if DRAWING
+                    int height = quantized.Height;
+                    int width = quantized.Width;
+                    if (alphaMask != null) height += alphaMask.Height; //Only if bit depth != 32
+                    msWriter.Write(MinDibSize);
+                    msWriter.Write(quantized.Width);
+#else
                     int height = quantized.PixelHeight;
+                    int width = quantized.PixelWidth;
                     if (alphaMask != null) height += alphaMask.PixelHeight; //Only if bit depth != 32
                     msWriter.Write(MinDibSize);
                     msWriter.Write(quantized.PixelWidth);
+#endif
                     msWriter.Write(height);
                     msWriter.Write((short)1);
                     msWriter.Write(bitsPerPixel); //1, 4, 8, 24, or 32
@@ -920,20 +1090,34 @@ namespace UIconEdit
                     if (quantized.Palette != null)
                     {
                         ushort paletteCount = (ushort)IconEntry.GetColorCount(entry.BitDepth);
-
-                        for (int i = 0; i < paletteCount && i < quantized.Palette.Colors.Count; i++)
+                        var palette = quantized.Palette;
+#if DRAWING
+                        for (int i = 0; i < paletteCount && i < palette.Entries.Length; i++)
                         {
-                            Color curColor = quantized.Palette.Colors[i];
+                            Color curColor = palette.Entries[i];
+#else
+                        for (int i = 0; i < paletteCount && i < palette.Colors.Count; i++)
+                        {
+                            Color curColor = palette.Colors[i];
+#endif
                             msWriter.Write(curColor.B);
                             msWriter.Write(curColor.G);
                             msWriter.Write(curColor.R);
                             msWriter.Write(byte.MaxValue);
                         }
 
-                        for (int i = quantized.Palette.Colors.Count; i < paletteCount; i++)
+#if !DRAWING
+                        for (int i = palette.Colors.Count; i < paletteCount; i++)
                             msWriter.Write(0xFF000000u);
+#endif
                     }
-                    int width = quantized.PixelWidth;
+
+#if DRAWING
+                    _writeBmpData(quantized, msWriter);
+
+                    if (alphaMask != null)
+                        _writeBmpData(alphaMask, msWriter);
+#else
                     int alphaStride = (width + 7) >> 3;
                     _catchStride(ref alphaStride);
                     int bmpStride;
@@ -957,12 +1141,11 @@ namespace UIconEdit
                     }
                     _catchStride(ref bmpStride);
 
-                    height = quantized.PixelHeight;
-
-                    _writeBmpData(quantized, msWriter, height, bmpStride);
+                    _writeBmpData(quantized, msWriter, bmpStride);
 
                     if (alphaMask != null)
-                        _writeBmpData(alphaMask, msWriter, height, alphaStride);
+                        _writeBmpData(alphaMask, msWriter, alphaStride);
+#endif
                 }
 #if !LEAVEOPEN
                 writer.Flush();
@@ -974,10 +1157,59 @@ namespace UIconEdit
                 isPng ? "PNG" : "BMP", entry.Width, entry.Height, entry.BitDepth, GetImgY(entry), writeStream.Length);
 #endif
 
+#if DRAWING
+            if (quantized != entry.BaseImage)
+                quantized.Dispose();
+            if (alphaMask != null && alphaMask != entry.AlphaImage)
+                alphaMask.Dispose();
+#endif
             length = (uint)writeStream.Length;
             writer.Write(length); //12
             writer.Write(offset); //16
             offset += length;
+        }
+
+#if DRAWING
+        private static void _savePngWPF(MemoryStream writeStream, Bitmap quantized)
+        {
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            using (Bitmap fullQuant = new Bitmap(quantized.Width, quantized.Height, PixelFormat.Format32bppArgb))
+            {
+                using (Graphics g = Graphics.FromImage(fullQuant))
+                    g.DrawImage(quantized, 0, 0, quantized.Width, quantized.Height);
+
+                BitmapData bmpData = fullQuant.LockBits(new Rectangle(0, 0, fullQuant.Width, fullQuant.Height), ImageLockMode.ReadOnly, fullQuant.PixelFormat);
+
+                BitmapSource bmpSource = BitmapSource.Create(fullQuant.Width, fullQuant.Height, 0, 0, System.Windows.Media.PixelFormats.Bgra32, null,
+                    bmpData.Scan0, bmpData.Stride * bmpData.Height, bmpData.Stride);
+
+                fullQuant.UnlockBits(bmpData);
+                encoder.Frames.Add(BitmapFrame.Create(bmpSource));
+            }
+            encoder.Save(writeStream);
+        }
+
+        private static void _writeBmpData(Bitmap bmp, BinaryWriter msWriter)
+        {
+            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
+            int stride = bmpData.Stride;
+            byte[] bmpBytes = new byte[stride * bmp.Height];
+            Marshal.Copy(bmpData.Scan0, bmpBytes, 0, bmpBytes.Length);
+            bmp.UnlockBits(bmpData);
+
+            int height = bmp.Height;
+#else
+        private static void _writeBmpData(BitmapSource bmp, BinaryWriter msWriter, int stride)
+        {
+            int height = bmp.PixelHeight;
+            byte[] bmpBytes = new byte[height * stride];
+            bmp.CopyPixels(bmpBytes, stride, 0);
+#endif
+            for (int y = height - 1; y >= 0; y--)
+            {
+                int yOff = y * stride;
+                msWriter.Write(bmpBytes, yOff, stride);
+            }
         }
 
         private static void _catchStride(ref int stride)
@@ -986,19 +1218,51 @@ namespace UIconEdit
             if (offVal != 0)
                 stride += 4 - offVal;
         }
-
-        private static void _writeBmpData(BitmapSource bmp, BinaryWriter msWriter, int height, int stride)
-        {
-            byte[] bmpData = new byte[height * stride];
-            bmp.CopyPixels(bmpData, stride, 0);
-
-            for (int y = height - 1; y >= 0; y--)
-            {
-                int yOff = y * stride;
-                msWriter.Write(bmpData, yOff, stride);
-            }
-        }
         #endregion
+
+#if DRAWING
+        private bool _isDisposed;
+        /// <summary>
+        /// Gets a value indicating whether the current instance has been disposed.
+        /// </summary>
+        public bool IsDisposed { get { return _isDisposed; } }
+
+        /// <summary>
+        /// Immediately releases all resources used by the current instance.
+        /// </summary>
+        public void Dispose()
+        {
+            if (!_isDisposed) return;
+
+            Dispose(true);
+            _isDisposed = true;
+            if (Disposed != null)
+                Disposed(this, EventArgs.Empty);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                foreach (IconEntry curEntry in _entries.ToArray())
+                    curEntry.Dispose();
+            }
+            _entries.Clear();
+        }
+
+        /// <summary>
+        /// Destructor.
+        /// </summary>
+        ~IconFileBase()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Raised when the current instance is disposed.
+        /// </summary>
+        public event EventHandler Disposed;
+#endif
 
         /// <summary>
         /// Represents a list of icon entries. Entries with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and

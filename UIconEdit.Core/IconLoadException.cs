@@ -32,9 +32,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+#if DRAWING
+namespace UIconDrawing
+#else
 namespace UIconEdit
+#endif
 {
-
     /// <summary>
     /// The exception that is thrown when an icon file contains invalid data.
     /// </summary>

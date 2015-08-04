@@ -34,7 +34,11 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
+#if DRAWING
+namespace UIconDrawing
+#else
 namespace UIconEdit
+#endif
 {
     /// <summary>
     /// Provides methods for extracting icons from EXE and DLL files.

@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit.Core.Net40", "UIconEdit.Core\UIconEdit.Core.Net40.csproj", "{40CE58B0-4000-42C0-92A7-5314279B916E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nQuant.Core", "nQuant\nQuant.Core\nQuant.Core.csproj", "{A59307EA-FCB0-4110-BC42-0417871C24C4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit.Test.Net40", "UIconEdit.Test\UIconEdit.Test.Net40.csproj", "{902D4D9C-4500-418F-9890-5AAD7D82EEC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconDrawing.Net40", "UIconDrawing\UIconDrawing.Net40.csproj", "{7C44B786-4000-4A29-86AE-E216038F0E55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconDrawing.Test.Net40", "UIconDrawing.Test\UIconDrawing.Test.Net40.csproj", "{E9E01515-4000-4944-952A-417B78D6EA75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{902D4D9C-4500-418F-9890-5AAD7D82EEC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{902D4D9C-4500-418F-9890-5AAD7D82EEC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{902D4D9C-4500-418F-9890-5AAD7D82EEC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C44B786-4000-4A29-86AE-E216038F0E55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C44B786-4000-4A29-86AE-E216038F0E55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C44B786-4000-4A29-86AE-E216038F0E55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C44B786-4000-4A29-86AE-E216038F0E55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9E01515-4000-4944-952A-417B78D6EA75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9E01515-4000-4944-952A-417B78D6EA75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9E01515-4000-4944-952A-417B78D6EA75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9E01515-4000-4944-952A-417B78D6EA75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

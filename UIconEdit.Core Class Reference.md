@@ -1324,7 +1324,7 @@ The dependency property for the read-only [`IconEntry.IsQuantized`](#property-pu
 --------------------------------------------------
 ## Property: `public System.Boolean IsQuantized { get; }`
 
-Gets a value indicating whether [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) are known to be already quantized.
+Gets a value indicating whether [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) are both known to be already quantized.
 
 --------------------------------------------------
 ## Field: `public static readonly System.Windows.DependencyProperty BaseImageProperty`

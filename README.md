@@ -1,6 +1,6 @@
 ﻿UIconEdit and UIconCore
 =======================
-A C# application for opening and editing [Windows .CUR and .ICO files](http://en.wikipedia.org/wiki/ICO_%28file_format%29), using the [Windows Presentation Foundation](http://en.wikipedia.org/wiki/Windows_Presentation_Foundation) for image processing. The project is divided into two parts:
+A C# application for opening and editing [Windows .CUR and .ICO files](http://en.wikipedia.org/wiki/ICO_%28file_format%29), using the [Windows Presentation Foundation](http://en.wikipedia.org/wiki/Windows_Presentation_Foundation) for image processing. The project is divided into three parts:
 
 * The UIconDrawing library, which allows icon creation and modification in code using System.Drawing.
 * The UIconEdit.Core library, which allows icon creation and modification in code using WPF.

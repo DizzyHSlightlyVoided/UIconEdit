@@ -2367,7 +2367,17 @@ namespace UIconEdit
         /// </summary>
         public static readonly IconEntry Empty;
 
-        internal bool IsValid { get { return Width >= IconEntry.MinDimension && Height >= IconEntry.MinDimension && _isValid(BitDepth); } }
+        /// <summary>
+        /// Gets a value indicating whether the current value would actually appear in an icon entry.
+        /// </summary>
+        public bool IsValid
+        {
+            get
+            {
+                return Width >= IconEntry.MinDimension && Width <= IconEntry.MaxDimension
+                    && Height >= IconEntry.MinDimension && Height <= IconEntry.MaxDimension && _isValid(BitDepth);
+            }
+        }
 
         /// <summary>
         /// Returns a string representation of the current value.

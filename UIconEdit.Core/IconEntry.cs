@@ -1531,7 +1531,7 @@ namespace UIconEdit
                     }
                     nQuant.WuQuantizer quant = new nQuant.WuQuantizer();
 
-                    returner = (Bitmap)quant.QuantizeImage(baseBmp, _alphaThreshold, 70, colorCount);
+                    returner = GetSmaller((Bitmap)quant.QuantizeImage(baseBmp, _alphaThreshold, 70, colorCount), pFormat, false);
                 }
                 baseBmp.Dispose();
 
@@ -1568,12 +1568,96 @@ namespace UIconEdit
                 bmp8Palette.Entries[i] = default(Color);
             bmp8.Palette = bmp8Palette;
 
-            if (pFormat == PixelFormat.Format8bppIndexed)
-                return bmp8;
+            return GetSmaller(bmp8, pFormat, true);
+        }
 
-            var bmpSmaller = bmp8.Clone(fullRect, pFormat);
-            bmp8.Dispose();
-            return bmpSmaller;
+        private Bitmap GetSmaller(Bitmap source, PixelFormat pFormat, bool ordered)
+        {
+            if (pFormat == PixelFormat.Format8bppIndexed)
+                return source;
+
+            Rectangle fullRect = new Rectangle(0, 0, _width, _height);
+
+            int maxColorCount, offset, colorsPerByte, resultStride, shift, top;
+
+            if (pFormat == PixelFormat.Format1bppIndexed)
+            {
+                maxColorCount = 2;
+                offset = 1;
+                colorsPerByte = 8;
+                resultStride = (_width + 7) >> 3;
+                shift = 3;
+                top = 7;
+            }
+            else
+            {
+                maxColorCount = 16;
+                offset = 4;
+                colorsPerByte = 2;
+                resultStride = (_width + 1) >> 1;
+                shift = 1;
+                top = 4;
+            }
+
+            Dictionary<byte, byte> indices = new Dictionary<byte, byte>();
+            List<Color> colorList = new List<Color>();
+            var sourceEntries = source.Palette.Entries;
+
+            if (ordered)
+            {
+                for (byte i = 0; i < maxColorCount; i++)
+                {
+                    indices.Add(i, i);
+                    colorList.Add(sourceEntries[i]);
+                }
+            }
+
+            Bitmap result = new Bitmap(_width, _height, pFormat);
+
+            BitmapData sourceData = source.LockBits(fullRect, ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+            BitmapData resultData = result.LockBits(fullRect, ImageLockMode.WriteOnly, pFormat);
+
+            unsafe
+            {
+                byte* pSource = (byte*)sourceData.Scan0, pResult = (byte*)resultData.Scan0;
+
+                for (int y = 0; y < _height; y++)
+                {
+                    int yOffSource = (y * sourceData.Stride), yOffResult = (y * resultData.Stride);
+
+                    for (int xRow = 0; xRow < resultStride; xRow++)
+                    {
+                        int xSource = (xRow << shift) + yOffSource, xResult = xRow + yOffResult;
+
+                        for (int xShift = 0; xShift < colorsPerByte; xShift++)
+                        {
+                            byte curSource = pSource[xSource + xShift], curDex;
+                            if (!indices.TryGetValue(curSource, out curDex))
+                            {
+                                curDex = (byte)colorList.Count;
+                                colorList.Add(sourceEntries[curSource]);
+                                indices[curSource] = curDex;
+                            }
+
+                            pResult[xResult] |= (byte)(curDex << top - (xShift * offset));
+                        }
+                    }
+                }
+            }
+
+            source.UnlockBits(sourceData);
+            result.UnlockBits(resultData);
+
+            var resultPalette = result.Palette;
+
+            for (int i = 0; i < colorList.Count; i++)
+                resultPalette.Entries[i] = colorList[i];
+            for (int i = colorList.Count; i < resultPalette.Entries.Length; i++)
+                resultPalette.Entries[i] = default(Color);
+            result.Palette = resultPalette;
+
+            source.Dispose();
+            return result;
         }
 #else
         /// <summary>

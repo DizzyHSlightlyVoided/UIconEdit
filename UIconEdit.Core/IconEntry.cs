@@ -1181,7 +1181,6 @@ namespace UIconEdit
             }
         }
 
-#if DRAWING
         #region ColorValue
         [StructLayout(LayoutKind.Explicit)]
         private struct ColorValue : IEquatable<ColorValue>
@@ -1203,7 +1202,11 @@ namespace UIconEdit
 
             public ColorValue(Color value)
             {
+#if DRAWING
                 this = new ColorValue() { Value = value.ToArgb() };
+#else
+                this = new ColorValue() { A = value.A, R = value.R, G = value.G, B = value.B };
+#endif
             }
 
             [FieldOffset(0)]
@@ -1218,7 +1221,7 @@ namespace UIconEdit
             [FieldOffset(3)]
             public byte A;
 
-            public static readonly ColorValue White = new ColorValue(~0), Black = new ColorValue(~0xFFFFFF), Default;
+            public static readonly ColorValue White = new ColorValue(~0), Black = new ColorValue(~0xFFFFFF);
 
             public double GetDistance(ColorValue other)
             {
@@ -1271,24 +1274,9 @@ namespace UIconEdit
             {
                 return Value == other.Value;
             }
-
-            public static ColorValue operator ~(ColorValue value)
-            {
-                return new ColorValue(~value.Value);
-            }
-
-            public static ColorValue operator &(ColorValue v1, ColorValue v2)
-            {
-                return new ColorValue(v1.Value & v2.Value);
-            }
-
-            public static ColorValue operator |(ColorValue v1, ColorValue v2)
-            {
-                return new ColorValue(v1.Value | v2.Value);
-            }
         }
         #endregion
-
+#if DRAWING
         /// <summary>
         /// Applies <see cref="AlphaImage"/> to <see cref="BaseImage"/>.
         /// </summary>
@@ -1504,7 +1492,7 @@ namespace UIconEdit
             {
                 var curColor = colors[i];
                 var whiteDistance = curColor.GetDistance(ColorValue.White);
-                if (curColor.GetDistance(ColorValue.Black) < whiteDistance || curColor.GetDistance(ColorValue.Default) < whiteDistance)
+                if (curColor.GetDistance(ColorValue.Black) < whiteDistance || curColor.GetDistance(default(ColorValue)) < whiteDistance)
                     returner[i] = 1;
             }
             return returner;
@@ -1668,13 +1656,12 @@ namespace UIconEdit
             if (IsQuantized && (isPng == (alphaImage == null)))
             {
                 alphaMask = alphaImage;
-                return new WriteableBitmap(BaseImage);
+                return (WriteableBitmap)(new WriteableBitmap(BaseImage)).GetCurrentValueAsFrozen();
             }
 
             IconScalingFilter scaleMode = ScalingFilter;
 
-            uint[] pixels = _scaleBitmap(scaleMode, BaseImage);
-            const uint opaqueAlpha = 0xFF000000u;
+            ColorValue[] pixels = _scaleBitmap(scaleMode, BaseImage);
 
             byte _alphaThreshold = AlphaThreshold;
 
@@ -1683,56 +1670,47 @@ namespace UIconEdit
                 alphaMask = null;
                 if (alphaImage != null)
                 {
-                    alphaImage = new FormatConvertedBitmap(alphaImage, PixelFormats.Bgra32, null, 0);
-
-                    if (alphaImage.PixelWidth != _width || alphaImage.PixelHeight != _height)
-                    {
-                        alphaImage = new TransformedBitmap(alphaImage, new ScaleTransform((double)_width / alphaImage.PixelWidth,
-                            (double)_height / alphaImage.PixelHeight));
-                    }
-
-                    uint[] alphaPixels = new uint[_width * _height];
-                    alphaImage.CopyPixels(alphaPixels, _width * sizeof(uint), 0);
+                    ColorValue[] alphaPixels = _scaleBitmap(scaleMode, alphaImage);
 
                     for (int i = 0; i < alphaPixels.Length; i++)
                     {
-                        if (alphaPixels[i] == opaqueAlpha)
-                            pixels[i] &= ~opaqueAlpha;
+                        ColorValue curAlpha = alphaPixels[i];
+                        double whiteDistance = curAlpha.GetDistance(ColorValue.White);
+                        if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance || curAlpha.GetDistance(default(ColorValue)) < whiteDistance)
+                            pixels[i].A = 0;
                     }
                 }
             }
             else if (alphaImage == null)
             {
-                uint[] alphaPixels = new uint[pixels.Length];
+                ColorValue[] alphaPixels = new ColorValue[pixels.Length];
 
                 for (int i = 0; i < pixels.Length; i++)
                 {
-                    uint curVal = pixels[i] >> 24;
-                    if (curVal < _alphaThreshold)
-                        alphaPixels[i] = opaqueAlpha;
+                    ColorValue curVal = pixels[i];
+                    if (curVal.A < _alphaThreshold)
+                        alphaPixels[i] = ColorValue.Black;
                     else
-                        alphaPixels[i] = uint.MaxValue;
+                        alphaPixels[i] = ColorValue.White;
                 }
 
-                alphaMask = new FormatConvertedBitmap(GetBitmap(_width, _height, alphaPixels), PixelFormats.Indexed1, AlphaPalette, 0);
+                alphaMask = GetBitmap(_width, _height, alphaPixels, DPixelFormat.Format1bppIndexed, 2);
             }
             else
             {
-                if (alphaImage.PixelWidth != _width || alphaImage.PixelHeight != _height)
+                ColorValue[] alphaPixels = _scaleBitmap(scaleMode, alphaImage);
+
+                for (int i = 0; i < alphaPixels.Length; i++)
                 {
-                    if (scaleMode == IconScalingFilter.Matrix)
-                    {
-                        alphaImage = new TransformedBitmap(alphaImage, new ScaleTransform((double)_width / alphaImage.PixelWidth,
-                            (double)_height / alphaImage.PixelHeight));
-                    }
+                    ColorValue curAlpha = alphaPixels[i];
+                    double whiteDistance = curAlpha.GetDistance(ColorValue.White);
+                    if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance || curAlpha.GetDistance(default(ColorValue)) < whiteDistance)
+                        alphaPixels[i] = ColorValue.Black;
                     else
-                    {
-                        uint[] alphaPixels = new uint[_width * _height];
-                        _scaleBitmap(scaleMode, new FormatConvertedBitmap(alphaImage, PixelFormats.Bgra32, null, 0), alphaPixels);
-                        alphaMask = GetBitmap(_width, _height, alphaPixels);
-                    }
+                        alphaPixels[i] = ColorValue.White;
                 }
-                alphaMask = new FormatConvertedBitmap(alphaImage, PixelFormats.Indexed1, AlphaPalette, 0);
+
+                alphaMask = GetBitmap(_width, _height, alphaPixels, DPixelFormat.Format1bppIndexed, 2);
             }
 
             if (_depth == IconBitDepth.Depth32BitsPerPixel)
@@ -1740,11 +1718,17 @@ namespace UIconEdit
 
             for (int i = 0; i < pixels.Length; i++)
             {
-                uint value = pixels[i] >> 24;
-                if (value < _alphaThreshold)
-                    pixels[i] = isPng ? (pixels[i] & ~opaqueAlpha) : opaqueAlpha;
+                ColorValue value = pixels[i];
+                if (value.A < _alphaThreshold)
+                {
+                    if (isPng)
+                        value.A = 0;
+                    else
+                        value = ColorValue.Black;
+                    pixels[i] = value;
+                }
                 else
-                    pixels[i] |= opaqueAlpha;
+                    pixels[i].A = byte.MaxValue;
             }
 
             DPixelFormat pFormat;
@@ -1779,34 +1763,49 @@ namespace UIconEdit
             {
                 Color curColor = quantized.Palette.Colors[quantBytes[i]];
 
-                uint bgra = curColor.B | ((uint)curColor.G << 8) | ((uint)curColor.R << 16);
+                ColorValue value = pixels[i];
 
-                pixels[i] = (pixels[i] & opaqueAlpha) | bgra;
+                value.R = curColor.R;
+                value.G = curColor.G;
+                value.B = curColor.B;
+
+                pixels[i] = value;
             }
 
             return GetBitmap(_width, _height, pixels);
         }
 
-        private uint[] _scaleBitmap(IconScalingFilter scaleMode, BitmapSource image)
+        private ColorValue[] _scaleBitmap(IconScalingFilter scaleMode, BitmapSource image)
         {
-            uint[] pixels = new uint[_width * _height];
+            ColorValue[] pixels = new ColorValue[_width * _height];
+
+            Int32Rect fullRect = new Int32Rect(0, 0, _width, _height);
+
             FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
             if (formatBmp.PixelWidth == _width && formatBmp.PixelHeight == _height)
             {
-                formatBmp.CopyPixels(pixels, _width * sizeof(uint), 0);
+                unsafe
+                {
+                    fixed (ColorValue* pPixels = pixels)
+                        formatBmp.CopyPixels(fullRect, (IntPtr)pPixels, pixels.Length * sizeof(ColorValue), _width * sizeof(ColorValue));
+                }
             }
             else if (scaleMode == IconScalingFilter.Matrix)
             {
                 TransformedBitmap transBmp = new TransformedBitmap(formatBmp, new ScaleTransform((double)_width / formatBmp.PixelWidth,
                     (double)_height / formatBmp.PixelHeight));
-                transBmp.CopyPixels(pixels, _width * sizeof(uint), 0);
+                unsafe
+                {
+                    fixed (ColorValue* pPixels = pixels)
+                        transBmp.CopyPixels(fullRect, (IntPtr)pPixels, pixels.Length * sizeof(ColorValue), _width * sizeof(ColorValue));
+                }
             }
             else _scaleBitmap(scaleMode, formatBmp, pixels);
 
             return pixels;
         }
 
-        private void _scaleBitmap(IconScalingFilter scaleMode, FormatConvertedBitmap image, uint[] pixels)
+        private void _scaleBitmap(IconScalingFilter scaleMode, FormatConvertedBitmap image, ColorValue[] pixels)
         {
             using (DBitmap dBitmap = new DBitmap(image.PixelWidth, image.PixelHeight, DPixelFormat.Format32bppArgb))
             {
@@ -1849,7 +1848,7 @@ namespace UIconEdit
 
                     unsafe
                     {
-                        uint* pData = (uint*)sizeData.Scan0;
+                        ColorValue* pData = (ColorValue*)sizeData.Scan0;
                         for (int i = 0; i < pixels.Length; i++)
                             pixels[i] = pData[i];
                     }
@@ -1859,7 +1858,7 @@ namespace UIconEdit
             }
         }
 
-        internal unsafe WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, uint[] pixels, DPixelFormat format, ushort maxColors)
+        private unsafe WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, ColorValue[] pixels, DPixelFormat format, ushort maxColors)
         {
             if (maxColors > 256 && (format == DPixelFormat.Format32bppArgb || format == DPixelFormat.Format24bppRgb))
             {
@@ -1867,7 +1866,7 @@ namespace UIconEdit
                 if (format == DPixelFormat.Format24bppRgb)
                 {
                     for (int i = 0; i < pixels.Length; i++)
-                        pixels[i] |= 0xFF000000;
+                        pixels[i].A = byte.MaxValue;
                 }
 
                 wBmp.WritePixels(new Int32Rect(0, 0, pixelWidth, pixelHeight), pixels, pixelWidth * 4, 0);
@@ -1883,7 +1882,7 @@ namespace UIconEdit
 
                 BitmapData bData = baseBmp.LockBits(fullRect, ImageLockMode.WriteOnly, DPixelFormat.Format32bppArgb);
 
-                uint* pData = (uint*)bData.Scan0;
+                ColorValue* pData = (ColorValue*)bData.Scan0;
 
                 for (int i = 0; i < pixels.Length; i++)
                     pData[i] = pixels[i];
@@ -1979,12 +1978,12 @@ namespace UIconEdit
             return result;
         }
 
-        internal WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, uint[] pixels, DPixelFormat format)
+        private WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, ColorValue[] pixels, DPixelFormat format)
         {
             return GetBitmap(pixelWidth, pixelHeight, pixels, format, ushort.MaxValue);
         }
 
-        internal WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, uint[] pixels)
+        private WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, ColorValue[] pixels)
         {
             return GetBitmap(pixelWidth, pixelHeight, pixels, DPixelFormat.Format32bppArgb, ushort.MaxValue);
         }

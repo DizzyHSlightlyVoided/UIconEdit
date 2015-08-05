@@ -1802,7 +1802,6 @@ namespace UIconEdit
 
             private int _binarySearch(int index, int count, IconEntryKey key)
             {
-                if (!_set.Contains(key)) return -1;
                 int low = index, high = index + count - 1;
 
                 while (low <= high)

@@ -1765,36 +1765,38 @@ namespace UIconEdit
                     }
                 }
             }
-            else if (alphaImage == null)
-            {
-                ColorValue[] alphaPixels = new ColorValue[pixels.Length];
-
-                for (int i = 0; i < pixels.Length; i++)
-                {
-                    ColorValue curVal = pixels[i];
-                    if (curVal.A < _alphaThreshold)
-                        alphaPixels[i] = ColorValue.Black;
-                    else
-                        alphaPixels[i] = ColorValue.White;
-                }
-
-                alphaMask = GetBitmap(_width, _height, alphaPixels, DPixelFormat.Format1bppIndexed, 2);
-            }
             else
             {
-                ColorValue[] alphaPixels = _scaleBitmap(scaleMode, alphaImage);
-
-                for (int i = 0; i < alphaPixels.Length; i++)
+                ColorValue[] alphaPixels;
+                if (alphaImage == null)
                 {
-                    ColorValue curAlpha = alphaPixels[i];
-                    double whiteDistance = curAlpha.GetDistance(ColorValue.White);
-                    if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance || curAlpha.GetDistance(default(ColorValue)) < whiteDistance)
-                        alphaPixels[i] = ColorValue.Black;
-                    else
-                        alphaPixels[i] = ColorValue.White;
+                    alphaPixels = new ColorValue[pixels.Length];
+
+                    for (int i = 0; i < pixels.Length; i++)
+                    {
+                        ColorValue curVal = pixels[i];
+                        if (curVal.A < _alphaThreshold)
+                            alphaPixels[i] = ColorValue.Black;
+                        else
+                            alphaPixels[i] = ColorValue.White;
+                    }
+                }
+                else
+                {
+                    alphaPixels = _scaleBitmap(scaleMode, alphaImage);
+
+                    for (int i = 0; i < alphaPixels.Length; i++)
+                    {
+                        ColorValue curAlpha = alphaPixels[i];
+                        double whiteDistance = curAlpha.GetDistance(ColorValue.White);
+                        if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance || curAlpha.GetDistance(default(ColorValue)) < whiteDistance)
+                            alphaPixels[i] = ColorValue.Black;
+                        else
+                            alphaPixels[i] = ColorValue.White;
+                    }
                 }
 
-                alphaMask = GetBitmap(_width, _height, alphaPixels, DPixelFormat.Format1bppIndexed, 2);
+                alphaMask = new FormatConvertedBitmap(GetBitmap(_width, _height, alphaPixels), PixelFormats.Indexed1, AlphaPalette, 0);
             }
 
             if (_depth == IconBitDepth.Depth32BitsPerPixel)

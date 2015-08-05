@@ -871,7 +871,11 @@ namespace UIconEdit
 
         internal virtual bool IsValid(IconEntry entry)
         {
+#if DRAWING
+            return entry != null && !entry.IsDisposed;
+#else
             return entry != null;
+#endif
         }
 
         internal abstract ushort GetImgX(IconEntry entry);
@@ -1337,6 +1341,23 @@ namespace UIconEdit
                 return entry;
             }
 
+#if DRAWING
+            /// <summary>
+            /// Gets and sets the element at the specified index.
+            /// </summary>
+            /// <param name="index">The index of the element to get or set.</param>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <para><paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.</para>
+            /// <para>-OR-</para>
+            /// <para>In a set operation, the specified value is <c>null</c>.</para>
+            /// </exception>
+            /// <exception cref="NotSupportedException">
+            /// In a set operation, an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// already exists in the list at a different index, the specified value is already associated with a different icon file, or the specified
+            /// value is disposed.
+            /// </exception>
+            public IconEntry this[int index]
+#else
             /// <summary>
             /// Gets and sets the element at the specified index.
             /// </summary>
@@ -1351,6 +1372,7 @@ namespace UIconEdit
             /// already exists in the list at a different index, or the specified value is already associated with a different icon file.
             /// </exception>
             public IconEntry this[int index]
+#endif
             {
                 get { return _items[index]; }
                 set
@@ -1379,6 +1401,16 @@ namespace UIconEdit
                     _noDups &= _set.Add(curItem.EntryKey);
             }
 
+#if DRAWING
+            /// <summary>
+            /// Adds the specified icon entry to the list.
+            /// </summary>
+            /// <param name="item">The icon entry to add to the list.</param>
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>, is disposed,
+            /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
+            /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
+            public bool Add(IconEntry item)
+#else
             /// <summary>
             /// Adds the specified icon entry to the list.
             /// </summary>
@@ -1387,6 +1419,7 @@ namespace UIconEdit
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
             /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
             public bool Add(IconEntry item)
+#endif
             {
                 return Insert(_items.Count, item);
             }
@@ -1402,6 +1435,20 @@ namespace UIconEdit
                 throw new NotSupportedException("Could not add the specified value!");
             }
 
+#if DRAWING
+            /// <summary>
+            /// Adds the specified icon entry to the list at the specified index.
+            /// </summary>
+            /// <param name="index">The index at which to insert the icon entry.</param>
+            /// <param name="item">The icon entry to add to the list.</param>
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>, is disposed,
+            /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
+            /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> is less than 0 or is greater than <see cref="Count"/>.
+            /// </exception>
+            public bool Insert(int index, IconEntry item)
+#else
             /// <summary>
             /// Adds the specified icon entry to the list at the specified index.
             /// </summary>
@@ -1414,6 +1461,7 @@ namespace UIconEdit
             /// <paramref name="index"/> is less than 0 or is greater than <see cref="Count"/>.
             /// </exception>
             public bool Insert(int index, IconEntry item)
+#endif
             {
                 if (index < 0 || index > _items.Count) throw new ArgumentOutOfRangeException("index");
                 if (_items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item.EntryKey))
@@ -1446,6 +1494,17 @@ namespace UIconEdit
                 return true;
             }
 
+#if DRAWING
+            /// <summary>
+            /// Sets the value at the specified index.
+            /// </summary>
+            /// <param name="index">The index of the value to set.</param>
+            /// <param name="item">The item to set at the specified index.</param>
+            /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c>, is disposed,
+            /// is already associated with a different icon file, or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
+            /// and <see cref="IconEntry.BitDepth"/> already exists at a different index.</returns>
+            public bool SetValue(int index, IconEntry item)
+#else
             /// <summary>
             /// Sets the value at the specified index.
             /// </summary>
@@ -1455,6 +1514,7 @@ namespace UIconEdit
             /// is already associated with a different icon file, or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
             /// and <see cref="IconEntry.BitDepth"/> already exists at a different index.</returns>
             public bool SetValue(int index, IconEntry item)
+#endif
             {
                 return _setValue(index, item, false);
             }

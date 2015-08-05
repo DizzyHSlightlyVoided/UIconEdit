@@ -280,7 +280,7 @@ In a set operation, the specified value is `null`.
 
 
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
-In a set operation, an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists in the list at a different index, or the specified value is already associated with a different icon file.
+In a set operation, an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists in the list at a different index, the specified value is already associated with a different icon file, or the specified value is disposed.
 
 --------------------------------------------------
 ## Property: `public virtual System.Int32 Count { get; }`
@@ -293,7 +293,7 @@ Gets the number of elements in the list.
 Adds the specified icon entry to the list.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists in the list.
 
 
 --------------------------------------------------
@@ -303,7 +303,7 @@ Adds the specified icon entry to the list at the specified index.
 * `index`: The index at which to insert the icon entry.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists in the list.
 
 
 ### Exceptions
@@ -318,7 +318,7 @@ Sets the value at the specified index.
 * `index`: The index of the value to set.
 * `item`: The item to set at the specified index.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists at a different index.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is disposed, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists at a different index.
 
 
 --------------------------------------------------

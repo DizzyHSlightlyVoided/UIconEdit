@@ -583,7 +583,7 @@ namespace UIconEdit
             {
                 if (_isDisposed) throw new ObjectDisposedException(null);
                 if (value == null) throw new ArgumentNullException();
-                if (_isQuantizedImage)
+                if (_isQuantizedImage && !ReferenceEquals(value, _baseImage))
                 {
                     _baseImage.Dispose();
                     _isQuantizedImage = false;
@@ -647,7 +647,7 @@ namespace UIconEdit
             set
             {
                 if (_isDisposed) throw new ObjectDisposedException(null);
-                if (_isQuantizedAlpha)
+                if (_isQuantizedAlpha && !ReferenceEquals(_alphaImage, value))
                 {
                     if (_alphaImage != null) _alphaImage.Dispose();
                     _isQuantizedAlpha = false;
@@ -2246,25 +2246,16 @@ namespace UIconEdit
         /// <summary>
         /// Indicates the width of the icon entry.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than or equal to 0.
-        /// </exception>
         public int Width;
 
         /// <summary>
         /// Indicates the height of the icon entry.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than or equal to 0.
-        /// </exception>
         public int Height;
 
         /// <summary>
         /// Indicates the bit depth of the icon entry.
         /// </summary>
-        /// <exception cref="InvalidEnumArgumentException">
-        /// In a set operation, the specified value is not a valid <see cref="IconBitDepth"/> value.
-        /// </exception>
         public IconBitDepth BitDepth;
 
         /// <summary>

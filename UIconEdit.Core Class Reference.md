@@ -1653,30 +1653,15 @@ Creates a new instance.
 
 Indicates the width of the icon entry.
 
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than or equal to 0.
-
 --------------------------------------------------
 ## Field: `public System.Int32 Height`
 
 Indicates the height of the icon entry.
 
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than or equal to 0.
-
 --------------------------------------------------
 ## Field: `public UIconEdit.IconBitDepth BitDepth`
 
 Indicates the bit depth of the icon entry.
-
-### Exceptions
-
-##### [`InvalidEnumArgumentException`](https://msdn.microsoft.com/en-us/library/system.componentmodel.invalidenumargumentexception.aspx)
-In a set operation, the specified value is not a valid [`IconBitDepth`](#type-public-enum-uiconediticonbitdepth) value.
 
 --------------------------------------------------
 ## Method: `public System.Int32 CompareTo(UIconEdit.IconEntryKey other)`

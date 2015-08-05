@@ -1387,7 +1387,7 @@ namespace UIconEdit
             if (isPng)
             {
                 alphaMask = null;
-                if (_alphaImage != null)
+                if (_alphaImage != null && _depth == IconBitDepth.Depth32BitsPerPixel && this._depth != IconBitDepth.Depth32BitsPerPixel)
                 {
                     byte[] alphaBytes = _getAlphaBytes(_alphaImage);
 
@@ -1752,7 +1752,7 @@ namespace UIconEdit
             if (isPng)
             {
                 alphaMask = null;
-                if (alphaImage != null)
+                if (alphaImage != null && _depth == IconBitDepth.Depth32BitsPerPixel && this._depth != IconBitDepth.Depth32BitsPerPixel)
                 {
                     ColorValue[] alphaPixels = _scaleBitmap(scaleMode, alphaImage);
 

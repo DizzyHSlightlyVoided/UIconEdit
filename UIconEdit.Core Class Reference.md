@@ -345,7 +345,7 @@ Removes an icon entry similar to the specified value from the list.
 
 
 --------------------------------------------------
-## Method: `public System.Boolean RemoveSimilar(System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth)`
+## Method: `public System.Boolean RemoveSimilar(System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
 
 Removes an icon entry similar to the specified values from the list.
 * `width`: The width of the icon entry to search for.
@@ -388,7 +388,7 @@ Determines if an element similar to the specified value exists in the list.
 
 
 --------------------------------------------------
-## Method: `public System.Boolean ContainsSimilar(System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth)`
+## Method: `public System.Boolean ContainsSimilar(System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
 
 Determines if an element similar to the specified values exists in the list.
 * `width`: The width of the icon entry to search for.
@@ -426,7 +426,7 @@ Gets the index of an element similar to the specified value.
 
 
 --------------------------------------------------
-## Method: `public System.Int32 IndexOfSimilar(System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth)`
+## Method: `public System.Int32 IndexOfSimilar(System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
 
 Gets the index of an element similar to the specified values.
 * `width`: The width of the icon entry to search for.
@@ -539,7 +539,7 @@ Performs a binary search for an entry with the same [`IconEntry.Width`](#propert
 `index` and `count` do not indicate a valid range of elements in the list.
 
 --------------------------------------------------
-## Method: `public System.Int32 BinarySearchSimilar(System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth)`
+## Method: `public System.Int32 BinarySearchSimilar(System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
 
 Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
 * `width`: The width of the icon entry to search for.
@@ -550,7 +550,7 @@ Performs a binary search for an entry with the same [`IconEntry.Width`](#propert
 
 
 --------------------------------------------------
-## Method: `public System.Int32 BinarySearchSimilar(System.Int32 index, System.Int32 count, System.Int16 width, System.Int16 height, UIconEdit.IconBitDepth bitDepth)`
+## Method: `public System.Int32 BinarySearchSimilar(System.Int32 index, System.Int32 count, System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
 
 Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uiconediticonentrykey-entrykey--get-) value.
 * `index`: The index in the list at which the search begins.
@@ -1676,6 +1676,11 @@ Compares the current instance to the specified other [`IconEntryKey`](#type-publ
 ## Field: `public static readonly UIconEdit.IconEntry Empty`
 
 Returns an invalid [`IconEntryKey`](#type-public-struct-uiconediticonentrykey) with all values equal to 0.
+
+--------------------------------------------------
+## Property: `public System.Boolean IsValid { get; }`
+
+Gets a value indicating whether the current value would actually appear in an icon entry.
 
 --------------------------------------------------
 ## Method: `public System.String ToString()`

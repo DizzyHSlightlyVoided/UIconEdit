@@ -695,7 +695,7 @@ namespace UIconEdit
 
                 entries.Sort(new IconEntryComparer());
 
-                returner.Entries.AddBulk(entries);
+                returner._entries.AddBulk(entries);
 
                 return returner;
             }
@@ -872,7 +872,7 @@ namespace UIconEdit
         internal virtual bool IsValid(IconEntry entry)
         {
 #if DRAWING
-            return entry != null && !entry.IsDisposed;
+            return entry != null && !entry.IsDisposed && !_isDisposed;
 #else
             return entry != null;
 #endif
@@ -891,7 +891,7 @@ namespace UIconEdit
             BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding());
 #endif
             {
-                List<IconEntry> entries = new List<IconEntry>(Entries);
+                List<IconEntry> entries = new List<IconEntry>(_entries);
                 entries.Sort(new IconEntryComparer());
 
                 writer.Write(ushort.MinValue);
@@ -926,7 +926,33 @@ namespace UIconEdit
             writer.Flush();
 #endif
         }
-
+#if DRAWING
+        /// <summary>
+        /// Saves the file to the specified stream.
+        /// </summary>
+        /// <param name="output">The stream to which the file will be written.</param>
+        /// <exception cref="InvalidOperationException">
+        /// <see cref="Entries"/> contains zero elements.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="output"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="output"/> is closed or does not support writing.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <para>The current instance is disposed.</para>
+        /// <para>-OR-</para>
+        /// <para><paramref name="output"/> is closed.</para>
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public void Save(Stream output)
+        {
+            if (_isDisposed)
+                throw new ObjectDisposedException(null, "The current instance is disposed.");
+#else
         /// <summary>
         /// Saves the file to the specified stream.
         /// </summary>
@@ -948,8 +974,11 @@ namespace UIconEdit
         /// </exception>
         public void Save(Stream output)
         {
-            var entries = Entries;
-            if (entries.Count == 0 || entries.Count > ushort.MaxValue) throw new InvalidOperationException();
+#endif
+            if (_entries.Count == 0)
+                throw new InvalidOperationException("Must have at least one entry.");
+            if (_entries.Count > ushort.MaxValue)
+                throw new InvalidOperationException("Must have fewer than 65536 entries.");
             try
             {
                 _save(output);
@@ -959,6 +988,34 @@ namespace UIconEdit
             catch (Exception e) { throw new IOException(e.Message, e); }
         }
 
+#if DRAWING
+        /// <summary>
+        /// Saves the file to the specified file.
+        /// </summary>
+        /// <param name="path">The file to which the file will be written.</param>
+        /// <exception cref="InvalidOperationException">
+        /// <see cref="Entries"/> contains zero elements.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// The current instance is disposed.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in <see cref="Path.GetInvalidPathChars()"/>.
+        /// </exception>
+        /// <exception cref="PathTooLongException">
+        /// The specified path, filename, or both contain the system-defined maximum length.
+        /// </exception>
+        /// <exception cref="DirectoryNotFoundException">
+        /// The specified path is invalid.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public void Save(string path)
+#else
         /// <summary>
         /// Saves the file to the specified file.
         /// </summary>
@@ -982,21 +1039,14 @@ namespace UIconEdit
         /// An I/O error occurred.
         /// </exception>
         public void Save(string path)
+#endif
         {
-            var entries = Entries;
-            if (entries.Count == 0) throw new InvalidOperationException("At least one entry is needed.");
             using (MemoryStream ms = new MemoryStream())
             {
-                try
-                {
-                    _save(ms);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    using (FileStream fs = File.Open(path, FileMode.Create))
-                        ms.CopyTo(fs);
-                }
-                catch (ObjectDisposedException) { throw; }
-                catch (IOException) { throw; }
-                catch (Exception e) { throw new IOException(e.Message, e); }
+                Save(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                using (FileStream fs = File.Open(path, FileMode.Create))
+                    ms.CopyTo(fs);
             }
         }
 
@@ -1407,8 +1457,9 @@ namespace UIconEdit
             /// </summary>
             /// <param name="item">The icon entry to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>, is disposed,
-            /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
-            /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
+            /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, the current instance is disposed,
+            /// or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> 
+            /// already exists in the list.</returns>
             public bool Add(IconEntry item)
 #else
             /// <summary>
@@ -1442,8 +1493,9 @@ namespace UIconEdit
             /// <param name="index">The index at which to insert the icon entry.</param>
             /// <param name="item">The icon entry to add to the list.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>, is disposed,
-            /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
-            /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
+            /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, the current instance is disposed,
+            /// or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists
+            /// in the list.</returns>
             /// <exception cref="ArgumentOutOfRangeException">
             /// <paramref name="index"/> is less than 0 or is greater than <see cref="Count"/>.
             /// </exception>
@@ -1501,8 +1553,8 @@ namespace UIconEdit
             /// <param name="index">The index of the value to set.</param>
             /// <param name="item">The item to set at the specified index.</param>
             /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c>, is disposed,
-            /// is already associated with a different icon file, or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
-            /// and <see cref="IconEntry.BitDepth"/> already exists at a different index.</returns>
+            /// is already associated with a different icon file, an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
+            /// and <see cref="IconEntry.BitDepth"/> already exists at a different index, or if the current is disposed.</returns>
             public bool SetValue(int index, IconEntry item)
 #else
             /// <summary>
@@ -1529,10 +1581,11 @@ namespace UIconEdit
             public void RemoveAt(int index)
             {
                 IconEntry item = _items[index];
+                IconEntryKey key = item.EntryKey;
 
-                bool remove = _noDups || _items.Where(i => i != item && i.EntryKey == item.EntryKey).FirstOrDefault() != null;
+                bool remove = _noDups || _items.Where(i => i != item && i.EntryKey == key).FirstOrDefault() != null;
                 if (remove)
-                    _set.Remove(item.EntryKey);
+                    _set.Remove(key);
                 item.File = null;
                 _items.RemoveAt(index);
                 if (remove && !_noDups)
@@ -1577,7 +1630,7 @@ namespace UIconEdit
             /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
             public bool RemoveSimilar(IconEntryKey key)
             {
-                if (!key.IsValid) return false;
+                if (!_set.Contains(key)) return false;
                 for (int i = 0; i < _items.Count; i++)
                 {
                     if (key == _items[i].EntryKey)
@@ -1598,7 +1651,7 @@ namespace UIconEdit
             /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
             /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
             /// <c>false</c> if no such icon entry was found in the list.</returns>
-            public bool RemoveSimilar(short width, short height, IconBitDepth bitDepth)
+            public bool RemoveSimilar(int width, int height, IconBitDepth bitDepth)
             {
                 return RemoveSimilar(new IconEntryKey(width, height, bitDepth));
             }
@@ -1649,7 +1702,6 @@ namespace UIconEdit
             /// as <paramref name="key"/> exists in the list; <c>false</c> otherwise.</returns>
             public bool ContainsSimilar(IconEntryKey key)
             {
-                if (!key.IsValid) return false;
                 return _set.Contains(key);
             }
 
@@ -1662,7 +1714,7 @@ namespace UIconEdit
             /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
             /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was found;
             /// <c>false</c> if no such icon entry was found in the list.</returns>
-            public bool ContainsSimilar(short width, short height, IconBitDepth bitDepth)
+            public bool ContainsSimilar(int width, int height, IconBitDepth bitDepth)
             {
                 return _set.Contains(new IconEntryKey(width, height, bitDepth));
             }
@@ -1703,7 +1755,7 @@ namespace UIconEdit
             /// as <paramref name="key"/>, if found; otherwise, -1.</returns>
             public int IndexOfSimilar(IconEntryKey key)
             {
-                if (!key.IsValid) return -1;
+                if (!_set.Contains(key)) return -1;
                 for (int i = 0; i < _items.Count; i++)
                     if (key == _items[i].EntryKey) return i;
                 return -1;
@@ -1717,7 +1769,7 @@ namespace UIconEdit
             /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
             /// <returns>The index of an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
             /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>, if found; otherwise, -1.</returns>
-            public int IndexOfSimilar(short width, short height, IconBitDepth bitDepth)
+            public int IndexOfSimilar(int width, int height, IconBitDepth bitDepth)
             {
                 return IndexOfSimilar(new IconEntryKey(width, height, bitDepth));
             }
@@ -1750,7 +1802,7 @@ namespace UIconEdit
 
             private int _binarySearch(int index, int count, IconEntryKey key)
             {
-                if (!key.IsValid) return -1;
+                if (!_set.Contains(key)) return -1;
                 int low = index, high = index + count - 1;
 
                 while (low <= high)
@@ -1886,7 +1938,7 @@ namespace UIconEdit
             /// <see cref="IconEntry.BitDepth"/> as <paramref name="width"/>, <paramref name="height"/>, and <paramref name="bitDepth"/>,
             /// if found; otherwise, the bitwise complement of the index of where <paramref name="width"/>, <paramref name="height"/>,
             /// and <paramref name="bitDepth"/> would be.</returns>
-            public int BinarySearchSimilar(short width, short height, IconBitDepth bitDepth)
+            public int BinarySearchSimilar(int width, int height, IconBitDepth bitDepth)
             {
                 return BinarySearchSimilar(new IconEntryKey(width, height, bitDepth));
             }
@@ -1911,7 +1963,7 @@ namespace UIconEdit
             /// <exception cref="ArgumentException">
             /// <paramref name="index"/> and <paramref name="count"/> do not indicate a valid range of elements in the list.
             /// </exception>
-            public int BinarySearchSimilar(int index, int count, short width, short height, IconBitDepth bitDepth)
+            public int BinarySearchSimilar(int index, int count, int width, int height, IconBitDepth bitDepth)
             {
                 return BinarySearchSimilar(index, count, new IconEntryKey(width, height, bitDepth));
             }

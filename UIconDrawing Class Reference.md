@@ -201,7 +201,13 @@ Saves the file to the specified stream.
 `output` is closed or does not support writing.
 
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+
+The current instance is disposed.
+
+-OR-
+
 `output` is closed.
+
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
 An I/O error occurred.
@@ -216,6 +222,9 @@ Saves the file to the specified file.
 
 ##### [`InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx)
 [`IconFileBase.Entries`](#property-public-uicondrawingiconfilebaseentrylist-entries--get-) contains zero elements.
+
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+The current instance is disposed.
 
 ##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
 `path` is `null`.
@@ -293,7 +302,7 @@ Gets the number of elements in the list.
 Adds the specified icon entry to the list.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), the current instance is disposed, or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists in the list.
 
 
 --------------------------------------------------
@@ -303,7 +312,7 @@ Adds the specified icon entry to the list at the specified index.
 * `index`: The index at which to insert the icon entry.
 * `item`: The icon entry to add to the list.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists in the list.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully added; `false` if `item` is `null`, is disposed, is already associated with a different icon file, [`EntryList.Count`](#property-public-virtual-systemint32-count--get-) is equal to [`UInt16.MaxValue`](https://msdn.microsoft.com/en-us/library/system.uint16.maxvalue.aspx), the current instance is disposed, or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists in the list.
 
 
 ### Exceptions
@@ -318,7 +327,7 @@ Sets the value at the specified index.
 * `index`: The index of the value to set.
 * `item`: The item to set at the specified index.
 
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is disposed, is already associated with a different icon file, or if an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists at a different index.
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was successfully set; `false` if `item` is `null`, is disposed, is already associated with a different icon file, an element with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) already exists at a different index, or if the current is disposed.
 
 
 --------------------------------------------------
@@ -360,7 +369,7 @@ Removes an icon entry similar to the specified value from the list.
 
 
 --------------------------------------------------
-## Method: `public System.Boolean RemoveSimilar(System.Int16 width, System.Int16 height, UIconDrawing.IconBitDepth bitDepth)`
+## Method: `public System.Boolean RemoveSimilar(System.Int32 width, System.Int32 height, UIconDrawing.IconBitDepth bitDepth)`
 
 Removes an icon entry similar to the specified values from the list.
 * `width`: The width of the icon entry to search for.
@@ -403,7 +412,7 @@ Determines if an element similar to the specified value exists in the list.
 
 
 --------------------------------------------------
-## Method: `public System.Boolean ContainsSimilar(System.Int16 width, System.Int16 height, UIconDrawing.IconBitDepth bitDepth)`
+## Method: `public System.Boolean ContainsSimilar(System.Int32 width, System.Int32 height, UIconDrawing.IconBitDepth bitDepth)`
 
 Determines if an element similar to the specified values exists in the list.
 * `width`: The width of the icon entry to search for.
@@ -441,7 +450,7 @@ Gets the index of an element similar to the specified value.
 
 
 --------------------------------------------------
-## Method: `public System.Int32 IndexOfSimilar(System.Int16 width, System.Int16 height, UIconDrawing.IconBitDepth bitDepth)`
+## Method: `public System.Int32 IndexOfSimilar(System.Int32 width, System.Int32 height, UIconDrawing.IconBitDepth bitDepth)`
 
 Gets the index of an element similar to the specified values.
 * `width`: The width of the icon entry to search for.
@@ -554,7 +563,7 @@ Performs a binary search for an entry with the same [`IconEntry.Width`](#propert
 `index` and `count` do not indicate a valid range of elements in the list.
 
 --------------------------------------------------
-## Method: `public System.Int32 BinarySearchSimilar(System.Int16 width, System.Int16 height, UIconDrawing.IconBitDepth bitDepth)`
+## Method: `public System.Int32 BinarySearchSimilar(System.Int32 width, System.Int32 height, UIconDrawing.IconBitDepth bitDepth)`
 
 Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uicondrawingiconentrykey-entrykey--get-) value.
 * `width`: The width of the icon entry to search for.
@@ -565,7 +574,7 @@ Performs a binary search for an entry with the same [`IconEntry.Width`](#propert
 
 
 --------------------------------------------------
-## Method: `public System.Int32 BinarySearchSimilar(System.Int32 index, System.Int32 count, System.Int16 width, System.Int16 height, UIconDrawing.IconBitDepth bitDepth)`
+## Method: `public System.Int32 BinarySearchSimilar(System.Int32 index, System.Int32 count, System.Int32 width, System.Int32 height, UIconDrawing.IconBitDepth bitDepth)`
 
 Performs a binary search for an entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) as the specified key within the entire list. This method presumes that the list is already sorted according to each [`IconEntry.EntryKey`](#property-public-uicondrawingiconentrykey-entrykey--get-) value.
 * `index`: The index in the list at which the search begins.
@@ -1668,6 +1677,11 @@ Compares the current instance to the specified other [`IconEntryKey`](#type-publ
 ## Field: `public static readonly UIconDrawing.IconEntry Empty`
 
 Returns an invalid [`IconEntryKey`](#type-public-struct-uicondrawingiconentrykey) with all values equal to 0.
+
+--------------------------------------------------
+## Property: `public System.Boolean IsValid { get; }`
+
+Gets a value indicating whether the current value would actually appear in an icon entry.
 
 --------------------------------------------------
 ## Method: `public System.String ToString()`

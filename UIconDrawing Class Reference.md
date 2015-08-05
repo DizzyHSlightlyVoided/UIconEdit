@@ -1320,6 +1320,11 @@ Gets the resampled width of the icon.
 Gets the resampled height of the icon.
 
 --------------------------------------------------
+## Property: `public System.Drawing.Size Size { get; }`
+
+Gets the size of the current instance.
+
+--------------------------------------------------
 ## Property: `public UIconDrawing.IconBitDepth BitDepth { get; }`
 
 Gets the bit depth of the current instance.

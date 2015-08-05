@@ -726,6 +726,13 @@ namespace UIconEdit
         }
         #endregion
 
+#if DRAWING
+        /// <summary>
+        /// Gets the size of the current instance.
+        /// </summary>
+        public Size Size { get { return new Size(_width, _height); } }
+#endif
+
         #region BitDepth
         private IconBitDepth _depth;
         /// <summary>

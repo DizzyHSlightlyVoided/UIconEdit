@@ -180,6 +180,7 @@ namespace UIconEdit.Maker
         public string IconExtractError { get { return _text["IconExtractError"]; } }
         public string CursorExtractError { get { return _text["CursorExtractError"]; } }
         public string IconExtractNone { get { return _text["IconExtractNone"]; } }
+        public string RegistryError { get { return _text["RegistryError"]; } }
 
         public string FilenameSuffix { get { return _text["FilenameSuffix"]; } }
         public string FilenameSuffixEx { get { return _text["FilenameSuffixEx"]; } }
@@ -227,6 +228,7 @@ namespace UIconEdit.Maker
         public string Settings { get { return _text["Settings"]; } }
         public string SettingsLanguage { get { return _text["SettingsLanguage"]; } }
         public string SettingsKeepChecked { get { return _text["SettingsKeepChecked"]; } }
+        public string SettingsRegister { get { return _text["SettingsRegister"]; } }
 
         public string ButtonOK { get { return _text["ButtonOK"]; } }
         public string ButtonCancel { get { return _text["ButtonCancel"]; } }
@@ -236,6 +238,7 @@ namespace UIconEdit.Maker
         public string ButtonOverwrite { get { return _text["ButtonOverwrite"]; } }
         public string ButtonPreview { get { return _text["ButtonPreview"]; } }
         public string ButtonApply { get { return _text["ButtonApply"]; } }
+        public string ButtonRetry { get { return _text["ButtonRetry"]; } }
 
         public string FormatBitsPerPixel { get { return _text["FormatBitsPerPixel"]; } }
         public string FormatSize { get { return _text["FormatSize"]; } }

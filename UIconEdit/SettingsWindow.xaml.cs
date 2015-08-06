@@ -35,6 +35,7 @@ using System.Linq;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Win32;
 
 namespace UIconEdit.Maker
 {
@@ -79,12 +80,27 @@ namespace UIconEdit.Maker
             }
 
             _languages = languages.ToArray();
+            try
+            {
+                using (RegistryKey key = Registry.ClassesRoot.OpenSubKey(regKey2, false))
+                {
+                    if (key != null)
+                    {
+                        object value = key.GetValue(null);
+
+                        IsInRegistry = value != null && key.GetValueKind(null) == RegistryValueKind.String && value.ToString() == AppLoc();
+                        SetValue(CanSavePropertyKey, false);
+                    }
+                }
+            }
+            catch { }
 
             InitializeComponent();
 
-            cmbLang.SelectedIndex = dex;
             settingsFile.Reset();
         }
+
+        const string regKey1 = @"*\shell\UIconEdit", regKey2 = regKey1 + @"\command";
 
         private LanguageFile[] _languages;
         [Bindable(true)]
@@ -93,22 +109,121 @@ namespace UIconEdit.Maker
         [Bindable(true)]
         public SettingsFile SettingsFile { get { return ((MainWindow)Owner).SettingsFile; } }
 
+        #region IsInRegistry
+        public static readonly DependencyProperty IsInRegistryProperty = DependencyProperty.Register("IsInRegistry", typeof(bool), typeof(SettingsWindow),
+            new PropertyMetadata(false, IsInRegistryChanged));
+
+        private static void IsInRegistryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            d.SetValue(CanSavePropertyKey, true);
+        }
+
+        public bool IsInRegistry
+        {
+            get { return (bool)GetValue(IsInRegistryProperty); }
+            set { SetValue(IsInRegistryProperty, value); }
+        }
+        #endregion
+
+        #region CanSave
+        private static readonly DependencyPropertyKey CanSavePropertyKey = DependencyProperty.RegisterReadOnly("CanSave", typeof(bool), typeof(SettingsWindow),
+            new PropertyMetadata(false));
+        public static readonly DependencyProperty CanSaveProperty = CanSavePropertyKey.DependencyProperty;
+
+        public bool CanSave { get { return (bool)GetValue(CanSaveProperty); } }
+        #endregion
+
         private void Apply_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = SettingsFile.IsModified;
+            e.CanExecute = SettingsFile.IsModified || CanSave;
             e.Handled = true;
         }
 
         private void Apply_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            SettingsFile.Save();
+            _save(false);
+        }
+
+        private static string AppLoc()
+        {
+            return string.Format("\"{0}\" \"%1\"", typeof(SettingsWindow).Assembly.Location);
+        }
+
+        private static RegistryKey GetOrCreateRegKey()
+        {
+            RegistryKey key = Registry.ClassesRoot.OpenSubKey(regKey2, RegistryKeyPermissionCheck.ReadWriteSubTree);
+            if (key == null) return Registry.ClassesRoot.CreateSubKey(regKey2, RegistryKeyPermissionCheck.ReadWriteSubTree);
+
+            return key;
+        }
+
+        private bool _save(bool closing)
+        {
+            SettingsFile.Save(this);
+            bool repeating = false;
+            do
+            {
+                try
+                {
+                    if (chkRegistry.IsChecked.HasValue && chkRegistry.IsChecked.Value)
+                    {
+                        using (RegistryKey key = GetOrCreateRegKey())
+                        {
+                            key.SetValue(null, AppLoc());
+                        }
+                    }
+                    else
+                    {
+                        Registry.ClassesRoot.DeleteSubKeyTree(regKey1);
+                    }
+                    SetValue(CanSavePropertyKey, false);
+                    return true;
+                }
+                catch
+                {
+                    if (closing)
+                    {
+                        var langFile = SettingsFile.LanguageFile;
+                        QuestionWindow qWindow = new QuestionWindow((MainWindow)Owner, langFile.RegistryError, SettingsFile.LanguageFile.Error);
+                        qWindow.Owner = this;
+
+                        qWindow.ButtonOKEnabled = true;
+                        qWindow.ButtonOKMessage = langFile.ButtonRetry;
+                        qWindow.ButtonYesEnabled = false;
+                        qWindow.ButtonNoEnabled = true;
+                        qWindow.ButtonNoMessage = langFile.ButtonNoSave;
+                        qWindow.ButtonCancelEnabled = true;
+
+                        qWindow.Show();
+
+                        switch (qWindow.Result)
+                        {
+                            case MessageBoxResult.OK:
+                                repeating = true;
+                                continue;
+                            case MessageBoxResult.No:
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                    else
+                    {
+                        ErrorWindow.Show((MainWindow)Owner, this, SettingsFile.LanguageFile.RegistryError);
+                    }
+                }
+            }
+            while (repeating);
+            return false;
         }
 
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
-            SettingsFile.Save();
-            DialogResult = true;
-            Close();
+            if (_save(true))
+            {
+                DialogResult = true;
+                Close();
+            }
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)

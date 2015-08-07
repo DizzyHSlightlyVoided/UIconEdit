@@ -46,13 +46,13 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+using Bitmap = System.Drawing.Bitmap;
 using BitmapData = System.Drawing.Imaging.BitmapData;
-using DBitmap = System.Drawing.Bitmap;
 using DPixelFormat = System.Drawing.Imaging.PixelFormat;
-using DRectangle = System.Drawing.Rectangle;
 using ImageLockMode = System.Drawing.Imaging.ImageLockMode;
 using InterpolationMode = System.Drawing.Drawing2D.InterpolationMode;
 using Graphics = System.Drawing.Graphics;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace UIconEdit
 #endif
@@ -1167,6 +1167,7 @@ namespace UIconEdit
         #region GetQuantized
         private void SetScalingFilter(Graphics g)
         {
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 #if DRAWING
             switch (_scalingFilter)
 #else
@@ -1267,7 +1268,7 @@ namespace UIconEdit
 
             public override string ToString()
             {
-                return string.Format("#{0:x8}: R:{1} B:{2} G:{3} A:{4}", Value, R, B, G, A);
+                return string.Format("#{0:x8}: A:{1} R:{2} B:{3} G:{4}", Value, A, R, B, G);
             }
 
             public override int GetHashCode()
@@ -1286,6 +1287,7 @@ namespace UIconEdit
             }
         }
         #endregion
+
 #if DRAWING
         /// <summary>
         /// Applies <see cref="AlphaImage"/> to <see cref="BaseImage"/>.
@@ -1305,7 +1307,21 @@ namespace UIconEdit
 
             return quantized;
         }
+#else
+        /// <summary>
+        /// Applies <see cref="AlphaImage"/> to <see cref="BaseImage"/>.
+        /// </summary>
+        /// <returns>A new <see cref="BitmapSource"/>, sized according to <see cref="Width"/> and <see cref="Height"/>, consisting of
+        /// <see cref="AlphaImage"/> applied to <see cref="BaseImage"/> and with a 32-bit pixel format.</returns>
+        public BitmapSource GetCombinedAlpha()
+        {
+            BitmapSource alphaMask;
 
+            return GetQuantized(true, IconBitDepth.Depth32BitsPerPixel, out alphaMask);
+        }
+#endif
+
+#if DRAWING
         /// <summary>
         /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
         /// in a form indicated by the specified value.
@@ -1324,7 +1340,28 @@ namespace UIconEdit
             AlphaImage = alphaMask;
             _isQuantizedImage = _isQuantizedAlpha = true;
         }
+#else
+        /// <summary>
+        /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
+        /// in a form indicated by the specified value.
+        /// </summary>
+        /// <param name="isPng">If <c>true</c>, <see cref="AlphaImage"/> will be set <c>null</c> and <see cref="BaseImage"/> will be quantized
+        /// as if it was a PNG icon entry. If <c>false</c>, <see cref="BaseImage"/> and <see cref="AlphaImage"/> will be quantized
+        /// as if for a BMP entry.</param>
+        /// <exception cref="InvalidOperationException">
+        /// The current instance is frozen.
+        /// </exception>
+        public void SetQuantized(bool isPng)
+        {
+            if (IsFrozen) throw new InvalidOperationException("The current instance is frozen.");
+            BitmapSource alphaMask, baseImage = GetQuantized(isPng, out alphaMask);
+            BaseImage = baseImage;
+            AlphaImage = alphaMask;
+            SetValue(IsQuantizedPropertyKey, true);
+        }
+#endif
 
+#if DRAWING
         /// <summary>
         /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
         /// in a form indicated by <see cref="IsPng"/>.
@@ -1336,10 +1373,24 @@ namespace UIconEdit
         /// The current instance is disposed.
         /// </exception>
         public void SetQuantized()
+#else
+        /// <summary>
+        /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
+        /// in a form indicated by <see cref="IsPng"/>.
+        /// </summary>
+        /// <remarks>
+        /// Performs the same action as <see cref="SetQuantized(bool)"/>, with <see cref="IsPng"/> passed as the parameter.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">
+        /// The current instance is frozen.
+        /// </exception>
+        public void SetQuantized()
+#endif
         {
             SetQuantized(IsPng);
         }
 
+#if DRAWING
         /// <summary>
         /// Returns color quantization of the current instance as it would appear for a PNG entry.
         /// </summary>
@@ -1357,7 +1408,19 @@ namespace UIconEdit
             if (alphaMask != null) alphaMask.Dispose();
             return quantized;
         }
+#else
+        /// <summary>
+        /// Returns color quantization of the current instance as it would appear for a PNG entry.
+        /// </summary>
+        /// <returns>A <see cref="BitmapSource"/> containing the quantized image.</returns>
+        public BitmapSource GetQuantizedPng()
+        {
+            BitmapSource alphaMask;
+            return GetQuantized(true, out alphaMask);
+        }
+#endif
 
+#if DRAWING
         /// <summary>
         /// Returns color quantization of the current instance as it would appear for a BMP entry.
         /// </summary>
@@ -1373,37 +1436,78 @@ namespace UIconEdit
         /// which must be disposed after you're done with them.
         /// </remarks>
         public Bitmap GetQuantized(out Bitmap alphaMask)
+#else
+        /// <summary>
+        /// Returns color quantization of the current instance as it would appear for a BMP entry.
+        /// </summary>
+        /// <param name="alphaMask">When this method returns, contains the quantized alpha mask generated using <see cref="AlphaThreshold"/>.
+        /// Black pixels are transparent; white pixels are opaque.
+        /// This parameter is passed uninitialized.</param>
+        /// <returns>A <see cref="BitmapSource"/> containing the quantized image without the alpha mask.</returns>
+        public BitmapSource GetQuantized(out BitmapSource alphaMask)
+#endif
         {
             return GetQuantized(false, out alphaMask);
         }
 
+#if DRAWING
         internal Bitmap GetQuantized(bool isPng, out Bitmap alphaMask)
+#else
+        internal WriteableBitmap GetQuantized(bool isPng, out BitmapSource alphaMask)
+#endif
         {
             return GetQuantized(isPng, _depth, out alphaMask);
         }
 
+#if DRAWING
         internal unsafe Bitmap GetQuantized(bool isPng, IconBitDepth _depth, out Bitmap alphaMask)
         {
             if (_isDisposed) throw new ObjectDisposedException(null);
+#else
+        private WriteableBitmap GetQuantized(bool isPng, IconBitDepth _depth, out BitmapSource alphaMask)
+        {
+            BitmapSource _alphaImage = AlphaImage;
+#endif
 
-            if (_isQuantizedAlpha && _isQuantizedImage && isPng == (_alphaImage == null))
+            if (IsQuantized && isPng == (_alphaImage == null))
             {
-                alphaMask = _alphaImage == null ? null : (Bitmap)_alphaImage.Clone();
+                if (_alphaImage == null)
+                    alphaMask = null;
+                else
+#if DRAWING
+                    alphaMask = (Bitmap)_alphaImage.Clone();
                 return (Bitmap)_baseImage.Clone();
+#else
+                {
+                    alphaMask = new WriteableBitmap(_alphaImage);
+                    alphaMask.Freeze();
+                }
+                var resultImage = new WriteableBitmap(BaseImage);
+                resultImage.Freeze();
+                return resultImage;
+#endif
             }
 
-            ColorValue[] pixels = _getPixels(_baseImage);
+            ColorValue[] pixels =
+#if DRAWING
+                _getPixels(_baseImage);
+#else
+                _getPixels(BaseImage);
+            byte _alphaThreshold = AlphaThreshold;
+#endif
 
             if (isPng)
             {
                 alphaMask = null;
                 if (_alphaImage != null && _depth == IconBitDepth.Depth32BitsPerPixel && this._depth != IconBitDepth.Depth32BitsPerPixel)
                 {
-                    byte[] alphaBytes = _getAlphaBytes(_alphaImage);
+                    ColorValue[] alphaPixels = _getPixels(_alphaImage);
 
-                    for (int i = 0; i < pixels.Length; i++)
+                    for (int i = 0; i < alphaPixels.Length; i++)
                     {
-                        if (alphaBytes[i] == 1)
+                        ColorValue curAlpha = alphaPixels[i];
+                        double whiteDistance = curAlpha.GetDistance(ColorValue.White);
+                        if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance || curAlpha.GetDistance(default(ColorValue)) < whiteDistance)
                             pixels[i].A = 0;
                     }
                 }
@@ -1411,26 +1515,54 @@ namespace UIconEdit
             else
             {
                 ColorValue[] alphaPixels;
-
                 if (_alphaImage == null)
                 {
-                    bool firstNon = !isPng;
                     alphaPixels = new ColorValue[pixels.Length];
+
                     for (int i = 0; i < pixels.Length; i++)
                     {
-                        if (pixels[i].A < _alphaThreshold)
+                        ColorValue curVal = pixels[i];
+                        if (curVal.A < _alphaThreshold)
                             alphaPixels[i] = ColorValue.Black;
                         else
                             alphaPixels[i] = ColorValue.White;
                     }
                 }
-                else alphaPixels = _getPixels(_alphaImage);
+                else
+                {
+                    alphaPixels = _getPixels(_alphaImage);
 
+                    for (int i = 0; i < alphaPixels.Length; i++)
+                    {
+                        ColorValue curAlpha = alphaPixels[i];
+                        double whiteDistance = curAlpha.GetDistance(ColorValue.White);
+                        if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance || curAlpha.GetDistance(default(ColorValue)) < whiteDistance)
+                            alphaPixels[i] = ColorValue.Black;
+                        else
+                            alphaPixels[i] = ColorValue.White;
+                    }
+                }
+
+#if DRAWING
                 alphaMask = GetBitmap(alphaPixels, PixelFormat.Format1bppIndexed, AlphaPalette, 2);
+#else
+                var alphaBitmap = GetBitmap(alphaPixels);
+                alphaBitmap.Freeze();
+
+                alphaMask = new FormatConvertedBitmap(alphaBitmap, PixelFormats.Indexed1, AlphaPalette, 0);
+#endif
             }
 
             if (_depth == IconBitDepth.Depth32BitsPerPixel)
-                return GetBitmap(pixels, PixelFormat.Format32bppArgb, null, ushort.MaxValue);
+#if DRAWING
+                return GetBitmap(pixels);
+#else
+            {
+                var bmpResult = GetBitmap(pixels);
+                bmpResult.Freeze();
+                return bmpResult;
+            }
+#endif
 
             for (int i = 0; i < pixels.Length; i++)
             {
@@ -1447,13 +1579,47 @@ namespace UIconEdit
                 pixels[i] = curPixel;
             }
 
-            Bitmap quantized = GetBitmap(pixels, isPng ? PixelFormat.Format8bppIndexed : GetPixelFormat(_depth), null, (int)GetColorCount(_depth));
+#if DRAWING
+            Bitmap quantized = GetBitmap(pixels, isPng ? PixelFormat.Format8bppIndexed : GetPixelFormat(_depth), null, (ushort)GetColorCount(_depth));
+#else
+            DPixelFormat pFormat;
+            ushort paletteCount;
+            switch (_depth)
+            {
+                case IconBitDepth.Depth24BitsPerPixel:
+                    if (isPng) return GetBitmap(pixels);
+                    var quant = GetBitmap(pixels, DPixelFormat.Format24bppRgb);
+                    quant.Freeze();
+                    return quant;
+                case IconBitDepth.Depth2Color:
+                    paletteCount = 2;
+                    pFormat = isPng ? DPixelFormat.Format8bppIndexed : DPixelFormat.Format1bppIndexed;
+                    break;
+                case IconBitDepth.Depth16Color:
+                    paletteCount = 16;
+                    pFormat = isPng ? DPixelFormat.Format8bppIndexed : DPixelFormat.Format4bppIndexed;
+                    break;
+                default: //Depth256Color
+                    paletteCount = 256;
+                    pFormat = DPixelFormat.Format8bppIndexed;
+                    break;
+            }
 
-            if (!isPng) return quantized;
+            WriteableBitmap quantized = GetBitmap(pixels, pFormat, paletteCount);
+#endif
+            if (!isPng)
+            {
+#if !DRAWING
+                quantized.Freeze();
+#endif
+                return quantized;
+            }
 
             ColorValue[] otherPixels = _getPixels(quantized);
 
+#if DRAWING
             quantized.Dispose();
+#endif
 
             for (int i = 0; i < otherPixels.Length; i++)
             {
@@ -1465,10 +1631,17 @@ namespace UIconEdit
                 pixels[i] = curPixel;
             }
 
-            return GetBitmap(pixels, PixelFormat.Format32bppArgb, null, ushort.MaxValue);
+#if DRAWING
+            return GetBitmap(pixels);
+#else
+            quantized = GetBitmap(pixels);
+            quantized.Freeze();
+            return quantized;
+#endif
         }
 
         private ColorValue[] _getPixels(BitmapSource image)
+#if DRAWING
         {
             using (Bitmap bmp = new Bitmap(_width, _height, PixelFormat.Format32bppArgb))
             using (Graphics g = Graphics.FromImage(bmp))
@@ -1493,22 +1666,70 @@ namespace UIconEdit
                 return pixels;
             }
         }
-
-        private byte[] _getAlphaBytes(BitmapSource alpha)
+#else
         {
-            ColorValue[] colors = _getPixels(alpha);
-            byte[] returner = new byte[colors.Length];
-            for (int i = 0; i < colors.Length; i++)
-            {
-                var curColor = colors[i];
-                var whiteDistance = curColor.GetDistance(ColorValue.White);
-                if (curColor.GetDistance(ColorValue.Black) < whiteDistance || curColor.GetDistance(default(ColorValue)) < whiteDistance)
-                    returner[i] = 1;
-            }
-            return returner;
-        }
+            ColorValue[] pixels = new ColorValue[_width * _height];
 
-        private Bitmap GetBitmap(ColorValue[] pixels, PixelFormat pFormat, Color[] palette, int colorCount)
+            Int32Rect fullRect = new Int32Rect(0, 0, _width, _height);
+
+            FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
+            if (formatBmp.PixelWidth == _width && formatBmp.PixelHeight == _height)
+            {
+                unsafe
+                {
+                    fixed (ColorValue* pPixels = pixels)
+                        formatBmp.CopyPixels(fullRect, (IntPtr)pPixels, pixels.Length * sizeof(ColorValue), _width * sizeof(ColorValue));
+                }
+                return pixels;
+            }
+            else if (ScalingFilter == IconScalingFilter.Matrix)
+            {
+                TransformedBitmap transBmp = new TransformedBitmap(formatBmp, new ScaleTransform((double)_width / formatBmp.PixelWidth,
+                    (double)_height / formatBmp.PixelHeight));
+                unsafe
+                {
+                    fixed (ColorValue* pPixels = pixels)
+                        transBmp.CopyPixels(fullRect, (IntPtr)pPixels, pixels.Length * sizeof(ColorValue), _width * sizeof(ColorValue));
+                }
+                return pixels;
+            }
+
+            using (Bitmap dBitmap = new Bitmap(image.PixelWidth, image.PixelHeight, DPixelFormat.Format32bppArgb))
+            {
+                BitmapData dData = dBitmap.LockBits(new Rectangle(0, 0, image.PixelWidth, image.PixelHeight),
+                    ImageLockMode.WriteOnly, DPixelFormat.Format32bppArgb);
+
+                image.CopyPixels(new Int32Rect(0, 0, image.PixelWidth, image.PixelHeight), dData.Scan0, image.PixelHeight * dData.Stride, dData.Stride);
+
+                dBitmap.UnlockBits(dData);
+
+                using (Bitmap sizeBmp = new Bitmap(_width, _height, DPixelFormat.Format32bppArgb))
+                {
+                    using (Graphics g = Graphics.FromImage(sizeBmp))
+                    {
+                        SetScalingFilter(g);
+
+                        g.DrawImage(dBitmap, 0, 0, _width, _height);
+                    }
+
+                    BitmapData sizeData = sizeBmp.LockBits(new Rectangle(0, 0, _width, _height), ImageLockMode.ReadOnly, DPixelFormat.Format32bppArgb);
+
+                    unsafe
+                    {
+                        ColorValue* pData = (ColorValue*)sizeData.Scan0;
+                        for (int i = 0; i < pixels.Length; i++)
+                            pixels[i] = pData[i];
+                    }
+
+                    sizeBmp.UnlockBits(sizeData);
+                }
+            }
+            return pixels;
+        }
+#endif
+
+#if DRAWING
+        private Bitmap GetBitmap(ColorValue[] pixels, PixelFormat pFormat, Color[] palette, ushort maxColors)
         {
             var fullRect = new Rectangle(0, 0, _width, _height);
             if (pFormat == PixelFormat.Format24bppRgb || pFormat == PixelFormat.Format32bppArgb || palette == null)
@@ -1530,16 +1751,16 @@ namespace UIconEdit
                     switch (pFormat)
                     {
                         case PixelFormat.Format1bppIndexed:
-                            colorCount = Math.Min(2, colorCount);
+                            maxColors = Math.Min((ushort)2, maxColors);
                             break;
                         case PixelFormat.Format4bppIndexed:
-                            colorCount = Math.Min(16, colorCount);
+                            maxColors = Math.Min((ushort)16, maxColors);
                             break;
                         default:
-                            colorCount = Math.Min(256, colorCount);
+                            maxColors = Math.Min((ushort)256, maxColors);
                             break;
                     }
-                    returner = GetSmaller(Quantize(baseBmp, colorCount), pFormat, false);
+                    returner = GetSmaller(Quantize(baseBmp, maxColors), pFormat, false);
                 }
                 baseBmp.Dispose();
 
@@ -1577,6 +1798,11 @@ namespace UIconEdit
             bmp8.Palette = bmp8Palette;
 
             return GetSmaller(bmp8, pFormat, true);
+        }
+
+        private Bitmap GetBitmap(ColorValue[] pixels)
+        {
+            return GetBitmap(pixels, PixelFormat.Format32bppArgb, null, ushort.MaxValue);
         }
 
         private Bitmap GetSmaller(Bitmap source, PixelFormat pFormat, bool ordered)
@@ -1668,311 +1894,27 @@ namespace UIconEdit
             return result;
         }
 #else
-        /// <summary>
-        /// Applies <see cref="AlphaImage"/> to <see cref="BaseImage"/>.
-        /// </summary>
-        /// <returns>A new <see cref="BitmapSource"/>, sized according to <see cref="Width"/> and <see cref="Height"/>, consisting of
-        /// <see cref="AlphaImage"/> applied to <see cref="BaseImage"/> and with a 32-bit pixel format.</returns>
-        public BitmapSource GetCombinedAlpha()
+        private unsafe WriteableBitmap GetBitmap(ColorValue[] pixels, DPixelFormat pFormat, ushort maxColors)
         {
-            BitmapSource alphaMask;
-
-            return GetQuantized(true, IconBitDepth.Depth32BitsPerPixel, out alphaMask);
-        }
-
-        /// <summary>
-        /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
-        /// in a form indicated by the specified value.
-        /// </summary>
-        /// <param name="isPng">If <c>true</c>, <see cref="AlphaImage"/> will be set <c>null</c> and <see cref="BaseImage"/> will be quantized
-        /// as if it was a PNG icon entry. If <c>false</c>, <see cref="BaseImage"/> and <see cref="AlphaImage"/> will be quantized
-        /// as if for a BMP entry.</param>
-        /// <exception cref="InvalidOperationException">
-        /// The current instance is frozen.
-        /// </exception>
-        public void SetQuantized(bool isPng)
-        {
-            if (IsFrozen) throw new InvalidOperationException("The current instance is frozen.");
-            BitmapSource alphaMask, baseImage = GetQuantized(isPng, out alphaMask);
-            BaseImage = baseImage;
-            AlphaImage = alphaMask;
-            SetValue(IsQuantizedPropertyKey, true);
-        }
-
-        /// <summary>
-        /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
-        /// in a form indicated by <see cref="IsPng"/>.
-        /// </summary>
-        /// <remarks>
-        /// Performs the same action as <see cref="SetQuantized(bool)"/>, with <see cref="IsPng"/> passed as the parameter.
-        /// </remarks>
-        /// <exception cref="InvalidOperationException">
-        /// The current instance is frozen.
-        /// </exception>
-        public void SetQuantized()
-        {
-            SetQuantized(IsPng);
-        }
-
-        /// <summary>
-        /// Returns color quantization of the current instance as it would appear for a PNG entry.
-        /// </summary>
-        /// <returns>A <see cref="BitmapSource"/> containing the quantized image.</returns>
-        public BitmapSource GetQuantizedPng()
-        {
-            BitmapSource alphaMask;
-            return GetQuantized(true, out alphaMask);
-        }
-
-        /// <summary>
-        /// Returns color quantization of the current instance as it would appear for a BMP entry.
-        /// </summary>
-        /// <param name="alphaMask">When this method returns, contains the quantized alpha mask generated using <see cref="AlphaThreshold"/>.
-        /// Black pixels are transparent; white pixels are opaque.
-        /// This parameter is passed uninitialized.</param>
-        /// <returns>A <see cref="BitmapSource"/> containing the quantized image without the alpha mask.</returns>
-        public BitmapSource GetQuantized(out BitmapSource alphaMask)
-        {
-            return GetQuantized(false, out alphaMask);
-        }
-
-        internal WriteableBitmap GetQuantized(bool isPng, out BitmapSource alphaMask)
-        {
-            return GetQuantized(isPng, _depth, out alphaMask);
-        }
-
-        private WriteableBitmap GetQuantized(bool isPng, IconBitDepth _depth, out BitmapSource alphaMask)
-        {
-            BitmapSource alphaImage = AlphaImage;
-
-            if (IsQuantized && (isPng == (alphaImage == null)))
+            if (maxColors > 256 && (pFormat == DPixelFormat.Format32bppArgb || pFormat == DPixelFormat.Format24bppRgb))
             {
-                alphaMask = alphaImage;
-                return (WriteableBitmap)(new WriteableBitmap(BaseImage)).GetCurrentValueAsFrozen();
-            }
-
-            IconScalingFilter scaleMode = ScalingFilter;
-
-            ColorValue[] pixels = _scaleBitmap(scaleMode, BaseImage);
-
-            byte _alphaThreshold = AlphaThreshold;
-
-            if (isPng)
-            {
-                alphaMask = null;
-                if (alphaImage != null && _depth == IconBitDepth.Depth32BitsPerPixel && this._depth != IconBitDepth.Depth32BitsPerPixel)
-                {
-                    ColorValue[] alphaPixels = _scaleBitmap(scaleMode, alphaImage);
-
-                    for (int i = 0; i < alphaPixels.Length; i++)
-                    {
-                        ColorValue curAlpha = alphaPixels[i];
-                        double whiteDistance = curAlpha.GetDistance(ColorValue.White);
-                        if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance || curAlpha.GetDistance(default(ColorValue)) < whiteDistance)
-                            pixels[i].A = 0;
-                    }
-                }
-            }
-            else
-            {
-                ColorValue[] alphaPixels;
-                if (alphaImage == null)
-                {
-                    alphaPixels = new ColorValue[pixels.Length];
-
-                    for (int i = 0; i < pixels.Length; i++)
-                    {
-                        ColorValue curVal = pixels[i];
-                        if (curVal.A < _alphaThreshold)
-                            alphaPixels[i] = ColorValue.Black;
-                        else
-                            alphaPixels[i] = ColorValue.White;
-                    }
-                }
-                else
-                {
-                    alphaPixels = _scaleBitmap(scaleMode, alphaImage);
-
-                    for (int i = 0; i < alphaPixels.Length; i++)
-                    {
-                        ColorValue curAlpha = alphaPixels[i];
-                        double whiteDistance = curAlpha.GetDistance(ColorValue.White);
-                        if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance || curAlpha.GetDistance(default(ColorValue)) < whiteDistance)
-                            alphaPixels[i] = ColorValue.Black;
-                        else
-                            alphaPixels[i] = ColorValue.White;
-                    }
-                }
-
-                alphaMask = new FormatConvertedBitmap(GetBitmap(_width, _height, alphaPixels), PixelFormats.Indexed1, AlphaPalette, 0);
-            }
-
-            if (_depth == IconBitDepth.Depth32BitsPerPixel)
-                return GetBitmap(_width, _height, pixels);
-
-            for (int i = 0; i < pixels.Length; i++)
-            {
-                ColorValue value = pixels[i];
-                if (value.A < _alphaThreshold)
-                {
-                    if (isPng)
-                        value.A = 0;
-                    else
-                        value = ColorValue.Black;
-                    pixels[i] = value;
-                }
-                else
-                    pixels[i].A = byte.MaxValue;
-            }
-
-            DPixelFormat pFormat;
-            ushort paletteCount;
-            switch (_depth)
-            {
-                case IconBitDepth.Depth24BitsPerPixel:
-                    if (isPng) return GetBitmap(_width, _height, pixels);
-                    return GetBitmap(_width, _height, pixels, DPixelFormat.Format24bppRgb);
-                case IconBitDepth.Depth2Color:
-                    paletteCount = 2;
-                    pFormat = isPng ? DPixelFormat.Format8bppIndexed : DPixelFormat.Format1bppIndexed;
-                    break;
-                case IconBitDepth.Depth16Color:
-                    paletteCount = 16;
-                    pFormat = isPng ? DPixelFormat.Format8bppIndexed : DPixelFormat.Format4bppIndexed;
-                    break;
-                default: //Depth256Color
-                    paletteCount = 256;
-                    pFormat = DPixelFormat.Format8bppIndexed;
-                    break;
-            }
-
-            WriteableBitmap quantized = GetBitmap(_width, _height, pixels, pFormat, paletteCount);
-
-            if (!isPng) return quantized;
-
-            byte[] quantBytes = new byte[pixels.Length];
-            quantized.CopyPixels(quantBytes, _width, 0);
-
-            for (int i = 0; i < pixels.Length; i++)
-            {
-                Color curColor = quantized.Palette.Colors[quantBytes[i]];
-
-                ColorValue value = pixels[i];
-
-                value.R = curColor.R;
-                value.G = curColor.G;
-                value.B = curColor.B;
-
-                pixels[i] = value;
-            }
-
-            return GetBitmap(_width, _height, pixels);
-        }
-
-        private ColorValue[] _scaleBitmap(IconScalingFilter scaleMode, BitmapSource image)
-        {
-            ColorValue[] pixels = new ColorValue[_width * _height];
-
-            Int32Rect fullRect = new Int32Rect(0, 0, _width, _height);
-
-            FormatConvertedBitmap formatBmp = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
-            if (formatBmp.PixelWidth == _width && formatBmp.PixelHeight == _height)
-            {
-                unsafe
-                {
-                    fixed (ColorValue* pPixels = pixels)
-                        formatBmp.CopyPixels(fullRect, (IntPtr)pPixels, pixels.Length * sizeof(ColorValue), _width * sizeof(ColorValue));
-                }
-            }
-            else if (scaleMode == IconScalingFilter.Matrix)
-            {
-                TransformedBitmap transBmp = new TransformedBitmap(formatBmp, new ScaleTransform((double)_width / formatBmp.PixelWidth,
-                    (double)_height / formatBmp.PixelHeight));
-                unsafe
-                {
-                    fixed (ColorValue* pPixels = pixels)
-                        transBmp.CopyPixels(fullRect, (IntPtr)pPixels, pixels.Length * sizeof(ColorValue), _width * sizeof(ColorValue));
-                }
-            }
-            else _scaleBitmap(scaleMode, formatBmp, pixels);
-
-            return pixels;
-        }
-
-        private void _scaleBitmap(IconScalingFilter scaleMode, FormatConvertedBitmap image, ColorValue[] pixels)
-        {
-            using (DBitmap dBitmap = new DBitmap(image.PixelWidth, image.PixelHeight, DPixelFormat.Format32bppArgb))
-            {
-                BitmapData dData = dBitmap.LockBits(new DRectangle(0, 0, image.PixelWidth, image.PixelHeight),
-                    ImageLockMode.WriteOnly, DPixelFormat.Format32bppArgb);
-
-                image.CopyPixels(new Int32Rect(0, 0, image.PixelWidth, image.PixelHeight), dData.Scan0, image.PixelHeight * dData.Stride, dData.Stride);
-
-                dBitmap.UnlockBits(dData);
-
-                using (DBitmap sizeBmp = new DBitmap(_width, _height, DPixelFormat.Format32bppArgb))
-                {
-                    using (Graphics g = Graphics.FromImage(sizeBmp))
-                    {
-                        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-
-                        switch (scaleMode)
-                        {
-                            case IconScalingFilter.Bicubic:
-                                g.InterpolationMode = InterpolationMode.Bicubic;
-                                break;
-                            case IconScalingFilter.Bilinear:
-                                g.InterpolationMode = InterpolationMode.Bilinear;
-                                break;
-                            case IconScalingFilter.HighQualityBicubic:
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                break;
-                            case IconScalingFilter.HighQualityBilinear:
-                                g.InterpolationMode = InterpolationMode.HighQualityBilinear;
-                                break;
-                            case IconScalingFilter.NearestNeighbor:
-                                g.InterpolationMode = InterpolationMode.NearestNeighbor;
-                                break;
-                        }
-
-                        g.DrawImage(dBitmap, 0, 0, _width, _height);
-                    }
-
-                    BitmapData sizeData = sizeBmp.LockBits(new DRectangle(0, 0, _width, _height), ImageLockMode.ReadOnly, DPixelFormat.Format32bppArgb);
-
-                    unsafe
-                    {
-                        ColorValue* pData = (ColorValue*)sizeData.Scan0;
-                        for (int i = 0; i < pixels.Length; i++)
-                            pixels[i] = pData[i];
-                    }
-
-                    sizeBmp.UnlockBits(sizeData);
-                }
-            }
-        }
-
-        private unsafe WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, ColorValue[] pixels, DPixelFormat format, ushort maxColors)
-        {
-            if (maxColors > 256 && (format == DPixelFormat.Format32bppArgb || format == DPixelFormat.Format24bppRgb))
-            {
-                WriteableBitmap wBmp = new WriteableBitmap(pixelWidth, pixelHeight, 0, 0, PixelFormats.Bgra32, null);
-                if (format == DPixelFormat.Format24bppRgb)
+                WriteableBitmap wBmp = new WriteableBitmap(_width, _height, 0, 0, PixelFormats.Bgra32, null);
+                if (pFormat == DPixelFormat.Format24bppRgb)
                 {
                     for (int i = 0; i < pixels.Length; i++)
                         pixels[i].A = byte.MaxValue;
                 }
 
-                wBmp.WritePixels(new Int32Rect(0, 0, pixelWidth, pixelHeight), pixels, pixelWidth * 4, 0);
-                if (format == DPixelFormat.Format32bppArgb)
+                wBmp.WritePixels(new Int32Rect(0, 0, _width, _height), pixels, _width * 4, 0);
+                if (pFormat == DPixelFormat.Format32bppArgb)
                     return wBmp;
 
                 return new WriteableBitmap(new FormatConvertedBitmap(wBmp, PixelFormats.Bgr24, null, 0));
             }
-            var fullRect = new DRectangle(0, 0, pixelWidth, pixelHeight);
-            DBitmap resultBmp;
+            var fullRect = new Rectangle(0, 0, _width, _height);
+            Bitmap resultBmp;
             {
-                DBitmap baseBmp = new DBitmap(pixelWidth, pixelHeight, DPixelFormat.Format32bppArgb);
+                Bitmap baseBmp = new Bitmap(_width, _height, DPixelFormat.Format32bppArgb);
 
                 BitmapData bData = baseBmp.LockBits(fullRect, ImageLockMode.WriteOnly, DPixelFormat.Format32bppArgb);
 
@@ -1985,11 +1927,11 @@ namespace UIconEdit
 
                 if (maxColors > 256)
                 {
-                    if (format == DPixelFormat.Format32bppArgb)
+                    if (pFormat == DPixelFormat.Format32bppArgb)
                         resultBmp = baseBmp;
                     else
                     {
-                        resultBmp = baseBmp.Clone(fullRect, format);
+                        resultBmp = baseBmp.Clone(fullRect, pFormat);
                         baseBmp.Dispose();
                     }
                 }
@@ -2005,7 +1947,7 @@ namespace UIconEdit
             {
                 var palCollection = resultBmp.Palette.Entries.Select(c => Color.FromArgb(c.A, c.R, c.G, c.B));
 
-                switch (format)
+                switch (pFormat)
                 {
                     case DPixelFormat.Format32bppArgb:
                     case DPixelFormat.Format24bppRgb:
@@ -2042,9 +1984,9 @@ namespace UIconEdit
 
             BitmapData rData = resultBmp.LockBits(fullRect, ImageLockMode.ReadOnly, resultBmp.PixelFormat);
 
-            BitmapSource source = BitmapSource.Create(pixelWidth, pixelHeight, 0, 0, rFormat, palette, rData.Scan0, rData.Stride * rData.Height, rData.Stride);
+            BitmapSource source = BitmapSource.Create(_width, _height, 0, 0, rFormat, palette, rData.Scan0, rData.Stride * rData.Height, rData.Stride);
 
-            switch (format)
+            switch (pFormat)
             {
                 default: //DPixelFormat.Format32bppArgb:
                     rFormat = PixelFormats.Bgra32;
@@ -2071,32 +2013,23 @@ namespace UIconEdit
             return result;
         }
 
-        private WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, ColorValue[] pixels, DPixelFormat format)
+        private WriteableBitmap GetBitmap(ColorValue[] pixels, DPixelFormat format)
         {
-            return GetBitmap(pixelWidth, pixelHeight, pixels, format, ushort.MaxValue);
+            return GetBitmap(pixels, format, ushort.MaxValue);
         }
 
-        private WriteableBitmap GetBitmap(int pixelWidth, int pixelHeight, ColorValue[] pixels)
+        private WriteableBitmap GetBitmap(ColorValue[] pixels)
         {
-            return GetBitmap(pixelWidth, pixelHeight, pixels, DPixelFormat.Format32bppArgb, ushort.MaxValue);
+            return GetBitmap(pixels, DPixelFormat.Format32bppArgb, ushort.MaxValue);
         }
 #endif
 
-#if DRAWING
         private Bitmap Quantize(Bitmap source, int maxColors)
-#else
-        private DBitmap Quantize(DBitmap source, int maxColors)
-#endif
         {
             int stride = ((source.Width * 4) + 3) >> 2;
             byte[] data = new byte[stride * source.Height];
 
-            var fullRect =
-#if DRAWING
-                new Rectangle(0, 0, source.Width, source.Height);
-#else
-                new DRectangle(0, 0, source.Width, source.Height);
-#endif
+            var fullRect = new Rectangle(0, 0, _width, _height);
 
             BitmapData bmpData = source.LockBits(fullRect, ImageLockMode.ReadOnly,
 #if DRAWING
@@ -2145,17 +2078,21 @@ namespace UIconEdit
             if (!success)
             {
                 nQuant.WuQuantizer quant = new nQuant.WuQuantizer();
+                return (Bitmap)quant.QuantizeImage(source,
 #if DRAWING
-                return (Bitmap)quant.QuantizeImage(source, _alphaThreshold, 70, maxColors);
+                    _alphaThreshold,
 #else
-                return (DBitmap)quant.QuantizeImage(source, AlphaThreshold, 70, maxColors);
+                    AlphaThreshold,
 #endif
+                        70, maxColors);
             }
+            Bitmap returner = new Bitmap(source.Width, source.Height,
 #if DRAWING
-            Bitmap returner = new Bitmap(source.Width, source.Height, PixelFormat.Format8bppIndexed);
+                PixelFormat.Format8bppIndexed);
 #else
-            DBitmap returner = new DBitmap(source.Width, source.Height, DPixelFormat.Format8bppIndexed);
+                DPixelFormat.Format8bppIndexed);
 #endif
+
             var bmpPalette = returner.Palette;
             for (int i = 0; i < palette.Count; i++)
                 bmpPalette.Entries[i] = palette[i];

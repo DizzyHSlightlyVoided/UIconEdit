@@ -217,7 +217,7 @@ namespace UIconEdit.Maker
 
                 if (entry == null)
                     throw new InvalidOperationException();
-                _image = (BitmapSource)entry.GetCombinedAlpha().GetAsFrozen();
+                _image = entry.GetCombinedAlpha();
             }
 
             public BitmapSource _image;

@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Language LangName="English (United States)">
+  <Title>UIconEdit</Title>
+  <Error>Error</Error>
+  <LanguageLoadError>Could not load the language "{0}".</LanguageLoadError><!-- {0} = short language name (i.e. "en-US"). -->
+  <SettingsSaveError>Could not save the settings file.</SettingsSaveError>
+  <ImageLoadError>Could not load "{0}".</ImageLoadError><!-- {0} = file path. -->
+  <ImageSaveError>Could not save "{0}".</ImageSaveError><!-- {0} = file path. -->
+  <ImageAddError>A {0}-bit {1}×{2} image already exists in the icon file.</ImageAddError><!-- {0} = number of bits per pixel, {1} = width, {2} = height. -->
+  <IconExtractError>Could not load icon #{0} in "{1}".</IconExtractError><!-- {0} = index of icon in EXE or DLL file, {1} = file path to EXE or DLL file. -->
+  <CursorExtractError>Could not load cursor #{0} in "{1}".</CursorExtractError><!-- {0} = index of cursor in EXE or DLL file, {1} = file path to EXE or DLL file. -->
+  <IconExtractNone>No valid icons or cursors were loaded from "{0}".</IconExtractNone><!-- {0} = file path to EXE or DLL file. -->
+  <RegistryError>Could not save registry values.</RegistryError>
+  <FilenameSuffix>{0}bpp{1}x{2}</FilenameSuffix><!-- {0} = number of bits per pixel, {1} = width, {2} = height. -->
+  <FilenameSuffixEx>-{0}</FilenameSuffixEx><!-- {0} = index (appended to FilenameSuffix in case of duplicate names). -->
+  <MenuFile>_File</MenuFile>
+  <MenuFileOpen>_Open</MenuFileOpen>
+  <MenuFileNew>_New</MenuFileNew>
+  <MenuFileSave>_Save</MenuFileSave>
+  <MenuFileSaveAs>Save _As</MenuFileSaveAs>
+  <MenuFileQuit>E_xit</MenuFileQuit>
+  <MenuEdit>_Edit</MenuEdit>
+  <MenuEditAdd>Add _new image</MenuEditAdd>
+  <MenuEditDup>_Duplicate current image</MenuEditDup>
+  <MenuEditRem>_Remove current image</MenuEditRem>
+  <MenuEditExp>E_xport current image</MenuEditExp>
+  <MenuEditExpAll>Export _all</MenuEditExpAll>
+  <MenuEditSettings>_Settings</MenuEditSettings>
+  <ButtonTipOpen>Open</ButtonTipOpen>
+  <ButtonTipNew>New</ButtonTipNew>
+  <ButtonTipSave>Save</ButtonTipSave>
+  <ButtonTipFirst>First image</ButtonTipFirst>
+  <ButtonTipPrev>Previous image</ButtonTipPrev>
+  <ButtonTipNext>Next image</ButtonTipNext>
+  <ButtonTipLast>Last image</ButtonTipLast>
+  <ButtonTipAdd>Add new image</ButtonTipAdd>
+  <ButtonTipDup>Duplicate current image</ButtonTipDup>
+  <ButtonTipRem>Remove current image</ButtonTipRem>
+  <ButtonTipExp>Export current image</ButtonTipExp>
+  <ModifiedCaption>Save</ModifiedCaption>
+  <ModifiedMessage>File was modified. Save?</ModifiedMessage>
+  <RemoveCaption>Delete Image</RemoveCaption>
+  <RemoveMessage>Delete current image? This cannot be undone!</RemoveMessage>
+  <OverwriteCaption>Overwrite File</OverwriteCaption>
+  <OverwriteMessage>The file "{0}" already exists. Overwrite it?</OverwriteMessage><!-- {0} = file path -->
+  <Preview>Preview</Preview>
+  <Settings>Settings</Settings>
+  <SettingsLanguage>Language</SettingsLanguage>
+  <SettingsKeepChecked>Keep cursor hotspot checked after switching to a different image</SettingsKeepChecked>
+  <SettingsRegister>Add to Windows Explorer context menu</SettingsRegister>
+  <ButtonOK>_OK</ButtonOK>
+  <ButtonCancel>_Cancel</ButtonCancel>
+  <ButtonYes>_Yes</ButtonYes>
+  <ButtonNo>_No</ButtonNo>
+  <ButtonNoSave>Do_n't Save</ButtonNoSave>
+  <ButtonOverwrite>Overwrite _All</ButtonOverwrite>
+  <ButtonPreview>_Preview</ButtonPreview>
+  <ButtonApply>_Apply</ButtonApply>
+  <ButtonRetry>_Retry</ButtonRetry>
+  <FormatBitsPerPixel>{0}-bit</FormatBitsPerPixel><!-- {0} = number of bits per pixel -->
+  <FormatSize>{0}×{1}</FormatSize><!-- {0} = width, {1} = height -->
+  <CustomSize>Custom:</CustomSize>
+  <ExtendedSize>Extended Windows 10 Sizes</ExtendedSize>
+  <SizeWidth>Width:</SizeWidth>
+  <SizeHeight>Height:</SizeHeight>
+  <AlphaThreshold>Alpha threshold:</AlphaThreshold>
+  <Bits32>Full Color + Alpha (32-bit)</Bits32>
+  <Bits24>Full Color (24-bit)</Bits24>
+  <Bits8>256-color (8-bit)</Bits8>
+  <Bits4>16-color (4-bit)</Bits4>
+  <Bits1>2-color (1-bit)</Bits1>
+  <GroupImage>Image</GroupImage>
+  <GroupSize>Size</GroupSize>
+  <GroupBitsPerPixel>Bits Per Pixel</GroupBitsPerPixel>
+  <AddTitle>Add Image</AddTitle>
+  <DuplicateTitle>Duplicate Image</DuplicateTitle>
+  <Percent>%</Percent>
+  <Hotspot>Hotspot</Hotspot>
+  <HotspotX>X:</HotspotX>
+  <HotspotY>Y:</HotspotY>
+  <Position>{0},{1}</Position><!-- {0} = horizontal position, {1} = vertical position -->
+  <FilePathNew>New File</FilePathNew>
+  <Extract>Extract</Extract>
+  <ExtractFrameCount>#{0} ({1})<!-- {0} = index of an icon or cursor in an icon file, {1} = number of images in icon/cursor. --></ExtractFrameCount>
+  <ExtractIco>Icons</ExtractIco>
+  <ExtractCur>Cursors</ExtractCur>
+  <IconError0>An unknown error occurred.</IconError0>
+  <IconError1>The file is not a valid cursor or icon file.</IconError1>
+  <IconError2icon>The icon file does not contain any valid entries.</IconError2icon>
+  <IconError2cursor>The cursor file does not contain any valid valid entries.</IconError2cursor>
+  <IconError3icon>A cursor file was expected, but the file is an icon file.</IconError3icon>
+  <IconError3cursor>An icon file was expected, but the file is a cursor file.</IconError3cursor>
+  <IconError1000>An error occurred when attempting to parse an icon image.</IconError1000>
+  <IconError1001>{0}-bit images are not allowed!</IconError1001><!-- {0} = invalid number of bits per pixel -->
+  <ScalingFilter>Scaling filter:</ScalingFilter>
+  <ScalingFilterMatrix>Simple</ScalingFilterMatrix>
+  <ScalingFilterBilinear>Bilinear</ScalingFilterBilinear>
+  <ScalingFilterBicubic>Bicubic</ScalingFilterBicubic>
+  <ScalingFilterNearestNeighbor>Nearest Neighbor</ScalingFilterNearestNeighbor>
+  <ScalingFilterHighQualityBilinear>High-Quality Bilinear</ScalingFilterHighQualityBilinear>
+  <ScalingFilterHighQualityBicubic>High-Quality Bicubic</ScalingFilterHighQualityBicubic>
+  <TypeIco>Icon files</TypeIco>
+  <TypeCur>Cursor files</TypeCur>
+  <TypeIcoCur>Icon or cursor files</TypeIcoCur>
+  <TypeAll>All files</TypeAll>
+  <TypePng>PNG files</TypePng>
+  <TypePngSuffix>PNG files with size and bit-depth suffix</TypePngSuffix>
+  <TypeImage>Image files</TypeImage>
+</Language>

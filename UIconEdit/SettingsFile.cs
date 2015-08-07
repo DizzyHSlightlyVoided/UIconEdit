@@ -35,9 +35,8 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace UIconEdit.Maker
 {
@@ -49,7 +48,7 @@ namespace UIconEdit.Maker
 #else
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UIconEdit",
 #endif
-            "settings.json");
+            "settings.xml");
 
         public SettingsFile(MainWindow owner)
         {
@@ -85,30 +84,26 @@ namespace UIconEdit.Maker
                 if (!File.Exists(SettingsPath))
                     return;
 
-                JObject root;
+                XDocument doc;
                 using (StreamReader sr = new StreamReader(SettingsPath, Encoding.UTF8, true))
-                using (JsonTextReader reader = new JsonTextReader(sr))
-                    root = JToken.ReadFrom(reader) as JObject;
+                    doc = XDocument.Load(sr);
 
-                if (root == null) throw new InvalidDataException();
+                XElement root = doc.Root;
 
-                var jLang = root.GetValue(LanguageNameName) as JValue;
+                if (root == null || root.Name.LocalName != SettingsName)
+                    return;
 
-                if (jLang != null)
+                var jLang = root.Element(LanguageNameName);
+
+                if (jLang != null && !jLang.HasElements)
                     LanguageName = jLang.Value.ToString();
 
-                var jKeep = root.GetValue(KeepHotspotCheckedName) as JValue;
-                if (jKeep != null)
+                var jKeep = root.Element(KeepHotspotCheckedName);
+                if (jKeep != null && !jKeep.HasElements)
                 {
-                    switch (jKeep.Type)
-                    {
-                        case JTokenType.Boolean:
-                            KeepHotspotChecked = jKeep.Value<bool>();
-                            break;
-                        case JTokenType.Null:
-                            KeepHotspotChecked = false;
-                            break;
-                    }
+                    bool jVal;
+                    if (bool.TryParse(jKeep.Value, out jVal))
+                        KeepHotspotChecked = jVal;
                 }
             }
             catch (Exception)
@@ -142,14 +137,15 @@ namespace UIconEdit.Maker
                 using (MemoryStream ms = new MemoryStream())
                 {
                     using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8, 4096, true))
-                    using (var writer = new JsonTextWriter(sw))
+                    using (var writer = XmlWriter.Create(sw))
                     {
-                        writer.Formatting = Formatting.Indented;
+                        writer.WriteStartDocument();
+                        writer.WriteStartElement(SettingsName);
 
-                        writer.WriteStartObject();
-                        writer.WritePropertyName(LanguageNameName); writer.WriteValue(LanguageName);
-                        writer.WritePropertyName(KeepHotspotCheckedName); writer.WriteValue(KeepHotspotChecked);
-                        writer.WriteEndObject();
+                        writer.WriteElementString(LanguageNameName, LanguageName);
+                        writer.WriteElementString(KeepHotspotCheckedName, KeepHotspotChecked.ToString());
+                        writer.WriteEndElement();
+                        writer.WriteEndDocument();
                     }
                     ms.Seek(0, SeekOrigin.Begin);
                     using (FileStream fs = File.Open(SettingsPath, FileMode.Create))
@@ -183,6 +179,8 @@ namespace UIconEdit.Maker
 
             s.SetValue(IsModifiedPropertyKey, true);
         }
+
+        const string SettingsName = "Settings";
 
         #region LanguageName
         const string LanguageNameName = "LanguageName";

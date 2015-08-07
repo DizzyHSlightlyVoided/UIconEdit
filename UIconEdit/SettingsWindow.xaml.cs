@@ -55,7 +55,7 @@ namespace UIconEdit.Maker
             var oldFile = settingsFile.LanguageFile;
 
             int cIndex = 0;
-            foreach (string curPath in Directory.EnumerateFiles(Path.Combine(Path.GetDirectoryName(typeof(SettingsWindow).Assembly.Location), "Languages"), "*.json")
+            foreach (string curPath in Directory.EnumerateFiles(Path.Combine(Path.GetDirectoryName(typeof(SettingsWindow).Assembly.Location), "Languages"), "*.xml")
                 .Select(Path.GetFileNameWithoutExtension))
             {
                 try

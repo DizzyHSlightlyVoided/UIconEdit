@@ -33,8 +33,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-
-using Newtonsoft.Json;
+using System.Linq;
+using System.Xml.Linq;
 
 using UIconEdit.Maker.Properties;
 
@@ -42,8 +42,6 @@ namespace UIconEdit.Maker
 {
     internal class LanguageFile : IEquatable<LanguageFile>
     {
-        private static JsonSerializer jSer = new JsonSerializer();
-
         private static LanguageFile _default = new LanguageFile();
         /// <summary>
         /// Gets a default language file.
@@ -88,7 +86,7 @@ namespace UIconEdit.Maker
 
         private static string GetPath(string langName)
         {
-            return Path.Combine(Path.GetDirectoryName(typeof(LanguageFile).Assembly.Location), "Languages", langName + ".json");
+            return Path.Combine(Path.GetDirectoryName(typeof(LanguageFile).Assembly.Location), "Languages", langName + ".xml");
         }
 
         private void Load(string path)
@@ -100,13 +98,28 @@ namespace UIconEdit.Maker
         private void Load(TextReader textReader, bool initial)
         {
             Dictionary<string, string> loadedText;
-            using (JsonTextReader reader = new JsonTextReader(textReader))
-                loadedText = jSer.Deserialize<Dictionary<string, string>>(reader);
+            XDocument xDoc = XDocument.Load(textReader);
+            var root = xDoc.Root;
+
+            if (root == null || root.Name.LocalName != "Language")
+                throw new InvalidDataException();
+
+            var langAttr = root.Attribute("LangName");
+            if (langAttr == null)
+                throw new InvalidDataException();
+
+            _langName = langAttr.Value;
+
+            loadedText = root.Elements().ToDictionary(i => i.Name.LocalName, delegate (XElement element)
+            {
+                if (element.HasElements)
+                    throw new FileFormatException();
+                return element.Value;
+            }, StringComparer.OrdinalIgnoreCase);
 
             if (initial)
             {
                 _text = new Dictionary<string, string>(loadedText, StringComparer.OrdinalIgnoreCase);
-
             }
             else
             {
@@ -121,7 +134,11 @@ namespace UIconEdit.Maker
 
         public bool Equals(LanguageFile other)
         {
-            if (ReferenceEquals(other, null) || !_shortName.Equals(other._shortName, StringComparison.OrdinalIgnoreCase)) return false;
+            if (ReferenceEquals(other, null) || !_shortName.Equals(other._shortName, StringComparison.OrdinalIgnoreCase)
+                || !_langName.Equals(other._langName, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
             if (_text == other._text) return true;
 
             foreach (var curKVP in _text)
@@ -168,7 +185,8 @@ namespace UIconEdit.Maker
 
         public const string DefaultShortName = "en-US";
 
-        public string LangName { get { return _text["LangName"]; } }
+        private string _langName;
+        public string LangName { get { return _langName; } }
         public string Title { get { return _text["Title"]; } }
 
         public string Error { get { return _text["Error"]; } }

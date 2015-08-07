@@ -1074,6 +1074,11 @@ Represents a single entry in an icon.
 The default [`IconEntry.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-) value.
 
 --------------------------------------------------
+## Field: `public const System.Byte DefaultAlphaThreshold32 = 1`
+
+The default [`IconEntry.AlphaThreshold`](#property-public-systembyte-alphathreshold--get-set-) value when [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) is [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0).
+
+--------------------------------------------------
 ## Constructor: `public IconEntry(System.Drawing.Image baseImage, System.Int32 width, System.Int32 height, UIconDrawing.IconBitDepth bitDepth, System.Int32 hotspotX, System.Int32 hotspotY, System.Byte alphaThreshold)`
 
 Creates a new instance with the specified image.

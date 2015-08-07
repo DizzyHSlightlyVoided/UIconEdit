@@ -28,6 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #endregion
 
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -44,12 +45,15 @@ namespace UIconEdit.Maker
         public PreviewWindow(AddWindow owner)
         {
             Owner = owner;
+            AlphaThreshold = owner.AlphaThreshold;
             SetValue(SourceEntryPropertyKey, owner.GetIconEntry());
             InitializeComponent();
         }
 
         private void window_Loaded(object sender, RoutedEventArgs e)
         {
+            txtAlpha.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+
             MainWindow.SelectZoom(this, scrollImage, SourceImage, ZoomProperty, ZoomedWidthPropertyKey, ZoomedHeightPropertyKey, ZoomScaleModePropertyKey);
             Mouse.OverrideCursor = null;
         }
@@ -144,6 +148,25 @@ namespace UIconEdit.Maker
         public bool HasMultiImage { get { return (bool)GetValue(HasMultiImageProperty); } }
         #endregion
 
+        #region AlphaThreshold
+        public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register("AlphaThreshold", typeof(byte), typeof(PreviewWindow),
+            new PropertyMetadata(IconEntry.DefaultAlphaThreshold, AlphaThresholdChanged));
+
+        private static void AlphaThresholdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            PreviewWindow p = (PreviewWindow)d;
+            var owner = (AddWindow)p.Owner;
+            owner.AlphaThreshold = (byte)e.NewValue;
+            p.SetValue(SourceEntryPropertyKey, owner.GetIconEntry());
+        }
+
+        public byte AlphaThreshold
+        {
+            get { return (byte)GetValue(AlphaThresholdProperty); }
+            set { SetValue(AlphaThresholdProperty, value); }
+        }
+        #endregion
+
         private void _setChanged()
         {
             var entry = SourceEntry;
@@ -174,9 +197,14 @@ namespace UIconEdit.Maker
             _setChanged();
         }
 
-        private void txtAlpha_TextChanged(object sender, TextChangedEventArgs e)
+        private void window_Closing(object sender, CancelEventArgs e)
         {
-            _setChanged();
+            txtAlpha.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+        }
+
+        private void txtAlpha_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            txtAlpha.GetBindingExpression(TextBox.TextProperty).UpdateSource();
         }
     }
 }

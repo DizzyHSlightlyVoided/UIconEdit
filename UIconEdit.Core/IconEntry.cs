@@ -1529,9 +1529,7 @@ namespace UIconEdit
                             colorCount = Math.Min(256, colorCount);
                             break;
                     }
-                    nQuant.WuQuantizer quant = new nQuant.WuQuantizer();
-
-                    returner = GetSmaller((Bitmap)quant.QuantizeImage(baseBmp, _alphaThreshold, 70, colorCount), pFormat, false);
+                    returner = GetSmaller(Quantize(baseBmp, colorCount), pFormat, false);
                 }
                 baseBmp.Dispose();
 
@@ -1987,8 +1985,7 @@ namespace UIconEdit
                 }
                 else
                 {
-                    nQuant.WuQuantizer quant = new nQuant.WuQuantizer();
-                    resultBmp = (DBitmap)quant.QuantizeImage(baseBmp, 0, 0, maxColors);
+                    resultBmp = Quantize(baseBmp, maxColors);
                     baseBmp.Dispose();
                 }
             }
@@ -2074,6 +2071,102 @@ namespace UIconEdit
             return GetBitmap(pixelWidth, pixelHeight, pixels, DPixelFormat.Format32bppArgb, ushort.MaxValue);
         }
 #endif
+
+#if DRAWING
+        private Bitmap Quantize(Bitmap source, int maxColors)
+#else
+        private DBitmap Quantize(DBitmap source, int maxColors)
+#endif
+        {
+            int stride = ((source.Width * 4) + 3) >> 2;
+            byte[] data = new byte[stride * source.Height];
+
+            var fullRect =
+#if DRAWING
+                new Rectangle(0, 0, source.Width, source.Height);
+#else
+                new DRectangle(0, 0, source.Width, source.Height);
+#endif
+
+            BitmapData bmpData = source.LockBits(fullRect, ImageLockMode.ReadOnly,
+#if DRAWING
+                PixelFormat.Format32bppArgb);
+#else
+                DPixelFormat.Format32bppArgb);
+#endif
+
+            List<System.Drawing.Color> palette = new List<System.Drawing.Color>();
+            Dictionary<ColorValue, byte> paletteIndex = new Dictionary<ColorValue, byte>();
+
+            bool success = true;
+            unsafe
+            {
+                ColorValue* pValue = (ColorValue*)bmpData.Scan0;
+
+                for (int y = 0; y < source.Height; y++)
+                {
+                    int yOffSrc = source.Height * y;
+                    int yOffData = y * stride;
+                    for (int x = 0; x < source.Width; x++)
+                    {
+                        ColorValue curValue = pValue[yOffSrc + x];
+                        byte curDex;
+                        if (paletteIndex.TryGetValue(curValue, out curDex))
+                        {
+                            data[yOffData + x] = curDex;
+                            continue;
+                        }
+
+                        curDex = (byte)palette.Count;
+                        palette.Add(System.Drawing.Color.FromArgb(curValue.Value));
+                        if (palette.Count > maxColors)
+                        {
+                            success = false;
+                            break;
+                        }
+
+                        data[yOffData + x] = paletteIndex[curValue] = curDex;
+                    }
+                }
+            }
+
+            source.UnlockBits(bmpData);
+
+            if (!success)
+            {
+                nQuant.WuQuantizer quant = new nQuant.WuQuantizer();
+#if DRAWING
+                return (Bitmap)quant.QuantizeImage(source, _alphaThreshold, 70, maxColors);
+#else
+                return (DBitmap)quant.QuantizeImage(source, AlphaThreshold, 70, maxColors);
+#endif
+            }
+#if DRAWING
+            Bitmap returner = new Bitmap(source.Width, source.Height, PixelFormat.Format8bppIndexed);
+#else
+            DBitmap returner = new DBitmap(source.Width, source.Height, DPixelFormat.Format8bppIndexed);
+#endif
+            var bmpPalette = returner.Palette;
+            for (int i = 0; i < palette.Count; i++)
+                bmpPalette.Entries[i] = palette[i];
+            for (int i = palette.Count; i < bmpPalette.Entries.Length; i++)
+                bmpPalette.Entries[i] = default(System.Drawing.Color);
+
+            returner.Palette = bmpPalette;
+
+            bmpData = returner.LockBits(fullRect, ImageLockMode.ReadOnly,
+#if DRAWING
+                PixelFormat.Format8bppIndexed);
+#else
+                DPixelFormat.Format8bppIndexed);
+#endif
+
+            Marshal.Copy(data, 0, bmpData.Scan0, data.Length);
+
+            returner.UnlockBits(bmpData);
+
+            return returner;
+        }
         #endregion
 
         /// <summary>

@@ -167,7 +167,7 @@ namespace UIconEdit.Maker
                 Mouse.OverrideCursor = Cursors.Wait;
                 try
                 {
-                    LoadedFile = IconExtraction.ExtractIconSingle(path, extractWindow.IconIndex);
+                    LoadedFile = IconExtraction.ExtractIconSingle(path, extractWindow.IconIndex, _errorHandler);
                 }
                 catch
                 {

@@ -30,10 +30,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.IO;
-
+using System.Linq;
 #if DRAWING
+using System.Drawing;
+
 namespace UIconDrawing
 #else
+using System.Windows.Media.Imaging;
+
 namespace UIconEdit
 #endif
 {
@@ -49,6 +53,46 @@ namespace UIconEdit
         {
         }
 
+#if DRAWING
+        /// <summary>
+        /// Creates a new instance using the specified <see cref="Icon"/>.
+        /// </summary>
+        /// <param name="icon">An <see cref="Icon"/> to decode.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="icon"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// <paramref name="icon"/> contains invalid values.
+        /// </exception>
+        public IconFile(Icon icon)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                icon.Save(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+
+                using (IconFile copy = Load(ms))
+                    Entries.AddBulk(copy.Entries.Select(i => i.Clone()));
+            }
+        }
+#else
+        /// <summary>
+        /// Creates a new instance using elements copied from the specified <see cref="IconBitmapDecoder"/>.
+        /// </summary>
+        /// <param name="decoder">An <see cref="IconBitmapDecoder"/> containing decoded icon images.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="decoder"/> is <c>null</c>.
+        /// </exception>
+        public IconFile(IconBitmapDecoder decoder)
+        {
+            if(decoder == null)
+                throw new ArgumentNullException("decoder");
+
+            var entities = decoder.Frames.Select(i => new IconEntry((BitmapSource)i.GetCurrentValueAsFrozen(), null,
+                IconEntry.GetBitDepth(i.Thumbnail.Format.BitsPerPixel), i.PixelWidth, i.PixelHeight)).OrderBy(i => i, new IconEntryComparer());
+            Entries.AddBulk(entities);
+        }
+#endif
         /// <summary>
         /// Loads a <see cref="IconFile"/> from the specified stream.
         /// </summary>

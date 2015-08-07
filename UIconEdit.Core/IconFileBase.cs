@@ -1444,7 +1444,7 @@ namespace UIconEdit
             /// </summary>
             public int Count { get { return _items.Count; } }
 
-            internal void AddBulk(IList<IconEntry> entries)
+            internal void AddBulk(IEnumerable<IconEntry> entries)
             {
                 _setItems(new ObservableCollection<IconEntry>(entries));
                 foreach (var curItem in entries)

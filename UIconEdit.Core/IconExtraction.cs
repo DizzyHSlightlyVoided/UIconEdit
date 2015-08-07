@@ -35,8 +35,13 @@ using System.IO;
 using System.Linq;
 
 #if DRAWING
+using System.Drawing;
+
 namespace UIconDrawing
 #else
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+
 namespace UIconEdit
 #endif
 {
@@ -114,6 +119,12 @@ namespace UIconEdit
 
         private static IconFileBase _extractSingle(IntPtr hModule, int lpszType, IntPtr name, IconTypeCode typeCode, IconLoadExceptionHandler handler)
         {
+            using (MemoryStream ms = _extractSingle(hModule, lpszType, name))
+                return IconFileBase.Load(ms, typeCode, handler);
+        }
+
+        private static MemoryStream _extractSingle(IntPtr hModule, int lpszType, IntPtr name)
+        {
             using (MemoryStream dirStream = Win32Funcs.ExtractData(hModule, lpszType, name))
             using (BinaryReader dirReader = new BinaryReader(dirStream))
             {
@@ -131,9 +142,14 @@ namespace UIconEdit
                     iconLength += dirReader.ReadInt32();
                 }
 
-                using (MemoryStream iconStream = new MemoryStream(iconLength))
-                using (BinaryWriter iconWriter = new BinaryWriter(iconStream))
+                MemoryStream iconStream = new MemoryStream(iconLength);
+#if LEAVEOPEN
+                using (BinaryWriter iconWriter = new BinaryWriter(iconStream, System.Text.Encoding.UTF8, true))
                 {
+#else
+                {
+                    BinaryWriter iconWriter = new BinaryWriter(iconStream);
+#endif
                     iconStream.SetLength(picOffset);
 
                     iconWriter.Write(head);
@@ -162,7 +178,7 @@ namespace UIconEdit
                     }
 
                     iconStream.Seek(0, SeekOrigin.Begin);
-                    return IconFileBase.Load(iconStream, typeCode, handler);
+                    return iconStream;
                 }
             }
         }
@@ -215,6 +231,114 @@ namespace UIconEdit
                 if (hModule != IntPtr.Zero)
                     Win32Funcs.FreeLibrary(hModule);
             }
+        }
+
+#if DRAWING
+        /// <summary>
+        /// Loads a single <see cref="Icon"/> from the specified collection EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <param name="index">The zero-based index of the icon in <paramref name="path"/>.</param>
+        /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="FileFormatException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static Icon ExtractIconObjSingle(string path, int index)
+#else
+        /// <summary>
+        /// Loads a single <see cref="IconBitmapDecoder"/> from the specified collection EXE or DLL file.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <param name="index">The zero-based index of the icon in <paramref name="path"/>.</param>
+        /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="FileFormatException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static IconBitmapDecoder ExtractIconBitmapDecoderSingle(string path, int index)
+#endif
+        {
+            if (path == null) throw new ArgumentNullException("path");
+            if (index < 0) throw new ArgumentOutOfRangeException("index");
+            int iconCount = 0;
+            IntPtr hModule = IntPtr.Zero;
+            try
+            {
+                hModule = Win32Funcs.LoadLibraryEx(path, IntPtr.Zero, Win32Funcs.LOAD_LIBRARY_AS_DATAFILE);
+                if (hModule == IntPtr.Zero)
+                    throw new Win32Exception();
+
+#if DRAWING
+                Icon
+#else
+                IconBitmapDecoder
+#endif
+                    returner = null;
+                Exception x = null;
+                ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, int t, IntPtr name, IntPtr l)
+                {
+                    try
+                    {
+                        if (iconCount == index)
+                        {
+                            using (MemoryStream ms = _extractSingle(h, t, name))
+#if DRAWING
+                                returner = new Icon(ms);
+#else
+                                returner = new IconBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+#endif
+
+                            return false;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        x = e;
+                        return false;
+                    }
+                    finally
+                    {
+                        iconCount++;
+                    }
+                    return true;
+                };
+
+                if (Win32Funcs.EnumResourceNames(hModule, Win32Funcs.RT_GROUP_ICON, lpEnumFunc, 0))
+                    throw new ArgumentOutOfRangeException("index");
+
+                if (returner != null) return returner;
+                if (x == null) throw new Win32Exception();
+                throw x;
+            }
+            finally
+            {
+                if (hModule != IntPtr.Zero)
+                    Win32Funcs.FreeLibrary(hModule);
+            }
+
         }
 
         /// <summary>

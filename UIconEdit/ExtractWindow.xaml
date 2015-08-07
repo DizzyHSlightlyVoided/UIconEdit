@@ -40,7 +40,7 @@
                             <Image HorizontalAlignment="Center" MaxWidth="48" MaxHeight="48" Margin="2" Source="{Binding Image}"
                                    Width="{Binding Image.PixelWidth}" Height="{Binding Image.PixelHeight}"/>
                         </Border>
-                        <TextBlock HorizontalAlignment="Center" Grid.Row="2">
+                        <TextBlock HorizontalAlignment="Center" Grid.Row="1">
                             <TextBlock.Text>
                                 <MultiBinding Converter="{StaticResource StringFormatConverter}">
                                     <Binding Path="SettingsFile.LanguageFile.ExtractFrameCount" ElementName="window" FallbackValue="#{0} ({1})"/>

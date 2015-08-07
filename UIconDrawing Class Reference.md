@@ -909,6 +909,20 @@ Represents an icon file.
 Creates a new [`IconFile`](#type-public-class-uicondrawingiconfile) instance.
 
 --------------------------------------------------
+## Constructor: `public IconFile(System.Drawing.Icon icon)`
+
+Creates a new instance using the specified [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx).
+* `icon`: An [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx) to decode.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`icon` is `null`.
+
+##### [`IconLoadException`](#type-public-class-uicondrawingiconloadexception)
+`icon` contains invalid values.
+
+--------------------------------------------------
 ## Method: `public static UIconDrawing.IconFile Load(System.IO.Stream input)`
 
 Loads a [`IconFile`](#type-public-class-uicondrawingiconfile) from the specified stream.
@@ -2085,6 +2099,33 @@ Determines the number of cursors in the specified EXE or DLL file.
 
 ##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
 An error occurred when attempting to load resources from `path`.
+
+--------------------------------------------------
+## Method: `public static System.Drawing.Icon ExtractIconObjSingle(System.String path, System.Int32 index)`
+
+Loads a single [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx) from the specified collection EXE or DLL file.
+* `path`: The path to the file to load.
+* `index`: The zero-based index of the icon in `path`.
+
+**Returns:** Type [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx): The icon with the specified key in `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than the number of icons in `path`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
+An error occurred when loading the icon.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
 
 --------------------------------------------------
 ## Method: `public static UIconDrawing.IconFile ExtractIconSingle(System.String path, System.Int32 index, UIconDrawing.IconLoadExceptionHandler handler)`

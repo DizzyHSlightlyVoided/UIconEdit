@@ -173,5 +173,10 @@ namespace UIconEdit.Maker
         {
             _setChanged();
         }
+
+        private void txtAlpha_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _setChanged();
+        }
     }
 }

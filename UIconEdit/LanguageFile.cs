@@ -242,6 +242,9 @@ namespace UIconEdit.Maker
         public string OverwriteMessage { get { return _text["OverwriteMessage"]; } }
 
         public string Preview { get { return _text["Preview"]; } }
+        public string PreviewCombined { get { return _text["PreviewCombined"]; } }
+        public string PreviewBase { get { return _text["PreviewBase"]; } }
+        public string PreviewAlpha { get { return _text["PreviewAlpha"]; } }
 
         public string Settings { get { return _text["Settings"]; } }
         public string SettingsLanguage { get { return _text["SettingsLanguage"]; } }

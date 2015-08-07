@@ -44,7 +44,7 @@ namespace UIconEdit.Maker
         public PreviewWindow(AddWindow owner)
         {
             Owner = owner;
-            SourceImage = owner.GetIconEntry().GetCombinedAlpha();
+            SetValue(SourceEntryPropertyKey, owner.GetIconEntry());
             InitializeComponent();
         }
 
@@ -110,11 +110,68 @@ namespace UIconEdit.Maker
         public BitmapScalingMode ZoomScaleMode { get { return (BitmapScalingMode)GetValue(ZoomScaleModeProperty); } }
         #endregion
 
+        #region SourceEntry
+        private static readonly DependencyPropertyKey SourceEntryPropertyKey = DependencyProperty.RegisterReadOnly("SourceEntry", typeof(IconEntry),
+            typeof(PreviewWindow), new PropertyMetadata(null, SourceEntryChanged));
+        public static readonly DependencyProperty SourceEntryProperty = SourceEntryPropertyKey.DependencyProperty;
+
+        private static void SourceEntryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var entry = (IconEntry)e.NewValue;
+            d.SetValue(HasMultiImagePropertyKey, entry != null && entry.AlphaImage != null);
+            ((PreviewWindow)d)._setChanged();
+        }
+
+        public IconEntry SourceEntry { get { return (IconEntry)GetValue(SourceEntryProperty); } }
+        #endregion
+
+        #region SourceIndex
+        public static readonly DependencyProperty SourceIndexProperty = DependencyProperty.Register("SourceIndex", typeof(int), typeof(PreviewWindow),
+            new PropertyMetadata(0));
+
+        public int SourceIndex
+        {
+            get { return (int)GetValue(SourceIndexProperty); }
+            set { SetValue(SourceIndexProperty, value); }
+        }
+        #endregion
+
+        #region HasMultiImage
+        private static readonly DependencyPropertyKey HasMultiImagePropertyKey = DependencyProperty.RegisterReadOnly("HasMultiImage", typeof(bool),
+            typeof(PreviewWindow), new PropertyMetadata(true));
+        public static readonly DependencyProperty HasMultiImageProperty = HasMultiImagePropertyKey.DependencyProperty;
+
+        public bool HasMultiImage { get { return (bool)GetValue(HasMultiImageProperty); } }
+        #endregion
+
+        private void _setChanged()
+        {
+            var entry = SourceEntry;
+            if (entry == null) return;
+            switch (SourceIndex)
+            {
+                case 1:
+                    SourceImage = entry.BaseImage;
+                    break;
+                case 2:
+                    SourceImage = entry.AlphaImage;
+                    break;
+                default:
+                    SourceImage = entry.GetCombinedAlpha();
+                    break;
+            }
+        }
+
         private void cmbFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            SourceImage = ((AddWindow)Owner).GetIconEntry().GetCombinedAlpha();
+            SetValue(SourceEntryPropertyKey, ((AddWindow)Owner).GetIconEntry());
             Mouse.OverrideCursor = null;
+        }
+
+        private void cmbWhich_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _setChanged();
         }
     }
 }

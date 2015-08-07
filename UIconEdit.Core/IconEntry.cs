@@ -995,21 +995,7 @@ namespace UIconEdit
                     throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
             }
         }
-
-#if DRAWING
-        /// <summary>
-        /// Returns the number of bits per pixel associated with the specified <see cref="PixelFormat"/> value.
-        /// </summary>
-        /// <param name="format">The format from which to get the number of bits per pixel.</param>
-        /// <returns>The number of bits per pixel associated with <paramref name="format"/>, or 0 if <paramref name="format"/>
-        /// does not specify a bits-per-pixel count.</returns>
-        public static int GetBitsPerPixel(PixelFormat format)
-        {
-            if (format == PixelFormat.Format32bppRgb) return 24;
-
-            return ((int)format >> 8) & byte.MaxValue;
-        }
-#endif
+        
         /// <summary>
         /// Gets the maximum color count specified by <see cref="BitDepth"/>.
         /// </summary>

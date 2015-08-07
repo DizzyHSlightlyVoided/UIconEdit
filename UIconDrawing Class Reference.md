@@ -1403,15 +1403,6 @@ Returns the number of bits per pixel associated with the specified [`IconBitDept
 `bitDepth` is not a valid [`IconBitDepth`](#type-public-enum-uicondrawingiconbitdepth) value.
 
 --------------------------------------------------
-## Method: `public static System.Int32 GetBitsPerPixel(System.Drawing.Imaging.PixelFormat format)`
-
-Returns the number of bits per pixel associated with the specified [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.drawing.imaging.pixelformat.aspx) value.
-* `format`: The format from which to get the number of bits per pixel.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The number of bits per pixel associated with `format`, or 0 if `format` does not specify a bits-per-pixel count.
-
-
---------------------------------------------------
 ## Property: `public System.Int64 ColorCount { get; }`
 
 Gets the maximum color count specified by [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-).

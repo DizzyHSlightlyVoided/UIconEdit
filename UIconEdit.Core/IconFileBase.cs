@@ -376,7 +376,7 @@ namespace UIconEdit
                                     loadedImage = alterBitmap;
                                     goto case PixelFormat.Format32bppArgb;
                                 default:
-                                    throw new IconLoadException(IconErrorCode.InvalidBitDepth, loadedId, IconEntry.GetBitsPerPixel(loadedImage.PixelFormat), curKVP.Key);
+                                    throw new IconLoadException(IconErrorCode.InvalidBitDepth, loadedId, Image.GetPixelFormatSize(loadedImage.PixelFormat), curKVP.Key);
                             }
 #else
                             BitmapSource frame = decoder.Frames[0];

@@ -71,6 +71,10 @@ namespace UIconEdit
         /// The default <see cref="AlphaThreshold"/> value.
         /// </summary>
         public const byte DefaultAlphaThreshold = 96;
+        /// <summary>
+        /// The default <see cref="AlphaThreshold"/> value when <see cref="BitDepth"/> is <see cref="IconBitDepth.Depth32BitsPerPixel"/>.
+        /// </summary>
+        public const byte DefaultAlphaThreshold32 = 1;
 
         private void _initValues(int width, int height, IconBitDepth bitDepth)
         {
@@ -96,6 +100,12 @@ namespace UIconEdit
                     return true;
             }
             return false;
+        }
+
+        private static byte _defaultAlphaThreshold(IconBitDepth bitDepth)
+        {
+            if (bitDepth == IconBitDepth.Depth32BitsPerPixel) return DefaultAlphaThreshold32;
+            return DefaultAlphaThreshold;
         }
 
         /// <summary>
@@ -177,7 +187,7 @@ namespace UIconEdit
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
         public IconEntry(BitmapSource baseImage, int width, int height, IconBitDepth bitDepth, int hotspotX, int hotspotY)
-            : this(baseImage, width, height, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
+            : this(baseImage, width, height, bitDepth, hotspotX, hotspotY, _defaultAlphaThreshold(bitDepth))
         {
         }
 
@@ -198,7 +208,7 @@ namespace UIconEdit
         /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
         public IconEntry(BitmapSource baseImage, int width, int height, IconBitDepth bitDepth)
-            : this(baseImage, width, height, bitDepth, 0, 0, DefaultAlphaThreshold)
+            : this(baseImage, width, height, bitDepth, 0, 0, _defaultAlphaThreshold(bitDepth))
         {
         }
 
@@ -267,7 +277,7 @@ namespace UIconEdit
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
         public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth, int hotspotX, int hotspotY)
-            : this(baseImage, bitDepth, hotspotX, hotspotY, DefaultAlphaThreshold)
+            : this(baseImage, bitDepth, hotspotX, hotspotY, _defaultAlphaThreshold(bitDepth))
         {
         }
 
@@ -308,7 +318,7 @@ namespace UIconEdit
         /// The width or height of <paramref name="baseImage"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
         /// </exception>
         public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth)
-            : this(baseImage, bitDepth, 0, 0, DefaultAlphaThreshold)
+            : this(baseImage, bitDepth, 0, 0, _defaultAlphaThreshold(bitDepth))
         {
         }
 

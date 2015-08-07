@@ -144,6 +144,7 @@ namespace UIconEdit.Maker
             {
                 default: //Depth32BitsPerPixel
                     rad32bit.IsChecked = true;
+                    SetValue(UseAlphaThresholdPropertyKey, false);
                     break;
                 case IconBitDepth.Depth24BitsPerPixel:
                     rad24bit.IsChecked = true;
@@ -180,9 +181,41 @@ namespace UIconEdit.Maker
         public bool NewFile { get { return (bool)GetValue(NewFileProperty); } }
         #endregion
 
+        #region UseAlphaThreshold
+        private static readonly DependencyPropertyKey UseAlphaThresholdPropertyKey = DependencyProperty.RegisterReadOnly("UseAlphaThreshold", typeof(bool),
+            typeof(AddWindow), new PropertyMetadata(true, UseAlphaThresholdChanged));
+
+        private static void UseAlphaThresholdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue)
+            {
+                AddWindow a = (AddWindow)d;
+                a.SetValue(AlphaThresholdProperty, a._curAlphaThreshold);
+            }
+            else
+            {
+                d.SetValue(AlphaThresholdProperty, IconEntry.DefaultAlphaThreshold32);
+            }
+        }
+
+        public static readonly DependencyProperty UseAlphaThresholdProperty = UseAlphaThresholdPropertyKey.DependencyProperty;
+
+        public bool UseAlphaThreshold { get { return (bool)GetValue(UseAlphaThresholdProperty); } }
+        #endregion
+
         #region AlphaThreshold
         public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register("AlphaThreshold", typeof(byte), typeof(AddWindow),
-            new PropertyMetadata(IconEntry.DefaultAlphaThreshold));
+            new PropertyMetadata(IconEntry.DefaultAlphaThreshold, AlphaThresholdChanged));
+
+        private static void AlphaThresholdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            AddWindow a = (AddWindow)d;
+
+            if (a.UseAlphaThreshold)
+                a._curAlphaThreshold = (byte)e.NewValue;
+        }
+
+        private byte _curAlphaThreshold = IconEntry.DefaultAlphaThreshold;
 
         public byte AlphaThreshold
         {
@@ -213,18 +246,23 @@ namespace UIconEdit.Maker
             {
                 default: //Depth32BitsPerPixel
                     a.rad32bit.IsChecked = true;
+                    a.SetValue(UseAlphaThresholdPropertyKey, false);
                     break;
                 case IconBitDepth.Depth24BitsPerPixel:
                     a.rad24bit.IsChecked = true;
+                    a.SetValue(UseAlphaThresholdPropertyKey, true);
                     break;
                 case IconBitDepth.Depth8BitsPerPixel:
                     a.rad8bit.IsChecked = true;
+                    a.SetValue(UseAlphaThresholdPropertyKey, true);
                     break;
                 case IconBitDepth.Depth4BitsPerPixel:
                     a.rad4bit.IsChecked = true;
+                    a.SetValue(UseAlphaThresholdPropertyKey, true);
                     break;
                 case IconBitDepth.Depth1BitsPerPixel:
                     a.rad1bit.IsChecked = true;
+                    a.SetValue(UseAlphaThresholdPropertyKey, true);
                     break;
             }
         }

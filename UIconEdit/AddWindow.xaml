@@ -109,7 +109,8 @@
             <StackPanel Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center">
                 <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.AlphaThreshold, ElementName=window, FallbackValue='Alpha Threshold:'}"
                            VerticalAlignment="Center"/>
-                <TextBox Width="65" Text="{Binding AlphaThreshold, ElementName=window}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                <TextBox Width="65" Text="{Binding AlphaThreshold, ElementName=window}" Margin="5,0,0,0" VerticalAlignment="Center"
+                         IsEnabled="{Binding UseAlphaThreshold, ElementName=window}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Label Content="{Binding Owner.SettingsFile.LanguageFile.ScalingFilter, ElementName=window, FallbackValue='Scaling filter:'}" Padding="0"

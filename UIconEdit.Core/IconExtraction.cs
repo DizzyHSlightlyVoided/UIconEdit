@@ -132,17 +132,11 @@ namespace UIconEdit
                 ushort entryCount = dirReader.ReadUInt16();
                 int tSingle = lpszType - 11;
 
-                int iconLength = 6 + (entryCount * 16), picOffset = iconLength;
-                for (int i = 0; i < entryCount; i++)
-                {
-                    int iOff = (14 * i) + 6 + 8;
+                int picOffset = 6 + (entryCount * 16);
 
-                    dirStream.Seek(iOff, SeekOrigin.Begin);
+                MemoryStream[] mStreams = new MemoryStream[entryCount];
 
-                    iconLength += dirReader.ReadInt32();
-                }
-
-                MemoryStream iconStream = new MemoryStream(iconLength);
+                MemoryStream iconStream = new MemoryStream();
 #if LEAVEOPEN
                 using (BinaryWriter iconWriter = new BinaryWriter(iconStream, System.Text.Encoding.UTF8, true))
                 {
@@ -150,8 +144,6 @@ namespace UIconEdit
                 {
                     BinaryWriter iconWriter = new BinaryWriter(iconStream);
 #endif
-                    iconStream.SetLength(picOffset);
-
                     iconWriter.Write(head);
                     iconWriter.Write(entryCount);
 
@@ -163,18 +155,24 @@ namespace UIconEdit
                         dirStream.Seek(dOff + 12, SeekOrigin.Begin);
                         ushort id = dirReader.ReadUInt16();
 
-                        using (MemoryStream picStream = Win32Funcs.ExtractData(hModule, tSingle, (IntPtr)id))
-                        {
-                            iconStream.Seek(iOff, SeekOrigin.Begin);
-                            iconStream.Write(dirStream.GetBuffer(), dOff, 8); //First 8 bytes are the same.
-                            iconWriter.Write((int)picStream.Length);
-                            iconWriter.Write(picOffset);
+                        MemoryStream picStream = Win32Funcs.ExtractData(hModule, tSingle, (IntPtr)id);
 
-                            iconStream.Seek(picOffset, SeekOrigin.Begin);
-                            picStream.CopyTo(iconStream);
+                        mStreams[i] = picStream;
 
-                            picOffset += (int)picStream.Length;
-                        }
+                        iconStream.Write(dirStream.GetBuffer(), dOff, 8); //First 8 bytes are the same.
+
+                        int curLen = (int)picStream.Length;
+
+                        iconWriter.Write(curLen);
+                        iconWriter.Write(picOffset);
+
+                        picOffset += curLen;
+                    }
+
+                    foreach (MemoryStream curStream in mStreams)
+                    {
+                        curStream.CopyTo(iconStream);
+                        curStream.Dispose();
                     }
 
                     iconStream.Seek(0, SeekOrigin.Begin);

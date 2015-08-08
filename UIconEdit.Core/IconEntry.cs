@@ -995,7 +995,7 @@ namespace UIconEdit
                     throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
             }
         }
-        
+
         /// <summary>
         /// Gets the maximum color count specified by <see cref="BitDepth"/>.
         /// </summary>
@@ -1798,12 +1798,11 @@ namespace UIconEdit
 
             Rectangle fullRect = new Rectangle(0, 0, _width, _height);
 
-            int maxColorCount, offset, colorsPerByte, resultStride, shift, top;
+            int maxColorCount, colorsPerByte, resultStride, shift, top;
 
             if (pFormat == PixelFormat.Format1bppIndexed)
             {
                 maxColorCount = 2;
-                offset = 1;
                 colorsPerByte = 8;
                 resultStride = (_width + 7) >> 3;
                 shift = 3;
@@ -1812,7 +1811,6 @@ namespace UIconEdit
             else
             {
                 maxColorCount = 16;
-                offset = 4;
                 colorsPerByte = 2;
                 resultStride = (_width + 1) >> 1;
                 shift = 1;
@@ -1837,32 +1835,33 @@ namespace UIconEdit
             BitmapData sourceData = source.LockBits(fullRect, ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
             BitmapData resultData = result.LockBits(fullRect, ImageLockMode.WriteOnly, pFormat);
 
-            unsafe
             {
-                byte* pSource = (byte*)sourceData.Scan0, pResult = (byte*)resultData.Scan0;
+                int sourceDataStride = sourceData.Stride;
+                int resultDataStride = resultData.Stride;
+                byte[] pSource = new byte[_width * sourceDataStride], pResult = new byte[_height * resultDataStride];
+                Marshal.Copy(sourceData.Scan0, pSource, 0, pSource.Length);
+                source.UnlockBits(sourceData);
 
                 for (int y = 0; y < _height; y++)
                 {
-                    int yOffSource = (y * sourceData.Stride), yOffResult = (y * resultData.Stride);
+                    int yOffSource = (y * sourceDataStride), yOffResult = (y * resultDataStride);
 
-                    for (int xRow = 0; xRow < resultStride; xRow++)
+                    for (int xRow = 0; xRow < _width; xRow++)
                     {
-                        int xSource = (xRow << shift) + yOffSource, xResult = xRow + yOffResult;
+                        byte curSource = pSource[yOffSource + xRow], curDex;
 
-                        for (int xShift = 0; xShift < colorsPerByte; xShift++)
+                        if (!indices.TryGetValue(curSource, out curDex))
                         {
-                            byte curSource = pSource[xSource + xShift], curDex;
-                            if (!indices.TryGetValue(curSource, out curDex))
-                            {
-                                curDex = (byte)colorList.Count;
-                                colorList.Add(sourceEntries[curSource]);
-                                indices[curSource] = curDex;
-                            }
-
-                            pResult[xResult] |= (byte)(curDex << top - (xShift * offset));
+                            curDex = (byte)colorList.Count;
+                            colorList.Add(sourceEntries[curSource]);
+                            indices[curSource] = curDex;
                         }
+
+                        pResult[yOffResult + (xRow >> shift)] |= (byte)(curDex << (top - (xRow % colorsPerByte)));
                     }
                 }
+                Marshal.Copy(pResult, 0, resultData.Scan0, pResult.Length);
+                result.UnlockBits(resultData);
             }
 
             source.UnlockBits(sourceData);

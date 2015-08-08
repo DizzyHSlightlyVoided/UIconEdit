@@ -271,6 +271,9 @@ namespace UIconEdit
 
                 foreach (var curKVP in entryList)
                 {
+#if DRAWING
+                    Bitmap loadedImage = null, alphaMask = null;
+#endif
                     IconDirEntry entry = curKVP.Value;
                     try
                     {
@@ -285,12 +288,9 @@ namespace UIconEdit
                             gapLength -= read;
                         }
 
-#if DRAWING
-                        Bitmap
-#else
-                        WriteableBitmap
+#if !DRAWING
+                        WriteableBitmap loadedImage, alphaMask;
 #endif
-                            loadedImage, alphaMask;
 
                         int dibSize = reader.ReadInt32();
 
@@ -580,6 +580,18 @@ namespace UIconEdit
                     }
                     catch (IconLoadException e)
                     {
+#if DRAWING
+                        try
+                        {
+                            if (loadedImage != null) loadedImage.Dispose();
+                        }
+                        catch { }
+                        try
+                        {
+                            if (alphaMask != null) alphaMask.Dispose();
+                        }
+                        catch { }
+#endif
                         if (handler == null)
 #if DEBUG
                             throw new IconLoadException(e);

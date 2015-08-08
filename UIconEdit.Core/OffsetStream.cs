@@ -43,19 +43,12 @@ namespace UIconEdit
         private Stream _stream;
 
         private long _remainingLength;
-        private MemoryStream _ms;
 
         internal OffsetStream(Stream stream, long length, bool leaveOpen)
         {
             _stream = stream;
             _leaveOpen = leaveOpen;
             _remainingLength = length;
-        }
-
-        internal OffsetStream(Stream stream, byte[] buffer, long length, bool leaveOpen)
-            : this(stream, length, leaveOpen)
-        {
-            _ms = new MemoryStream(buffer);
         }
 
         public override bool CanRead
@@ -95,28 +88,12 @@ namespace UIconEdit
 
             new ArraySegment<byte>(buffer, offset, count);
 
-            if (count == 0) return count;
-
-            int msRead = 0;
-
-            if (_ms != null)
-            {
-                msRead = _ms.Read(buffer, offset, count);
-                count -= msRead;
-                offset += msRead;
-                if (_ms.Position >= _ms.Length)
-                {
-                    _ms.Dispose();
-                    _ms = null;
-                }
-                if (count == 0) return msRead;
-            }
             if (count == 0 || _remainingLength <= 0) return 0;
 
             int read = _stream.Read(buffer, offset, (int)Math.Min(count, _remainingLength));
             if (read == 0) _remainingLength = 0;
             else _remainingLength -= read;
-            return read + msRead;
+            return read;
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -136,18 +113,15 @@ namespace UIconEdit
 
         protected override void Dispose(bool disposing)
         {
-            if (_ms != null)
-                _ms.Dispose();
             try
             {
                 if (_stream != null)
                 {
-                    int read = -1;
                     const int bufferCount = 8192;
                     byte[] endBuffer = new byte[bufferCount];
-                    while (_remainingLength >= 0 && read != 0)
+                    while (_remainingLength > 0)
                     {
-                        read = _stream.Read(endBuffer, 0, (int)Math.Min(_remainingLength, bufferCount));
+                        int read = _stream.Read(endBuffer, 0, (int)Math.Min(_remainingLength, bufferCount));
                         if (read == 0) _remainingLength = 0;
                         else _remainingLength -= read;
                     }
@@ -160,7 +134,6 @@ namespace UIconEdit
             {
                 _stream = null;
                 _leaveOpen = true;
-                _ms = null;
                 base.Dispose(disposing);
             }
         }

@@ -321,16 +321,17 @@ namespace UIconEdit
 #if !DRAWING
                             PngBitmapDecoder decoder;
 #endif
-                            using (OffsetStream os = new OffsetStream(input,
-                                new byte[]
+                            using (OffsetStream os = new OffsetStream(input, entry.ResourceLength - 4L, true))
+                            using (MemoryStream ms = new MemoryStream())
+                            {
+                                ms.Write(new byte[]
                                 {
                                     unchecked((byte)pngLittleEndian),
                                     unchecked((byte)(pngLittleEndian >> 8)),
                                     unchecked((byte)(pngLittleEndian >> 16)),
                                     (pngLittleEndian >> 24)
-                                }, entry.ResourceLength - 4, true))
-                            using (MemoryStream ms = new MemoryStream())
-                            {
+                                }, 0, sizeof(int));
+
                                 os.CopyTo(ms);
                                 ms.Seek(0, SeekOrigin.Begin);
                                 try
@@ -381,7 +382,7 @@ namespace UIconEdit
 #else
                             BitmapFrame frame = decoder.Frames[0];
 
-                            var pFormat = frame.Thumbnail.Format;
+                            var pFormat = frame.Format;
 
                             switch (frame.Format.BitsPerPixel)
                             {
@@ -481,10 +482,10 @@ namespace UIconEdit
                                     actualHeight = height >> 1;
                                 }
 
-                                if (reader.ReadInt32() != 0)
+                                if (curReader.ReadInt32() != 0)
                                     throw new IconLoadException(IconErrorCode.EntryParseError, loadedId, curKVP.Key);
 
-                                int dataLength = reader.ReadInt32();
+                                int dataLength = curReader.ReadInt32();
                                 int bmpLength, alphaLength;
 
                                 if (dataLength == 0)
@@ -504,13 +505,13 @@ namespace UIconEdit
                                     bmpLength = dataLength - alphaLength;
                                 }
 
-                                reader.ReadInt64(); //Skip next eight bytes.
+                                curReader.ReadInt64(); //Skip next eight bytes.
 
-                                int palCount = reader.ReadInt32();
+                                int palCount = curReader.ReadInt32();
                                 if (palCount == 0 && bitDepth != IconBitDepth.Depth32BitsPerPixel && bitDepth != IconBitDepth.Depth24BitsPerPixel)
                                     palCount = (int)IconEntry.GetColorCount(bitDepth.Value);
 
-                                reader.ReadInt32(); //Skip next 4 bytes
+                                curReader.ReadInt32(); //Skip next 4 bytes
 
 #if DRAWING
                                 Color[]
@@ -526,10 +527,10 @@ namespace UIconEdit
                                     List<Color> colors = new List<Color>(palCount);
                                     for (int p = 0; p < palCount; p++)
                                     {
-                                        byte b = reader.ReadByte();
-                                        byte g = reader.ReadByte();
-                                        byte r = reader.ReadByte();
-                                        reader.ReadByte();
+                                        byte b = curReader.ReadByte();
+                                        byte g = curReader.ReadByte();
+                                        byte r = curReader.ReadByte();
+                                        curReader.ReadByte();
                                         colors.Add(Color.FromArgb(byte.MaxValue, r, g, b));
                                     }
 #if DRAWING
@@ -540,9 +541,9 @@ namespace UIconEdit
                                 }
 
 #if DRAWING
-                                loadedImage = _loadBitmap(reader, bmpStride, width, actualHeight, pFormat, palette);
+                                loadedImage = _loadBitmap(curReader, bmpStride, width, actualHeight, pFormat, palette);
 #else
-                                byte[] bmpData = _readBmpLines(reader, bmpStride, actualHeight);
+                                byte[] bmpData = _readBmpLines(curReader, bmpStride, actualHeight);
 
                                 loadedImage = new WriteableBitmap(BitmapSource.Create(width, actualHeight, 0, 0, pFormat, palette, bmpData, bmpStride));
 #endif
@@ -552,9 +553,9 @@ namespace UIconEdit
                                 else
                                 {
 #if DRAWING
-                                    alphaMask = _loadBitmap(reader, alphaStride, width, actualHeight, PixelFormat.Format1bppIndexed, IconEntry.AlphaPalette);
+                                    alphaMask = _loadBitmap(curReader, alphaStride, width, actualHeight, PixelFormat.Format1bppIndexed, IconEntry.AlphaPalette);
 #else
-                                    byte[] alphaData = _readBmpLines(reader, alphaStride, actualHeight);
+                                    byte[] alphaData = _readBmpLines(curReader, alphaStride, actualHeight);
 
                                     alphaMask = new WriteableBitmap(BitmapSource.Create(width, actualHeight, 0, 0, PixelFormats.Indexed1,
                                         IconEntry.AlphaPalette, alphaData, alphaStride));

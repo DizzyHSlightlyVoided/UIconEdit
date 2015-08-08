@@ -42,14 +42,14 @@ namespace UIconEdit
         private bool _leaveOpen;
         private Stream _stream;
 
-        private long _length, _remainingLength;
+        private long _remainingLength;
         private MemoryStream _ms;
 
         internal OffsetStream(Stream stream, long length, bool leaveOpen)
         {
             _stream = stream;
             _leaveOpen = leaveOpen;
-            _length = _remainingLength = length;
+            _remainingLength = length;
         }
 
         internal OffsetStream(Stream stream, byte[] buffer, long length, bool leaveOpen)
@@ -142,10 +142,10 @@ namespace UIconEdit
             {
                 if (_stream != null)
                 {
-                    int read = 0;
+                    int read = -1;
                     const int bufferCount = 8192;
                     byte[] endBuffer = new byte[bufferCount];
-                    while (_remainingLength != 0 && read != 0)
+                    while (_remainingLength >= 0 && read != 0)
                     {
                         read = _stream.Read(endBuffer, 0, (int)Math.Min(_remainingLength, bufferCount));
                         if (read == 0) _remainingLength = 0;

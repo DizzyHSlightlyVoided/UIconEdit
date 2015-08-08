@@ -379,9 +379,9 @@ namespace UIconEdit
                                     throw new IconLoadException(IconErrorCode.InvalidBitDepth, loadedId, Image.GetPixelFormatSize(loadedImage.PixelFormat), curKVP.Key);
                             }
 #else
-                            BitmapSource frame = decoder.Frames[0];
+                            BitmapFrame frame = decoder.Frames[0];
 
-                            var pFormat = frame.Format;
+                            var pFormat = frame.Thumbnail.Format;
 
                             switch (frame.Format.BitsPerPixel)
                             {
@@ -405,7 +405,7 @@ namespace UIconEdit
                         else if (dibSize == MinDibSize)
                         {
                             #region Load Bmp
-                            using (OffsetStream ms = new OffsetStream(input, entry.ResourceLength - 4, true))
+                            using (OffsetStream ms = new OffsetStream(input, entry.ResourceLength - 4L, true))
                             using (BinaryReader curReader = new BinaryReader(ms))
                             {
                                 int width = curReader.ReadInt32(); //8
@@ -563,7 +563,11 @@ namespace UIconEdit
                             }
                             #endregion
                         }
-                        else throw new IconLoadException(IconErrorCode.InvalidFormat, loadedId, curKVP.Key);
+                        else
+                        {
+                            using (OffsetStream os = new OffsetStream(input, entry.ResourceLength - 4L, true)) { }
+                            throw new IconLoadException(IconErrorCode.InvalidFormat, loadedId, curKVP.Key);
+                        }
 
                         IconEntry resultEntry;
 

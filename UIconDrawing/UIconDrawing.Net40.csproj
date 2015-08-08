@@ -58,9 +58,6 @@
     <Compile Include="..\UIconEdit.Core\IconLoadException.cs">
       <Link>IconLoadException.cs</Link>
     </Compile>
-    <Compile Include="..\UIconEdit.Core\OffsetStream.cs">
-      <Link>OffsetStream.cs</Link>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\UIconEdit.Core\IconExtraction.cs">
       <Link>IconExtraction.cs</Link>

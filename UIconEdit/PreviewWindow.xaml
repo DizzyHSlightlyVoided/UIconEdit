@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UIconEdit.Maker" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
         mc:Ignorable="d" WindowStartupLocation="CenterOwner" Loaded="window_Loaded" Icon="GradientEdit.ico" ShowInTaskbar="False"
         Title="{Binding Owner.Owner.SettingsFile.LanguageFile.Preview, ElementName=window, FallbackValue=Preview}" Closing="window_Closing"
-        MinHeight="629" MinWidth="660" Height="629" Width="660">
+        MinHeight="660" MinWidth="700" Height="660" Width="700">
     <Window.Resources>
         <local:ScaleFilterConverter x:Key="ScaleFilterConverter"/>
     </Window.Resources>

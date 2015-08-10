@@ -33,13 +33,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-
+using System.Runtime.InteropServices;
 #if DRAWING
 using System.Drawing;
 
 namespace UIconDrawing
 #else
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace UIconEdit
@@ -117,71 +116,91 @@ namespace UIconEdit
             return _extractCount(path, Win32Funcs.RT_GROUP_CURSOR);
         }
 
-        private static IconFileBase _extractSingle(IntPtr hModule, int lpszType, IntPtr name, IconTypeCode typeCode, IconLoadExceptionHandler handler)
-        {
-            using (MemoryStream ms = _extractSingle(hModule, lpszType, name))
-                return IconFileBase.Load(ms, typeCode, handler);
-        }
-
-        private static MemoryStream _extractSingle(IntPtr hModule, int lpszType, IntPtr name)
+        private static void _extractSingle(IntPtr hModule, int lpszType, IntPtr name, IconTypeCode typeCode, Action<ushort> forEntryCount,
+            Action<IconDirDetail, MemoryStream, int> forEachMemStream)
         {
             using (MemoryStream dirStream = Win32Funcs.ExtractData(hModule, lpszType, name))
-            using (BinaryReader dirReader = new BinaryReader(dirStream))
+            using (BinaryReader reader = new BinaryReader(dirStream))
             {
-                uint head = dirReader.ReadUInt32();
-                ushort entryCount = dirReader.ReadUInt16();
+                if (reader.ReadInt16() != 0) throw new IconLoadException(IconErrorCode.InvalidFormat, 0);
+
+                IconTypeCode loadedId = (IconTypeCode)reader.ReadUInt16();
+                ushort entryCount = reader.ReadUInt16();
+
                 int tSingle = lpszType - 11;
 
-                int picOffset = 6 + (entryCount * 16);
+                forEntryCount(entryCount);
 
-                MemoryStream[] mStreams = new MemoryStream[entryCount];
-
-                MemoryStream iconStream = new MemoryStream();
-#if LEAVEOPEN
-                using (BinaryWriter iconWriter = new BinaryWriter(iconStream, System.Text.Encoding.UTF8, true))
+                for (int i = 0; i < entryCount; i++)
                 {
-#else
-                {
-                    BinaryWriter iconWriter = new BinaryWriter(iconStream);
-#endif
-                    iconWriter.Write(head);
-                    iconWriter.Write(entryCount);
+                    byte[] data = reader.ReadBytes(IconDirDetail.Size);
 
-                    for (int i = 0; i < entryCount; i++)
-                    {
-                        int dOff = (14 * i) + 6;
-                        int iOff = (16 * i) + 6;
+                    IntPtr pData = Marshal.AllocHGlobal(IconDirDetail.Size);
+                    Marshal.Copy(data, 0, pData, IconDirDetail.Size);
 
-                        dirStream.Seek(dOff + 12, SeekOrigin.Begin);
-                        ushort id = dirReader.ReadUInt16();
+                    IconDirDetail detail = (IconDirDetail)Marshal.PtrToStructure(pData, typeof(IconDirDetail));
 
-                        MemoryStream picStream = Win32Funcs.ExtractData(hModule, tSingle, (IntPtr)id);
+                    Marshal.FreeHGlobal(pData);
 
-                        mStreams[i] = picStream;
+                    ushort id = reader.ReadUInt16();
 
-                        iconStream.Write(dirStream.GetBuffer(), dOff, 8); //First 8 bytes are the same.
-
-                        int curLen = (int)picStream.Length;
-
-                        iconWriter.Write(curLen);
-                        iconWriter.Write(picOffset);
-
-                        picOffset += curLen;
-                    }
-
-                    foreach (MemoryStream curStream in mStreams)
-                    {
-                        curStream.CopyTo(iconStream);
-                        curStream.Dispose();
-                    }
-
-                    iconStream.Seek(0, SeekOrigin.Begin);
-                    return iconStream;
+                    forEachMemStream(detail, Win32Funcs.ExtractData(hModule, tSingle, (IntPtr)id), i);
                 }
             }
         }
 
+        private static IconFileBase _extractSingle(IntPtr hModule, int lpszType, IntPtr name, IconTypeCode typeCode, IconLoadExceptionHandler handler)
+        {
+            IconFileBase returner = typeCode == IconTypeCode.Cursor ? (IconFileBase)(new CursorFile()) : new IconFile();
+
+            List<IconEntry> entries = new List<IconEntry>();
+            _extractSingle(hModule, lpszType, name, typeCode, delegate (ushort ec) { },
+            delegate (IconDirDetail detail, MemoryStream ms, int curDex)
+            {
+                IconBitDepth? depth = IconFileBase.EntryBitDepth(typeCode, detail);
+
+                using (BinaryReader reader = new BinaryReader(ms))
+                {
+                    try
+                    {
+                        entries.Add(IconFileBase.Load(reader, detail, typeCode, depth, curDex));
+                    }
+                    catch (IconLoadException e)
+                    {
+                        if (handler == null)
+#if DEBUG
+                            throw new IconLoadException(e);
+#else
+                            throw;
+#endif
+                        handler(e);
+                    }
+                }
+            });
+
+            if (entries.Count == 0)
+                throw new IconLoadException(IconErrorCode.ZeroValidEntries, typeCode, null);
+
+            entries.Sort(new IconEntryComparer());
+
+            returner.Entries.AddBulk(entries);
+
+            return returner;
+        }
+
         private static IconFileBase _extractSingle(string path, int index, int lpszType, IconTypeCode typeCode, IconLoadExceptionHandler handler)
+        {
+            IconFileBase returner = null;
+
+            _extractSingle(path, index, lpszType, delegate (IntPtr hModule, int t, IntPtr name)
+            {
+                returner = _extractSingle(hModule, t, name, typeCode, handler);
+            });
+
+            return returner;
+        }
+
+        private static void _extractSingle(string path, int index, int lpszType, Action<IntPtr, int, IntPtr> action)
         {
             if (path == null) throw new ArgumentNullException("path");
             if (index < 0) throw new ArgumentOutOfRangeException("index");
@@ -193,7 +212,7 @@ namespace UIconEdit
                 if (hModule == IntPtr.Zero)
                     throw new Win32Exception();
 
-                IconFileBase returner = null;
+                bool result = false;
                 Exception x = null;
                 ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, int t, IntPtr name, IntPtr l)
                 {
@@ -201,7 +220,8 @@ namespace UIconEdit
                     {
                         if (iconCount == index)
                         {
-                            returner = _extractSingle(h, t, name, typeCode, handler);
+                            action(h, t, name);
+                            result = true;
                             return false;
                         }
                     }
@@ -220,7 +240,7 @@ namespace UIconEdit
                 if (Win32Funcs.EnumResourceNames(hModule, lpszType, lpEnumFunc, 0))
                     throw new ArgumentOutOfRangeException("index");
 
-                if (returner != null) return returner;
+                if (result) return;
                 if (x == null) throw new Win32Exception();
                 throw x;
             }
@@ -279,64 +299,63 @@ namespace UIconEdit
         public static IconBitmapDecoder ExtractIconBitmapDecoderSingle(string path, int index)
 #endif
         {
-            if (path == null) throw new ArgumentNullException("path");
-            if (index < 0) throw new ArgumentOutOfRangeException("index");
-            int iconCount = 0;
-            IntPtr hModule = IntPtr.Zero;
-            try
+            using (MemoryStream ms = new MemoryStream())
+            using (BinaryWriter writer = new BinaryWriter(ms))
             {
-                hModule = Win32Funcs.LoadLibraryEx(path, IntPtr.Zero, Win32Funcs.LOAD_LIBRARY_AS_DATAFILE);
-                if (hModule == IntPtr.Zero)
-                    throw new Win32Exception();
+                writer.Write(ushort.MinValue);
+                writer.Write((ushort)IconTypeCode.Icon);
+                List<MemoryStream> msList = new List<MemoryStream>();
 
-#if DRAWING
-                Icon
-#else
-                IconBitmapDecoder
-#endif
-                    returner = null;
-                Exception x = null;
-                ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, int t, IntPtr name, IntPtr l)
+                uint picOffset = 6;
+                ushort entryCount = 0;
+
+                _extractSingle(path, index, Win32Funcs.RT_GROUP_ICON, delegate (IntPtr h, int t, IntPtr name)
                 {
-                    try
+                    _extractSingle(h, t, name, IconTypeCode.Icon, delegate (ushort ec)
                     {
-                        if (iconCount == index)
-                        {
-                            using (MemoryStream ms = _extractSingle(h, t, name))
+                        entryCount = ec;
+                        picOffset += ec * 16u;
+                        writer.Write(entryCount);
+                    },
+                    delegate (IconDirDetail detail, MemoryStream curStream, int i)
+                    {
+                        IntPtr pDetail = Marshal.AllocHGlobal(IconDirDetail.Size);
+                        Marshal.StructureToPtr(detail, pDetail, false);
+
+                        byte[] buffer = new byte[8]; //The first 8 bytes are the same.
+                        Marshal.Copy(pDetail, buffer, 0, 8);
+
+                        Marshal.FreeHGlobal(pDetail);
+
+                        writer.Write(buffer);
+
+                        uint streamLen = (uint)curStream.Length;
+                        writer.Write(streamLen);
+                        writer.Write(picOffset);
+
+                        picOffset += streamLen;
+
+                        msList.Add(curStream);
+                    });
+                });
+
+                foreach (MemoryStream curStream in msList)
+                {
+                    curStream.CopyTo(ms);
+                    curStream.Dispose();
+                }
+
+                ms.Seek(0, SeekOrigin.Begin);
 #if DRAWING
-                                returner = new Icon(ms);
+                return new Icon(ms);
 #else
-                                returner = new IconBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                var returner = new IconBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                foreach (var frame in returner.Frames)
+                    frame.Freeze();
+
+                return returner;
 #endif
-
-                            return false;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        x = e;
-                        return false;
-                    }
-                    finally
-                    {
-                        iconCount++;
-                    }
-                    return true;
-                };
-
-                if (Win32Funcs.EnumResourceNames(hModule, Win32Funcs.RT_GROUP_ICON, lpEnumFunc, 0))
-                    throw new ArgumentOutOfRangeException("index");
-
-                if (returner != null) return returner;
-                if (x == null) throw new Win32Exception();
-                throw x;
             }
-            finally
-            {
-                if (hModule != IntPtr.Zero)
-                    Win32Funcs.FreeLibrary(hModule);
-            }
-
         }
 
         /// <summary>
@@ -459,6 +478,10 @@ namespace UIconEdit
             try
             {
                 hModule = Win32Funcs.LoadLibraryEx(path, IntPtr.Zero, Win32Funcs.LOAD_LIBRARY_AS_DATAFILE);
+
+                if (hModule == IntPtr.Zero)
+                    throw new Win32Exception();
+
                 CancelEventArgs cancelArgs = new CancelEventArgs(false);
                 IconExtractException x = null;
                 ENUMRESNAMEPROC lpEnumFunc = delegate (IntPtr h, int t, IntPtr name, IntPtr l)
@@ -467,6 +490,7 @@ namespace UIconEdit
                     {
                         if (singleHandler != null)
                             sHandler = e => singleHandler(new IconExtractException(e, curIndex));
+
                         callback(curIndex, (TIconFile)_extractSingle(h, t, name, typeCode, sHandler), cancelArgs);
 
                         if (cancelArgs.Cancel)

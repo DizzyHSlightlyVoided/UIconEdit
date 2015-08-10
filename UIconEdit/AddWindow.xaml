@@ -28,31 +28,33 @@
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:AddWindow.PreviewCommand}" CanExecute="Preview_CanExecute" Executed="Preview_Executed"/>
     </Window.CommandBindings>
-    <Grid>
-        <GroupBox x:Name="groupImage" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="110" Width="96"
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <GroupBox x:Name="groupImage" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="110" Width="96"
                   Header="{Binding Owner.SettingsFile.LanguageFile.GroupImage, FallbackValue=Image}">
-            <Border Background="{StaticResource TransparentTiles}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                <Border Background="{StaticResource TransparentTiles}" HorizontalAlignment="Center" VerticalAlignment="Center"
                     BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="1">
-                <Image MaxWidth="80" MaxHeight="80" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding LoadedImage, ElementName=window}"
+                    <Image MaxWidth="80" MaxHeight="80" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding LoadedImage, ElementName=window}"
                        Margin="1" Width="{Binding LoadedImage.PixelWidth, ElementName=window}" RenderOptions.BitmapScalingMode="HighQuality"/>
-            </Border>
-        </GroupBox>
-        <GroupBox x:Name="groupBitDepth" HorizontalAlignment="Left" Margin="111,10,0,0" VerticalAlignment="Top" Height="110" Width="473"
+                </Border>
+            </GroupBox>
+            <GroupBox x:Name="groupBitDepth" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Height="110" Width="473"
                   Header="{Binding Owner.SettingsFile.LanguageFile.GroupBitsPerPixel, FallbackValue='Bits Per Pixel'}">
-            <WrapPanel>
-                <RadioButton x:Name="rad32bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="212" Checked="bit_Checked"
+                <WrapPanel>
+                    <RadioButton x:Name="rad32bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="212" Checked="bit_Checked"
                              Content="{Binding Owner.SettingsFile.LanguageFile.Bits32, ElementName=window, FallbackValue='Full Color + Alpha (32-bit)'}"/>
-                <RadioButton x:Name="rad24bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="212" Checked="bit_Checked"
+                    <RadioButton x:Name="rad24bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="212" Checked="bit_Checked"
                              Content="{Binding Owner.SettingsFile.LanguageFile.Bits24, ElementName=window, FallbackValue='Full Color (24-bit)'}"/>
-                <RadioButton x:Name="rad8bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
+                    <RadioButton x:Name="rad8bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
                              Content="{Binding Owner.SettingsFile.LanguageFile.Bits8, ElementName=window, FallbackValue='256-Color (8-bit)'}"/>
-                <RadioButton x:Name="rad4bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
+                    <RadioButton x:Name="rad4bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
                              Content="{Binding Owner.SettingsFile.LanguageFile.Bits4, ElementName=window, FallbackValue='16-Color (4-bit)'}"/>
-                <RadioButton x:Name="rad1bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
+                    <RadioButton x:Name="rad1bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="145" Checked="bit_Checked"
                              Content="{Binding Owner.SettingsFile.LanguageFile.Bits1, ElementName=window, FallbackValue='2-Color (1-bit)'}"/>
-            </WrapPanel>
-        </GroupBox>
-        <GroupBox x:Name="groupSize" Header="GroupBox" HorizontalAlignment="Left" Margin="10,125,0,0" VerticalAlignment="Top" Height="151" Width="574">
+                </WrapPanel>
+            </GroupBox>
+        </StackPanel>
+        <GroupBox x:Name="groupSize" Header="GroupBox" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="151" Width="574">
             <WrapPanel>
                 <CheckBox x:Name="chkExtended" Margin="10,10,20,0" IsChecked="{Binding ExtendedSizes, ElementName=window}"
                           Content="{Binding Owner.SettingsFile.LanguageFile.ExtendedSize, FallbackValue='Extended Windows 10 Sizes'}"/>
@@ -105,7 +107,7 @@
                 </RadioButton>
             </WrapPanel>
         </GroupBox>
-        <WrapPanel Orientation="Horizontal" Margin="10,281,10,40"  VerticalAlignment="Bottom">
+        <WrapPanel Orientation="Horizontal" Margin="10,10,10,0"  VerticalAlignment="Bottom">
             <StackPanel Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center">
                 <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.AlphaThreshold, ElementName=window, FallbackValue='Alpha Threshold:'}"
                            VerticalAlignment="Center"/>
@@ -141,5 +143,5 @@
             <Button x:Name="btnCancel" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinWidth="75" IsCancel="True"
                     Content="{Binding Owner.SettingsFile.LanguageFile.ButtonCancel, ElementName=window, FallbackValue=_Cancel}"/>
         </StackPanel>
-    </Grid>
+    </StackPanel>
 </Window>

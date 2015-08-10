@@ -2103,7 +2103,7 @@ An error occurred when attempting to load resources from `path`.
 --------------------------------------------------
 ## Method: `public static System.Drawing.Icon ExtractIconObjSingle(System.String path, System.Int32 index)`
 
-Loads a single [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx) from the specified collection EXE or DLL file.
+Loads a single [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx) from the specified collection EXE or DLL file with the default size.
 * `path`: The path to the file to load.
 * `index`: The zero-based index of the icon in `path`.
 
@@ -2121,7 +2121,73 @@ Loads a single [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.
 ##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
 An error occurred when attempting to load resources from `path`.
 
-##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
+##### [`IconLoadException`](#type-public-class-uicondrawingiconloadexception)
+An error occurred when loading the icon.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+An error occurred when loading the icon.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static System.Drawing.Icon ExtractIconObjSingle(System.String path, System.Int32 index, System.Drawing.Size size)`
+
+Loads a single [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx) from the specified collection EXE or DLL file with the specified size.
+* `path`: The path to the file to load.
+* `index`: The zero-based index of the icon in `path`.
+* `size`: The indended width of the icon.
+
+**Returns:** Type [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx): The icon with the specified key in `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than the number of icons in `path`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconLoadException`](#type-public-class-uicondrawingiconloadexception)
+An error occurred when loading the icon.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+An error occurred when loading the icon.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static System.Drawing.Icon ExtractIconObjSingle(System.String path, System.Int32 index, System.Int32 width, System.Int32 height)`
+
+Loads a single [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx) from the specified collection EXE or DLL file with the specified size.
+* `path`: The path to the file to load.
+* `index`: The zero-based index of the icon in `path`.
+* `width`: The indended width of the icon.
+* `height`: The intended height of the icon.
+
+**Returns:** Type [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx): The icon with the specified key in `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than the number of icons in `path`.
+
+##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
+An error occurred when attempting to load resources from `path`.
+
+##### [`IconLoadException`](#type-public-class-uicondrawingiconloadexception)
+An error occurred when loading the icon.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
 An error occurred when loading the icon.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)

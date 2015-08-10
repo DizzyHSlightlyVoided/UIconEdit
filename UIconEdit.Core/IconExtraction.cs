@@ -253,7 +253,7 @@ namespace UIconEdit
 
 #if DRAWING
         /// <summary>
-        /// Loads a single <see cref="Icon"/> from the specified collection EXE or DLL file.
+        /// Loads a single <see cref="Icon"/> from the specified collection EXE or DLL file with the default size.
         /// </summary>
         /// <param name="path">The path to the file to load.</param>
         /// <param name="index">The zero-based index of the icon in <paramref name="path"/>.</param>
@@ -267,13 +267,77 @@ namespace UIconEdit
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
         /// </exception>
-        /// <exception cref="FileFormatException">
+        /// <exception cref="IconLoadException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="ArgumentException">
         /// An error occurred when loading the icon.
         /// </exception>
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
         public static Icon ExtractIconObjSingle(string path, int index)
+        {
+            return ExtractIconObjSingle(path, index, 0, 0);
+        }
+
+        /// <summary>
+        /// Loads a single <see cref="Icon"/> from the specified collection EXE or DLL file with the specified size.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <param name="index">The zero-based index of the icon in <paramref name="path"/>.</param>
+        /// <param name="size">The indended width of the icon.</param>
+        /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static Icon ExtractIconObjSingle(string path, int index, Size size)
+        {
+            return ExtractIconObjSingle(path, index, size.Width, size.Height);
+        }
+
+        /// <summary>
+        /// Loads a single <see cref="Icon"/> from the specified collection EXE or DLL file with the specified size.
+        /// </summary>
+        /// <param name="path">The path to the file to load.</param>
+        /// <param name="index">The zero-based index of the icon in <paramref name="path"/>.</param>
+        /// <param name="width">The indended width of the icon.</param>
+        /// <param name="height">The intended height of the icon.</param>
+        /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="Win32Exception">
+        /// An error occurred when attempting to load resources from <paramref name="path"/>.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public static Icon ExtractIconObjSingle(string path, int index, int width, int height)
 #else
         /// <summary>
         /// Loads a single <see cref="IconBitmapDecoder"/> from the specified collection EXE or DLL file.
@@ -290,7 +354,13 @@ namespace UIconEdit
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
         /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when loading the icon.
+        /// </exception>
         /// <exception cref="FileFormatException">
+        /// An error occurred when loading the icon.
+        /// </exception>
+        /// <exception cref="ArgumentException">
         /// An error occurred when loading the icon.
         /// </exception>
         /// <exception cref="IOException">
@@ -347,7 +417,7 @@ namespace UIconEdit
 
                 ms.Seek(0, SeekOrigin.Begin);
 #if DRAWING
-                return new Icon(ms);
+                return new Icon(ms, width, height);
 #else
                 var returner = new IconBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
                 foreach (var frame in returner.Frames)

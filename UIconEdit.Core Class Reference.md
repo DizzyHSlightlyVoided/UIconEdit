@@ -2131,7 +2131,13 @@ Loads a single [`IconBitmapDecoder`](https://msdn.microsoft.com/en-us/library/sy
 ##### [`Win32Exception`](https://msdn.microsoft.com/en-us/library/system.componentmodel.win32exception.aspx)
 An error occurred when attempting to load resources from `path`.
 
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when loading the icon.
+
 ##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
+An error occurred when loading the icon.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
 An error occurred when loading the icon.
 
 ##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)

@@ -31,8 +31,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
@@ -80,27 +81,34 @@ namespace UIconEdit.Maker
             }
 
             _languages = languages.ToArray();
-            try
-            {
-                using (RegistryKey key = Registry.ClassesRoot.OpenSubKey(regKey2, false))
-                {
-                    if (key != null)
-                    {
-                        object value = key.GetValue(null);
-
-                        IsInRegistry = value != null && key.GetValueKind(null) == RegistryValueKind.String && value.ToString() == AppLoc();
-                        SetValue(CanSavePropertyKey, false);
-                    }
-                }
-            }
-            catch { }
+            _checkRegistry();
 
             InitializeComponent();
 
             settingsFile.Reset();
         }
 
-        const string regKey1 = @"*\shell\UIconEdit", regKey2 = regKey1 + @"\command";
+        private void _checkRegistry()
+        {
+            try
+            {
+                using (RegistryKey key = Registry.ClassesRoot.OpenSubKey(Program.RegKey2, false))
+                {
+                    if (key == null)
+                    {
+                        IsInRegistry = false;
+                    }
+                    else
+                    {
+                        object value = key.GetValue(null);
+
+                        IsInRegistry = value != null && key.GetValueKind(null) == RegistryValueKind.String && value.ToString() == Program.AppLoc();
+                    }
+                    SetValue(CanSavePropertyKey, false);
+                }
+            }
+            catch { }
+        }
 
         private LanguageFile[] _languages;
         [Bindable(true)]
@@ -144,73 +152,57 @@ namespace UIconEdit.Maker
             _save(false);
         }
 
-        private static string AppLoc()
-        {
-            return string.Format("\"{0}\" \"%1\"", typeof(SettingsWindow).Assembly.Location);
-        }
-
-        private static RegistryKey GetOrCreateRegKey()
-        {
-            RegistryKey key = Registry.ClassesRoot.OpenSubKey(regKey2, RegistryKeyPermissionCheck.ReadWriteSubTree);
-            if (key == null) return Registry.ClassesRoot.CreateSubKey(regKey2, RegistryKeyPermissionCheck.ReadWriteSubTree);
-
-            return key;
-        }
-
         private bool _save(bool closing)
         {
             SettingsFile.Save(this);
             bool repeating = false;
+            if (!CanSave) return true;
             do
             {
-                try
+                ProcessStartInfo psInfo = new ProcessStartInfo();
+                psInfo.FileName = typeof(SettingsWindow).Assembly.Location;
+                psInfo.Arguments = Program.LoadParam + (chkRegistry.IsChecked.HasValue && chkRegistry.IsChecked.Value);
+                psInfo.Verb = "runas";
+
+                Process process = new Process();
+                process.StartInfo = psInfo;
+                process.Start();
+                process.WaitForExit();
+
+                if (process.ExitCode == 0)
                 {
-                    if (chkRegistry.IsChecked.HasValue && chkRegistry.IsChecked.Value)
-                    {
-                        using (RegistryKey key = GetOrCreateRegKey())
-                        {
-                            key.SetValue(null, AppLoc());
-                        }
-                    }
-                    else
-                    {
-                        Registry.ClassesRoot.DeleteSubKeyTree(regKey1);
-                    }
-                    SetValue(CanSavePropertyKey, false);
+                    _checkRegistry();
                     return true;
                 }
-                catch
+                if (closing)
                 {
-                    if (closing)
+                    var langFile = SettingsFile.LanguageFile;
+                    QuestionWindow qWindow = new QuestionWindow((MainWindow)Owner, langFile.RegistryError, SettingsFile.LanguageFile.Error);
+                    qWindow.Owner = this;
+
+                    qWindow.ButtonOKEnabled = true;
+                    qWindow.ButtonOKMessage = langFile.ButtonRetry;
+                    qWindow.ButtonYesEnabled = false;
+                    qWindow.ButtonNoEnabled = true;
+                    qWindow.ButtonNoMessage = langFile.ButtonNoSave;
+                    qWindow.ButtonCancelEnabled = true;
+
+                    qWindow.Show();
+
+                    switch (qWindow.Result)
                     {
-                        var langFile = SettingsFile.LanguageFile;
-                        QuestionWindow qWindow = new QuestionWindow((MainWindow)Owner, langFile.RegistryError, SettingsFile.LanguageFile.Error);
-                        qWindow.Owner = this;
-
-                        qWindow.ButtonOKEnabled = true;
-                        qWindow.ButtonOKMessage = langFile.ButtonRetry;
-                        qWindow.ButtonYesEnabled = false;
-                        qWindow.ButtonNoEnabled = true;
-                        qWindow.ButtonNoMessage = langFile.ButtonNoSave;
-                        qWindow.ButtonCancelEnabled = true;
-
-                        qWindow.Show();
-
-                        switch (qWindow.Result)
-                        {
-                            case MessageBoxResult.OK:
-                                repeating = true;
-                                continue;
-                            case MessageBoxResult.No:
-                                return true;
-                            default:
-                                return false;
-                        }
+                        case MessageBoxResult.OK:
+                            repeating = true;
+                            continue;
+                        case MessageBoxResult.No:
+                            return true;
+                        default:
+                            return false;
                     }
-                    else
-                    {
-                        ErrorWindow.Show((MainWindow)Owner, this, SettingsFile.LanguageFile.RegistryError);
-                    }
+                }
+                else
+                {
+                    ErrorWindow.Show((MainWindow)Owner, this, SettingsFile.LanguageFile.RegistryError);
                 }
             }
             while (repeating);

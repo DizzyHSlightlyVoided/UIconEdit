@@ -34,12 +34,12 @@ using System.Configuration;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace UIconEdit
+namespace UIconEdit.Maker
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    partial class App : Application
     {
     }
 }

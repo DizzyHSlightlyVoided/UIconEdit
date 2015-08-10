@@ -36,6 +36,9 @@
   <PropertyGroup>
     <ApplicationIcon>GradientEdit.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>UIconEdit.Maker.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -64,6 +67,7 @@
     <Compile Include="PreviewWindow.xaml.cs">
       <DependentUpon>PreviewWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="QuestionWindow.xaml.cs">
       <DependentUpon>QuestionWindow.xaml</DependentUpon>
     </Compile>

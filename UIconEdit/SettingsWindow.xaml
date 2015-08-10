@@ -23,12 +23,21 @@
             </ComboBox>
         </GroupBox>
         <StackPanel Margin="5,75,5,5" VerticalAlignment="Top">
-            <CheckBox x:Name="chkHotspot" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Top"
+            <CheckBox x:Name="chkHotspot" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center"
                       Content="{Binding SettingsFile.LanguageFile.SettingsKeepChecked, ElementName=window, FallbackValue='Keep Checked'}"
                       IsChecked="{Binding SettingsFile.KeepHotspotChecked, ElementName=window}"/>
-            <CheckBox x:Name="chkRegistry" HorizontalAlignment="Left" Margin="5"
-                      Content="{Binding SettingsFile.LanguageFile.SettingsRegister, ElementName=window, FallbackValue='Add to Windows Explorer context menu'}"
-                      IsChecked="{Binding IsInRegistry, ElementName=window}"/>
+            <CheckBox x:Name="chkRegistry" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center"
+                      IsChecked="{Binding IsInRegistry, ElementName=window}">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Image Source="{x:Static local:UacShieldFuncs.UACIcon}" MaxWidth="16" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding SettingsFile.LanguageFile.SettingsRegister, ElementName=window, FallbackValue='Add to Windows Explorer context menu'}"
+                               Grid.Column="1" VerticalAlignment="Center"/>
+                </Grid>
+            </CheckBox>
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" FlowDirection="RightToLeft" Margin="0,10,0,0">
             <Button Content="{Binding SettingsFile.LanguageFile.ButtonCancel, ElementName=window, FallbackValue=_Cancel}" MinWidth="75" Margin="5"

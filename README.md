@@ -1,4 +1,4 @@
-﻿UIconEdit and UIconCore
+﻿UIconEdit and UIconDrawing
 =======================
 A C# application for opening and editing [Windows .CUR and .ICO files](http://en.wikipedia.org/wiki/ICO_%28file_format%29), using the [Windows Presentation Foundation](http://en.wikipedia.org/wiki/Windows_Presentation_Foundation) for image processing. In my experiments, I have determined that it is also much faster than WPF's own [IconBitmapDecoder](https://msdn.microsoft.com/en-us/library/ms602492.aspx) class. The project is divided into three parts:
 
@@ -16,13 +16,12 @@ UIconEdit app's functionality
 * Opening .ICO, .CUR, and image files as a command-line parameter.
 * Getting and setting a cursor's hotspot.
 * Extracting icons from .DLL and .EXE files.
+* Adding a "UIconEdit" option to file context menus in Windows.
 
 Planned functionality
 ---------------------
-### UIconEdit
-* File associations.
 
-### UIconEdit.Core
+### UIconEdit.Core and UIconDrawing
 * The creation of animated cursors (.ANI files). This probably won't make it into UIconEdit itself.
 
 UIconDrawing examples

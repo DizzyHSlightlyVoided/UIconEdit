@@ -3,7 +3,7 @@
 A C# application for opening and editing [Windows .CUR and .ICO files](http://en.wikipedia.org/wiki/ICO_%28file_format%29), using the [Windows Presentation Foundation](http://en.wikipedia.org/wiki/Windows_Presentation_Foundation) for image processing. In my experiments, I have determined that it is also much faster than WPF's own [IconBitmapDecoder](https://msdn.microsoft.com/en-us/library/ms602492.aspx) class. The project is divided into three parts:
 
 * The UIconDrawing library, which allows icon creation and modification in code using System.Drawing.
-* The UIconEdit.Core library, which allows icon creation and modification in code using WPF.
+* The UIconEdit.Core library, which allows icon creation and modification in code using WPF. It still uses System.Drawing in certain places.
 * The UIconEdit WPF graphical app.
 
 UIconEdit app's functionality

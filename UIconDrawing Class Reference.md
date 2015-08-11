@@ -909,6 +909,18 @@ Represents an icon file.
 Creates a new [`IconFile`](#type-public-class-uicondrawingiconfile) instance.
 
 --------------------------------------------------
+## Method: `public static UIconDrawing.IconFile FromHandle(System.IntPtr handle)`
+
+Loads an icon from the specified handle.
+* `handle`: A Windows handle to an icon.
+
+**Returns:** Type [`IconFile`](#type-public-class-uicondrawingiconfile): A loaded [`IconFile`](#type-public-class-uicondrawingiconfile).
+
+### Remarks
+
+When using this method, you must dispose of the original icon by using the `DestroyIcon` method in the Win32 API to ensure that the resources are released.
+
+--------------------------------------------------
 ## Constructor: `public IconFile(System.Drawing.Icon icon)`
 
 Creates a new instance using the specified [`Icon`](https://msdn.microsoft.com/en-us/library/system.drawing.icon.aspx).

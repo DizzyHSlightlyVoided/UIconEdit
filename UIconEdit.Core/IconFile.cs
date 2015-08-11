@@ -31,8 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.IO;
 using System.Linq;
-#if DRAWING
 using System.Drawing;
+#if DRAWING
 
 namespace UIconDrawing
 #else
@@ -54,6 +54,26 @@ namespace UIconEdit
         }
 
 #if DRAWING
+        /// <summary>
+        /// Loads an icon from the specified handle.
+        /// </summary>
+        /// <param name="handle">A Windows handle to an icon.</param>
+        /// <returns>A loaded <see cref="IconFile"/>.</returns>
+        /// <remarks>
+        /// When using this method, you must dispose of the original icon by using the <c>DestroyIcon</c> method in the Win32 API
+        /// to ensure that the resources are released.
+        /// </remarks>
+        public static IconFile FromHandle(IntPtr handle)
+        {
+            using (Icon icon = Icon.FromHandle(handle))
+            using (MemoryStream ms = new MemoryStream())
+            {
+                icon.Save(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                return Load(ms);
+            }
+        }
+
         /// <summary>
         /// Creates a new instance using the specified <see cref="Icon"/>.
         /// </summary>

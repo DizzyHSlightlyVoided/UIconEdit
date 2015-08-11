@@ -20,6 +20,8 @@ UIconEdit app's functionality
 
 Planned functionality
 ---------------------
+### UIconEdit App
+* The ability to select an individual frame when importing a multi-frame image.
 
 ### UIconEdit.Core and UIconDrawing
 * The creation of animated cursors (.ANI files). This probably won't make it into UIconEdit itself.

@@ -52,9 +52,9 @@
     <Compile Include="Win32Funcs.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nQuant\nQuant.Core\nQuant.Core.csproj">
-      <Project>{a59307ea-fcb0-4110-bc42-0417871c24c4}</Project>
-      <Name>nQuant.Core</Name>
+    <ProjectReference Include="..\nQuant\nQuant.Core\nQuantWpf.Core.csproj">
+      <Project>{21c7366e-ea88-4158-8544-0100dd3ab47d}</Project>
+      <Name>nQuantWpf.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

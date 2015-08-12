@@ -39,12 +39,14 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using BitmapSource = System.Drawing.Image;
+using nQuant;
 
 namespace UIconDrawing
 #else
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using nQuantWpf;
 
 using Bitmap = System.Drawing.Bitmap;
 using BitmapData = System.Drawing.Imaging.BitmapData;
@@ -1532,10 +1534,8 @@ namespace UIconEdit
 #if DRAWING
                 alphaMask = GetBitmap(alphaPixels, PixelFormat.Format1bppIndexed, AlphaPalette, 2);
 #else
-                var alphaBitmap = GetBitmap(alphaPixels);
-                alphaBitmap.Freeze();
-
-                alphaMask = new FormatConvertedBitmap(alphaBitmap, PixelFormats.Indexed1, AlphaPalette, 0);
+                alphaMask = GetBitmap(alphaPixels, PixelFormats.Indexed1, AlphaPalette, 2);
+                alphaMask.Freeze();
 #endif
             }
 
@@ -1565,34 +1565,14 @@ namespace UIconEdit
                 pixels[i] = curPixel;
             }
 
+            var quantized = GetBitmap(pixels, isPng ?
 #if DRAWING
-            Bitmap quantized = GetBitmap(pixels, isPng ? PixelFormat.Format8bppIndexed : GetPixelFormat(_depth), null, (ushort)GetColorCount(_depth));
+                PixelFormat.Format8bppIndexed
 #else
-            DPixelFormat pFormat;
-            ushort paletteCount;
-            switch (_depth)
-            {
-                case IconBitDepth.Depth24BitsPerPixel:
-                    if (isPng) return GetBitmap(pixels);
-                    var quant = GetBitmap(pixels, DPixelFormat.Format24bppRgb);
-                    quant.Freeze();
-                    return quant;
-                case IconBitDepth.Depth2Color:
-                    paletteCount = 2;
-                    pFormat = isPng ? DPixelFormat.Format8bppIndexed : DPixelFormat.Format1bppIndexed;
-                    break;
-                case IconBitDepth.Depth16Color:
-                    paletteCount = 16;
-                    pFormat = isPng ? DPixelFormat.Format8bppIndexed : DPixelFormat.Format4bppIndexed;
-                    break;
-                default: //Depth256Color
-                    paletteCount = 256;
-                    pFormat = DPixelFormat.Format8bppIndexed;
-                    break;
-            }
-
-            WriteableBitmap quantized = GetBitmap(pixels, pFormat, paletteCount);
+                PixelFormats.Indexed8
 #endif
+                : GetPixelFormat(_depth), null, (ushort)GetColorCount(_depth));
+
             if (!isPng)
             {
 #if !DRAWING
@@ -1879,136 +1859,65 @@ namespace UIconEdit
             return result;
         }
 #else
-        private unsafe WriteableBitmap GetBitmap(ColorValue[] pixels, DPixelFormat pFormat, ushort maxColors)
+        private unsafe WriteableBitmap GetBitmap(ColorValue[] pixels, PixelFormat pFormat, BitmapPalette palette, ushort maxColors)
         {
-            if (maxColors > 256 && (pFormat == DPixelFormat.Format32bppArgb || pFormat == DPixelFormat.Format24bppRgb))
+            WriteableBitmap wBmp = new WriteableBitmap(_width, _height, 0, 0, PixelFormats.Bgra32, null);
+            if (pFormat.BitsPerPixel == 24)
             {
-                WriteableBitmap wBmp = new WriteableBitmap(_width, _height, 0, 0, PixelFormats.Bgra32, null);
-                if (pFormat == DPixelFormat.Format24bppRgb)
-                {
-                    for (int i = 0; i < pixels.Length; i++)
-                        pixels[i].A = byte.MaxValue;
-                }
-
-                wBmp.WritePixels(new Int32Rect(0, 0, _width, _height), pixels, _width * 4, 0);
-                if (pFormat == DPixelFormat.Format32bppArgb)
-                    return wBmp;
-
-                return new WriteableBitmap(new FormatConvertedBitmap(wBmp, PixelFormats.Bgr24, null, 0));
-            }
-            var fullRect = new Rectangle(0, 0, _width, _height);
-            Bitmap resultBmp;
-            {
-                Bitmap baseBmp = new Bitmap(_width, _height, DPixelFormat.Format32bppArgb);
-
-                BitmapData bData = baseBmp.LockBits(fullRect, ImageLockMode.WriteOnly, DPixelFormat.Format32bppArgb);
-
-                ColorValue* pData = (ColorValue*)bData.Scan0;
-
                 for (int i = 0; i < pixels.Length; i++)
-                    pData[i] = pixels[i];
-
-                baseBmp.UnlockBits(bData);
-
-                if (maxColors > 256)
-                {
-                    if (pFormat == DPixelFormat.Format32bppArgb)
-                        resultBmp = baseBmp;
-                    else
-                    {
-                        resultBmp = baseBmp.Clone(fullRect, pFormat);
-                        baseBmp.Dispose();
-                    }
-                }
-                else
-                {
-                    resultBmp = Quantize(baseBmp, maxColors);
-                    baseBmp.Dispose();
-                }
+                    pixels[i].A = byte.MaxValue;
             }
 
-            BitmapPalette palette = null;
-            if (resultBmp.Palette != null && resultBmp.Palette.Entries.Length != 0)
+            wBmp.WritePixels(new Int32Rect(0, 0, _width, _height), pixels, _width * 4, 0);
+            if (pFormat.BitsPerPixel == 32)
+                return wBmp;
+            else if (pFormat.BitsPerPixel == 24)
+                return new WriteableBitmap(new FormatConvertedBitmap(wBmp, pFormat, null, 0));
+
+            if (palette != null)
+                return new WriteableBitmap(new FormatConvertedBitmap(wBmp, pFormat, palette, 0));
+
+            WuQuantizer wQuant = new WuQuantizer();
+
+            WriteableBitmap quantized = (WriteableBitmap)wQuant.QuantizeImage(wBmp, AlphaThreshold, 70, maxColors);
+
+            if (pFormat.BitsPerPixel == 8)
+                return quantized;
+
+            byte[] indices = new byte[pixels.Length];
+
+            quantized.CopyPixels(indices, _width, 0);
+
+            var baseColors = quantized.Palette.Colors;
+            List<Color> colors = new List<Color>();
+            HashSet<byte> indexSet = new HashSet<byte>();
+
+            foreach (byte b in indices)
             {
-                var palCollection = resultBmp.Palette.Entries.Select(c => Color.FromArgb(c.A, c.R, c.G, c.B));
+                if (indexSet.Contains(b)) continue;
 
-                switch (pFormat)
-                {
-                    case DPixelFormat.Format32bppArgb:
-                    case DPixelFormat.Format24bppRgb:
-                    case DPixelFormat.Format8bppIndexed:
-                        break;
-                    default:
-                        palCollection = palCollection.Take(maxColors);
-                        break;
-                }
+                indexSet.Add(b);
+                colors.Add(baseColors[b]);
 
-                palette = new BitmapPalette(palCollection.ToArray());
-            }
-
-            PixelFormat rFormat;
-
-            switch (resultBmp.PixelFormat)
-            {
-                default: //DPixelFormat.Format32bppArgb:
-                    rFormat = PixelFormats.Bgra32;
-                    break;
-                case DPixelFormat.Format24bppRgb:
-                    rFormat = PixelFormats.Bgr24;
-                    break;
-                case DPixelFormat.Format8bppIndexed:
-                    rFormat = PixelFormats.Indexed8;
-                    break;
-                case DPixelFormat.Format4bppIndexed:
-                    rFormat = PixelFormats.Indexed4;
-                    break;
-                case DPixelFormat.Format1bppIndexed:
-                    rFormat = PixelFormats.Indexed1;
+                if (colors.Count == maxColors)
                     break;
             }
 
-            BitmapData rData = resultBmp.LockBits(fullRect, ImageLockMode.ReadOnly, resultBmp.PixelFormat);
-
-            BitmapSource source = BitmapSource.Create(_width, _height, 0, 0, rFormat, palette, rData.Scan0, rData.Stride * rData.Height, rData.Stride);
-
-            switch (pFormat)
-            {
-                default: //DPixelFormat.Format32bppArgb:
-                    rFormat = PixelFormats.Bgra32;
-                    break;
-                case DPixelFormat.Format24bppRgb:
-                    rFormat = PixelFormats.Bgr24;
-                    break;
-                case DPixelFormat.Format8bppIndexed:
-                    rFormat = PixelFormats.Indexed8;
-                    break;
-                case DPixelFormat.Format4bppIndexed:
-                    rFormat = PixelFormats.Indexed4;
-                    break;
-                case DPixelFormat.Format1bppIndexed:
-                    rFormat = PixelFormats.Indexed1;
-                    break;
-            }
-
-            WriteableBitmap result = new WriteableBitmap(new FormatConvertedBitmap(source, rFormat, source.Palette, 0));
-
-            resultBmp.UnlockBits(rData);
-            resultBmp.Dispose();
-
-            return result;
+            return new WriteableBitmap(new FormatConvertedBitmap(quantized, pFormat, new BitmapPalette(colors), 1));
         }
 
-        private WriteableBitmap GetBitmap(ColorValue[] pixels, DPixelFormat format)
+        private WriteableBitmap GetBitmap(ColorValue[] pixels, PixelFormat format)
         {
-            return GetBitmap(pixels, format, ushort.MaxValue);
+            return GetBitmap(pixels, format, null, ushort.MaxValue);
         }
 
         private WriteableBitmap GetBitmap(ColorValue[] pixels)
         {
-            return GetBitmap(pixels, DPixelFormat.Format32bppArgb, ushort.MaxValue);
+            return GetBitmap(pixels, PixelFormats.Bgra32, null, ushort.MaxValue);
         }
 #endif
 
+#if DRAWING
         private Bitmap Quantize(Bitmap source, int maxColors)
         {
             int stride = ((source.Width * 4) + 3) >> 2;
@@ -2016,14 +1925,9 @@ namespace UIconEdit
 
             var fullRect = new Rectangle(0, 0, _width, _height);
 
-            BitmapData bmpData = source.LockBits(fullRect, ImageLockMode.ReadOnly,
-#if DRAWING
-                PixelFormat.Format32bppArgb);
-#else
-                DPixelFormat.Format32bppArgb);
-#endif
+            BitmapData bmpData = source.LockBits(fullRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-            List<System.Drawing.Color> palette = new List<System.Drawing.Color>();
+            List<Color> palette = new List<Color>();
             Dictionary<ColorValue, byte> paletteIndex = new Dictionary<ColorValue, byte>();
 
             bool success = true;
@@ -2046,7 +1950,7 @@ namespace UIconEdit
                         }
 
                         curDex = (byte)palette.Count;
-                        palette.Add(System.Drawing.Color.FromArgb(curValue.Value));
+                        palette.Add(Color.FromArgb(curValue.Value));
                         if (palette.Count > maxColors)
                         {
                             success = false;
@@ -2062,36 +1966,21 @@ namespace UIconEdit
 
             if (!success)
             {
-                nQuant.WuQuantizer quant = new nQuant.WuQuantizer();
-                return (Bitmap)quant.QuantizeImage(source,
-#if DRAWING
-                    _alphaThreshold,
-#else
-                    AlphaThreshold,
-#endif
-                        70, maxColors);
+                WuQuantizer quant = new WuQuantizer();
+
+                return (Bitmap)quant.QuantizeImage(source, _alphaThreshold, 70, maxColors);
             }
-            Bitmap returner = new Bitmap(source.Width, source.Height,
-#if DRAWING
-                PixelFormat.Format8bppIndexed);
-#else
-                DPixelFormat.Format8bppIndexed);
-#endif
+            Bitmap returner = new Bitmap(source.Width, source.Height, PixelFormat.Format8bppIndexed);
 
             var bmpPalette = returner.Palette;
             for (int i = 0; i < palette.Count; i++)
                 bmpPalette.Entries[i] = palette[i];
             for (int i = palette.Count; i < bmpPalette.Entries.Length; i++)
-                bmpPalette.Entries[i] = default(System.Drawing.Color);
+                bmpPalette.Entries[i] = Color.Empty;
 
             returner.Palette = bmpPalette;
 
-            bmpData = returner.LockBits(fullRect, ImageLockMode.ReadOnly,
-#if DRAWING
-                PixelFormat.Format8bppIndexed);
-#else
-                DPixelFormat.Format8bppIndexed);
-#endif
+            bmpData = returner.LockBits(fullRect, ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
 
             Marshal.Copy(data, 0, bmpData.Scan0, data.Length);
 
@@ -2099,6 +1988,7 @@ namespace UIconEdit
 
             return returner;
         }
+#endif
         #endregion
 
         /// <summary>

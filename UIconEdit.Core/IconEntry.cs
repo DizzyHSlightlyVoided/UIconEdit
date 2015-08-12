@@ -1726,7 +1726,10 @@ namespace UIconEdit
                             maxColors = Math.Min((ushort)256, maxColors);
                             break;
                     }
-                    returner = GetSmaller(Quantize(baseBmp, maxColors), pFormat, false);
+
+                    WuQuantizer quant = new WuQuantizer();
+
+                    returner = GetSmaller((Bitmap)quant.QuantizeImage(baseBmp, _alphaThreshold, 70, maxColors), pFormat);
                 }
                 baseBmp.Dispose();
 
@@ -1763,7 +1766,7 @@ namespace UIconEdit
                 bmp8Palette.Entries[i] = default(Color);
             bmp8.Palette = bmp8Palette;
 
-            return GetSmaller(bmp8, pFormat, true);
+            return GetSmaller(bmp8, pFormat);
         }
 
         private Bitmap GetBitmap(ColorValue[] pixels)
@@ -1771,18 +1774,17 @@ namespace UIconEdit
             return GetBitmap(pixels, PixelFormat.Format32bppArgb, null, ushort.MaxValue);
         }
 
-        private Bitmap GetSmaller(Bitmap source, PixelFormat pFormat, bool ordered)
+        private Bitmap GetSmaller(Bitmap source, PixelFormat pFormat)
         {
             if (pFormat == PixelFormat.Format8bppIndexed)
                 return source;
 
             Rectangle fullRect = new Rectangle(0, 0, _width, _height);
 
-            int maxColorCount, colorsPerByte, resultStride, shift, top;
+            int colorsPerByte, resultStride, shift, top;
 
             if (pFormat == PixelFormat.Format1bppIndexed)
             {
-                maxColorCount = 2;
                 colorsPerByte = 8;
                 resultStride = (_width + 7) >> 3;
                 shift = 3;
@@ -1790,7 +1792,6 @@ namespace UIconEdit
             }
             else
             {
-                maxColorCount = 16;
                 colorsPerByte = 2;
                 resultStride = (_width + 1) >> 1;
                 shift = 1;
@@ -1800,15 +1801,6 @@ namespace UIconEdit
             Dictionary<byte, byte> indices = new Dictionary<byte, byte>();
             List<Color> colorList = new List<Color>();
             var sourceEntries = source.Palette.Entries;
-
-            if (ordered)
-            {
-                for (byte i = 0; i < maxColorCount; i++)
-                {
-                    indices.Add(i, i);
-                    colorList.Add(sourceEntries[i]);
-                }
-            }
 
             Bitmap result = new Bitmap(_width, _height, pFormat);
 
@@ -1852,7 +1844,7 @@ namespace UIconEdit
             for (int i = 0; i < colorList.Count; i++)
                 resultPalette.Entries[i] = colorList[i];
             for (int i = colorList.Count; i < resultPalette.Entries.Length; i++)
-                resultPalette.Entries[i] = default(Color);
+                resultPalette.Entries[i] = Color.Empty;
             result.Palette = resultPalette;
 
             source.Dispose();
@@ -1914,79 +1906,6 @@ namespace UIconEdit
         private WriteableBitmap GetBitmap(ColorValue[] pixels)
         {
             return GetBitmap(pixels, PixelFormats.Bgra32, null, ushort.MaxValue);
-        }
-#endif
-
-#if DRAWING
-        private Bitmap Quantize(Bitmap source, int maxColors)
-        {
-            int stride = ((source.Width * 4) + 3) >> 2;
-            byte[] data = new byte[stride * source.Height];
-
-            var fullRect = new Rectangle(0, 0, _width, _height);
-
-            BitmapData bmpData = source.LockBits(fullRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-            List<Color> palette = new List<Color>();
-            Dictionary<ColorValue, byte> paletteIndex = new Dictionary<ColorValue, byte>();
-
-            bool success = true;
-            unsafe
-            {
-                ColorValue* pValue = (ColorValue*)bmpData.Scan0;
-
-                for (int y = 0; y < source.Height; y++)
-                {
-                    int yOffSrc = source.Height * y;
-                    int yOffData = y * stride;
-                    for (int x = 0; x < source.Width; x++)
-                    {
-                        ColorValue curValue = pValue[yOffSrc + x];
-                        byte curDex;
-                        if (paletteIndex.TryGetValue(curValue, out curDex))
-                        {
-                            data[yOffData + x] = curDex;
-                            continue;
-                        }
-
-                        curDex = (byte)palette.Count;
-                        palette.Add(Color.FromArgb(curValue.Value));
-                        if (palette.Count > maxColors)
-                        {
-                            success = false;
-                            break;
-                        }
-
-                        data[yOffData + x] = paletteIndex[curValue] = curDex;
-                    }
-                }
-            }
-
-            source.UnlockBits(bmpData);
-
-            if (!success)
-            {
-                WuQuantizer quant = new WuQuantizer();
-
-                return (Bitmap)quant.QuantizeImage(source, _alphaThreshold, 70, maxColors);
-            }
-            Bitmap returner = new Bitmap(source.Width, source.Height, PixelFormat.Format8bppIndexed);
-
-            var bmpPalette = returner.Palette;
-            for (int i = 0; i < palette.Count; i++)
-                bmpPalette.Entries[i] = palette[i];
-            for (int i = palette.Count; i < bmpPalette.Entries.Length; i++)
-                bmpPalette.Entries[i] = Color.Empty;
-
-            returner.Palette = bmpPalette;
-
-            bmpData = returner.LockBits(fullRect, ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
-
-            Marshal.Copy(data, 0, bmpData.Scan0, data.Length);
-
-            returner.UnlockBits(bmpData);
-
-            return returner;
         }
 #endif
         #endregion

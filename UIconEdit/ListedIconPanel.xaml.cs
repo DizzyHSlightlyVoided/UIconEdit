@@ -54,7 +54,19 @@ namespace UIconEdit.Maker
         #endregion
 
         #region Entry
-        public static DependencyProperty EntryProperty = DependencyProperty.Register("Entry", typeof(IconEntry), typeof(ListedIconPanel));
+        public static DependencyProperty EntryProperty = DependencyProperty.Register("Entry", typeof(IconEntry), typeof(ListedIconPanel),
+            new PropertyMetadata(null, EntryChanged));
+
+        private static void EntryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            IconEntry entry = (IconEntry)e.NewValue;
+            if (entry == null) return;
+
+            PresentationSource source = PresentationSource.FromVisual((ListedIconPanel)d);
+            double width = source.CompositionTarget.TransformFromDevice.M11 * 64;
+
+            d.SetValue(ScalingModePropertyKey, entry.Width > width ? BitmapScalingMode.HighQuality : BitmapScalingMode.NearestNeighbor);
+        }
 
         public IconEntry Entry
         {

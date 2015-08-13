@@ -191,38 +191,7 @@
                          SelectionChanged="listbox_SelectionChanged" BorderThickness="0">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="1,2,1,1" HorizontalAlignment="Center">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Border BorderThickness="1" Background="{StaticResource TransparentTiles}"
-                                        BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}">
-                                    <Image Source="{Binding Converter={StaticResource AlphaImageConverter}}" Width="64" Margin="2"
-                                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                                </Border>
-                                <TextBlock Grid.Row="1" HorizontalAlignment="Center">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource StringFormatConverter}">
-                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.FormatBitsPerPixel" FallbackValue="{}{0}bps"/>
-                                            <Binding Path="BitsPerPixel"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                                <TextBlock Grid.Row="2" HorizontalAlignment="Center">
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource StringFormatConverter}">
-                                            <Binding ElementName="window" Path="SettingsFile.LanguageFile.FormatSize" FallbackValue="{}{0}x{1}"/>
-                                            <Binding Path="Width"/>
-                                            <Binding Path="Height"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                                <CheckBox Grid.Row="3" HorizontalAlignment="Center" IsChecked="{Binding IsPng}"
-                                          Content="{Binding SettingsFile.LanguageFile.FormatPng, ElementName=window, FallbackValue=PNG}"/>
-                            </Grid>
+                            <local:ListedIconPanel Entry="{Binding}" MainWindow="{Binding ElementName=window}"/>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

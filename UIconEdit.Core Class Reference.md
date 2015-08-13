@@ -1368,9 +1368,19 @@ The dependency property for the [`IconEntry.AlphaImage`](#property-public-system
 Gets and sets an image to be used as the alpha mask, or `null` to derive the alpha mask from [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-). Black pixels are transparent; white pixels are opaque.
 
 --------------------------------------------------
-## Property: `public System.Boolean IsPng { get; }`
+## Property: `public System.Boolean IsPngByDefault { get; }`
 
 Gets a value indicating whether the current instance will be saved as a PNG image within the icon structure by default.
+
+--------------------------------------------------
+## Field: `public static readonly System.Windows.DependencyProperty IsPngProperty`
+
+Dependency property for the [`IconEntry.IsPng`](#property-public-systemboolean-ispng--get-set-) property.
+
+--------------------------------------------------
+## Property: `public System.Boolean IsPng { get; set; }`
+
+Gets and sets a value indicating whether the current instance will be saved as a PNG image. Not recommended for [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) values other than [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0) unless the width or height is greater than [`IconEntry.MaxBmp`](#field-public-const-systemint16-maxbmp--255) (255).
 
 --------------------------------------------------
 ## Property: `public UIconEdit.IconEntryKey EntryKey { get; }`
@@ -1525,10 +1535,10 @@ The current instance is frozen.
 --------------------------------------------------
 ## Method: `public void SetQuantized()`
 
-Sets [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) equal to their quantized equivalent, in a form indicated by [`IconEntry.IsPng`](#property-public-systemboolean-ispng--get-).
+Sets [`IconEntry.BaseImage`](#property-public-systemwindowsmediaimagingbitmapsource-baseimage--get-set-) and [`IconEntry.AlphaImage`](#property-public-systemwindowsmediaimagingbitmapsource-alphaimage--get-set-) equal to their quantized equivalent, in a form indicated by [`IconEntry.IsPng`](#property-public-systemboolean-ispng--get-set-).
 ### Remarks
 
-Performs the same action as [`IconEntry.SetQuantized(System.Boolean)`](#method-public-void-setquantizedsystemboolean-ispng), with [`IconEntry.IsPng`](#property-public-systemboolean-ispng--get-) passed as the parameter.
+Performs the same action as [`IconEntry.SetQuantized(System.Boolean)`](#method-public-void-setquantizedsystemboolean-ispng), with [`IconEntry.IsPng`](#property-public-systemboolean-ispng--get-set-) passed as the parameter.
 
 ### Exceptions
 

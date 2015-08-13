@@ -247,14 +247,16 @@ namespace UIconEdit
                 throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
             BaseImage = baseImage;
 
+            _depth = bitDepth;
 #if DRAWING
             _width = baseImage.Width;
             _height = baseImage.Height;
+            _isPng = IsPngByDefault;
 #else
             _width = baseImage.PixelWidth;
             _height = baseImage.PixelHeight;
+            IsPng = IsPngByDefault;
 #endif
-            _depth = bitDepth;
             AlphaThreshold = alphaThreshold;
             HotspotX = hotspotX;
             HotspotY = hotspotY;
@@ -332,10 +334,12 @@ namespace UIconEdit
             _width = baseImage.Width;
             _height = baseImage.Height;
             _isQuantizedImage = _isQuantizedAlpha = true;
+            _isPng = IsPngByDefault;
 #else
             _width = baseImage.PixelWidth;
             _height = baseImage.PixelHeight;
             SetValue(IsQuantizedPropertyKey, true);
+            IsPng = IsPngByDefault;
 #endif
             _depth = bitDepth;
             HotspotX = hotspotX;
@@ -692,7 +696,7 @@ namespace UIconEdit
 #if !DRAWING
         [Bindable(true, BindingDirection.OneWay)]
 #endif
-        public bool IsPng
+        public bool IsPngByDefault
         {
             get
             {
@@ -701,6 +705,43 @@ namespace UIconEdit
                 return _width > MaxBmp || _height > MaxBmp;
             }
         }
+
+#if DRAWING
+        private bool _isPng;
+        /// <summary>
+        /// Gets and sets a value indicating whether the current instance will be saved as a PNG image.
+        /// Not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/> unless the
+        /// width or height is greater than <see cref="MaxBmp"/> (255).
+        /// </summary>
+        /// <exception cref="ObjectDisposedException">
+        /// In a set operation, the current instance is disposed.
+        /// </exception>
+        public bool IsPng
+        {
+            get { return _isPng; }
+            set
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                _isPng = value;
+            }
+        }
+#else
+        /// <summary>
+        /// Dependency property for the <see cref="IsPng"/> property.
+        /// </summary>
+        public static readonly DependencyProperty IsPngProperty = DependencyProperty.Register("IsPng", typeof(bool), typeof(IconEntry));
+
+        /// <summary>
+        /// Gets and sets a value indicating whether the current instance will be saved as a PNG image.
+        /// Not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/> unless the
+        /// width or height is greater than <see cref="MaxBmp"/> (255).
+        /// </summary>
+        public bool IsPng
+        {
+            get { return (bool)GetValue(IsPngProperty); }
+            set { SetValue(IsPngProperty, value); }
+        }
+#endif
 
         /// <summary>
         /// Gets a key for the icon entry.
@@ -1916,7 +1957,12 @@ namespace UIconEdit
         /// <returns>A string representation of the current instance.</returns>
         public override string ToString()
         {
-            return string.Format("{0}, BaseImage:{1}", EntryKey, BaseImage);
+            return string.Format("{0}, BaseImage:{1}, IsPng:{2}", EntryKey,
+#if DRAWING
+                _baseImage, _isPng);
+#else
+                BaseImage, IsPng);
+#endif
         }
 
         /// <summary>

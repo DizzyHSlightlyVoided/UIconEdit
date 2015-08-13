@@ -359,11 +359,14 @@ namespace UIconEdit
             WriteableBitmap loadedImage, alphaMask;
 #endif
             {
+                bool isPng;
                 const int pngLittleEndian = 0x474e5089; //"\u0089PNG"  in little-endian order.
                 int dibSize = curReader.ReadInt32();
                 if (dibSize == pngLittleEndian)
                 {
                     #region Load Png
+                    isPng = true;
+
                     ms.Seek(0, SeekOrigin.Begin);
                     alphaMask = null;
 #if !DRAWING
@@ -440,6 +443,8 @@ namespace UIconEdit
                 else if (dibSize == MinDibSize)
                 {
                     #region Load Bmp
+                    isPng = false;
+
                     int width = curReader.ReadInt32(); //8
                     int height = curReader.ReadInt32(); //12
 
@@ -597,9 +602,9 @@ namespace UIconEdit
                 else throw new IconLoadException(IconErrorCode.InvalidFormat, loadedId, index);
 
                 if (loadedId == IconTypeCode.Cursor)
-                    resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth.Value, entry.XPlanes, entry.YBitsPerpixel);
+                    resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth.Value, entry.XPlanes, entry.YBitsPerpixel, isPng);
                 else
-                    resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth.Value);
+                    resultEntry = new IconEntry(loadedImage, alphaMask, bitDepth.Value, isPng);
 
                 return resultEntry;
             }

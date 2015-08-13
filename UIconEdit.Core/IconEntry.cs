@@ -326,7 +326,7 @@ namespace UIconEdit
         {
         }
 
-        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth, int hotspotX, int hotspotY)
+        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth, int hotspotX, int hotspotY, bool isPng)
         {
             BaseImage = baseImage;
             AlphaImage = alphaImage;
@@ -334,20 +334,20 @@ namespace UIconEdit
             _width = baseImage.Width;
             _height = baseImage.Height;
             _isQuantizedImage = _isQuantizedAlpha = true;
-            _isPng = IsPngByDefault;
+            _isPng = isPng;
 #else
             _width = baseImage.PixelWidth;
             _height = baseImage.PixelHeight;
             SetValue(IsQuantizedPropertyKey, true);
-            IsPng = IsPngByDefault;
+            IsPng = isPng;
 #endif
             _depth = bitDepth;
             HotspotX = hotspotX;
             HotspotY = hotspotY;
         }
 
-        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth)
-            : this(baseImage, alphaImage, bitDepth, 0, 0)
+        internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth, bool isPng)
+            : this(baseImage, alphaImage, bitDepth, 0, 0, isPng)
         {
         }
 

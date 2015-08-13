@@ -31,11 +31,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.IO;
 using System.Linq;
-using System.Drawing;
 #if DRAWING
+using System.Drawing;
 
 namespace UIconDrawing
 #else
+using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 
 namespace UIconEdit
@@ -96,6 +97,19 @@ namespace UIconEdit
             }
         }
 #else
+        private IEnumerable<IconEntry> _genEntries(IEnumerable<BitmapFrame> frames)
+        {
+            foreach (BitmapFrame frame in frames)
+            {
+                IconEntry entry = new IconEntry((BitmapSource)frame.GetCurrentValueAsFrozen(), null,
+                    IconEntry.GetBitDepth(frame.Thumbnail.Format.BitsPerPixel), false);
+
+                entry.IsPng = entry.IsPngByDefault;
+
+                yield return entry;
+            }
+        }
+
         /// <summary>
         /// Creates a new instance using elements copied from the specified <see cref="IconBitmapDecoder"/>.
         /// </summary>
@@ -105,12 +119,10 @@ namespace UIconEdit
         /// </exception>
         public IconFile(IconBitmapDecoder decoder)
         {
-            if(decoder == null)
+            if (decoder == null)
                 throw new ArgumentNullException("decoder");
 
-            var entities = decoder.Frames.Select(i => new IconEntry((BitmapSource)i.GetCurrentValueAsFrozen(), null,
-                IconEntry.GetBitDepth(i.Thumbnail.Format.BitsPerPixel), i.PixelWidth, i.PixelHeight)).OrderBy(i => i, new IconEntryComparer());
-            Entries.AddBulk(entities);
+            Entries.AddBulk(_genEntries(decoder.Frames).OrderBy(i => i, new IconEntryComparer()));
         }
 #endif
         /// <summary>

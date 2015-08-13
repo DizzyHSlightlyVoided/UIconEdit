@@ -733,6 +733,36 @@ namespace UIconEdit.Maker
             _settings.Save();
         }
 
+        private void Reload_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = LoadedFile != null && FilePath != null;
+        }
+
+        private void Reload_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (IsModified)
+            {
+                var file = _settings.LanguageFile;
+                QuestionWindow window = new QuestionWindow(this, file.ReloadMessage, file.ReloadCaption);
+                window.ButtonOKEnabled = false;
+                window.ButtonYesEnabled = true;
+                window.ButtonNoEnabled = true;
+                window.ButtonNoMessage = file.MenuFileSaveAs;
+                window.ButtonCancelEnabled = true;
+
+                var result = window.ShowDialog();
+                switch (window.Result)
+                {
+                    case MessageBoxResult.Cancel:
+                        return;
+                    case MessageBoxResult.No:
+                        if (!_save(true)) return;
+                        break;
+                }
+            }
+            _load(FilePath);
+        }
+
         private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Close();

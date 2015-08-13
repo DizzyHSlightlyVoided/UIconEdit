@@ -2,6 +2,7 @@
 <Language LangName="English (United States)">
   <Title>UIconEdit</Title>
 
+  <!-- Error -->
   <Error>Error</Error>
   <!-- {0} = short language name (i.e. "en-US"). -->
   <LanguageLoadError>Could not load the language "{0}".</LanguageLoadError>
@@ -30,6 +31,7 @@
   <MenuFileNew>_New</MenuFileNew>
   <MenuFileSave>_Save</MenuFileSave>
   <MenuFileSaveAs>Save _As</MenuFileSaveAs>
+  <MenuFileReload>_Reload</MenuFileReload>
   <MenuFileQuit>E_xit</MenuFileQuit>
 
   <MenuEdit>_Edit</MenuEdit>
@@ -54,6 +56,9 @@
 
   <ModifiedCaption>Save</ModifiedCaption>
   <ModifiedMessage>File was modified. Save?</ModifiedMessage>
+
+  <ReloadCaption>Reload</ReloadCaption>
+  <ReloadMessage>All unsaved changes will be lost! Continue?</ReloadMessage>
 
   <RemoveCaption>Delete Image</RemoveCaption>
   <RemoveMessage>Delete current image? This cannot be undone!</RemoveMessage>

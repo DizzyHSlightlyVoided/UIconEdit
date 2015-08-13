@@ -12,6 +12,7 @@
         <CommandBinding Command="ApplicationCommands.New" CanExecute="CommandBinding_CanExecute" Executed="New_Executed"/>
         <CommandBinding Command="ApplicationCommands.Save" CanExecute="Save_CanExecute" Executed="Save_Executed"/>
         <CommandBinding Command="ApplicationCommands.SaveAs" CanExecute="SaveAs_CanExecute" Executed="SaveAs_Executed"/>
+        <CommandBinding Command="NavigationCommands.Refresh" CanExecute="Reload_CanExecute" Executed="Reload_Executed"/>
         <CommandBinding Command="ApplicationCommands.Close" CanExecute="CommandBinding_CanExecute" Executed="Close_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.AddCommand}" CanExecute="Add_CanExecute" Executed="Add_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.DuplicateCommand}" CanExecute="Duplicate_CanExecute" Executed="Duplicate_Executed"/>
@@ -63,6 +64,7 @@
                 </MenuItem>
                 <MenuItem Command="ApplicationCommands.SaveAs" Header="{Binding SettingsFile.LanguageFile.MenuFileSaveAs, ElementName=window, FallbackValue=Save _As}"
                           InputGestureText="Ctrl+Shift+S"/>
+                <MenuItem Command="NavigationCommands.Refresh" Header="{Binding SettingsFile.LanguageFile.MenuFileReload, ElementName=window, FallbackValue=_Reload}"/>
                 <Separator/>
                 <MenuItem Command="ApplicationCommands.Close" Header="{Binding SettingsFile.LanguageFile.MenuFileQuit, ElementName=window, FallbackValue=E_xit}"
                           InputGestureText="Alt+F4"/>

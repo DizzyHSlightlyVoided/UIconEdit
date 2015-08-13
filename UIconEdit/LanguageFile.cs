@@ -208,6 +208,7 @@ namespace UIconEdit.Maker
         public string MenuFileOpen { get { return _text["MenuFileOpen"]; } }
         public string MenuFileSave { get { return _text["MenuFileSave"]; } }
         public string MenuFileSaveAs { get { return _text["MenuFileSaveAs"]; } }
+        public string MenuFileReload { get { return _text["MenuFileReload"]; } }
         public string MenuFileQuit { get { return _text["MenuFileQuit"]; } }
 
         public string MenuEdit { get { return _text["MenuEdit"]; } }
@@ -234,6 +235,9 @@ namespace UIconEdit.Maker
 
         public string ModifiedCaption { get { return _text["ModifiedCaption"]; } }
         public string ModifiedMessage { get { return _text["ModifiedMessage"]; } }
+
+        public string ReloadCaption { get { return _text["ReloadCaption"]; } }
+        public string ReloadMessage { get { return _text["ReloadMessage"]; } }
 
         public string RemoveCaption { get { return _text["RemoveCaption"]; } }
         public string RemoveMessage { get { return _text["RemoveMessage"]; } }

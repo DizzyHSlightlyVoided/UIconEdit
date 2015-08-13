@@ -196,6 +196,7 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                     <RowDefinition/>
+                                    <RowDefinition/>
                                 </Grid.RowDefinitions>
                                 <Border BorderThickness="1" Background="{StaticResource TransparentTiles}"
                                         BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}">
@@ -219,6 +220,8 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
+                                <CheckBox Grid.Row="3" HorizontalAlignment="Center" IsChecked="{Binding IsPng}"
+                                          Content="{Binding SettingsFile.LanguageFile.FormatPng, ElementName=window, FallbackValue=PNG}"/>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

@@ -263,6 +263,8 @@ namespace UIconEdit.Maker
 
         public string FormatBitsPerPixel { get { return _text["FormatBitsPerPixel"]; } }
         public string FormatSize { get { return _text["FormatSize"]; } }
+        public string FormatPng { get { return _text["FormatPng"]; } }
+
         public string CustomSize { get { return _text["CustomSize"]; } }
         public string ExtendedSize { get { return _text["ExtendedSize"]; } }
         public string SizeWidth { get { return _text["SizeWidth"]; } }

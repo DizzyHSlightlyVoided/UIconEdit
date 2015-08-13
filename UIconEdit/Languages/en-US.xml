@@ -86,6 +86,7 @@
   <FormatBitsPerPixel>{0}-bit</FormatBitsPerPixel>
   <!-- {0} = width, {1} = height -->
   <FormatSize>{0}×{1}</FormatSize>
+  <FormatPng>PNG</FormatPng>
 
   <CustomSize>Custom:</CustomSize>
   <ExtendedSize>Extended Windows 10 Sizes</ExtendedSize>

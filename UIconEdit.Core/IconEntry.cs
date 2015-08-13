@@ -359,6 +359,7 @@ namespace UIconEdit
         public IconEntry Clone()
         {
             IconEntry entry = (IconEntry)MemberwiseClone();
+            entry.File = null;
             entry._baseImage = (BitmapSource)_baseImage.Clone();
             if (_alphaImage != null)
                 entry._alphaImage = (BitmapSource)_alphaImage.Clone();

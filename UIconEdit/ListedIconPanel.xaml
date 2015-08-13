@@ -40,6 +40,6 @@
             </TextBlock.Text>
         </TextBlock>
         <CheckBox Grid.Row="3" HorizontalAlignment="Center" IsChecked="{Binding Entry.IsPng, ElementName=control}"
-                  Content="{Binding SettingsFile.LanguageFile.FormatPng, ElementName=control, FallbackValue=PNG}"/>
+                  Content="{Binding MainWindow.SettingsFile.LanguageFile.FormatPng, ElementName=control, FallbackValue=PNG}"/>
     </Grid>
 </UserControl>

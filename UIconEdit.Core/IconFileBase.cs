@@ -1248,7 +1248,7 @@ namespace UIconEdit
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(DebugView))]
-        public class EntryList : IList<IconEntry>, IList, INotifyCollectionChanged, INotifyPropertyChanged
+        public class EntryList : IEntryList, IList, INotifyCollectionChanged, INotifyPropertyChanged
 #if IREADONLY
             , IReadOnlyList<IconEntry>
 #endif

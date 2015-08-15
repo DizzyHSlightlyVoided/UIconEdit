@@ -47,6 +47,8 @@
     <Compile Include="IconFile.cs" />
     <Compile Include="IconEntry.cs" />
     <Compile Include="IconLoadException.cs" />
+    <Compile Include="IEntryList.cs" />
+    <Compile Include="FixedIconEntryList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IconExtraction.cs" />
     <Compile Include="Win32Funcs.cs" />

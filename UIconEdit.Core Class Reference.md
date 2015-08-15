@@ -150,7 +150,7 @@ An error occurred when processing the icon file's format.
 An I/O error occurred.
 
 --------------------------------------------------
-## Method: `public virtual UIconEdit.IconFileBase Clone()`
+## Method: `public abstract UIconEdit.IconFileBase Clone()`
 
 When overridden in a derived class, returns a duplicate of the current instance.
 
@@ -158,7 +158,7 @@ When overridden in a derived class, returns a duplicate of the current instance.
 
 
 --------------------------------------------------
-## Method: `public virtual UIconEdit.IconFile CloneAsIconFile()`
+## Method: `public override UIconEdit.IconFile CloneAsIconFile()`
 
 Returns a duplicate of the current instance as an [`IconFile`](#type-public-class-uiconediticonfile)
 
@@ -166,7 +166,7 @@ Returns a duplicate of the current instance as an [`IconFile`](#type-public-clas
 
 
 --------------------------------------------------
-## Method: `public virtual UIconEdit.CursorFile CloneAsCursorFile()`
+## Method: `public override UIconEdit.CursorFile CloneAsCursorFile()`
 
 Returns a duplicate of the current instance as an [`IconFile`](#type-public-class-uiconediticonfile)
 
@@ -174,7 +174,7 @@ Returns a duplicate of the current instance as an [`IconFile`](#type-public-clas
 
 
 --------------------------------------------------
-## Property: `public virtual UIconEdit.IconTypeCode ID { get; }`
+## Property: `public abstract UIconEdit.IconTypeCode ID { get; }`
 
 When overridden in a derived class, gets the 16-bit identifier for the file type.
 
@@ -307,7 +307,7 @@ Sets the value at the specified index.
 
 
 --------------------------------------------------
-## Method: `public virtual void RemoveAt(System.Int32 index)`
+## Method: `public void RemoveAt(System.Int32 index)`
 
 Removes the element at the specified index.
 * `index`: The element at the specified index.
@@ -318,7 +318,7 @@ Removes the element at the specified index.
 `index` is less than 0 or is greater than or equal to [`EntryList.Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
-## Method: `public virtual System.Boolean Remove(UIconEdit.IconEntry item)`
+## Method: `public System.Boolean Remove(UIconEdit.IconEntry item)`
 
 Removes the specified icon entry from the list.
 * `item`: The icon entry to remove from the list.
@@ -356,12 +356,12 @@ Removes an icon entry similar to the specified values from the list.
 
 
 --------------------------------------------------
-## Method: `public virtual void Clear()`
+## Method: `public void Clear()`
 
 Removes all elements from the list.
 
 --------------------------------------------------
-## Method: `public virtual System.Boolean Contains(UIconEdit.IconEntry item)`
+## Method: `public System.Boolean Contains(UIconEdit.IconEntry item)`
 
 Determines if the specified element exists in the list.
 * `item`: The icon entry to search for in the list.
@@ -399,7 +399,7 @@ Determines if an element similar to the specified values exists in the list.
 
 
 --------------------------------------------------
-## Method: `public virtual System.Int32 IndexOf(UIconEdit.IconEntry item)`
+## Method: `public System.Int32 IndexOf(UIconEdit.IconEntry item)`
 
 Gets the index of the specified item.
 * `item`: The icon entry to search for in the list.
@@ -437,7 +437,7 @@ Gets the index of an element similar to the specified values.
 
 
 --------------------------------------------------
-## Method: `public virtual void CopyTo(UIconEdit.IconEntry[] array, System.Int32 arrayIndex)`
+## Method: `public void CopyTo(UIconEdit.IconEntry[] array, System.Int32 arrayIndex)`
 
 Copies all elements in the list to the specified array, starting at the specified index.
 * `array`: The array to which all elements in the list will be copied.
@@ -862,12 +862,12 @@ An error occurred when processing the cursor file's format.
 An I/O error occurred.
 
 --------------------------------------------------
-## Property: `public virtual UIconEdit.IconTypeCode ID { get; }`
+## Property: `public override UIconEdit.IconTypeCode ID { get; }`
 
 Gets the 16-bit type code for the current instance.
 
 --------------------------------------------------
-## Method: `public virtual UIconEdit.IconFileBase Clone()`
+## Method: `public override UIconEdit.IconFileBase Clone()`
 
 Returns a duplicate of the current instance.
 
@@ -1038,12 +1038,12 @@ An error occurred when processing the icon file's format.
 An I/O error occurred.
 
 --------------------------------------------------
-## Property: `public virtual UIconEdit.IconTypeCode ID { get; }`
+## Property: `public override UIconEdit.IconTypeCode ID { get; }`
 
 Gets the 16-bit type code for the current instance.
 
 --------------------------------------------------
-## Method: `public virtual UIconEdit.IconFileBase Clone()`
+## Method: `public override UIconEdit.IconFileBase Clone()`
 
 Returns a duplicate of the current instance.
 
@@ -1230,7 +1230,7 @@ Creates a new instance with the specified image.
 The width or height of `baseImage` is less than [`IconEntry.MinDimension`](#field-public-const-systemint16-mindimension--1) or is greater than [`IconEntry.MaxDimension`](#field-public-const-systemint16-maxdimension--768).
 
 --------------------------------------------------
-## Method: `protected virtual System.Windows.Freezable CreateInstanceCore()`
+## Method: `protected override System.Windows.Freezable CreateInstanceCore()`
 
 Creates a new default [`IconEntry`](#type-public-class-uiconediticonentry) instance.
 
@@ -1241,25 +1241,25 @@ Creates a new default [`IconEntry`](#type-public-class-uiconediticonentry) insta
 
 
 --------------------------------------------------
-## Method: `protected virtual void CloneCore(System.Windows.Freezable sourceFreezable)`
+## Method: `protected override void CloneCore(System.Windows.Freezable sourceFreezable)`
 
 Makes the current instance a deep copy of the specified other object.
 * `sourceFreezable`: The object to clone.
 
 --------------------------------------------------
-## Method: `protected virtual void CloneCurrentValueCore(System.Windows.Freezable sourceFreezable)`
+## Method: `protected override void CloneCurrentValueCore(System.Windows.Freezable sourceFreezable)`
 
 Makes the current instance a deep copy of the specified other object's value.
 * `sourceFreezable`: The object to clone.
 
 --------------------------------------------------
-## Method: `protected virtual void GetAsFrozenCore(System.Windows.Freezable sourceFreezable)`
+## Method: `protected override void GetAsFrozenCore(System.Windows.Freezable sourceFreezable)`
 
 Makes the current instance a frozen copy of the specified other object.
 * `sourceFreezable`: The object to clone.
 
 --------------------------------------------------
-## Method: `protected virtual void GetCurrentValueAsFrozenCore(System.Windows.Freezable sourceFreezable)`
+## Method: `protected override void GetCurrentValueAsFrozenCore(System.Windows.Freezable sourceFreezable)`
 
 Makes the current instance a frozen copy of the specified other object's value.
 * `sourceFreezable`: The object to clone.
@@ -1563,7 +1563,7 @@ Returns color quantization of the current instance as it would appear for a BMP 
 
 
 --------------------------------------------------
-## Method: `public virtual System.String ToString()`
+## Method: `public override System.String ToString()`
 
 Returns a string representation of the current instance.
 
@@ -1987,7 +1987,7 @@ Creates a new instance with the specified message and a reference to the excepti
 * `innerException`: The exception that is the cause of the current exception. If the `innerException` parameter is not `null`, the current exception should be raised in a `catch` block which handles the inner exception.
 
 --------------------------------------------------
-## Property: `public virtual System.String Message { get; }`
+## Property: `public override System.String Message { get; }`
 
 Gets a message describing the error.
 
@@ -2020,7 +2020,7 @@ Gets a value indicating the type of the icon file.
 The exception that is thrown when an icon file extracted from an EXE or DLL file contains invalid data.
 
 --------------------------------------------------
-## Property: `public virtual System.String Message { get; }`
+## Property: `public override System.String Message { get; }`
 
 Gets a message describing the error.
 
@@ -2080,6 +2080,306 @@ A delegate function for handling [`IconLoadException`](#type-public-class-uicone
 
 A delegate function for handling [`IconExtractException`](#type-public-class-uiconediticonextractexception) errors.
 * `e`: An [`IconExtractException`](#type-public-class-uiconediticonextractexception) containing information about the error.
+
+--------------------------------------------------
+# Type: `public interface UIconEdit.IEntryList`
+
+A base class for [`IconEntry`](#type-public-class-uiconediticonentry) collections.
+
+--------------------------------------------------
+## Method: `public System.Boolean ContainsSimilar(UIconEdit.IconEntry item)`
+
+Determines if an element similar to the specified icon entry exists in the list.
+* `item`: The icon entry to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `item` exists in the list; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean ContainsSimilar(UIconEdit.IconEntryKey key)`
+
+Determines if an element similar to the specified icon entry exists in the list.
+* `key`: The icon entry to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key` exists in the list; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean ContainsSimilar(System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
+
+Determines if an element similar to the specified values exists in the list.
+* `width`: The width of the icon entry to search for.
+* `height`: The height of the icon entry to search for.
+* `bitDepth`: The bit depth of the icon entry to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint32-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `bitDepth` was found;`false` if no such icon entry was found in the list.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 IndexOfSimilar(UIconEdit.IconEntry item)`
+
+Gets the index of an element similar to the specified item.
+* `item`: The icon entry to compare.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `item`, if found; otherwise, -1.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 IndexOfSimilar(UIconEdit.IconEntryKey key)`
+
+Gets the index of an element similar to the specified item.
+* `key`: The icon entry to compare.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key`, if found; otherwise, -1.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 IndexOfSimilar(System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
+
+Gets the index of an element similar to the specified values.
+* `width`: The width of the icon entry to search for.
+* `height`: The height of the icon entry to search for.
+* `bitDepth`: The bit depth of the icon entry to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint32-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `bitDepth`, if found; otherwise, -1.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean RemoveSimilar(UIconEdit.IconEntry item)`
+
+Removes an icon entry similar to the specified value from the list.
+* `item`: The icon entry to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `item` was successfully found and removed; `false` if no such icon entry was found in the list.
+
+
+### Exceptions
+
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+The collection is read-only.
+
+--------------------------------------------------
+## Method: `public System.Boolean RemoveSimilar(UIconEdit.IconEntryKey key)`
+
+Removes an icon entry similar to the specified value from the list.
+* `key`: The icon entry to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key` was successfully found and removed; `false` if no such icon entry was found in the list.
+
+
+### Exceptions
+
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+The collection is read-only.
+
+--------------------------------------------------
+## Method: `public System.Boolean RemoveSimilar(System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
+
+Removes an icon entry similar to the specified values from the list.
+* `width`: The width of the icon entry to search for.
+* `height`: The height of the icon entry to search for.
+* `bitDepth`: The bit depth of the icon entry to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint32-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `bitDepth` was successfully found and removed;`false` if no such icon entry was found in the list.
+
+
+### Exceptions
+
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+The collection is read-only.
+
+--------------------------------------------------
+# Type: `public class UIconEdit.FixedIconEntryList`
+
+Represents a read-only sorted list of [`IconEntry`](#type-public-class-uiconediticonentry) objects.
+
+--------------------------------------------------
+## Constructor: `public FixedIconEntryList(System.Collections.Generic.IEnumerable<UIconEdit.IconEntry> collection)`
+
+Creates a new list with the specified collection of icon entries.
+* `collection`: The collection whose elements will be copied to the new instance.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`collection` is `null`.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+
+`collection` is empty.
+
+-OR-
+
+`collection` contains one or more `null` elements.
+
+-OR-
+
+`collection` contains multiple elements with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-).
+
+
+--------------------------------------------------
+## Property: `FixedIconEntryList.Item(System.Int32 index)`
+
+Gets the element at the specified index.
+* `index`: The index of the element to get.
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than or equal to [`FixedIconEntryList.Count`](#property-public-virtual-systemint32-count--get--1).
+
+--------------------------------------------------
+## Property: `public virtual System.Int32 Count { get; }`
+
+Gets the number of elements contained in the list.
+
+--------------------------------------------------
+## Method: `public System.Boolean Contains(UIconEdit.IconEntry item)`
+
+Determines if the specified value exists in the list.
+* `item`: The value to search for in the list.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean ContainsSimilar(UIconEdit.IconEntry item)`
+
+Determines if an element similar to the specified icon entry exists in the list.
+* `item`: The icon entry to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `item` exists in the list; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean ContainsSimilar(UIconEdit.IconEntryKey key)`
+
+Determines if an element similar to the specified icon entry exists in the list.
+* `key`: The icon entry to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key` exists in the list; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean ContainsSimilar(System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
+
+Determines if an element similar to the specified values exists in the list.
+* `width`: The width of the icon entry to search for.
+* `height`: The height of the icon entry to search for.
+* `bitDepth`: The bit depth of the icon entry to search for.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint32-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `bitDepth` was found;`false` if no such icon entry was found in the list.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 IndexOf(UIconEdit.IconEntry value)`
+
+Gets the index of the specified value.
+* `value`: The value to search for in the list.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of `value`, or -1 if `value` was not found in the list.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 IndexOfSimilar(UIconEdit.IconEntry item)`
+
+Gets the index of an element similar to the specified item.
+* `item`: The icon entry to compare.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `item`, if found; otherwise, -1.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 IndexOfSimilar(UIconEdit.IconEntryKey key)`
+
+Gets the index of an element similar to the specified item.
+* `key`: The icon entry to compare.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `key`, if found; otherwise, -1.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 IndexOfSimilar(System.Int32 width, System.Int32 height, UIconEdit.IconBitDepth bitDepth)`
+
+Gets the index of an element similar to the specified values.
+* `width`: The width of the icon entry to search for.
+* `height`: The height of the icon entry to search for.
+* `bitDepth`: The bit depth of the icon entry to search for.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint32-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) as `bitDepth`, if found; otherwise, -1.
+
+
+--------------------------------------------------
+## Method: `public void CopyTo(UIconEdit.IconEntry[] array, System.Int32 arrayIndex)`
+
+Copies all elements in the list to the specified array, starting at the specified index.
+* `array`: The array to which all elements in the list will be copied.
+* `arrayIndex`: The index in `array` at which copying begins.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`array` is `null`.
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`arrayIndex` is less than 0.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The length of `array` minus `arrayIndex` is less than [`FixedIconEntryList.Count`](#property-public-virtual-systemint32-count--get--1).
+
+--------------------------------------------------
+## Method: `public System.Boolean SimilarListEquals(UIconEdit.FixedIconEntryList other)`
+
+Determines if the elements of the current instance are all similar to the specified other [`FixedIconEntryList`](#type-public-class-uiconeditfixediconentrylist).
+* `other`: The other [`FixedIconEntryList`](#type-public-class-uiconeditfixediconentrylist) to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the current instance contains the same number of elements with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) values as the specified other [`FixedIconEntryList`](#type-public-class-uiconeditfixediconentrylist);`false` otherwise.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`other` is `null`.
+
+--------------------------------------------------
+## Method: `public System.Boolean Overlaps(UIconEdit.FixedIconEntryList other)`
+
+Determines if the current instance and the specified other [`FixedIconEntryList`](#type-public-class-uiconeditfixediconentrylist) have values in common.
+* `other`: The other [`FixedIconEntryList`](#type-public-class-uiconeditfixediconentrylist) to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `other` contains at least one [`IconEntry`](#type-public-class-uiconediticonentry) which exists in the current instance;`false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public UIconEdit.FixedIconEntryList.Enumerator GetEnumerator()`
+
+Returns an enumerator which iterates through the list.
+
+**Returns:** Type [`Enumerator`](#type-struct-uiconeditfixediconentrylistenumerator): An enumerator which iterates through the list.
+
+
+--------------------------------------------------
+# Type: `struct UIconEdit.FixedIconEntryList.Enumerator`
+
+An enumerator which iterates through the list.
+
+--------------------------------------------------
+## Property: `public UIconEdit.IconEntry Current { get; }`
+
+Gets the element at the current position in the enumerator.
+
+--------------------------------------------------
+## Method: `public void Dispose()`
+
+Disposes of the current instance.
+
+--------------------------------------------------
+## Method: `public System.Boolean MoveNext()`
+
+Advances the enumerator to the next position in the list.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the enumerator successfully advanced; `false` if the enumerator has passed the end of the list.
+
 
 --------------------------------------------------
 # Type: `public abstract class UIconEdit.IconExtraction`

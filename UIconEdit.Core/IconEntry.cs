@@ -139,6 +139,13 @@ namespace UIconEdit
             _width = width;
             _height = height;
             _depth = bitDepth;
+#if DRAWING
+            _isPng
+#else
+            IsPng
+#endif
+                = IsPngByDefault;
+
             BaseImage = baseImage;
             AlphaThreshold = alphaThreshold;
             HotspotX = hotspotX;
@@ -251,12 +258,14 @@ namespace UIconEdit
 #if DRAWING
             _width = baseImage.Width;
             _height = baseImage.Height;
-            _isPng = IsPngByDefault;
+            _isPng
 #else
             _width = baseImage.PixelWidth;
             _height = baseImage.PixelHeight;
-            IsPng = IsPngByDefault;
+            IsPng
 #endif
+                = IsPngByDefault;
+
             AlphaThreshold = alphaThreshold;
             HotspotX = hotspotX;
             HotspotY = hotspotY;
@@ -711,8 +720,8 @@ namespace UIconEdit
         private bool _isPng;
         /// <summary>
         /// Gets and sets a value indicating whether the current instance will be saved as a PNG image.
-        /// Not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/> unless the
-        /// width or height is greater than <see cref="MaxBmp"/> (255).
+        /// Not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/>; however, this value
+        /// cannot be changed from <c>true</c> if <see cref="Width"/> or <see cref="Height"/> are greater than <see cref="MaxBmp"/>.
         /// </summary>
         /// <exception cref="ObjectDisposedException">
         /// In a set operation, the current instance is disposed.
@@ -723,19 +732,28 @@ namespace UIconEdit
             set
             {
                 if (_isDisposed) throw new ObjectDisposedException(null);
-                _isPng = value;
+                _isPng = value || _width > MaxBmp || _height > MaxBmp;
             }
         }
 #else
         /// <summary>
         /// Dependency property for the <see cref="IsPng"/> property.
         /// </summary>
-        public static readonly DependencyProperty IsPngProperty = DependencyProperty.Register("IsPng", typeof(bool), typeof(IconEntry));
+        public static readonly DependencyProperty IsPngProperty = DependencyProperty.Register("IsPng", typeof(bool), typeof(IconEntry),
+            new PropertyMetadata(false, null, IsPngCoerce));
+
+        private static object IsPngCoerce(DependencyObject d, object baseValue)
+        {
+            IconEntry entry = (IconEntry)d;
+
+            if (entry._width > MaxBmp || entry._height > MaxBmp) return true;
+            return baseValue;
+        }
 
         /// <summary>
         /// Gets and sets a value indicating whether the current instance will be saved as a PNG image.
-        /// Not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/> unless the
-        /// width or height is greater than <see cref="MaxBmp"/> (255).
+        /// Not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/>; however, this value
+        /// cannot be changed from <c>true</c> if <see cref="Width"/> or <see cref="Height"/> are greater than <see cref="MaxBmp"/>.
         /// </summary>
         public bool IsPng
         {

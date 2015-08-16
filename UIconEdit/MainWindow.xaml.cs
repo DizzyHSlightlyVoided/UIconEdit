@@ -561,7 +561,7 @@ namespace UIconEdit.Maker
             _add(new AddWindow(this, true, false, bmpSource, entry.BitDepth));
         }
 
-        public static readonly RoutedCommand RemoveCommand = new RoutedCommand("Duplicate", typeof(MainWindow));
+        public static readonly RoutedCommand RemoveCommand = new RoutedCommand("Remove", typeof(MainWindow));
 
         private void Remove_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -571,8 +571,17 @@ namespace UIconEdit.Maker
             window.ButtonYesEnabled = true;
             window.ButtonNoEnabled = true;
             bool? result = window.ShowDialog();
-            if (!result.HasValue || !result.Value || window.Result == MessageBoxResult.No) return;
-            LoadedFile.Entries.RemoveAt(listbox.SelectedIndex);
+            if (!result.HasValue || !result.Value || window.Result == MessageBoxResult.No)
+                return;
+            int dex = listbox.SelectedIndex;
+            var entries = LoadedFile.Entries;
+            entries.RemoveAt(dex);
+            if (entries.Count == 0)
+                listbox.SelectedIndex = -1;
+            else if (dex == 0)
+                listbox.SelectedIndex = 0;
+            else
+                listbox.SelectedIndex = dex - 1;
             IsModified = true;
         }
 

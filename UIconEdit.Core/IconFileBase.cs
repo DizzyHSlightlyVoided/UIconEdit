@@ -1215,16 +1215,13 @@ namespace UIconEdit
             _isDisposed = true;
             if (Disposed != null)
                 Disposed(this, EventArgs.Empty);
+            Disposed = null;
         }
 
         private void Dispose(bool disposing)
         {
             if (disposing)
-            {
-                foreach (IconEntry curEntry in _entries.ToArray())
-                    curEntry.Dispose();
-            }
-            _entries.Clear();
+                _entries.Dispose();
         }
 
         /// <summary>
@@ -1371,10 +1368,23 @@ namespace UIconEdit
             {
                 _setItems(new ObservableCollection<IconEntry>(entries));
                 foreach (var curItem in entries)
+                {
                     _noDups &= _set.Add(curItem.EntryKey);
+                    curItem.File = _file;
+                }
             }
 
 #if DRAWING
+            internal void Dispose()
+            {
+                var items = _items.ToArray();
+                Clear();
+                foreach (IconEntry entry in items)
+                    entry.Dispose();
+                CollectionChanged = null;
+                PropertyChanged = null;
+            }
+
             /// <summary>
             /// Adds the specified icon entry to the list.
             /// </summary>

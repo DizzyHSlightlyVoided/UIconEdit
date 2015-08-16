@@ -397,7 +397,10 @@ namespace UIconEdit
             Dispose(true);
             _isDisposed = true;
             if (Disposed != null)
+            {
                 Disposed(this, EventArgs.Empty);
+                Disposed = null;
+            }
         }
 
         private void Dispose(bool disposing)

@@ -277,15 +277,5 @@ namespace UIconEdit
         {
             return CloneAsIconFile();
         }
-
-        internal override ushort GetImgX(IconEntry entry)
-        {
-            return 1;
-        }
-
-        internal override ushort GetImgY(IconEntry entry)
-        {
-            return (ushort)entry.BitsPerPixel;
-        }
     }
 }

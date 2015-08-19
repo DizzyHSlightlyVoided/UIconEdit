@@ -789,7 +789,9 @@ namespace UIconEdit
         /// <summary>
         /// Gets a collection containing all entries in the icon file. 
         /// </summary>
+#if !DRAWING
         [Bindable(true)]
+#endif
         public EntryList Entries { get { return _entries; } }
 
         internal virtual bool IsValid(IconEntry entry)
@@ -801,54 +803,7 @@ namespace UIconEdit
 #endif
         }
 
-        internal abstract ushort GetImgX(IconEntry entry);
-
-        internal abstract ushort GetImgY(IconEntry entry);
-
         #region Save
-        internal void _save(Stream output)
-        {
-#if LEAVEOPEN
-            using (BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding(), true))
-#else
-            BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding());
-#endif
-            {
-                List<IconEntry> entries = new List<IconEntry>(_entries);
-                entries.Sort(new IconEntryComparer());
-
-                writer.Write(ushort.MinValue);
-                writer.Write((short)ID);
-                writer.Write((short)entries.Count);
-
-                uint offset = (uint)(6 + (entries.Count * 16));
-
-                List<MemoryStream> streamList = new List<MemoryStream>();
-#if DEBUG && MESSAGE
-                Stopwatch sw = Stopwatch.StartNew();
-#endif
-                foreach (IconEntry curEntry in entries)
-                {
-                    MemoryStream writeStream;
-                    WriteImage(writer, curEntry, ref offset, out writeStream);
-                    streamList.Add(writeStream);
-                }
-
-                foreach (MemoryStream ms in streamList)
-                {
-                    ms.Seek(0, SeekOrigin.Begin);
-                    ms.CopyTo(output);
-                    ms.Dispose();
-                }
-#if DEBUG && MESSAGE
-                sw.Stop();
-                Debug.WriteLine("Finished processing all entries in {0}ms.", sw.Elapsed.TotalMilliseconds);
-#endif
-            }
-#if !LEAVEOPEN
-            writer.Flush();
-#endif
-        }
 #if DRAWING
         /// <summary>
         /// Saves the file to the specified stream.
@@ -872,9 +827,6 @@ namespace UIconEdit
         /// An I/O error occurred.
         /// </exception>
         public void Save(Stream output)
-        {
-            if (_isDisposed)
-                throw new ObjectDisposedException(null, "The current instance is disposed.");
 #else
         /// <summary>
         /// Saves the file to the specified stream.
@@ -896,19 +848,9 @@ namespace UIconEdit
         /// An I/O error occurred.
         /// </exception>
         public void Save(Stream output)
-        {
 #endif
-            if (_entries.Count == 0)
-                throw new InvalidOperationException("Must have at least one entry.");
-            if (_entries.Count > ushort.MaxValue)
-                throw new InvalidOperationException("Must have fewer than 65536 entries.");
-            try
-            {
-                _save(output);
-            }
-            catch (ObjectDisposedException) { throw; }
-            catch (IOException) { throw; }
-            catch (Exception e) { throw new IOException(e.Message, e); }
+        {
+            Save(output, ID);
         }
 
 #if DRAWING
@@ -974,17 +916,74 @@ namespace UIconEdit
         }
 
         const int MinDibSize = 40;
+        internal void Save(Stream output, IconTypeCode id)
+        {
+#if DRAWING
+            if (_isDisposed)
+                throw new ObjectDisposedException(null);
+#endif
+            if (_entries.Count == 0)
+                throw new InvalidOperationException("Must have at least one entry.");
+            if (_entries.Count > ushort.MaxValue)
+                throw new InvalidOperationException("Must have fewer than 65536 entries.");
 
-        private void WriteImage(BinaryWriter writer, IconEntry entry, ref uint offset, out MemoryStream writeStream)
+            try
+            {
+#if LEAVEOPEN
+                using (BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding(), true))
+#else
+                BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding());
+#endif
+                {
+                    List<IconEntry> entries = new List<IconEntry>(_entries);
+                    entries.Sort(new IconEntryComparer());
+
+                    writer.Write(ushort.MinValue);
+                    writer.Write((short)ID);
+                    writer.Write((short)entries.Count);
+
+                    uint offset = (uint)(6 + (entries.Count * 16));
+
+                    List<MemoryStream> streamList = new List<MemoryStream>();
+#if DEBUG && MESSAGE
+                    Stopwatch sw = Stopwatch.StartNew();
+#endif
+                    foreach (IconEntry curEntry in entries)
+                    {
+                        MemoryStream writeStream;
+                        WriteImage(writer, curEntry, id, ref offset, out writeStream);
+                        streamList.Add(writeStream);
+                    }
+
+                    foreach (MemoryStream ms in streamList)
+                    {
+                        ms.Seek(0, SeekOrigin.Begin);
+                        ms.CopyTo(output);
+                        ms.Dispose();
+                    }
+#if DEBUG && MESSAGE
+                    sw.Stop();
+                    Debug.WriteLine("Finished processing all entries in {0}ms.", sw.Elapsed.TotalMilliseconds);
+#endif
+                }
+#if !LEAVEOPEN
+                writer.Flush();
+#endif
+            }
+            catch (ObjectDisposedException) { throw; }
+            catch (IOException) { throw; }
+            catch (Exception e) { throw new IOException(e.Message, e); }
+        }
+
+        private void WriteImage(BinaryWriter writer, IconEntry entry, IconTypeCode id, ref uint offset, out MemoryStream writeStream)
         {
             bool isPng = entry.IsPng;
 
-            if (entry.Width > byte.MaxValue || entry.Height > byte.MaxValue)
-                writer.Write(ushort.MinValue); //2
-            else
+            IconDirEntry dirEntry = new IconDirEntry();
+            if (entry.Width <= byte.MaxValue && entry.Height <= byte.MaxValue)
             {
-                writer.Write((byte)entry.Width);
-                writer.Write((byte)entry.Height);
+                dirEntry.Detail.BWidth = (byte)entry.Width;
+                dirEntry.Detail.BHeight = (byte)entry.Height;
             }
 
 #if DRAWING
@@ -995,28 +994,35 @@ namespace UIconEdit
 #endif
                 = entry.GetQuantized(isPng, out alphaMask);
 
-            if (alphaMask == null || quantized.Palette == null ||
+            if (alphaMask != null && quantized.Palette != null &&
 #if DRAWING
                 quantized.Palette.Entries.Length
 #else
                 quantized.Palette.Colors.Count
 #endif
-                    > byte.MaxValue)
-                writer.Write(byte.MinValue);
-            else
-                writer.Write((byte)quantized.Palette.
+                    <= byte.MaxValue)
+            {
+                dirEntry.Detail.ColorCount = (byte)quantized.Palette.
 #if DRAWING
-                    Entries.Length); //3
+                    Entries.Length;
 #else
-                    Colors.Count); //3
+                    Colors.Count;
 #endif
+            }
 
-            writer.Write(byte.MinValue); //4
+            if (id == IconTypeCode.Cursor)
+            {
+                var hotspotX = entry.HotspotX;
+                dirEntry.Detail.XPlanes = hotspotX > ushort.MaxValue ? ushort.MaxValue : (ushort)hotspotX;
+                var hotspotY = entry.HotspotY;
+                dirEntry.Detail.YBitsPerpixel = hotspotY > ushort.MaxValue ? ushort.MaxValue : (ushort)hotspotY;
+            }
+            else
+            {
+                dirEntry.Detail.XPlanes = 1;
+                dirEntry.Detail.YBitsPerpixel = (ushort)entry.BitsPerPixel;
+            }
 
-            writer.Write(GetImgX(entry)); //6
-            writer.Write(GetImgY(entry)); //8
-
-            uint length;
             writeStream = new MemoryStream();
             if (isPng)
             {
@@ -1140,10 +1146,15 @@ namespace UIconEdit
             if (alphaMask != null && alphaMask != entry.AlphaImage)
                 alphaMask.Dispose();
 #endif
-            length = (uint)writeStream.Length;
-            writer.Write(length); //12
-            writer.Write(offset); //16
-            offset += length;
+
+            dirEntry.Detail.ResourceLength = (uint)writeStream.Length;
+            dirEntry.ImageOffset = offset;
+
+            offset += dirEntry.Detail.ResourceLength;
+
+            byte[] bBuffer = new byte[IconDirEntry.Size];
+            dirEntry.CopyTo(bBuffer, 0);
+            writer.Write(bBuffer);
         }
 
 #if DRAWING

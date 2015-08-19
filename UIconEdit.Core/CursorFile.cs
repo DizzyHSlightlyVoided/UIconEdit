@@ -192,20 +192,6 @@ namespace UIconEdit
             get { return IconTypeCode.Cursor; }
         }
 
-        internal override ushort GetImgX(IconEntry entry)
-        {
-            var hotspot = entry.HotspotX;
-            if (hotspot > ushort.MaxValue) return ushort.MaxValue;
-            return (ushort)hotspot;
-        }
-
-        internal override ushort GetImgY(IconEntry entry)
-        {
-            var hotspot = entry.HotspotY;
-            if (hotspot > ushort.MaxValue) return ushort.MaxValue;
-            return (ushort)hotspot;
-        }
-
         /// <summary>
         /// Returns a duplicate of the current instance.
         /// </summary>

@@ -71,6 +71,9 @@
     <Compile Include="..\UIconEdit.Core\Win32Funcs.cs">
       <Link>Win32Funcs.cs</Link>
     </Compile>
+    <Compile Include="..\UIconEdit.Core\AnimatedCursorFile.cs">
+      <Link>AnimatedCursorFile.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\nQuant\nQuant.Core\nQuant.Core.csproj">

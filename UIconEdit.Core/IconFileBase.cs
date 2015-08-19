@@ -611,7 +611,7 @@ namespace UIconEdit
 #if DRAWING
             finally
             {
-                if (resultEntry != null)
+                if (resultEntry == null)
                 {
                     try
                     {

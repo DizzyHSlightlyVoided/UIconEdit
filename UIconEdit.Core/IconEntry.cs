@@ -957,8 +957,8 @@ namespace UIconEdit
         /// </summary>
         public int HotspotY
         {
-            get { return (int)GetValue(HotspotXProperty); }
-            set { SetValue(HotspotXProperty, value); }
+            get { return (int)GetValue(HotspotYProperty); }
+            set { SetValue(HotspotYProperty, value); }
         }
 #endif
         #endregion

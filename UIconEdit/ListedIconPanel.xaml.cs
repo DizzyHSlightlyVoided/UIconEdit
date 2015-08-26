@@ -65,10 +65,7 @@ namespace UIconEdit.Maker
             PresentationSource source = PresentationSource.FromVisual((ListedIconPanel)d);
             double width = source.CompositionTarget.TransformFromDevice.M11 * 64;
 
-            bool bigger = entry.Width > IconEntry.MaxBmp || entry.Height > IconEntry.MaxBmp;
-
-            d.SetValue(IsPngEnabledPropertyKey, !bigger);
-            if (bigger)
+            if (entry.Width > IconEntry.MaxBmp || entry.Height > IconEntry.MaxBmp)
                 ((ListedIconPanel)d).chkPng.IsChecked = true;
 
             d.SetValue(ScalingModePropertyKey, entry.Width > width ? BitmapScalingMode.HighQuality : BitmapScalingMode.NearestNeighbor);
@@ -87,14 +84,6 @@ namespace UIconEdit.Maker
         public static readonly DependencyProperty ScalingModeProperty = ScalingModePropertyKey.DependencyProperty;
 
         public BitmapScalingMode ScalingMode { get { return (BitmapScalingMode)GetValue(ScalingModeProperty); } }
-        #endregion
-
-        #region IsPngEnabled
-        private static readonly DependencyPropertyKey IsPngEnabledPropertyKey = DependencyProperty.RegisterReadOnly("IsPngEnabled", typeof(bool),
-            typeof(ListedIconPanel), new PropertyMetadata());
-        public static readonly DependencyProperty IsPngEnabledProperty = IsPngEnabledPropertyKey.DependencyProperty;
-
-        public bool IsPngEnabled { get { return (bool)GetValue(IsPngEnabledProperty); } }
         #endregion
     }
 }

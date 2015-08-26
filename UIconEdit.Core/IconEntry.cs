@@ -1792,7 +1792,7 @@ namespace UIconEdit
 
                     WuQuantizer quant = new WuQuantizer();
 
-                    returner = GetSmaller((Bitmap)quant.QuantizeImage(baseBmp, _alphaThreshold, 70, maxColors), pFormat);
+                    returner = GetSmaller(Quantize(baseBmp, pixels, maxColors), pFormat);
                 }
                 baseBmp.Dispose();
 
@@ -1932,11 +1932,9 @@ namespace UIconEdit
             if (palette != null)
                 return new WriteableBitmap(new FormatConvertedBitmap(wBmp, pFormat, palette, 0));
 
-            WuQuantizer wQuant = new WuQuantizer();
+            WriteableBitmap quantized = Quantize(wBmp, pixels, maxColors);
 
-            WriteableBitmap quantized = (WriteableBitmap)wQuant.QuantizeImage(wBmp, AlphaThreshold, 70, maxColors);
-
-            if (pFormat.BitsPerPixel == 8)
+            if (pFormat.BitsPerPixel == quantized.Format.BitsPerPixel)
                 return quantized;
 
             byte[] indices = new byte[pixels.Length];
@@ -1971,6 +1969,73 @@ namespace UIconEdit
             return GetBitmap(pixels, PixelFormats.Bgra32, null, ushort.MaxValue);
         }
 #endif
+
+#if DRAWING
+        private Bitmap Quantize(Bitmap source, ColorValue[] pixels, int colorCount)
+#else
+        private WriteableBitmap Quantize(BitmapSource source, ColorValue[] pixels, int colorCount)
+#endif
+        {
+            byte[] data = new byte[pixels.Length];
+            Dictionary<ColorValue, byte> indices = new Dictionary<ColorValue, byte>();
+
+            bool smaller = true;
+
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                ColorValue c = pixels[i];
+                byte dex;
+
+                if (!indices.TryGetValue(c, out dex))
+                {
+                    if (indices.Count == colorCount)
+                    {
+                        smaller = false;
+                        break;
+                    }
+
+                    dex = (byte)indices.Count;
+                    indices.Add(c, dex);
+                }
+                data[i] = dex;
+            }
+
+            if (!smaller)
+            {
+                WuQuantizer quant = new WuQuantizer();
+#if DRAWING
+                return (Bitmap)quant.QuantizeImage(source, _alphaThreshold,
+#else
+                return (WriteableBitmap)quant.QuantizeImage(source, AlphaThreshold,
+#endif
+                    70, colorCount);
+            }
+
+#if DRAWING
+            Bitmap bmp = new Bitmap(source.Width, source.Height, PixelFormat.Format8bppIndexed);
+            Rectangle fullRect = new Rectangle(Point.Empty, source.Size);
+            Color[] colors = indices.Keys.Select(i => i.GetColor()).ToArray();
+            var palette = bmp.Palette;
+
+            for (int i = 0; i < colors.Length; i++)
+                palette.Entries[i] = colors[i];
+
+            bmp.Palette = palette;
+
+            BitmapData bmpData = bmp.LockBits(fullRect, ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+
+            for (int y = 0; y < source.Height; y++)
+                Marshal.Copy(data, y * source.Width, bmpData.Scan0 + (y * bmpData.Stride), source.Width);
+
+            bmp.UnlockBits(bmpData);
+#else
+            WriteableBitmap bmp = new WriteableBitmap(source.PixelWidth, source.PixelHeight, 0, 0, PixelFormats.Indexed8,
+                new BitmapPalette(indices.Keys.Select(i => i.GetColor()).ToArray()));
+
+            bmp.WritePixels(new Int32Rect(0, 0, source.PixelWidth, source.PixelHeight), data, source.PixelWidth, 0);
+#endif
+            return bmp;
+        }
         #endregion
 
         /// <summary>

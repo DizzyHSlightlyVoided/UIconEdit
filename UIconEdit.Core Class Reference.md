@@ -766,6 +766,9 @@ Loads a [`CursorFile`](#type-public-class-uiconeditcursorfile) from the specifie
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `input` is closed.
 
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the cursor file's format.
+
 ##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the cursor file's format.
 
@@ -775,7 +778,7 @@ An I/O error occurred.
 --------------------------------------------------
 ## Method: `public static UIconEdit.CursorFile Load(System.String path, UIconEdit.IconLoadExceptionHandler handler)`
 
-Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
+Loads a [`CursorFile`](#type-public-class-uiconeditcursorfile) from the specified path.
 * `path`: The path to a cursor file.
 * `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual cursor entries, or `null` to throw an exception in those cases.
 
@@ -811,6 +814,9 @@ The caller does not have the required permission.
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
 
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the cursor file's format.
+
 ##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the cursor file's format.
 
@@ -820,7 +826,7 @@ An I/O error occurred.
 --------------------------------------------------
 ## Method: `public static UIconEdit.CursorFile Load(System.String path)`
 
-Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
+Loads a [`CursorFile`](#type-public-class-uiconeditcursorfile) from the specified path.
 * `path`: The path to a cursor file.
 
 **Returns:** Type [`CursorFile`](#type-public-class-uiconeditcursorfile): An [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation loaded from `path`.
@@ -854,6 +860,9 @@ The caller does not have the required permission.
 
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
+
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the cursor file's format.
 
 ##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the cursor file's format.
@@ -915,6 +924,9 @@ Loads a [`IconFile`](#type-public-class-uiconediticonfile) from the specified st
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `input` is closed.
 
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
+
 ##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
 
@@ -942,6 +954,9 @@ Loads a [`IconFile`](#type-public-class-uiconediticonfile) from the specified st
 ##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
 `input` is closed.
 
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
+
 ##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
 
@@ -951,7 +966,7 @@ An I/O error occurred.
 --------------------------------------------------
 ## Method: `public static UIconEdit.IconFile Load(System.String path, UIconEdit.IconLoadExceptionHandler handler)`
 
-Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
+Loads an [`IconFile`](#type-public-class-uiconediticonfile) from the specified path.
 * `path`: The path to a icon file.
 * `handler`: A delegate used to process [`IconLoadException`](#type-public-class-uiconediticonloadexception)s thrown when processing individual icon entries, or `null` to throw an exception in those cases.
 
@@ -987,6 +1002,9 @@ The caller does not have the required permission.
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
 
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
+
 ##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
 
@@ -996,7 +1014,7 @@ An I/O error occurred.
 --------------------------------------------------
 ## Method: `public static UIconEdit.IconFile Load(System.String path)`
 
-Loads an [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation from the specified path.
+Loads an [`IconFile`](#type-public-class-uiconediticonfile) from the specified path.
 * `path`: The path to a icon file.
 
 **Returns:** Type [`IconFile`](#type-public-class-uiconediticonfile): An [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) implementation loaded from `path`.
@@ -1030,6 +1048,9 @@ The caller does not have the required permission.
 
 ##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
 `path` is in an invalid format.
+
+##### [`IconLoadException`](#type-public-class-uiconediticonloadexception)
+An error occurred when processing the icon file's format.
 
 ##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
 An error occurred when processing the icon file's format.
@@ -1380,7 +1401,7 @@ Dependency property for the [`IconEntry.IsPng`](#property-public-systemboolean-i
 --------------------------------------------------
 ## Property: `public System.Boolean IsPng { get; set; }`
 
-Gets and sets a value indicating whether the current instance will be saved as a PNG image. Not recommended for [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) values other than [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0) unless the width or height is greater than [`IconEntry.MaxBmp`](#field-public-const-systemint16-maxbmp--255) (255).
+Gets and sets a value indicating whether the current instance will be saved as a PNG image. A value of `true` is not recommended for [`IconEntry.BitDepth`](#property-public-uiconediticonbitdepth-bitdepth--get-) values other than [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0), and `false` is not recommended for [`IconEntry.Width`](#property-public-systemint32-width--get-) and [`IconEntry.Height`](#property-public-systemint32-height--get-) greater than or equal to 256.
 
 --------------------------------------------------
 ## Property: `public UIconEdit.IconEntryKey EntryKey { get; }`
@@ -2754,3 +2775,136 @@ A delegate function to perform on each cursor or icon extracted from a DLL or EX
 * `index`: The index of the current cursor or icon to process.
 * `iconFile`: The cursor or icon which was extracted.
 * `e`: A [`CancelEventArgs`](https://msdn.microsoft.com/en-us/library/system.componentmodel.canceleventargs.aspx) object which is used to cancel
+
+--------------------------------------------------
+# Type: `public class UIconEdit.AnimatedCursorFile`
+
+Represents an animated cursor file.
+
+--------------------------------------------------
+## Property: `public System.Collections.ObjectModel.ObservableCollection<T> Entries { get; }`
+
+Gets a list of [`IconFileBase`](#type-public-abstract-class-uiconediticonfilebase) objects containing all entries in the animated cursor file.
+
+--------------------------------------------------
+## Property: `public System.Collections.ObjectModel.ObservableCollection<T> Frames { get; }`
+
+Gets a list containing all frame information in the current instance.
+
+--------------------------------------------------
+# Type: `public struct UIconEdit.AnimatedCursorFrame`
+
+Represents a single frame of an animated cursor.
+
+--------------------------------------------------
+## Constructor: `public AnimatedCursorFrame(System.Int32 index, System.Int32 jiffies)`
+
+Creates a new instance with the specified values.
+* `index`: The index of the frame in [`AnimatedCursorFile.Entries`](#property-public-systemcollectionsobjectmodelobservablecollectiont-entries--get-).
+* `jiffies`: The delay before displaying the next frame in the animated cursor, in "jiffies" (1/60 of a second).
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` or `jiffies` are less than 0.
+
+--------------------------------------------------
+## Constructor: `public AnimatedCursorFrame(System.Int32 index, System.TimeSpan length)`
+
+Creates a new instance with the specified values.
+* `index`: The index of the frame in [`AnimatedCursorFile.Entries`](#property-public-systemcollectionsobjectmodelobservablecollectiont-entries--get-).
+* `length`: The delay before displaying the next frame in the animated cursor. Fitted to the nearest "jiffy" (1/60 of a second).
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+
+`index` is less than 0.
+
+-OR-
+
+`length` is less than [`TimeSpan.Zero`](https://msdn.microsoft.com/en-us/library/system.timespan.zero.aspx).
+
+
+--------------------------------------------------
+## Property: `public System.Int32 Index { get; set; }`
+
+Gets and sets the index of the frame in [`AnimatedCursorFile.Entries`](#property-public-systemcollectionsobjectmodelobservablecollectiont-entries--get-).
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is less than 0.
+
+--------------------------------------------------
+## Property: `public System.Int32 Jiffies { get; set; }`
+
+Gets and sets the delay before displaying the next frame in the animated cursor, in "jiffies" (1/60 of a second).
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is less than 0.
+
+--------------------------------------------------
+## Property: `public System.TimeSpan Length { get; set; }`
+
+Gets and sets the delay before displaying the next frame in the animated cursor. Fitted to the nearest "jiffy" (1/60 of a second).
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is less than [`TimeSpan.Zero`](https://msdn.microsoft.com/en-us/library/system.timespan.zero.aspx).
+
+--------------------------------------------------
+## Method: `public System.String ToString()`
+
+Returns a string representation of the current instance.
+
+**Returns:** Type [`String`](https://msdn.microsoft.com/en-us/library/system.string.aspx): A string representation of the current instance.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean Equals(UIconEdit.AnimatedCursorFrame other)`
+
+Determines if the current instance is equal to the specified other [`AnimatedCursorFrame`](#type-public-struct-uiconeditanimatedcursorframe) value.
+* `other`: The other [`AnimatedCursorFrame`](#type-public-struct-uiconeditanimatedcursorframe) to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the current instance is equal to `other`; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean Equals(System.Object obj)`
+
+Determines if the current instance is equal to the specified other object.
+* `obj`: The other objecto compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the current instance is equal to `obj`; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 GetHashCode()`
+
+Returns the hash code for the current value.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The hash code for the current value.
+
+
+--------------------------------------------------
+## Operator: `public static System.Boolean op_Equality(UIconEdit.AnimatedCursorFrame a1, UIconEdit.AnimatedCursorFrame a2)`
+
+Determines equality of two [`AnimatedCursorFrame`](#type-public-struct-uiconeditanimatedcursorframe) objects.
+* `a1`: An [`AnimatedCursorFrame`](#type-public-struct-uiconeditanimatedcursorframe) to compare.
+* `a2`: An [`AnimatedCursorFrame`](#type-public-struct-uiconeditanimatedcursorframe) to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `a1` is equal to `a2`; `false` otherwise.
+
+
+--------------------------------------------------
+## Operator: `public static System.Boolean op_Inequality(UIconEdit.AnimatedCursorFrame a1, UIconEdit.AnimatedCursorFrame a2)`
+
+Determines inequality of two [`AnimatedCursorFrame`](#type-public-struct-uiconeditanimatedcursorframe) objects.
+* `a1`: An [`AnimatedCursorFrame`](#type-public-struct-uiconeditanimatedcursorframe) to compare.
+* `a2`: An [`AnimatedCursorFrame`](#type-public-struct-uiconeditanimatedcursorframe) to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `a1` is not equal to `a2`; `false` otherwise.

@@ -90,6 +90,9 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="input"/> is closed.
         /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when processing the cursor file's format.
+        /// </exception>
         /// <exception cref="FileFormatException">
         /// An error occurred when processing the cursor file's format.
         /// </exception>
@@ -102,7 +105,7 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Loads an <see cref="IconFileBase"/> implementation from the specified path.
+        /// Loads a <see cref="CursorFile"/> from the specified path.
         /// </summary>
         /// <param name="path">The path to a cursor file.</param>
         /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual cursor entries,
@@ -132,6 +135,9 @@ namespace UIconEdit
         /// <exception cref="NotSupportedException">
         /// <paramref name="path"/> is in an invalid format.
         /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when processing the cursor file's format.
+        /// </exception>
         /// <exception cref="FileFormatException">
         /// An error occurred when processing the cursor file's format.
         /// </exception>
@@ -145,7 +151,7 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Loads an <see cref="IconFileBase"/> implementation from the specified path.
+        /// Loads a <see cref="CursorFile"/> from the specified path.
         /// </summary>
         /// <param name="path">The path to a cursor file.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
@@ -172,6 +178,9 @@ namespace UIconEdit
         /// </exception>
         /// <exception cref="NotSupportedException">
         /// <paramref name="path"/> is in an invalid format.
+        /// </exception>
+        /// <exception cref="IconLoadException">
+        /// An error occurred when processing the cursor file's format.
         /// </exception>
         /// <exception cref="FileFormatException">
         /// An error occurred when processing the cursor file's format.

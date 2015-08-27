@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UIconEdit.Test</RootNamespace>
     <AssemblyName>UIconEdit.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
@@ -18,9 +18,9 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Net 4.0\Debug\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.0\Debug\</IntermediateOutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>bin\Net 4.5\Debug\</OutputPath>
+    <IntermediateOutputPath>obj\Net 4.5\Debug\</IntermediateOutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_4_5;IREADONLY;LEAVEOPEN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -28,9 +28,9 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Net 4.0\Release\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.0\Release\</IntermediateOutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>bin\Net 4.5\Release\</OutputPath>
+    <IntermediateOutputPath>obj\Net 4.5\Release\</IntermediateOutputPath>
+    <DefineConstants>TRACE;NET_4_5;IREADONLY;LEAVEOPEN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -64,9 +64,9 @@
       <Project>{21c7366e-ea88-4158-8544-0100dd3ab47d}</Project>
       <Name>nQuantWpf.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UIconEdit.Core\UIconEdit.Core.Net40.csproj">
-      <Project>{40ce58b0-4000-42c0-92a7-5314279b916e}</Project>
-      <Name>UIconEdit.Core.Net40</Name>
+    <ProjectReference Include="..\UIconEdit.Core\UIconEdit.Core.csproj">
+      <Project>{40ce58b0-4500-42c0-92a7-5314279b916e}</Project>
+      <Name>UIconEdit.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

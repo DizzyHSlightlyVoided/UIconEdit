@@ -140,9 +140,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UIconEdit.Core\UIconEdit.Core.Net45.csproj">
+    <ProjectReference Include="..\UIconEdit.Core\UIconEdit.Core.csproj">
       <Project>{40ce58b0-4500-42c0-92a7-5314279b916e}</Project>
-      <Name>UIconEdit.Core.Net45</Name>
+      <Name>UIconEdit.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

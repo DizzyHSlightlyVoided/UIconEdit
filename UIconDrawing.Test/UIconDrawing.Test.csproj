@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E9E01515-4000-4944-952A-417B78D6EA75}</ProjectGuid>
+    <ProjectGuid>{E9E01515-4500-4944-952A-417B78D6EA75}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UIconDrawing.Test</RootNamespace>
     <AssemblyName>UIconDrawing.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -17,8 +17,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Net 4.0\Debug\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.0\Release\</IntermediateOutputPath>
+    <OutputPath>bin\Net 4.5\Debug\</OutputPath>
+    <IntermediateOutputPath>obj\Net 4.5\Release\</IntermediateOutputPath>
     <DefineConstants>TRACE;DEBUG;NET_4_5;IREADONLY;LEAVEOPEN;DRAWING</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,8 +27,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Net 4.0\Release\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.0\Release\</IntermediateOutputPath>
+    <OutputPath>bin\Net 4.5\Release\</OutputPath>
+    <IntermediateOutputPath>obj\Net 4.5\Release\</IntermediateOutputPath>
     <DefineConstants>TRACE;NET_4_5;IREADONLY;LEAVEOPEN;DRAWING</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -65,9 +65,9 @@
       <Project>{a59307ea-fcb0-4110-bc42-0417871c24c4}</Project>
       <Name>nQuant.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UIconDrawing\UIconDrawing.Net40.csproj">
-      <Project>{7c44b786-4000-4a29-86ae-e216038f0e55}</Project>
-      <Name>UIconDrawing.Net40</Name>
+    <ProjectReference Include="..\UIconDrawing\UIconDrawing.csproj">
+      <Project>{7c44b786-4500-4a29-86ae-e216038f0e55}</Project>
+      <Name>UIconDrawing</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

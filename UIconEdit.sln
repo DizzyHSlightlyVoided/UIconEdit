@@ -5,15 +5,15 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit", "UIconEdit\UIconEdit.csproj", "{09B35738-A114-436E-962C-A2CB0804E539}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit.Core.Net45", "UIconEdit.Core\UIconEdit.Core.Net45.csproj", "{40CE58B0-4500-42C0-92A7-5314279B916E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit.Core", "UIconEdit.Core\UIconEdit.Core.csproj", "{40CE58B0-4500-42C0-92A7-5314279B916E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nQuant.Core", "nQuant\nQuant.Core\nQuant.Core.csproj", "{A59307EA-FCB0-4110-BC42-0417871C24C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit.Test.Net45", "UIconEdit.Test\UIconEdit.Test.Net45.csproj", "{902D4D9C-4500-418F-9890-5AAD7D82EEC9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconEdit.Test", "UIconEdit.Test\UIconEdit.Test.csproj", "{902D4D9C-4500-418F-9890-5AAD7D82EEC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconDrawing.Net45", "UIconDrawing\UIconDrawing.Net45.csproj", "{7C44B786-4500-4A29-86AE-E216038F0E55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconDrawing", "UIconDrawing\UIconDrawing.csproj", "{7C44B786-4500-4A29-86AE-E216038F0E55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconDrawing.Test.Net45", "UIconDrawing.Test\UIconDrawing.Test.Net45.csproj", "{E9E01515-4500-4944-952A-417B78D6EA75}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIconDrawing.Test", "UIconDrawing.Test\UIconDrawing.Test.csproj", "{E9E01515-4500-4944-952A-417B78D6EA75}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nQuantWpf.Core", "nQuant\nQuant.Core\nQuantWpf.Core.csproj", "{21C7366E-EA88-4158-8544-0100DD3AB47D}"
 EndProject

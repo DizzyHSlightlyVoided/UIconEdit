@@ -216,13 +216,8 @@ namespace UIconEdit
 #if DEBUG && MESSAGE
             Stopwatch sw = Stopwatch.StartNew();
 #endif
-#if LEAVEOPEN
             using (BinaryReader reader = new BinaryReader(input, new UTF8Encoding(), true))
             {
-#else
-            {
-                BinaryReader reader = new BinaryReader(input, new UTF8Encoding());
-#endif
                 if (reader.ReadInt16() != 0) throw new IconLoadException(IconErrorCode.InvalidFormat, 0);
 
                 loadedId = (IconTypeCode)reader.ReadInt16();
@@ -929,11 +924,7 @@ namespace UIconEdit
 
             try
             {
-#if LEAVEOPEN
                 using (BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding(), true))
-#else
-                BinaryWriter writer = new BinaryWriter(output, new UTF8Encoding());
-#endif
                 {
                     List<IconEntry> entries = new List<IconEntry>(_entries);
                     entries.Sort(new IconEntryComparer());
@@ -966,9 +957,6 @@ namespace UIconEdit
                     Debug.WriteLine("Finished processing all entries in {0}ms.", sw.Elapsed.TotalMilliseconds);
 #endif
                 }
-#if !LEAVEOPEN
-                writer.Flush();
-#endif
             }
             catch (ObjectDisposedException) { throw; }
             catch (IOException) { throw; }
@@ -1043,11 +1031,7 @@ namespace UIconEdit
             }
             else
             {
-#if LEAVEOPEN
                 using (BinaryWriter msWriter = new BinaryWriter(writeStream, new UTF8Encoding(), true))
-#else
-                BinaryWriter msWriter = new BinaryWriter(writeStream, new UTF8Encoding());
-#endif
                 {
                     ushort bitsPerPixel = (ushort)entry.BitsPerPixel;
 #if DRAWING
@@ -1130,9 +1114,6 @@ namespace UIconEdit
                         _writeBmpData(alphaMask, msWriter, alphaStride);
 #endif
                 }
-#if !LEAVEOPEN
-                writer.Flush();
-#endif
             }
 
 #if DEBUG && MESSAGE
@@ -1256,10 +1237,7 @@ namespace UIconEdit
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(DebugView))]
-        public class EntryList : IEntryList, IList, INotifyCollectionChanged, INotifyPropertyChanged
-#if IREADONLY
-            , IReadOnlyList<IconEntry>
-#endif
+        public class EntryList : IEntryList, IList, INotifyCollectionChanged, INotifyPropertyChanged, IReadOnlyList<IconEntry>
         {
             private HashSet<IconEntryKey> _set;
             private ObservableCollection<IconEntry> _items;

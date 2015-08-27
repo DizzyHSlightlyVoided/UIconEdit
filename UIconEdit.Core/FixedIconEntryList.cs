@@ -42,10 +42,7 @@ namespace UIconEdit
     /// <summary>
     /// Represents a read-only sorted list of <see cref="IconEntry"/> objects.
     /// </summary>
-    public class FixedIconEntryList : IEntryList, IList
-#if IREADONLY
-        , IReadOnlyList<IconEntry>
-#endif
+    public class FixedIconEntryList : IEntryList, IList, IReadOnlyList<IconEntry>
     {
         private IconEntry[] _items;
         private Dictionary<IconEntryKey, int> _indices;

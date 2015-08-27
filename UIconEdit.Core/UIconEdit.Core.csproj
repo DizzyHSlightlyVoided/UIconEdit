@@ -18,7 +18,7 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Net 4.5\Debug\</OutputPath>
     <IntermediateOutputPath>obj\Net 4.5\Debug\</IntermediateOutputPath>
-    <DefineConstants>TRACE;DEBUG;NET_4_5;IREADONLY;LEAVEOPEN</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Net 4.5\Debug\UIconEdit.Core.XML</DocumentationFile>
@@ -29,7 +29,7 @@
     <Optimize>true</Optimize>
     <OutputPath>bin\Net 4.5\Release\</OutputPath>
     <IntermediateOutputPath>obj\Net 4.5\Release\</IntermediateOutputPath>
-    <DefineConstants>TRACE;NET_4_5;IREADONLY;LEAVEOPEN</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Net 4.5\Release\UIconEdit.Core.XML</DocumentationFile>

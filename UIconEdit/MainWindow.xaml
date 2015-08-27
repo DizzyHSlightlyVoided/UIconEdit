@@ -130,6 +130,15 @@
             <Button Command="NavigationCommands.PreviousPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipPrev, ElementName=window, FallbackValue=Prev}">
                 <Image Source="Resources\ArrowBackward.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
+            <TextBlock VerticalAlignment="Center">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                        <Binding Path="SettingsFile.LanguageFile.ImgPos" ElementName="window" FallbackValue="{}{0}/{1}"/>
+                        <Binding Path="SelectedIndex" ElementName="window" FallbackValue="0"/>
+                        <Binding Path="LoadedFile.Entries.Count" ElementName="window" FallbackValue="0"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
             <Button Command="NavigationCommands.NextPage" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipNext, ElementName=window, FallbackValue=Next}">
                 <Image Source="Resources\ArrowForward.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>
@@ -179,8 +188,8 @@
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource StringFormatConverter}">
                             <Binding Path="SettingsFile.LanguageFile.Position" ElementName="window" FallbackValue="{}{0},{1}"/>
-                            <Binding Path="MousePosX" ElementName="window"/>
-                            <Binding Path="MousePosY" ElementName="window"/>
+                            <Binding Path="MousePosX" ElementName="window" FallbackValue="0"/>
+                            <Binding Path="MousePosY" ElementName="window" FallbackValue="0"/>
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>

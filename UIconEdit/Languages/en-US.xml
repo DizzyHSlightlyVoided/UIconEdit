@@ -119,6 +119,8 @@
 
   <!-- {0} = horizontal position, {1} = vertical position -->
   <Position>{0},{1}</Position>
+  <!-- {0} = the 1-based index of the current value in the list of items. {1} = the number of images. -->
+  <ImgPos>{0}/{1}</ImgPos>
   <FilePathNew>New File</FilePathNew>
 
   <Extract>Extract</Extract>

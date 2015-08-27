@@ -307,6 +307,14 @@ namespace UIconEdit.Maker
         public int MousePosY { get { return (int)GetValue(MousePosYProperty); } }
         #endregion
 
+        #region SelectedIndex
+        private static readonly DependencyPropertyKey SelectedIndexPropertyKey = DependencyProperty.RegisterReadOnly("SelectedIndex", typeof(int), typeof(MainWindow),
+            new PropertyMetadata());
+        public static DependencyProperty SelectedIndexProperty = SelectedIndexPropertyKey.DependencyProperty;
+
+        public int SelectedIndex { get { return (int)GetValue(SelectedIndexProperty); } }
+        #endregion
+
         internal static void ZoomSet(Window w, BitmapSource image, DependencyProperty ZoomProperty, DependencyPropertyKey ZoomedWidthPropertyKey,
             DependencyPropertyKey ZoomedHeightPropertyKey, DependencyPropertyKey ZoomScaleModePropertyKey)
         {
@@ -802,6 +810,7 @@ namespace UIconEdit.Maker
 
         private void listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            SetValue(SelectedIndexPropertyKey, listbox.SelectedIndex + 1);
             if (!_settings.KeepHotspotChecked)
                 chkHotspot.IsChecked = false;
             if (listbox.SelectedIndex < 0)

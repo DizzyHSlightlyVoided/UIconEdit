@@ -292,7 +292,9 @@ namespace UIconEdit.Maker
         public string Percent { get { return _text["Percent"]; } }
         public string HotspotX { get { return _text["HotspotX"]; } }
         public string HotspotY { get { return _text["HotspotY"]; } }
+
         public string Position { get { return _text["Position"]; } }
+        public string ImgPos { get { return _text["ImgPos"]; } }
         public string FilePathNew { get { return _text["FilePathNew"]; } }
 
         public string Extract { get { return _text["Extract"]; } }

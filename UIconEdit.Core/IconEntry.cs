@@ -723,8 +723,8 @@ namespace UIconEdit
         private bool _isPng;
         /// <summary>
         /// Gets and sets a value indicating whether the current instance will be saved as a PNG image.
-        /// Not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/>; however, this value
-        /// cannot be changed from <c>true</c> if <see cref="Width"/> or <see cref="Height"/> are greater than <see cref="MaxBmp"/>.
+        /// <c>true</c> is not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/>, and <c>false</c>
+        /// is not recommended for <see cref="Width"/> and <see cref="Height"/> greater than or equal to 256.
         /// </summary>
         /// <exception cref="ObjectDisposedException">
         /// In a set operation, the current instance is disposed.
@@ -735,7 +735,7 @@ namespace UIconEdit
             set
             {
                 if (_isDisposed) throw new ObjectDisposedException(null);
-                _isPng = value || _width > MaxBmp || _height > MaxBmp;
+                _isPng = value;
             }
         }
 #else
@@ -743,20 +743,12 @@ namespace UIconEdit
         /// Dependency property for the <see cref="IsPng"/> property.
         /// </summary>
         public static readonly DependencyProperty IsPngProperty = DependencyProperty.Register("IsPng", typeof(bool), typeof(IconEntry),
-            new PropertyMetadata(false, null, IsPngCoerce));
-
-        private static object IsPngCoerce(DependencyObject d, object baseValue)
-        {
-            IconEntry entry = (IconEntry)d;
-
-            if (entry._width > MaxBmp || entry._height > MaxBmp) return true;
-            return baseValue;
-        }
+            new PropertyMetadata(false, null));
 
         /// <summary>
         /// Gets and sets a value indicating whether the current instance will be saved as a PNG image.
-        /// Not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/>; however, this value
-        /// cannot be changed from <c>true</c> if <see cref="Width"/> or <see cref="Height"/> are greater than <see cref="MaxBmp"/>.
+        /// A value of <c>true</c> is not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/>, and <c>false</c>
+        /// is not recommended for <see cref="Width"/> and <see cref="Height"/> greater than or equal to 256.
         /// </summary>
         public bool IsPng
         {

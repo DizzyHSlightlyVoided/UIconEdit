@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UIconEdit.Maker" HorizontalAlignment="Center"
-             Width="70" MaxWidth="84" Margin="1,2,1,1"
+             Width="70" MaxWidth="84" Margin="1,2,1,1" Loaded="control_Loaded"
              mc:Ignorable="d">
     <UserControl.Resources>
         <local:AlphaImageConverter x:Key="AlphaImageConverter"/>

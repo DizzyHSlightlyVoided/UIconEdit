@@ -64,10 +64,7 @@ namespace UIconEdit.Maker
 
             PresentationSource source = PresentationSource.FromVisual((ListedIconPanel)d);
             double width = source.CompositionTarget.TransformToDevice.M11 * 64;
-
-            if (entry.Width > IconEntry.MaxBmp || entry.Height > IconEntry.MaxBmp)
-                ((ListedIconPanel)d).chkPng.IsChecked = true;
-
+            
             d.SetValue(ScalingModePropertyKey, entry.Width > width ? BitmapScalingMode.HighQuality : BitmapScalingMode.NearestNeighbor);
         }
 
@@ -85,5 +82,16 @@ namespace UIconEdit.Maker
 
         public BitmapScalingMode ScalingMode { get { return (BitmapScalingMode)GetValue(ScalingModeProperty); } }
         #endregion
+
+        private void chkPng_Checked(object sender, RoutedEventArgs e)
+        {
+            MainWindow.IsModified = true;
+        }
+
+        private void control_Loaded(object sender, RoutedEventArgs e)
+        {
+            chkPng.Checked += chkPng_Checked;
+            chkPng.Unchecked += chkPng_Checked;
+        }
     }
 }

@@ -206,7 +206,7 @@ namespace UIconEdit.Maker
             MainWindow m = (MainWindow)d;
 
             m.SetValue(IsFileLoadedPropertyKey, e.NewValue != null);
-            m.SetValue(IsModifiedPropertyKey, false);
+            m.SetValue(IsModifiedProperty, false);
             if (e.NewValue == null || ((IconFileBase)e.NewValue).Entries.Count == 0)
             {
                 m.listbox.SelectedIndex = -1;
@@ -239,14 +239,13 @@ namespace UIconEdit.Maker
         #endregion
 
         #region IsModified
-        private static readonly DependencyPropertyKey IsModifiedPropertyKey = DependencyProperty.RegisterReadOnly("IsModified", typeof(bool), typeof(MainWindow),
+        public static readonly DependencyProperty IsModifiedProperty = DependencyProperty.Register("IsModified", typeof(bool), typeof(MainWindow),
             new PropertyMetadata());
-        public static readonly DependencyProperty IsModifiedProperty = IsModifiedPropertyKey.DependencyProperty;
 
         public bool IsModified
         {
             get { return (bool)GetValue(IsModifiedProperty); }
-            private set { SetValue(IsModifiedPropertyKey, value); }
+            set { SetValue(IsModifiedProperty, value); }
         }
         #endregion
 

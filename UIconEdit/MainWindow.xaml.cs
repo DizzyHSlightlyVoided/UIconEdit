@@ -129,12 +129,9 @@ namespace UIconEdit.Maker
 
             try
             {
-                BitmapSource bmpSource;
-                using (FileStream fs = File.OpenRead(path))
-                    bmpSource = new WriteableBitmap(BitmapFrame.Create(fs));
+                BitmapImage bmpSource = LoadImage(path);
 
-                Mouse.OverrideCursor = null;
-                AddWindow addWindow = new AddWindow(this, false, true, bmpSource, IconBitDepth.Depth32BitsPerPixel);
+                AddWindow addWindow = new AddWindow(this, false, true, bmpSource, IconEntry.GetBitDepth(bmpSource.Format));
                 bool? result = addWindow.ShowDialog();
 
                 if (result.HasValue && result.Value)
@@ -186,6 +183,20 @@ namespace UIconEdit.Maker
             finally
             {
                 Mouse.OverrideCursor = null;
+            }
+        }
+
+        private static BitmapImage LoadImage(string path)
+        {
+            using (FileStream fs = File.OpenRead(path))
+            {
+                BitmapImage bmpSource = new BitmapImage();
+                bmpSource.BeginInit();
+                bmpSource.CacheOption = BitmapCacheOption.OnLoad;
+                bmpSource.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                bmpSource.StreamSource = fs;
+                bmpSource.EndInit();
+                return bmpSource;
             }
         }
 
@@ -531,24 +542,20 @@ namespace UIconEdit.Maker
             bool? result = dialog.ShowDialog(this);
             if (!result.HasValue || !result.Value) return;
 
-            BitmapSource bmpSource;
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
-                using (FileStream fs = File.OpenRead(dialog.FileName))
-                    bmpSource = new WriteableBitmap(BitmapFrame.Create(fs));
+                BitmapImage bmpSource = LoadImage(dialog.FileName);
+                _add(new AddWindow(this, false, false, bmpSource, IconEntry.GetBitDepth(bmpSource.Format)));
             }
             catch
             {
                 ErrorWindow.Show(this, string.Format(_settings.LanguageFile.ImageLoadError, dialog.FileName));
-                return;
             }
             finally
             {
                 Mouse.OverrideCursor = null;
             }
-
-            _add(new AddWindow(this, false, false, bmpSource, IconBitDepth.Depth32BitsPerPixel));
         }
 
         public static readonly RoutedCommand DuplicateCommand = new RoutedCommand("Duplicate", typeof(MainWindow));

@@ -159,6 +159,8 @@ namespace UIconEdit.Maker
                     rad1bit.IsChecked = true;
                     break;
             }
+
+            Mouse.OverrideCursor = null;
         }
 
         private MainWindow _mainWindow;

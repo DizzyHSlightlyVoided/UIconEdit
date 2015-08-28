@@ -38,7 +38,7 @@
                         <Border BorderThickness="1" Background="{StaticResource TransparentTiles}" HorizontalAlignment="Center" 
                                 BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" MinWidth="56" MinHeight="56">
                             <Image HorizontalAlignment="Center" MaxWidth="48" MaxHeight="48" Margin="2" Source="{Binding Image}"
-                                   Width="{Binding Image.PixelWidth}" Height="{Binding Image.PixelHeight}"/>
+                                   Width="{Binding Width}" Height="{Binding Height}"/>
                         </Border>
                         <TextBlock HorizontalAlignment="Center" Grid.Row="1">
                             <TextBlock.Text>

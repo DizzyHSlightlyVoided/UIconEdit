@@ -63,7 +63,7 @@ namespace UIconEdit.Maker
             if (entry == null) return;
 
             PresentationSource source = PresentationSource.FromVisual((ListedIconPanel)d);
-            double width = source.CompositionTarget.TransformFromDevice.M11 * 64;
+            double width = source.CompositionTarget.TransformToDevice.M11 * 64;
 
             if (entry.Width > IconEntry.MaxBmp || entry.Height > IconEntry.MaxBmp)
                 ((ListedIconPanel)d).chkPng.IsChecked = true;

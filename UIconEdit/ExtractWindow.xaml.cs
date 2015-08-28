@@ -140,8 +140,8 @@ namespace UIconEdit.Maker
             public void Start()
             {
                 PresentationSource source = PresentationSource.FromVisual(_owner);
-                _transformX = source.CompositionTarget.TransformFromDevice.M11;
-                _transformY = source.CompositionTarget.TransformFromDevice.M22;
+                _transformX = source.CompositionTarget.TransformToDevice.M11; //2.0 at 200% zoom
+                _transformY = source.CompositionTarget.TransformToDevice.M22;
 
                 _backgroundWorker.RunWorkerAsync();
             }
@@ -218,7 +218,12 @@ namespace UIconEdit.Maker
                 if (entry == null)
                     throw new InvalidOperationException();
                 _image = entry.GetCombinedAlpha();
+
+                _transformX = transformX;
+                _transformY = transformY;
             }
+
+            private double _transformX, _transformY;
 
             public BitmapSource _image;
             [Bindable(true)]
@@ -231,6 +236,11 @@ namespace UIconEdit.Maker
             public int _count;
             [Bindable(true)]
             public int Count { get { return _count; } }
+
+            public double Width { get { return _image.PixelWidth / _transformX; } }
+
+            [Bindable(true)]
+            public double Height { get { return _image.PixelHeight / _transformY; } }
         }
 
         private static void _handler(IconLoadException e) { }

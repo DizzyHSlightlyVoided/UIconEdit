@@ -321,8 +321,8 @@ namespace UIconEdit.Maker
             int val = (int)w.GetValue(ZoomProperty);
             PresentationSource source = PresentationSource.FromVisual(w);
 
-            w.SetValue(ZoomedWidthPropertyKey, Math.Floor(image.PixelWidth * source.CompositionTarget.TransformToDevice.M11 * (val / 100.0)));
-            w.SetValue(ZoomedHeightPropertyKey, Math.Floor(image.PixelHeight * source.CompositionTarget.TransformToDevice.M22 * (val / 100.0)));
+            w.SetValue(ZoomedWidthPropertyKey, Math.Floor(image.PixelWidth * source.CompositionTarget.TransformFromDevice.M11 * (val / 100.0))); //0.5 at 200% zoom
+            w.SetValue(ZoomedHeightPropertyKey, Math.Floor(image.PixelHeight * source.CompositionTarget.TransformFromDevice.M22 * (val / 100.0)));
             w.SetValue(ZoomScaleModePropertyKey, val >= 100 ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality);
         }
 
@@ -832,6 +832,10 @@ namespace UIconEdit.Maker
 
             double multiplier;
             double width = scrollImage.ActualWidth - padding, height = scrollImage.ActualHeight - padding;
+
+            PresentationSource source = PresentationSource.FromVisual(window);
+            width *= source.CompositionTarget.TransformToDevice.M11;
+            height *= source.CompositionTarget.TransformToDevice.M22;
 
             if (image.PixelWidth > width || image.PixelHeight > height)
             {

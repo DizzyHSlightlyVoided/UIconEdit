@@ -26,7 +26,7 @@
         <CommandBinding Command="NavigationCommands.LastPage" CanExecute="NavForward_CanExecute" Executed="LastPage_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
-        <KeyBinding Key="S" Modifiers="Shift" Command="ApplicationCommands.SaveAs"/>
+        <KeyBinding Key="S" Modifiers="Shift+Ctrl" Command="ApplicationCommands.SaveAs"/>
     </Window.InputBindings>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>

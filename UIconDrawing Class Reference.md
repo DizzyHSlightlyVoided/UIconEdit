@@ -1496,15 +1496,10 @@ Returns the [`IconBitDepth`](#type-public-enum-uicondrawingiconbitdepth) associa
 ## Method: `public static UIconDrawing.IconBitDepth GetBitDepth(System.Drawing.Imaging.PixelFormat pFormat)`
 
 Returns the [`IconBitDepth`](#type-public-enum-uicondrawingiconbitdepth) associated with the specified [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.drawing.imaging.pixelformat.aspx) value.
-* `pFormat`: The [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.drawing.imaging.pixelformat.aspx) to check.
+* `pFormat`: A [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.drawing.imaging.pixelformat.aspx) from which to derive the [`IconBitDepth`](#type-public-enum-uicondrawingiconbitdepth) value.
 
-**Returns:** Type [`IconBitDepth`](#type-public-enum-uicondrawingiconbitdepth): The [`IconBitDepth`](#type-public-enum-uicondrawingiconbitdepth) associated with `pFormat`.
+**Returns:** Type [`IconBitDepth`](#type-public-enum-uicondrawingiconbitdepth): The [`IconBitDepth`](#type-public-enum-uicondrawingiconbitdepth) associated with `pFormat`, based on [`Image.GetPixelFormatSize(Imaging.PixelFormat)`](https://msdn.microsoft.com/en-us/library/system.drawing.image.getpixelformatsize(system.drawing.imaging.pixelformat).aspx); [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0) if the number of bits per pixel is not 1, 4, 8, 24, or 32; or [`IconBitDepth.Depth24BitsPerPixel`](#field-iconbitdepthdepth24bitsperpixel--1) if the pixel format is [`PixelFormat.Format32bppRgb`](https://msdn.microsoft.com/en-us/library/system.drawing.imaging.pixelformat.format32bpprgb.aspx) (because only RGB data is stored in this pixel format, just as with [`PixelFormat.Format24bppRgb`](https://msdn.microsoft.com/en-us/library/system.drawing.imaging.pixelformat.format24bpprgb.aspx)).
 
-
-### Exceptions
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-`pFormat` does not map to an [`IconBitDepth`](#type-public-enum-uicondrawingiconbitdepth) value.
 
 --------------------------------------------------
 ## Method: `public static System.Drawing.Imaging.PixelFormat GetPixelFormat(UIconDrawing.IconBitDepth depth)`

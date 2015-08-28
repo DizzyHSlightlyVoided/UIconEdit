@@ -1131,32 +1131,51 @@ namespace UIconEdit
         /// <summary>
         /// Returns the <see cref="IconBitDepth"/> associated with the specified <see cref="PixelFormat"/> value.
         /// </summary>
-        /// <param name="pFormat">The <see cref="PixelFormat"/> to check.</param>
-        /// <returns>The <see cref="IconBitDepth"/> associated with <paramref name="pFormat"/>.</returns>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="pFormat"/> does not map to an <see cref="IconBitDepth"/> value.
-        /// </exception>
+        /// <param name="pFormat">A <see cref="PixelFormat"/> from which to derive the <see cref="IconBitDepth"/> value.</param>
+        /// <returns>The <see cref="IconBitDepth"/> associated with <paramref name="pFormat"/>, based on <see cref="BitmapSource.GetPixelFormatSize(PixelFormat)"/>;
+        /// <see cref="IconBitDepth.Depth32BitsPerPixel"/> if the number of bits per pixel is not 1, 4, 8, 24, or 32; or
+        /// <see cref="IconBitDepth.Depth24BitsPerPixel"/> if the pixel format is <see cref="PixelFormat.Format32bppRgb"/>
+        /// (because only RGB data is stored in this pixel format, just as with <see cref="PixelFormat.Format24bppRgb"/>).</returns>
         public static IconBitDepth GetBitDepth(PixelFormat pFormat)
+#else
+        /// <summary>
+        /// Returns the <see cref="IconBitDepth"/> associated with the specified <see cref="PixelFormat"/> value.
+        /// </summary>
+        /// <param name="pFormat">A <see cref="PixelFormat"/> from which to derive the <see cref="IconBitDepth"/> value.</param>
+        /// <returns>The <see cref="IconBitDepth"/> associated with <paramref name="pFormat"/>, based on <see cref="PixelFormat.BitsPerPixel"/>;
+        /// <see cref="IconBitDepth.Depth32BitsPerPixel"/> if the number of bits per pixel is not 1, 4, 8, 24, or 32; or
+        /// <see cref="IconBitDepth.Depth24BitsPerPixel"/> if the pixel format is <see cref="PixelFormats.Bgr32"/>
+        /// (because only RGB data is stored in this pixel format, just as with <see cref="PixelFormats.Bgr24"/>).</returns>
+        public static IconBitDepth GetBitDepth(PixelFormat pFormat)
+#endif
         {
-            switch (pFormat)
+#if DRAWING
+            if (pFormat == PixelFormat.Format32bppRgb)
+#else
+            if (pFormat == PixelFormats.Bgr32)
+#endif
+                return IconBitDepth.Depth24BitsPerPixel;
+
+            int bpp =
+#if DRAWING
+                BitmapSource.GetPixelFormatSize(pFormat);
+#else
+                pFormat.BitsPerPixel;
+#endif
+            switch (bpp)
             {
-                case PixelFormat.Format1bppIndexed:
+                case 1:
                     return IconBitDepth.Depth1BitPerPixel;
-                case PixelFormat.Format4bppIndexed:
+                case 4:
                     return IconBitDepth.Depth4BitsPerPixel;
-                case PixelFormat.Format8bppIndexed:
+                case 8:
                     return IconBitDepth.Depth8BitsPerPixel;
-                case PixelFormat.Format24bppRgb:
-                case PixelFormat.Format32bppRgb:
+                case 24:
                     return IconBitDepth.Depth24BitsPerPixel;
-                case PixelFormat.Format32bppArgb:
-                case PixelFormat.Format32bppPArgb:
-                    return IconBitDepth.Depth32BitsPerPixel;
                 default:
-                    throw new ArgumentException("Does not map to a UIconDrawing.IconBitDepth value.", "pFormat");
+                    return IconBitDepth.Depth32BitsPerPixel;
             }
         }
-#endif
 
         /// <summary>
         /// Returns the <see cref="PixelFormat"/> associated with the specified <see cref="IconBitDepth"/>.

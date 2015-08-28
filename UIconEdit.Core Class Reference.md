@@ -1521,6 +1521,15 @@ Returns the [`IconBitDepth`](#type-public-enum-uiconediticonbitdepth) associated
 `value` is not one of the specified parameter values.
 
 --------------------------------------------------
+## Method: `public static UIconEdit.IconBitDepth GetBitDepth(System.Windows.Media.PixelFormat pFormat)`
+
+Returns the [`IconBitDepth`](#type-public-enum-uiconediticonbitdepth) associated with the specified [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformat.aspx) value.
+* `pFormat`: A [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformat.aspx) from which to derive the [`IconBitDepth`](#type-public-enum-uiconediticonbitdepth) value.
+
+**Returns:** Type [`IconBitDepth`](#type-public-enum-uiconediticonbitdepth): The [`IconBitDepth`](#type-public-enum-uiconediticonbitdepth) associated with `pFormat`, based on [`PixelFormat.BitsPerPixel`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformat.bitsperpixel.aspx); [`IconBitDepth.Depth32BitsPerPixel`](#field-iconbitdepthdepth32bitsperpixel--0) if the number of bits per pixel is not 1, 4, 8, 24, or 32; or [`IconBitDepth.Depth24BitsPerPixel`](#field-iconbitdepthdepth24bitsperpixel--1) if the pixel format is [`PixelFormats.Bgr32`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformats.bgr32.aspx) (because only RGB data is stored in this pixel format, just as with [`PixelFormats.Bgr24`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformats.bgr24.aspx)).
+
+
+--------------------------------------------------
 ## Method: `public static System.Windows.Media.PixelFormat GetPixelFormat(UIconEdit.IconBitDepth depth)`
 
 Returns the [`PixelFormat`](https://msdn.microsoft.com/en-us/library/system.windows.media.pixelformat.aspx) associated with the specified [`IconBitDepth`](#type-public-enum-uiconediticonbitdepth).

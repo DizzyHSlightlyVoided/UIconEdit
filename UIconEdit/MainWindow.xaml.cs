@@ -529,7 +529,6 @@ namespace UIconEdit.Maker
             LoadedFile.Entries.Insert(dex, newEntry);
             listbox.SelectedIndex = dex;
             IsModified = true;
-            listbox.ScrollIntoView(listbox.SelectedItem);
             Mouse.OverrideCursor = null;
         }
 
@@ -819,7 +818,7 @@ namespace UIconEdit.Maker
             SetValue(SelectedIndexPropertyKey, listbox.SelectedIndex + 1);
             if (!_settings.KeepHotspotChecked)
                 chkHotspot.IsChecked = false;
-            if (listbox.SelectedIndex < 0)
+            if (listbox.SelectedItem == null)
             {
                 SetValue(IsLoadedAndSelectedPropertyKey, false);
                 return;
@@ -829,6 +828,7 @@ namespace UIconEdit.Maker
             var image = ((IconEntry)listbox.SelectedItem).BaseImage;
 
             SelectZoom(this, scrollImage, image, ZoomProperty, ZoomedWidthPropertyKey, ZoomedHeightPropertyKey, ZoomScaleModePropertyKey);
+            listbox.ScrollIntoView(listbox.SelectedItem);
         }
 
         internal static void SelectZoom(Window window, ScrollViewer scrollImage, BitmapSource image, DependencyProperty ZoomProperty,

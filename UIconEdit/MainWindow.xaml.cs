@@ -193,7 +193,7 @@ namespace UIconEdit.Maker
                 BitmapImage bmpSource = new BitmapImage();
                 bmpSource.BeginInit();
                 bmpSource.CacheOption = BitmapCacheOption.OnLoad;
-                bmpSource.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                bmpSource.CreateOptions = BitmapCreateOptions.PreservePixelFormat | BitmapCreateOptions.IgnoreColorProfile;
                 bmpSource.StreamSource = fs;
                 bmpSource.EndInit();
                 return bmpSource;

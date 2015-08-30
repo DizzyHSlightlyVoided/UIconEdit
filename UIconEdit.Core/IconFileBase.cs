@@ -372,7 +372,7 @@ namespace UIconEdit
 #if DRAWING
                         loadedImage = (Bitmap)Image.FromStream(ms).Clone();
 #else
-                        decoder = new PngBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                        decoder = new PngBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat | BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
 #endif
                     }
                     catch (Exception e)

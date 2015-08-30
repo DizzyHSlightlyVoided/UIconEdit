@@ -419,7 +419,7 @@ namespace UIconEdit
 #if DRAWING
                 return new Icon(ms, width, height);
 #else
-                var returner = new IconBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                var returner = new IconBitmapDecoder(ms, BitmapCreateOptions.PreservePixelFormat | BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
                 foreach (var frame in returner.Frames)
                     frame.Freeze();
 

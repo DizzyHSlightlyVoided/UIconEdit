@@ -104,7 +104,7 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
-        <ToolBar DockPanel.Dock="Top" Height="Auto">
+        <ToolBar DockPanel.Dock="Top" Height="Auto" ToolBarTray.IsLocked="true">
             <Button Command="ApplicationCommands.New" ToolTip="{Binding SettingsFile.LanguageFile.ButtonTipNew, ElementName=window, FallbackValue=New}">
                 <Image Source="Resources\New_24x24.png" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
             </Button>

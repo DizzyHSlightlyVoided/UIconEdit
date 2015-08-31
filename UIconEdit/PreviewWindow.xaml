@@ -11,7 +11,7 @@
         <local:ScaleFilterConverter x:Key="ScaleFilterConverter"/>
     </Window.Resources>
     <DockPanel>
-        <ToolBar DockPanel.Dock="Top" Height="Auto">
+        <ToolBar DockPanel.Dock="Top" Height="Auto" ToolBarTray.IsLocked="true">
             <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.AlphaThreshold, ElementName=window,FallbackValue='Alpha Threshold:'}"
                        VerticalAlignment="Center"/>
             <Border VerticalAlignment="Center" Margin="5,0,0,0">

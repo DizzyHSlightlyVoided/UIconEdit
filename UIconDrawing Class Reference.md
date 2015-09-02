@@ -2839,14 +2839,203 @@ A delegate function to perform on each cursor or icon extracted from a DLL or EX
 Represents an animated cursor file.
 
 --------------------------------------------------
+## Constructor: `public AnimatedCursorFile()`
+
+Initializes a new [`AnimatedCursorFile`](#type-public-class-uicondrawinganimatedcursorfile) instance.
+
+--------------------------------------------------
+## Method: `public static UIconDrawing.AnimatedCursorFile Load(System.IO.Stream input, UIconDrawing.IconExtractExceptionHandler handler)`
+
+Loads an animated cursor file from the specified stream.
+* `input`: The stream containing the animated cursor file to load.
+* `handler`: An error handler for loading the individual cursor files, or `null` to always throw an exception.
+
+**Returns:** Type [`AnimatedCursorFile`](#type-public-class-uicondrawinganimatedcursorfile): A loaded [`AnimatedCursorFile`](#type-public-class-uicondrawinganimatedcursorfile).
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`input` is `null`.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`input` is closed.
+
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`input` is closed.
+
+##### [`IconExtractException`](#type-public-class-uicondrawingiconextractexception)
+An error occurred when loading the animated cursor file.
+
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
+An error occurred when loading the animated cursor file.
+
+--------------------------------------------------
+## Method: `public static UIconDrawing.AnimatedCursorFile Load(System.IO.Stream input)`
+
+Loads an animated cursor file from the specified stream.
+* `input`: The stream containing the animated cursor file to load.
+
+**Returns:** Type [`AnimatedCursorFile`](#type-public-class-uicondrawinganimatedcursorfile): A loaded [`AnimatedCursorFile`](#type-public-class-uicondrawinganimatedcursorfile).
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`input` is `null`.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`input` is closed.
+
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+`input` is closed.
+
+##### [`IconExtractException`](#type-public-class-uicondrawingiconextractexception)
+An error occurred when loading the animated cursor file.
+
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
+An error occurred when loading the animated cursor file.
+
+--------------------------------------------------
+## Method: `public static UIconDrawing.AnimatedCursorFile Load(System.String path, UIconDrawing.IconExtractExceptionHandler handler)`
+
+Loads an [`AnimatedCursorFile`](#type-public-class-uicondrawinganimatedcursorfile) from the specified path.
+* `path`: The path to a cursor file.
+* `handler`: An error handler for loading the individual cursor files, or `null` to always throw an exception.
+
+**Returns:** Type [`AnimatedCursorFile`](#type-public-class-uicondrawinganimatedcursorfile): An [`IconFileBase`](#type-public-abstract-class-uicondrawingiconfilebase) implementation loaded from `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`Path.GetInvalidPathChars()`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
+
+##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
+The specified path, filename, or both contain the system-defined maximum length.
+
+##### [`FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx)
+The specified path was not found.
+
+##### [`DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx)
+The specified path was invalid.
+
+##### [`UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx)
+
+`path` specified a directory.
+
+-OR-
+
+The caller does not have the required permission.
+
+
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+`path` is in an invalid format.
+
+##### [`IconExtractException`](#type-public-class-uicondrawingiconextractexception)
+An error occurred when loading the animated cursor file.
+
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
+An error occurred when loading the animated cursor file.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public static UIconDrawing.AnimatedCursorFile Load(System.String path)`
+
+Loads an [`AnimatedCursorFile`](#type-public-class-uicondrawinganimatedcursorfile) from the specified path.
+* `path`: The path to a cursor file.
+
+**Returns:** Type [`AnimatedCursorFile`](#type-public-class-uicondrawinganimatedcursorfile): An [`IconFileBase`](#type-public-abstract-class-uicondrawingiconfilebase) implementation loaded from `path`.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`Path.GetInvalidPathChars()`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
+
+##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
+The specified path, filename, or both contain the system-defined maximum length.
+
+##### [`FileNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.filenotfoundexception.aspx)
+The specified path was not found.
+
+##### [`DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx)
+The specified path was invalid.
+
+##### [`UnauthorizedAccessException`](https://msdn.microsoft.com/en-us/library/system.unauthorizedaccessexception.aspx)
+
+`path` specified a directory.
+
+-OR-
+
+The caller does not have the required permission.
+
+
+##### [`NotSupportedException`](https://msdn.microsoft.com/en-us/library/system.notsupportedexception.aspx)
+`path` is in an invalid format.
+
+##### [`IconLoadException`](#type-public-class-uicondrawingiconloadexception)
+An error occurred when processing the cursor file's format.
+
+##### [`FileFormatException`](https://msdn.microsoft.com/en-us/library/system.io.fileformatexception.aspx)
+An error occurred when processing the cursor file's format.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
 ## Property: `public System.Collections.ObjectModel.ObservableCollection<T> Entries { get; }`
 
 Gets a list of [`IconFileBase`](#type-public-abstract-class-uicondrawingiconfilebase) objects containing all entries in the animated cursor file.
 
 --------------------------------------------------
-## Property: `public System.Collections.ObjectModel.ObservableCollection<T> Frames { get; }`
+## Property: `public System.Collections.ObjectModel.ObservableCollection<T> FrameIndices { get; }`
 
-Gets a list containing all frame information in the current instance.
+Gets the ordering of the frames, as indices within [`AnimatedCursorFile.Entries`](#property-public-systemcollectionsobjectmodelobservablecollectiont-entries--get-).
+
+--------------------------------------------------
+## Property: `public System.Int32 DisplayRate { get; set; }`
+
+Gets and sets the default display rate, in "jiffies" (1/60 of a second).
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value is less than or equal to 0.
+
+--------------------------------------------------
+## Property: `public System.String CursorName { get; set; }`
+
+Gets the name of the animated cursor file.
+
+--------------------------------------------------
+## Property: `public System.String CursorAuthor { get; set; }`
+
+Gets the author of the animated cursor file.
+
+--------------------------------------------------
+## PropertyChanged`
+
+Raised when a property on the current instance changes.
+
+--------------------------------------------------
+## Method: `protected void OnPropertyChanged(System.String propertyName)`
+
+Raises the [`AnimatedCursorFile.PropertyChanged`](#propertychanged-1) event.
+* `propertyName`: The name of the property which was changed.
+
+--------------------------------------------------
+## Disposed`
+
+Raised when the current instance is disposed.
 
 --------------------------------------------------
 ## Property: `public System.Boolean IsDisposed { get; }`
@@ -2859,54 +3048,54 @@ Gets a value indicating whether the current instance has been disposed.
 Immediately releases all resources used by the current instance.
 
 --------------------------------------------------
-## Disposed`
+# Type: `public class UIconDrawing.AnimatedCursorFrame`
 
-Raised when the current instance is disposed.
-
---------------------------------------------------
-# Type: `public struct UIconDrawing.AnimatedCursorFrame`
-
-Represents a single frame of an animated cursor.
+Represents rate information for a single frame of an animated cursor.
 
 --------------------------------------------------
-## Constructor: `public AnimatedCursorFrame(System.Int32 index, System.Int32 jiffies)`
+## Constructor: `public AnimatedCursorFrame(UIconDrawing.CursorFile file, System.Int32 jiffies)`
 
 Creates a new instance with the specified values.
-* `index`: The index of the frame in [`AnimatedCursorFile.Entries`](#property-public-systemcollectionsobjectmodelobservablecollectiont-entries--get-).
+* `file`: The cursor file associated with the current instance.
 * `jiffies`: The delay before displaying the next frame in the animated cursor, in "jiffies" (1/60 of a second).
 
 ### Exceptions
 
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`file` is `null`.
+
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` or `jiffies` are less than 0.
+`jiffies` is less than 0.
 
 --------------------------------------------------
-## Constructor: `public AnimatedCursorFrame(System.Int32 index, System.TimeSpan length)`
+## Constructor: `public AnimatedCursorFrame(UIconDrawing.CursorFile file, System.TimeSpan length)`
 
 Creates a new instance with the specified values.
-* `index`: The index of the frame in [`AnimatedCursorFile.Entries`](#property-public-systemcollectionsobjectmodelobservablecollectiont-entries--get-).
+* `file`: The cursor file associated with the current instance.
 * `length`: The delay before displaying the next frame in the animated cursor. Fitted to the nearest "jiffy" (1/60 of a second).
 
 ### Exceptions
 
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`file` is `null`.
+
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-
-`index` is less than 0.
-
--OR-
-
-`length` is less than [`TimeSpan.Zero`](https://msdn.microsoft.com/en-us/library/system.timespan.zero.aspx).
-
+`length` is less than [`TimeSpan.Zero`](https://msdn.microsoft.com/en-us/library/system.timespan.zero.aspx), or represents a number of [`AnimatedCursorFrame.Jiffies`](#property-public-systemint32-jiffies--get-set-) greater than [`Int32.MaxValue`](https://msdn.microsoft.com/en-us/library/system.int32.maxvalue.aspx).
 
 --------------------------------------------------
-## Property: `public System.Int32 Index { get; set; }`
+## PropertyChanged`
 
-Gets and sets the index of the frame in [`AnimatedCursorFile.Entries`](#property-public-systemcollectionsobjectmodelobservablecollectiont-entries--get-).
+Raised when a property on the current instance changes.
+
+--------------------------------------------------
+## Property: `public UIconDrawing.CursorFile File { get; set; }`
+
+Gets and sets the cursor file associated with the current instance.
 
 ### Exceptions
 
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than 0.
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+In a set operation, the specified value is `null`.
 
 --------------------------------------------------
 ## Property: `public System.Int32 Jiffies { get; set; }`
@@ -2926,57 +3115,4 @@ Gets and sets the delay before displaying the next frame in the animated cursor.
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`TimeSpan.Zero`](https://msdn.microsoft.com/en-us/library/system.timespan.zero.aspx).
-
---------------------------------------------------
-## Method: `public System.String ToString()`
-
-Returns a string representation of the current instance.
-
-**Returns:** Type [`String`](https://msdn.microsoft.com/en-us/library/system.string.aspx): A string representation of the current instance.
-
-
---------------------------------------------------
-## Method: `public System.Boolean Equals(UIconDrawing.AnimatedCursorFrame other)`
-
-Determines if the current instance is equal to the specified other [`AnimatedCursorFrame`](#type-public-struct-uicondrawinganimatedcursorframe) value.
-* `other`: The other [`AnimatedCursorFrame`](#type-public-struct-uicondrawinganimatedcursorframe) to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the current instance is equal to `other`; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `public System.Boolean Equals(System.Object obj)`
-
-Determines if the current instance is equal to the specified other object.
-* `obj`: The other objecto compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the current instance is equal to `obj`; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `public System.Int32 GetHashCode()`
-
-Returns the hash code for the current value.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The hash code for the current value.
-
-
---------------------------------------------------
-## Operator: `public static System.Boolean op_Equality(UIconDrawing.AnimatedCursorFrame a1, UIconDrawing.AnimatedCursorFrame a2)`
-
-Determines equality of two [`AnimatedCursorFrame`](#type-public-struct-uicondrawinganimatedcursorframe) objects.
-* `a1`: An [`AnimatedCursorFrame`](#type-public-struct-uicondrawinganimatedcursorframe) to compare.
-* `a2`: An [`AnimatedCursorFrame`](#type-public-struct-uicondrawinganimatedcursorframe) to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `a1` is equal to `a2`; `false` otherwise.
-
-
---------------------------------------------------
-## Operator: `public static System.Boolean op_Inequality(UIconDrawing.AnimatedCursorFrame a1, UIconDrawing.AnimatedCursorFrame a2)`
-
-Determines inequality of two [`AnimatedCursorFrame`](#type-public-struct-uicondrawinganimatedcursorframe) objects.
-* `a1`: An [`AnimatedCursorFrame`](#type-public-struct-uicondrawinganimatedcursorframe) to compare.
-* `a2`: An [`AnimatedCursorFrame`](#type-public-struct-uicondrawinganimatedcursorframe) to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `a1` is not equal to `a2`; `false` otherwise.
+In a set operation, the specified value is less than [`TimeSpan.Zero`](https://msdn.microsoft.com/en-us/library/system.timespan.zero.aspx), or represents a number of [`AnimatedCursorFrame.Jiffies`](#property-public-systemint32-jiffies--get-set-) greater than [`Int32.MaxValue`](https://msdn.microsoft.com/en-us/library/system.int32.maxvalue.aspx).

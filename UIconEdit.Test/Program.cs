@@ -29,7 +29,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
-using System.IO;
 
 #if DRAWING
 using System.Drawing;
@@ -37,6 +36,7 @@ using System.Drawing.Imaging;
 
 namespace UIconDrawing.Test
 #else
+using System.IO;
 using System.Windows.Media.Imaging;
 
 namespace UIconEdit.Test
@@ -56,13 +56,31 @@ namespace UIconEdit.Test
 
                     IconBitDepth result;
                     if (IconEntry.TryParseBitDepth(str, out result))
-                    {
                         Console.WriteLine("Succeeded! BitDepth." + result);
-                    }
                     else Console.WriteLine("Failed!");
                 }
                 Wait();
             }
+
+            Console.WriteLine("Loading file WobbleArrow.ani ...");
+#if DRAWING
+            using (AnimatedCursorFile aniFile = AnimatedCursorFile.Load("WobbleArrow.ani"))
+            {
+#else
+            {
+                AnimatedCursorFile aniFile = AnimatedCursorFile.Load("WobbleArrow.ani");
+#endif
+                Console.WriteLine("Number of frames: " + aniFile.Entries.Count);
+                Console.WriteLine("Base length: " + aniFile.Entries.Count);
+
+                for (int i = 0; i < aniFile.Entries.Count; i++)
+                {
+                    var curEntry = aniFile.Entries[i];
+                    Console.WriteLine(" {0}: {1} jiffies ({2})", i, curEntry.Jiffies, curEntry.Length);
+                }
+                Wait();
+            }
+
             Console.WriteLine("Loading file Gradient.ico ...");
 #if DRAWING
             using (IconFile iconFile = IconFile.Load("Gradient.ico"))
@@ -77,6 +95,7 @@ namespace UIconEdit.Test
                 iconFile.Save("GradientOut.ico");
             }
             Console.WriteLine("Completed!");
+
             Console.WriteLine("Loading file Crosshair.cur ...");
 #if DRAWING
             using (CursorFile cursorFile = CursorFile.Load("Crosshair.cur"))

@@ -242,7 +242,7 @@ namespace UIconEdit
 #if DRAWING
                     file._rate = displayRate;
 #else
-                    file.DisplayRate = displayRate;
+                    file.DisplayRateJiffies = displayRate;
 #endif
                     uint flags = reader.ReadUInt32();
 
@@ -294,15 +294,18 @@ namespace UIconEdit
                                         iconFile.Dispose();
 #endif
                                     }
-                                    frames[i] = new AnimatedCursorFrame(cursorFile, displayRate);
+                                    frames[i] = new AnimatedCursorFrame(cursorFile);
                                 }
-                                catch (IconLoadException e)
+                                //catch (IconLoadException e)
+                                //{
+                                //    throw new IconExtractException(e, i);
+                                //}
+                                //catch (Exception e)
+                                //{
+                                //    throw new IconExtractException(e, IconTypeCode.Unknown, i);
+                                //}
+                                finally
                                 {
-                                    throw new IconExtractException(e, i);
-                                }
-                                catch (Exception e)
-                                {
-                                    throw new IconExtractException(e, IconTypeCode.Unknown, i);
                                 }
                             }
                         }
@@ -345,7 +348,8 @@ namespace UIconEdit
                             int curRate = reader.ReadInt32();
                             if (curRate <= 0)
                                 throw new FileFormatException(string.Format("Invalid rate at entry {0}: {1}", i, curRate));
-                            frames[i].Jiffies = curRate;
+                            if (curRate != displayRate)
+                                frames[i].LengthJiffies = curRate;
                         }
                     }
                 }
@@ -596,17 +600,65 @@ namespace UIconEdit
         public ObservableCollection<int> FrameIndices { get { return _frames; } }
         #endregion
 
-        #region DisplayRate
+        internal static TimeSpan JiffiesToTime(int jiffies, string paramName)
+        {
+            if (jiffies < 1) throw new ArgumentOutOfRangeException(paramName);
+            return TimeSpan.FromSeconds(jiffies / 60.0);
+        }
+
+        /// <summary>
+        /// Converts the specified number of "jiffies" (1/60 of a second) to its corresponding <see cref="TimeSpan"/> value.
+        /// </summary>
+        /// <param name="jiffies">The number of jiffies to convert.</param>
+        /// <returns>A <see cref="TimeSpan"/> with a <see cref="TimeSpan.TotalSeconds"/> value equal to <paramref name="jiffies"/> divided by 60.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="jiffies"/> is less than or equal to 0.
+        /// </exception>
+        public static TimeSpan JiffiesToTime(int jiffies)
+        {
+            return JiffiesToTime(jiffies, "jiffies");
+        }
+
+        internal static int TimeToJiffies(TimeSpan value, string paramName)
+        {
+            if (value <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(paramName);
+            double jiffies = Math.Floor(value.TotalSeconds * 60);
+
+            if (jiffies <= 0 || jiffies > int.MaxValue)
+                throw new ArgumentOutOfRangeException(paramName);
+
+            return (int)jiffies;
+        }
+
+        /// <summary>
+        /// Converts the specified <see cref="TimeSpan"/> to its equivalent number of "jiffies" (1/60 of a second).
+        /// </summary>
+        /// <param name="value">The <see cref="TimeSpan"/> to convert.</param>
+        /// <returns>A number of jiffies equal to <paramref name="value"/>'s <see cref="TimeSpan.TotalSeconds"/> multiplied by 60.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="value"/> translates to a number of jiffies less than or equal to 0, or greater than <see cref="int.MaxValue"/>.
+        /// </exception>
+        public static int TimeToJiffies(TimeSpan value)
+        {
+            return TimeToJiffies(value, "value");
+        }
+
+        #region DisplayRateJiffies
 #if DRAWING
-        private int _rate = 1;
+        private int _rate = 10;
 #else
         /// <summary>
-        /// The dependency property for the <see cref="DisplayRate"/> property.
+        /// The dependency property for the <see cref="DisplayRateJiffies"/> property.
         /// </summary>
-        public static readonly DependencyProperty DisplayRateProperty = DependencyProperty.Register("DisplayRate", typeof(int), typeof(AnimatedCursorFile),
-            new PropertyMetadata(1, null, DisplayRateCoerce));
+        public static readonly DependencyProperty DisplayRateJiffiesProperty = DependencyProperty.Register("DisplayRateJiffies", typeof(int), typeof(AnimatedCursorFile),
+            new PropertyMetadata(10, DisplayRateJiffiesChanged, JiffiesCoerce));
 
-        private static object DisplayRateCoerce(DependencyObject d, object baseValue)
+        private static void DisplayRateJiffiesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            d.SetValue(DisplayRateTimeProperty, JiffiesToTime((int)e.NewValue));
+        }
+
+        internal static object JiffiesCoerce(DependencyObject d, object baseValue)
         {
             int value = (int)baseValue;
             if (value <= 0) return 1;
@@ -614,17 +666,17 @@ namespace UIconEdit
         }
 #endif
         /// <summary>
-        /// Gets and sets the default display rate, in "jiffies" (1/60 of a second).
+        /// Gets and sets the default delay before displaying the next frame, in "jiffies" (1/60 of a second).
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
         /// In a set operation, the specified value is less than or equal to 0.
         /// </exception>
-        public int DisplayRate
+        public int DisplayRateJiffies
         {
 #if DRAWING
             get { return _rate; }
 #else
-            get { return (int)GetValue(DisplayRateProperty); }
+            get { return (int)GetValue(DisplayRateJiffiesProperty); }
 #endif
             set
             {
@@ -632,13 +684,61 @@ namespace UIconEdit
 #if DRAWING
                 _rate = value;
 
-                OnPropertyChanged("DisplayRate");
+                OnPropertyChanged("DisplayRateJiffies");
+                OnPropertyChanged("DisplayRateTime");
 #else
-                SetValue(DisplayRateProperty, value);
+                SetValue(DisplayRateJiffiesProperty, value);
 #endif
             }
         }
         #endregion
+
+#if !DRAWING
+        /// <summary>
+        /// The dependency property for the <see cref="DisplayRateTime"/> property.
+        /// </summary>
+        public static readonly DependencyProperty DisplayRateTimeProperty = DependencyProperty.Register("DisplayRateTime", typeof(TimeSpan), typeof(AnimatedCursorFile),
+            new PropertyMetadata(TimeSpan.FromSeconds(10 / 60.0), DisplayRateTimeChanged, TimeCoerce));
+
+        private static void DisplayRateTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            d.SetValue(DisplayRateJiffiesProperty, TimeToJiffies((TimeSpan)e.NewValue));
+        }
+
+        internal static object TimeCoerce(DependencyObject d, object baseValue)
+        {
+            TimeSpan value = (TimeSpan)baseValue;
+
+            if (value < TimeSpan.Zero)
+                return TimeSpan.Zero;
+            var seconds = value.TotalSeconds * 60;
+
+            if (seconds > int.MaxValue)
+                return TimeSpan.FromSeconds(int.MaxValue / 60.0);
+
+            return TimeSpan.FromSeconds((int)(seconds / 60));
+        }
+#endif
+        /// <summary>
+        /// Gets and sets the default delay before displaying the next frame. Fitted to the nearest "jiffy" (1/60 of a second).
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// In a set operation, the specified value translates to a number of jiffies less than or equal to 0 or greater than <see cref="int.MaxValue"/>
+        /// </exception>
+        public TimeSpan DisplayRateTime
+        {
+#if DRAWING
+            get { return JiffiesToTime(_rate); }
+            set { DisplayRateJiffies = TimeToJiffies(value, null); }
+#else
+            get { return (TimeSpan)GetValue(DisplayRateTimeProperty); }
+            set
+            {
+                TimeToJiffies(value, null);
+                SetValue(DisplayRateTimeProperty, value);
+            }
+#endif
+        }
 
         #region CursorName
 #if DRAWING
@@ -769,6 +869,19 @@ namespace UIconEdit
 #endif
     {
         /// <summary>
+        /// Creates a new instance with the specified cursor file.
+        /// </summary>
+        /// <param name="file">The cursor file associated with the current instance.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="file"/> is <c>null</c>.
+        /// </exception>
+        public AnimatedCursorFrame(CursorFile file)
+        {
+            if (file == null) throw new ArgumentNullException("file");
+            _file = file;
+        }
+
+        /// <summary>
         /// Creates a new instance with the specified values.
         /// </summary>
         /// <param name="file">The cursor file associated with the current instance.</param>
@@ -783,11 +896,11 @@ namespace UIconEdit
         {
             if (file == null) throw new ArgumentNullException("file");
             if (jiffies < 0) throw new ArgumentOutOfRangeException("jiffies");
-#if DRAWING
             _file = file;
+#if DRAWING
             _jiffies = jiffies;
 #else
-            SetValue(JiffiesProperty, jiffies);
+            SetValue(LengthJiffiesProperty, jiffies);
 #endif
         }
 
@@ -801,16 +914,18 @@ namespace UIconEdit
         /// <paramref name="file"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="length"/> is less than <see cref="TimeSpan.Zero"/>, or represents a number of <see cref="Jiffies"/> greater than <see cref="int.MaxValue"/>.
+        /// <paramref name="length"/> is less than <see cref="TimeSpan.Zero"/>, or represents a number of "jiffies" (1/60 of a second)
+        /// greater than <see cref="int.MaxValue"/>.
         /// </exception>
         public AnimatedCursorFrame(CursorFile file, TimeSpan length)
         {
             if (file == null) throw new ArgumentNullException("file");
-            _setLength("length", length);
-#if DRAWING
+            int jiffies = AnimatedCursorFile.TimeToJiffies(length, "length");
             _file = file;
+#if DRAWING
+            _jiffies = jiffies;
 #else
-            SetValue(FileProperty, file);
+            SetValue(LengthJiffiesProperty, jiffies);
 #endif
         }
 
@@ -819,7 +934,7 @@ namespace UIconEdit
         /// Raised when a property on the current instance changes.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-        
+
         private void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
@@ -828,91 +943,72 @@ namespace UIconEdit
 #endif
 
         #region File
-#if DRAWING
-        private CursorFile _file;
-#else
-        /// <summary>
-        /// Dependency property for the <see cref="File"/> property.
-        /// </summary>
-        public static readonly DependencyProperty FileProperty = DependencyProperty.Register("File", typeof(CursorFile), typeof(AnimatedCursorFrame),
-            new PropertyMetadata(new CursorFile()), FileValidate);
-
-        private static bool FileValidate(object value)
-        {
-            return value != null;
-        }
-#endif
+        private readonly CursorFile _file;
         /// <summary>
         /// Gets and sets the cursor file associated with the current instance.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// In a set operation, the specified value is <c>null</c>.
         /// </exception>
+#if !DRAWING
+        [Bindable(true)]
+#endif
         public CursorFile File
         {
-#if DRAWING
             get { return _file; }
-#else
-            get { return (CursorFile)GetValue(FileProperty); }
-#endif
-            set
-            {
-                if (value == null) throw new ArgumentNullException();
-#if DRAWING
-                _file = value;
-                OnPropertyChanged("CursorFile");
-#else
-                SetValue(FileProperty, value);
-#endif
-            }
         }
         #endregion
 
         #region Jiffies
 #if DRAWING
-        private int _jiffies;
+        private int? _jiffies;
 #else
         /// <summary>
-        /// Dependency property for the <see cref="Jiffies"/> property.
+        /// Dependency property for the <see cref="LengthJiffies"/> property.
         /// </summary>
-        public static readonly DependencyProperty JiffiesProperty = DependencyProperty.Register("Jiffies", typeof(int), typeof(AnimatedCursorFrame),
-            new PropertyMetadata(1, JiffiesChanged, JiffiesCoerce));
+        public static readonly DependencyProperty LengthJiffiesProperty = DependencyProperty.Register("LengthJiffies", typeof(int?), typeof(AnimatedCursorFrame),
+            new PropertyMetadata(default(int?), LengthJiffiesChanged, LengthJiffiesCoerce));
 
-        private static void JiffiesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void LengthJiffiesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            int newVal = (int)e.NewValue;
-            d.SetValue(LengthProperty, TimeSpan.FromSeconds(newVal / 60.0));
+            int? newVal = (int)e.NewValue;
+            d.SetValue(LengthProperty, newVal.HasValue ? AnimatedCursorFile.JiffiesToTime(newVal.Value) : default(TimeSpan?));
         }
 
-        private static object JiffiesCoerce(DependencyObject d, object baseValue)
+        private static object LengthJiffiesCoerce(DependencyObject d, object baseValue)
         {
-            int value = (int)baseValue;
-            if (value < 1) return 1;
-            return baseValue;
+            int? value = (int?)baseValue;
+
+            if (!value.HasValue) return value;
+
+            value = (int)AnimatedCursorFile.JiffiesCoerce(d, value.Value);
+
+            return value;
         }
 #endif
         /// <summary>
-        /// Gets and sets the delay before displaying the next frame in the animated cursor, in "jiffies" (1/60 of a second).
+        /// Gets and sets the delay before displaying the next frame in the animated cursor, in "jiffies" (1/60 of a second),
+        /// or <c>null</c> to use the animated cursor file's <see cref="AnimatedCursorFile.DisplayRateJiffies"/> value.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than 0.
+        /// In a set operation, the specified value is not <c>null</c> and is less than 0.
         /// </exception>
-        public int Jiffies
+        public int? LengthJiffies
         {
 #if DRAWING
             get { return _jiffies; }
 #else
-            get { return (int)GetValue(JiffiesProperty); }
+            get { return (int?)GetValue(LengthJiffiesProperty); }
 #endif
             set
             {
-                if (value < 0) throw new ArgumentOutOfRangeException();
+                if (value.HasValue && value.Value < 0) throw new ArgumentOutOfRangeException();
 #if DRAWING
                 _jiffies = value;
                 OnPropertyChanged("Jiffies");
                 OnPropertyChanged("Length");
 #else
-                SetValue(JiffiesProperty, value);
+                SetValue(LengthJiffiesProperty, value);
 #endif
             }
         }
@@ -921,56 +1017,56 @@ namespace UIconEdit
         #region Length
 #if !DRAWING
         /// <summary>
-        /// Dependency property for the <see cref="Length"/> property.
+        /// Dependency property for the <see cref="LengthTime"/> property.
         /// </summary>
-        public static readonly DependencyProperty LengthProperty = DependencyProperty.Register("Length", typeof(TimeSpan), typeof(AnimatedCursorFrame),
-            new PropertyMetadata(TimeSpan.FromSeconds(1 / 60.0), LengthChanged, LengthCoerce));
+        public static readonly DependencyProperty LengthProperty = DependencyProperty.Register("LengthTime", typeof(TimeSpan?), typeof(AnimatedCursorFrame),
+            new PropertyMetadata(default(TimeSpan), LengthTimeChanged, LengthTimeCoerce));
 
-        private static void LengthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void LengthTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            TimeSpan? newVal = (TimeSpan?)e.NewValue;
+
+            d.SetValue(LengthJiffiesProperty, newVal.HasValue ? AnimatedCursorFile.TimeToJiffies(newVal.Value) : default(int?));
         }
 
-        private static object LengthCoerce(DependencyObject d, object baseValue)
+        private static object LengthTimeCoerce(DependencyObject d, object baseValue)
         {
-            TimeSpan value = (TimeSpan)baseValue;
+            TimeSpan? value = (TimeSpan?)baseValue;
 
-            if (value < TimeSpan.Zero)
-                return TimeSpan.Zero;
-            var tLength = value.TotalSeconds * 60;
+            if (!value.HasValue) return value;
 
-            if (tLength > int.MaxValue)
-                return TimeSpan.FromSeconds(int.MaxValue / 60.0);
+            value = (TimeSpan)AnimatedCursorFile.TimeCoerce(d, value.Value);
 
-            return TimeSpan.FromSeconds((int)(tLength / 60));
+            return value;
         }
 #endif
         /// <summary>
-        /// Gets and sets the delay before displaying the next frame in the animated cursor.
+        /// Gets and sets the delay before displaying the next frame in the animated cursor, or <c>null</c> to use the
+        /// animated cursor file's <see cref="AnimatedCursorFile.DisplayRateTime"/> property.
         /// Fitted to the nearest "jiffy" (1/60 of a second).
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is less than <see cref="TimeSpan.Zero"/>,
-        /// or represents a number of <see cref="Jiffies"/> greater than <see cref="int.MaxValue"/>.
+        /// In a set operation, the specified value is not <c>null</c>, and is less than <see cref="TimeSpan.Zero"/>
+        /// or represents a number of <see cref="LengthJiffies"/> greater than <see cref="int.MaxValue"/>.
         /// </exception>
-        public TimeSpan Length
+        public TimeSpan? LengthTime
         {
 #if DRAWING
-            get { return TimeSpan.FromSeconds(_jiffies / 60.0); }
+            get
+            {
+                if (_jiffies.HasValue)
+                    return TimeSpan.FromSeconds(_jiffies.Value / 60.0);
+                return null;
+            }
+            set { LengthJiffies = value.HasValue ? AnimatedCursorFile.TimeToJiffies(value.Value, null) : default(int?); }
 #else
-            get { return (TimeSpan)GetValue(JiffiesProperty); }
-#endif
-            set { _setLength(null, value); }
-        }
-
-        private void _setLength(string paramName, TimeSpan value)
-        {
-            if (value < TimeSpan.Zero || (value.TotalSeconds * 60) > int.MaxValue)
-                throw new ArgumentOutOfRangeException(paramName);
-#if DRAWING
-            _jiffies = (int)value.TotalSeconds * 60;
-#else
-            SetValue(JiffiesProperty, value);
+            get { return (TimeSpan?)GetValue(LengthJiffiesProperty); }
+            set
+            {
+                if (value.HasValue)
+                    AnimatedCursorFile.TimeToJiffies(value.Value, null);
+                SetValue(LengthJiffiesProperty, value);
+            }
 #endif
         }
         #endregion

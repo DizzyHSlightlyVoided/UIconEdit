@@ -70,13 +70,16 @@ namespace UIconEdit.Test
             {
                 AnimatedCursorFile aniFile = AnimatedCursorFile.Load("WobbleArrow.ani");
 #endif
+                Console.WriteLine("Base display rate: {0} jiffies ({1})", aniFile.DisplayRateJiffies, aniFile.DisplayRateTime);
                 Console.WriteLine("Number of frames: " + aniFile.Entries.Count);
-                Console.WriteLine("Base length: " + aniFile.Entries.Count);
 
                 for (int i = 0; i < aniFile.Entries.Count; i++)
                 {
                     var curEntry = aniFile.Entries[i];
-                    Console.WriteLine(" {0}: {1} jiffies ({2})", i, curEntry.Jiffies, curEntry.Length);
+                    if (curEntry.LengthJiffies.HasValue)
+                        Console.WriteLine(" {0}: {1} jiffies ({2})", i, curEntry.LengthJiffies, curEntry.LengthTime);
+                    else
+                        Console.WriteLine(" {0}: default display rate", i);
                 }
                 Wait();
             }

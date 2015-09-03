@@ -3002,14 +3002,52 @@ Gets a list of [`IconFileBase`](#type-public-abstract-class-uicondrawingiconfile
 Gets the ordering of the frames, as indices within [`AnimatedCursorFile.Entries`](#property-public-systemcollectionsobjectmodelobservablecollectiont-entries--get-).
 
 --------------------------------------------------
-## Property: `public System.Int32 DisplayRate { get; set; }`
+## Method: `public static System.TimeSpan JiffiesToTime(System.Int32 jiffies)`
 
-Gets and sets the default display rate, in "jiffies" (1/60 of a second).
+Converts the specified number of "jiffies" (1/60 of a second) to its corresponding [`TimeSpan`](https://msdn.microsoft.com/en-us/library/system.timespan.aspx) value.
+* `jiffies`: The number of jiffies to convert.
+
+**Returns:** Type [`TimeSpan`](https://msdn.microsoft.com/en-us/library/system.timespan.aspx): A [`TimeSpan`](https://msdn.microsoft.com/en-us/library/system.timespan.aspx) with a [`TimeSpan.TotalSeconds`](https://msdn.microsoft.com/en-us/library/system.timespan.totalseconds.aspx) value equal to `jiffies` divided by 60.
+
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`jiffies` is less than or equal to 0.
+
+--------------------------------------------------
+## Method: `public static System.Int32 TimeToJiffies(System.TimeSpan value)`
+
+Converts the specified [`TimeSpan`](https://msdn.microsoft.com/en-us/library/system.timespan.aspx) to its equivalent number of "jiffies" (1/60 of a second).
+* `value`: The [`TimeSpan`](https://msdn.microsoft.com/en-us/library/system.timespan.aspx) to convert.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): A number of jiffies equal to `value`'s [`TimeSpan.TotalSeconds`](https://msdn.microsoft.com/en-us/library/system.timespan.totalseconds.aspx) multiplied by 60.
+
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`value` translates to a number of jiffies less than or equal to 0, or greater than [`Int32.MaxValue`](https://msdn.microsoft.com/en-us/library/system.int32.maxvalue.aspx).
+
+--------------------------------------------------
+## Property: `public System.Int32 DisplayRateJiffies { get; set; }`
+
+Gets and sets the default delay before displaying the next frame, in "jiffies" (1/60 of a second).
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
 In a set operation, the specified value is less than or equal to 0.
+
+--------------------------------------------------
+## Property: `public System.TimeSpan DisplayRateTime { get; set; }`
+
+Gets and sets the default delay before displaying the next frame. Fitted to the nearest "jiffy" (1/60 of a second).
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+In a set operation, the specified value translates to a number of jiffies less than or equal to 0 or greater than [`Int32.MaxValue`](https://msdn.microsoft.com/en-us/library/system.int32.maxvalue.aspx)
 
 --------------------------------------------------
 ## Property: `public System.String CursorName { get; set; }`
@@ -3053,6 +3091,17 @@ Immediately releases all resources used by the current instance.
 Represents rate information for a single frame of an animated cursor.
 
 --------------------------------------------------
+## Constructor: `public AnimatedCursorFrame(UIconDrawing.CursorFile file)`
+
+Creates a new instance with the specified cursor file.
+* `file`: The cursor file associated with the current instance.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`file` is `null`.
+
+--------------------------------------------------
 ## Constructor: `public AnimatedCursorFrame(UIconDrawing.CursorFile file, System.Int32 jiffies)`
 
 Creates a new instance with the specified values.
@@ -3080,7 +3129,7 @@ Creates a new instance with the specified values.
 `file` is `null`.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`length` is less than [`TimeSpan.Zero`](https://msdn.microsoft.com/en-us/library/system.timespan.zero.aspx), or represents a number of [`AnimatedCursorFrame.Jiffies`](#property-public-systemint32-jiffies--get-set-) greater than [`Int32.MaxValue`](https://msdn.microsoft.com/en-us/library/system.int32.maxvalue.aspx).
+`length` is less than [`TimeSpan.Zero`](https://msdn.microsoft.com/en-us/library/system.timespan.zero.aspx), or represents a number of "jiffies" (1/60 of a second) greater than [`Int32.MaxValue`](https://msdn.microsoft.com/en-us/library/system.int32.maxvalue.aspx).
 
 --------------------------------------------------
 ## PropertyChanged`
@@ -3088,7 +3137,7 @@ Creates a new instance with the specified values.
 Raised when a property on the current instance changes.
 
 --------------------------------------------------
-## Property: `public UIconDrawing.CursorFile File { get; set; }`
+## Property: `public UIconDrawing.CursorFile File { get; }`
 
 Gets and sets the cursor file associated with the current instance.
 
@@ -3098,21 +3147,21 @@ Gets and sets the cursor file associated with the current instance.
 In a set operation, the specified value is `null`.
 
 --------------------------------------------------
-## Property: `public System.Int32 Jiffies { get; set; }`
+## Property: `public System.Nullable<T> LengthJiffies { get; set; }`
 
-Gets and sets the delay before displaying the next frame in the animated cursor, in "jiffies" (1/60 of a second).
+Gets and sets the delay before displaying the next frame in the animated cursor, in "jiffies" (1/60 of a second), or `null` to use the animated cursor file's [`AnimatedCursorFile.DisplayRateJiffies`](#property-public-systemint32-displayratejiffies--get-set-) value.
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than 0.
+In a set operation, the specified value is not `null` and is less than 0.
 
 --------------------------------------------------
-## Property: `public System.TimeSpan Length { get; set; }`
+## Property: `public System.Nullable<T> LengthTime { get; set; }`
 
-Gets and sets the delay before displaying the next frame in the animated cursor. Fitted to the nearest "jiffy" (1/60 of a second).
+Gets and sets the delay before displaying the next frame in the animated cursor, or `null` to use the animated cursor file's [`AnimatedCursorFile.DisplayRateTime`](#property-public-systemtimespan-displayratetime--get-set-) property. Fitted to the nearest "jiffy" (1/60 of a second).
 
 ### Exceptions
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-In a set operation, the specified value is less than [`TimeSpan.Zero`](https://msdn.microsoft.com/en-us/library/system.timespan.zero.aspx), or represents a number of [`AnimatedCursorFrame.Jiffies`](#property-public-systemint32-jiffies--get-set-) greater than [`Int32.MaxValue`](https://msdn.microsoft.com/en-us/library/system.int32.maxvalue.aspx).
+In a set operation, the specified value is not `null`, and is less than [`TimeSpan.Zero`](https://msdn.microsoft.com/en-us/library/system.timespan.zero.aspx) or represents a number of [`AnimatedCursorFrame.LengthJiffies`](#property-public-systemnullablet-lengthjiffies--get-set-) greater than [`Int32.MaxValue`](https://msdn.microsoft.com/en-us/library/system.int32.maxvalue.aspx).

@@ -393,7 +393,7 @@ namespace UIconEdit
         /// </summary>
         public void Dispose()
         {
-            if (!_isDisposed) return;
+            if (_isDisposed) return;
             Dispose(true);
             _isDisposed = true;
             if (Disposed != null)

@@ -1142,7 +1142,7 @@ namespace UIconEdit
         /// </summary>
         public void Dispose()
         {
-            if (!_isDisposed) return;
+            if (_isDisposed) return;
 
             Dispose(true);
             _isDisposed = true;
@@ -1412,6 +1412,19 @@ namespace UIconEdit
                 AnimatedCursorFrame[] items = new AnimatedCursorFrame[_items.Count];
                 _items.CopyTo(items, 0);
                 return items;
+            }
+
+            /// <summary>
+            /// Moves an element from one index to another.
+            /// </summary>
+            /// <param name="oldIndex">The index of the element to move.</param>
+            /// <param name="newIndex">The destination index.</param>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="oldIndex"/> or <paramref name="newIndex"/> are less than 0 or are greater than or equal to <see cref="Count"/>.
+            /// </exception>
+            public void Move(int oldIndex, int newIndex)
+            {
+                _items.Move(oldIndex, newIndex);
             }
 
 #if DRAWING

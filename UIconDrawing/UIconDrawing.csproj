@@ -61,9 +61,6 @@
     <Compile Include="..\UIconEdit.Core\IEntryList.cs">
       <Link>IEntryList.cs</Link>
     </Compile>
-    <Compile Include="..\UIconEdit.Core\FixedIconEntryList.cs">
-      <Link>FixedIconEntryList.cs</Link>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\UIconEdit.Core\IconExtraction.cs">
       <Link>IconExtraction.cs</Link>

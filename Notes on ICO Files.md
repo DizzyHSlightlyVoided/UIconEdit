@@ -21,4 +21,6 @@ At some point, there was a build of "Project Threshold" (Windows 10's developmen
 Cursors
 -------
 
-Windows system cursors are made with precisely one bit-depth. Windows 7 has one 32x32 and one 48x48 image; Windows 10 has 32x32, 48x48, 64x64, 96x96, and 128x128 sizes.
+Windows system cursors are made with precisely one bit-depth. Windows 7 cursors have one 32x32 and one 48x48 image; Windows 10 cursors have 32x32, 48x48, 64x64, 96x96, and 128x128 sizes.
+
+Windows itself supports PNG images in animated cursors; however, I have found that there is relatively poor support for PNGs in animated-cursor-editing software.

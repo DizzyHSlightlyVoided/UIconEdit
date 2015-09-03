@@ -617,6 +617,11 @@ Moves an element from one index to another.
 * `oldIndex`: The index of the element to move.
 * `newIndex`: The destination index.
 
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`oldIndex` or `newIndex` are less than 0 or are greater than or equal to [`EntryList.Count`](#property-public-virtual-systemint32-count--get-).
+
 --------------------------------------------------
 ## Method: `public UIconDrawing.IconEntry[] ToArray()`
 
@@ -3091,6 +3096,18 @@ Returns an array containing all elements in the current list.
 
 **Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`AnimatedCursorFrame`](#type-public-class-uicondrawinganimatedcursorframe): An array containing elements copied from the current list.
 
+
+--------------------------------------------------
+## Method: `public void Move(System.Int32 oldIndex, System.Int32 newIndex)`
+
+Moves an element from one index to another.
+* `oldIndex`: The index of the element to move.
+* `newIndex`: The destination index.
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`oldIndex` or `newIndex` are less than 0 or are greater than or equal to [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
 
 --------------------------------------------------
 ## Method: `public UIconDrawing.AnimatedCursorFile.EntryList.Enumerator GetEnumerator()`

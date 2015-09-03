@@ -1700,19 +1700,19 @@ namespace UIconEdit
             /// Copies all elements in the list to the specified array, starting at the specified index.
             /// </summary>
             /// <param name="array">The array to which all elements in the list will be copied.</param>
-            /// <param name="arrayIndex">The index in <paramref name="array"/> at which copying begins.</param>
+            /// <param name="index">The index in <paramref name="array"/> at which copying begins.</param>
             /// <exception cref="ArgumentNullException">
             /// <paramref name="array"/> is <c>null</c>.
             /// </exception>
             /// <exception cref="ArgumentOutOfRangeException">
-            /// <paramref name="arrayIndex"/> is less than 0.
+            /// <paramref name="index"/> is less than 0.
             /// </exception>
             /// <exception cref="ArgumentException">
-            /// The length of <paramref name="array"/> minus <paramref name="arrayIndex"/> is less than <see cref="Count"/>.
+            /// The length of <paramref name="array"/> minus <paramref name="index"/> is less than <see cref="Count"/>.
             /// </exception>
-            public void CopyTo(IconEntry[] array, int arrayIndex)
+            public void CopyTo(IconEntry[] array, int index)
             {
-                _items.CopyTo(array, arrayIndex);
+                _items.CopyTo(array, index);
             }
 
             private void _binarySearchCheck(int index, int count)

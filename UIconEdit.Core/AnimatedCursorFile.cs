@@ -29,9 +29,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -59,6 +62,7 @@ namespace UIconEdit
         /// </summary>
         public AnimatedCursorFile()
         {
+            _entries = new EntryList(this);
         }
 
         #region Load
@@ -579,14 +583,14 @@ namespace UIconEdit
         }
 
         #region Entries
-        private ObservableCollection<AnimatedCursorFrame> _entries = new ObservableCollection<AnimatedCursorFrame>();
+        private EntryList _entries;
         /// <summary>
         /// Gets a list of <see cref="IconFileBase"/> objects containing all entries in the animated cursor file.
         /// </summary>
 #if !DRAWING
         [Bindable(true)]
 #endif
-        public ObservableCollection<AnimatedCursorFrame> Entries { get { return _entries; } }
+        public EntryList Entries { get { return _entries; } }
         #endregion
 
         #region FrameIndices
@@ -693,6 +697,7 @@ namespace UIconEdit
         }
         #endregion
 
+        #region DisplayRateTime
 #if !DRAWING
         /// <summary>
         /// The dependency property for the <see cref="DisplayRateTime"/> property.
@@ -740,6 +745,7 @@ namespace UIconEdit
             }
 #endif
         }
+        #endregion
 
         #region CursorName
 #if DRAWING
@@ -857,6 +863,365 @@ namespace UIconEdit
         }
         #endregion
 #endif
+
+        /// <summary>
+        /// Represents a list of <see cref="CursorFile"/> objects for use in an animated cursor file.
+        /// </summary>
+        [DebuggerDisplay("Count = {Count}")]
+        [DebuggerTypeProxy(typeof(DebugView))]
+        public sealed class EntryList : IList<AnimatedCursorFrame>, IReadOnlyList<AnimatedCursorFrame>, IList, INotifyPropertyChanged, INotifyCollectionChanged
+        {
+            private AnimatedCursorFile _file;
+            private ObservableCollection<AnimatedCursorFrame> _items;
+
+            internal EntryList(AnimatedCursorFile file)
+            {
+                _file = file;
+                _items = new ObservableCollection<AnimatedCursorFrame>();
+                _items.CollectionChanged += _list_CollectionChanged;
+                ((INotifyPropertyChanged)_items).PropertyChanged += _list_PropertyChanged;
+            }
+
+            /// <summary>
+            /// Raised when the collection changes.
+            /// </summary>
+            public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+            private void _list_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+            {
+                if (CollectionChanged != null)
+                    CollectionChanged(this, e);
+            }
+
+            private void _list_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                if (PropertyChanged != null)
+                    PropertyChanged(this, e);
+            }
+
+            private event PropertyChangedEventHandler PropertyChanged;
+            event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+            {
+                add { PropertyChanged += value; }
+                remove { PropertyChanged -= value; }
+            }
+
+            /// <summary>
+            /// Gets and sets the element at the specified index.
+            /// </summary>
+            /// <param name="index">The index of the element to get or set.</param>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.
+            /// </exception>
+            /// <exception cref="ArgumentNullException">
+            /// In a set operation, the specified value is <c>null</c>.
+            /// </exception>
+            public AnimatedCursorFrame this[int index]
+            {
+                get { return _items[index]; }
+                set
+                {
+                    if (value == null) throw new ArgumentNullException();
+                    _items[index] = value;
+                }
+            }
+
+            object IList.this[int index]
+            {
+                get { return _items[index]; }
+                set
+                {
+                    if (value == null) throw new ArgumentNullException();
+                    AnimatedCursorFrame frame = value as AnimatedCursorFrame;
+                    if (frame == null) throw new ArgumentException("Invalid object type.");
+                    _items[index] = frame;
+                }
+            }
+
+            /// <summary>
+            /// Gets the number of elements contained in the list.
+            /// </summary>
+            public int Count { get { return _items.Count; } }
+
+            /// <summary>
+            /// Adds the specified <see cref="AnimatedCursorFrame"/> to the list at the specified index.
+            /// </summary>
+            /// <param name="index">The index at which the frame will be inserted.</param>
+            /// <param name="frame">The <see cref="AnimatedCursorFrame"/> to add.</param>
+            /// <returns><c>true</c> if <paramref name="frame"/> was successfully added; <c>false</c> if <paramref name="frame"/> is <c>null</c>,
+            /// already exists in the list, or is already associated with a different <see cref="AnimatedCursorFile"/>.</returns>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> is less than 0 or is greater than <see cref="Count"/>.
+            /// </exception>
+            public bool Insert(int index, AnimatedCursorFrame frame)
+            {
+                if (index < 0 || index > Count) throw new ArgumentOutOfRangeException("index");
+                if (frame == null || frame.CFile != null)
+                    return false;
+                frame.CFile = _file;
+                _items.Insert(index, frame);
+                return true;
+            }
+
+            void IList<AnimatedCursorFrame>.Insert(int index, AnimatedCursorFrame item)
+            {
+                Insert(index, item);
+            }
+
+            void IList.Insert(int index, object value)
+            {
+                if (value is AnimatedCursorFrame)
+                {
+                    if (!Insert(index, (AnimatedCursorFrame)value))
+                        throw new NotSupportedException("Invalid value.");
+                }
+                throw new ArgumentException("Invalid value type.", "value");
+            }
+
+            /// <summary>
+            /// Adds the specified <see cref="AnimatedCursorFrame"/> to the list.
+            /// </summary>
+            /// <param name="frame">The <see cref="AnimatedCursorFrame"/> to add.</param>
+            /// <returns><c>true</c> if <paramref name="frame"/> was successfully added; <c>false</c> if <paramref name="frame"/> is <c>null</c>,
+            /// already exists in the list, or is already associated with a different <see cref="AnimatedCursorFile"/>.</returns>
+            public bool Add(AnimatedCursorFrame frame)
+            {
+                return Insert(_items.Count, frame);
+            }
+
+            void ICollection<AnimatedCursorFrame>.Add(AnimatedCursorFrame item)
+            {
+                Add(item);
+            }
+
+            int IList.Add(object value)
+            {
+                ((IList)this).Insert(_items.Count, value);
+                return _items.Count;
+            }
+
+            /// <summary>
+            /// Removes the element at the specified index.
+            /// </summary>
+            /// <param name="index">The index of the element to remove.</param>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.
+            /// </exception>
+            public void RemoveAt(int index)
+            {
+                var frame = _items[index];
+                frame.CFile = null;
+                _items.RemoveAt(index);
+            }
+
+            /// <summary>
+            /// Removes the specified frame from the list.
+            /// </summary>
+            /// <param name="frame">The frame to remove.</param>
+            /// <returns><c>true</c> if <paramref name="frame"/> was found and successfully removed; <c>false</c> otherwise.</returns>
+            public bool Remove(AnimatedCursorFrame frame)
+            {
+                int dex = IndexOf(frame);
+
+                if (dex < 0) return false;
+
+                RemoveAt(dex);
+
+                return true;
+            }
+
+            void IList.Remove(object value)
+            {
+                Remove(value as AnimatedCursorFrame);
+            }
+
+            /// <summary>
+            /// Returns the index of the specified frame.
+            /// </summary>
+            /// <param name="frame">The frame to search for in the list.</param>
+            /// <returns>The index of <paramref name="frame"/>, if found; otherwise, -1.</returns>
+            public int IndexOf(AnimatedCursorFrame frame)
+            {
+                if (frame == null || frame.CFile != _file) return -1;
+                return _items.IndexOf(frame);
+            }
+
+            int IList.IndexOf(object value)
+            {
+                return IndexOf(value as AnimatedCursorFrame);
+            }
+
+            /// <summary>
+            /// Determines whether the specified frame exists in the list.
+            /// </summary>
+            /// <param name="frame">The frame to search for in the list.</param>
+            /// <returns><c>true</c> if <paramref name="frame"/> was found; <c>false</c> otherwise.</returns>
+            public bool Contains(AnimatedCursorFrame frame)
+            {
+                return frame != null && frame.CFile == _file;
+            }
+
+            bool IList.Contains(object value)
+            {
+                return Contains(value as AnimatedCursorFrame);
+            }
+
+            /// <summary>
+            /// Removes all elements from the list.
+            /// </summary>
+            public void Clear()
+            {
+                foreach (AnimatedCursorFrame frame in _items)
+                    frame.CFile = null;
+                _items.Clear();
+            }
+
+            /// <summary>
+            /// Copies all elements in the list to the specified array, starting at the specified index.
+            /// </summary>
+            /// <param name="array">The array to which all elements in the list will be copied.</param>
+            /// <param name="index">The index in <paramref name="array"/> at which copying begins.</param>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="array"/> is <c>null</c>.
+            /// </exception>
+            /// <exception cref="ArgumentOutOfRangeException">
+            /// <paramref name="index"/> is less than 0.
+            /// </exception>
+            /// <exception cref="ArgumentException">
+            /// The length of <paramref name="array"/> minus <paramref name="index"/> is less than <see cref="Count"/>.
+            /// </exception>
+            public void CopyTo(AnimatedCursorFrame[] array, int index)
+            {
+                _items.CopyTo(array, index);
+            }
+
+            void ICollection.CopyTo(Array array, int index)
+            {
+                ((ICollection)_items).CopyTo(array, index);
+            }
+
+
+            /// <summary>
+            /// Returns an enumerator which iterates through the list.
+            /// </summary>
+            /// <returns>An enumerator which iterates through the list.</returns>
+            public Enumerator GetEnumerator()
+            {
+                return new Enumerator(this);
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+
+            IEnumerator<AnimatedCursorFrame> IEnumerable<AnimatedCursorFrame>.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+
+
+            bool ICollection<AnimatedCursorFrame>.IsReadOnly
+            {
+                get { return false; }
+            }
+
+            bool IList.IsReadOnly
+            {
+                get { return false; }
+            }
+
+            bool IList.IsFixedSize
+            {
+                get { return false; }
+            }
+
+            bool ICollection.IsSynchronized
+            {
+                get { return false; }
+            }
+
+            object ICollection.SyncRoot
+            {
+                get { return ((ICollection)_items).SyncRoot; }
+            }
+
+            /// <summary>
+            /// An enumerator which iterates through the list.
+            /// </summary>
+            public struct Enumerator : IEnumerator<AnimatedCursorFrame>
+            {
+                private AnimatedCursorFrame _current;
+                private IEnumerator<AnimatedCursorFrame> _enum;
+
+                internal Enumerator(EntryList set)
+                {
+                    _current = null;
+                    _enum = set._items.GetEnumerator();
+                }
+
+                /// <summary>
+                /// Gets the element at the current position in the enumerator.
+                /// </summary>
+                public AnimatedCursorFrame Current
+                {
+                    get { return _current; }
+                }
+
+                object IEnumerator.Current
+                {
+                    get { return _current; }
+                }
+
+                /// <summary>
+                /// Disposes of the current instance.
+                /// </summary>
+                public void Dispose()
+                {
+                    if (_enum == null) return;
+                    _enum.Dispose();
+                    _enum = null;
+                    _current = null;
+                }
+
+                /// <summary>
+                /// Advances the enumerator to the next position in the list.
+                /// </summary>
+                /// <returns><c>true</c> if the enumerator successfully advanced; <c>false</c> if the enumerator has passed the end of the list.</returns>
+                public bool MoveNext()
+                {
+                    if (_enum == null) return false;
+                    if (!_enum.MoveNext())
+                    {
+                        Dispose();
+                        return false;
+                    }
+                    _current = _enum.Current;
+                    return true;
+                }
+
+                void IEnumerator.Reset()
+                {
+                    _enum.Reset();
+                }
+            }
+
+            private class DebugView
+            {
+                private EntryList _list;
+
+                public DebugView(EntryList list)
+                {
+                    _list = list;
+                }
+
+                [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+                public AnimatedCursorFrame[] Items
+                {
+                    get { return _list._items.ToArray(); }
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -882,8 +1247,10 @@ namespace UIconEdit
             _file = file;
         }
 
+        internal AnimatedCursorFile CFile;
+
         /// <summary>
-        /// Creates a new instance with the specified values.
+        /// Creates a new instance with the specified cursor file and delay.
         /// </summary>
         /// <param name="file">The cursor file associated with the current instance.</param>
         /// <param name="jiffies">The delay before displaying the next frame in the animated cursor, in "jiffies" (1/60 of a second).</param>
@@ -906,7 +1273,7 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Creates a new instance with the specified values.
+        /// Creates a new instance with the specified cursor file and delay.
         /// </summary>
         /// <param name="file">The cursor file associated with the current instance.</param>
         /// <param name="length">The delay before displaying the next frame in the animated cursor.

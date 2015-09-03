@@ -570,7 +570,6 @@ namespace UIconEdit
         /// An I/O error occurred.
         /// </exception>
         public void Save(Stream output)
-        {
 #else
         /// <summary>
         /// Saves the current instance to the specified stream.
@@ -598,8 +597,8 @@ namespace UIconEdit
         /// An I/O error occurred.
         /// </exception>
         public void Save(Stream output)
-        {
 #endif
+        {
             using (BinaryWriter outputWriter = new BinaryWriter(output))
             using (MemoryStream ms = Save())
                 Save(ms, output, outputWriter);
@@ -756,9 +755,18 @@ namespace UIconEdit
                 msWriter.Write(DisplayRateJiffies);
 #endif
                 uint flags = 1; //No raw-data here.
-                if (_indices.Count == 0)
+                if (_indices.Count != 0)
                     flags |= 2;
                 msWriter.Write(flags);
+
+                if (_indices.Count != 0)
+                {
+                    msWriter.Write(_idChnkSeq);
+                    msWriter.Write(_indices.Count * 4);
+
+                    for (int i = 0; i < _indices.Count; i++)
+                        msWriter.Write(_indices[i]);
+                }
 
                 int[] rates = null;
 
@@ -788,9 +796,12 @@ namespace UIconEdit
 
                             iconListWriter.Write(_idItemIcon);
                             iconListWriter.Write((int)cStream.Length);
+                            Debug.WriteLine(cStream.Length);
 
                             cStream.Seek(0, SeekOrigin.Begin);
                             cStream.CopyTo(iconListStream);
+                            if ((cStream.Length & 1) == 1)
+                                iconListWriter.Write(byte.MinValue);
                         }
                     }
 
@@ -807,15 +818,6 @@ namespace UIconEdit
 
                     for (int i = 0; i < rates.Length; i++)
                         msWriter.Write(rates[i]);
-                }
-
-                if (_indices.Count != 0)
-                {
-                    msWriter.Write(_idChnkSeq);
-                    msWriter.Write(_indices.Count * 4);
-
-                    for (int i = 0; i < _indices.Count; i++)
-                        msWriter.Write(_indices[i]);
                 }
 
                 ms.Seek(0, SeekOrigin.Begin);

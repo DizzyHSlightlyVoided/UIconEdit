@@ -372,7 +372,7 @@ namespace UIconEdit
                 if (hasSequences)
                 {
                     foreach (int i in indices)
-                        file._frames.Add(i);
+                        file._indices.Add(i);
                 }
 
                 return file;
@@ -540,6 +540,313 @@ namespace UIconEdit
         }
         #endregion
 
+        #region Save
+#if DRAWING
+        /// <summary>
+        /// Saves the current instance to the specified stream.
+        /// </summary>
+        /// <param name="output">The stream to which the current instance is written.</param>
+        /// <exception cref="ObjectDisposedException">
+        /// <para>The current instance is disposed.</para>
+        /// <para>-OR-</para>
+        /// <para><paramref name="output"/> is closed.</para>
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// <para><see cref="Entries"/> is <c>null</c>.</para>
+        /// <para>-OR-</para>
+        /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
+        /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
+        /// <para>-OR-</para>
+        /// <para><see cref="FrameIndices"/> contains elements which are less than 0, or are greater than or equal to the number of elements
+        /// in <see cref="Entries"/>.</para>
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="output"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="output"/> does not support writing.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public void Save(Stream output)
+        {
+#else
+        /// <summary>
+        /// Saves the current instance to the specified stream.
+        /// </summary>
+        /// <param name="output">The stream to which the current instance is written.</param>
+        /// <exception cref="InvalidOperationException">
+        /// <para><see cref="Entries"/> is <c>null</c>.</para>
+        /// <para>-OR-</para>
+        /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
+        /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
+        /// <para>-OR-</para>
+        /// <para><see cref="FrameIndices"/> contains elements which are less than 0, or are greater than or equal to the number of elements
+        /// in <see cref="Entries"/>.</para>
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="output"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// <paramref name="output"/> is closed.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="output"/> does not support writing.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public void Save(Stream output)
+        {
+#endif
+            using (BinaryWriter outputWriter = new BinaryWriter(output))
+            using (MemoryStream ms = Save())
+                Save(ms, output, outputWriter);
+        }
+
+#if DRAWING
+        /// <summary>
+        /// Saves the current instance to the specified path.
+        /// </summary>
+        /// <param name="path">The path to the file to which the current instance will be saved.</param>
+        /// <exception cref="ObjectDisposedException">
+        /// The current instance is disposed.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// <para><see cref="Entries"/> is <c>null</c>.</para>
+        /// <para>-OR-</para>
+        /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
+        /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
+        /// <para>-OR-</para>
+        /// <para><see cref="FrameIndices"/> contains elements which are less than 0, or are greater than or equal to the number of elements
+        /// in <see cref="Entries"/>.</para>
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in
+        /// <see cref="Path.GetInvalidPathChars()"/>.
+        /// </exception>
+        /// <exception cref="PathTooLongException">
+        /// The specified path, filename, or both contain the system-defined maximum length.
+        /// </exception>
+        /// <exception cref="DirectoryNotFoundException">
+        /// The specified path is invalid.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public void Save(string path)
+#else
+        /// <summary>
+        /// Saves the current instance to the specified path.
+        /// </summary>
+        /// <param name="path">The path to the file to which the current instance will be saved.</param>
+        /// <exception cref="InvalidOperationException">
+        /// <para><see cref="Entries"/> is <c>null</c>.</para>
+        /// <para>-OR-</para>
+        /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
+        /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
+        /// <para>-OR-</para>
+        /// <para><see cref="FrameIndices"/> contains elements which are less than 0, or are greater than or equal to the number of elements
+        /// in <see cref="Entries"/>.</para>
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="path"/> is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in
+        /// <see cref="Path.GetInvalidPathChars()"/>.
+        /// </exception>
+        /// <exception cref="PathTooLongException">
+        /// The specified path, filename, or both contain the system-defined maximum length.
+        /// </exception>
+        /// <exception cref="DirectoryNotFoundException">
+        /// The specified path is invalid.
+        /// </exception>
+        /// <exception cref="IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public void Save(string path)
+#endif
+        {
+            using (MemoryStream ms = Save())
+            {
+                using (FileStream fs = File.Create(path))
+                using (BinaryWriter fsWriter = new BinaryWriter(fs))
+                    Save(ms, fs, fsWriter);
+            }
+        }
+
+        private MemoryStream Save()
+        {
+#if DRAWING
+            if (_isDisposed) throw new ObjectDisposedException(null);
+#endif
+            if (_entries.Count == 0)
+                throw new InvalidOperationException("No entries present.");
+            var entry0 = _entries[0];
+
+            for (int i = 1; i < _entries.Count; i++)
+            {
+                if (!entry0.SimilarListEquals(_entries[i]))
+                    throw new InvalidOperationException("All AnimatedCursorFrame objects must have a File with the same number of IconEntry objects, " +
+                        "with the same combination of Width, Height, and BitDepth.");
+            }
+
+            foreach (int i in _indices)
+            {
+                if (i < 0)
+                    throw new InvalidOperationException("The FrameIndices property contains an element which is less than 0.");
+                if (i >= _entries.Count)
+                    throw new InvalidOperationException("The FrameIndices property contains an element which is greater than or equal to " +
+                        "the number of elements in Entries.");
+            }
+
+            MemoryStream ms = new MemoryStream();
+            using (BinaryWriter msWriter = new BinaryWriter(ms, new UTF8Encoding(), true))
+            {
+                msWriter.Write(_idBaseAcon);
+
+#if !DRAWING
+                string _author = CursorAuthor, _name = CursorName;
+                int _rate = DisplayRateJiffies;
+#endif
+                if (!IsNullOrEmptyExceptForNull(_name) || !IsNullOrEmptyExceptForNull(_author))
+                {
+                    using (MemoryStream listInfoStream = new MemoryStream())
+                    using (BinaryWriter listInfoWriter = new BinaryWriter(listInfoStream))
+                    {
+                        listInfoWriter.Write(_idListInfo);
+
+                        byte[] nameBytes = GetStringBytes(_name);
+                        byte[] authorBytes = GetStringBytes(_author);
+
+                        listInfoWriter.Write(_idItemInam);
+                        listInfoWriter.Write(nameBytes.Length);
+                        listInfoWriter.Write(nameBytes);
+                        if ((nameBytes.Length & 1) == 1) listInfoWriter.Write(byte.MinValue);
+
+                        listInfoWriter.Write(_idItemIart);
+                        listInfoWriter.Write(authorBytes.Length);
+                        listInfoWriter.Write(authorBytes);
+                        if ((authorBytes.Length & 1) == 1) listInfoWriter.Write(byte.MinValue);
+
+                        listInfoStream.Seek(0, SeekOrigin.Begin);
+
+                        msWriter.Write(_idChnkList);
+                        msWriter.Write((int)listInfoStream.Length);
+                        listInfoStream.CopyTo(ms);
+                    }
+                }
+
+                msWriter.Write(_idChnkAnih);
+                msWriter.Write(sizeAnih);
+                msWriter.Write(sizeAnih);
+
+                msWriter.Write(_entries.Count);
+                if (_indices.Count == 0) msWriter.Write(_entries.Count);
+                else msWriter.Write(_indices.Count);
+                msWriter.Write(new byte[16]);
+#if DRAWING
+                msWriter.Write(_rate);
+#else
+                msWriter.Write(DisplayRateJiffies);
+#endif
+                uint flags = 1; //No raw-data here.
+                if (_indices.Count == 0)
+                    flags |= 2;
+                msWriter.Write(flags);
+
+                int[] rates = null;
+
+                using (MemoryStream iconListStream = new MemoryStream())
+                using (BinaryWriter iconListWriter = new BinaryWriter(iconListStream))
+                {
+                    iconListWriter.Write(_idListFram);
+                    for (int i = 0; i < _entries.Count; i++)
+                    {
+                        AnimatedCursorFrame cFrame = _entries[i];
+
+                        using (MemoryStream cStream = new MemoryStream())
+                        {
+                            cFrame.File.Save(cStream);
+
+                            int? lengthJiffies = cFrame.LengthJiffies;
+                            if (lengthJiffies.HasValue && lengthJiffies.Value != _rate)
+                            {
+                                if (rates == null)
+                                {
+                                    rates = new int[_entries.Count];
+                                    for (int rI = 0; rI < rates.Length; rI++)
+                                        rates[rI] = _rate;
+                                }
+                                rates[i] = lengthJiffies.Value;
+                            }
+
+                            iconListWriter.Write(_idItemIcon);
+                            iconListWriter.Write((int)cStream.Length);
+
+                            cStream.Seek(0, SeekOrigin.Begin);
+                            cStream.CopyTo(iconListStream);
+                        }
+                    }
+
+                    msWriter.Write(_idChnkList);
+                    msWriter.Write((int)iconListStream.Length);
+                    iconListStream.Seek(0, SeekOrigin.Begin);
+                    iconListStream.CopyTo(ms);
+                }
+
+                if (rates != null)
+                {
+                    msWriter.Write(_idChnkRate);
+                    msWriter.Write(rates.Length * 4);
+
+                    for (int i = 0; i < rates.Length; i++)
+                        msWriter.Write(rates[i]);
+                }
+
+                if (_indices.Count != 0)
+                {
+                    msWriter.Write(_idChnkSeq);
+                    msWriter.Write(_indices.Count * 4);
+
+                    for (int i = 0; i < _indices.Count; i++)
+                        msWriter.Write(_indices[i]);
+                }
+
+                ms.Seek(0, SeekOrigin.Begin);
+                return ms;
+            }
+        }
+
+        private void Save(MemoryStream ms, Stream output, BinaryWriter outputWriter)
+        {
+            outputWriter.Write(_idBaseRiff);
+            outputWriter.Write((int)ms.Length);
+            ms.CopyTo(output);
+        }
+
+        private static bool IsNullOrEmptyExceptForNull(string s)
+        {
+            return string.IsNullOrEmpty(s) || s[0] == '\0';
+        }
+
+        private static byte[] GetStringBytes(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return new byte[1];
+
+            int dex = s.IndexOf('\0');
+            if (dex < 0) s += "\0";
+            else s = s.Substring(0, dex + 1);
+
+            return Encoding.UTF8.GetBytes(s);
+        }
+        #endregion
+
         private enum EntryKeyResult
         {
             AllSame,
@@ -591,14 +898,14 @@ namespace UIconEdit
         #endregion
 
         #region FrameIndices
-        private ObservableCollection<int> _frames = new ObservableCollection<int>();
+        private ObservableCollection<int> _indices = new ObservableCollection<int>();
         /// <summary>
         /// Gets the ordering of the frames, as indices within <see cref="Entries"/>.
         /// </summary>
 #if !DRAWING
         [Bindable(true)]
 #endif
-        public ObservableCollection<int> FrameIndices { get { return _frames; } }
+        public ObservableCollection<int> FrameIndices { get { return _indices; } }
         #endregion
 
         internal static TimeSpan JiffiesToTime(int jiffies, string paramName)
@@ -754,7 +1061,8 @@ namespace UIconEdit
         public static readonly DependencyProperty CursorNameProperty = DependencyProperty.Register("CursorName", typeof(string), typeof(AnimatedCursorFile));
 #endif
         /// <summary>
-        /// Gets the name of the animated cursor file.
+        /// Gets and sets the name of the animated cursor file.
+        /// This value is null-terminated when written to the file.
         /// </summary>
         public string CursorName
         {
@@ -782,7 +1090,8 @@ namespace UIconEdit
         public static readonly DependencyProperty CursorAuthorProperty = DependencyProperty.Register("CursorAuthor", typeof(string), typeof(AnimatedCursorFile));
 #endif
         /// <summary>
-        /// Gets the author of the animated cursor file.
+        /// Gets and sets the author of the animated cursor file.
+        /// This value is null-terminated when written to the file.
         /// </summary>
         public string CursorAuthor
         {
@@ -844,10 +1153,7 @@ namespace UIconEdit
         private void Dispose(bool disposing)
         {
             if (disposing)
-            {
-                foreach (AnimatedCursorFrame curFile in _entries)
-                    curFile.File.Dispose();
-            }
+                _entries.Dispose();
             _entries.Clear();
         }
 
@@ -1108,6 +1414,19 @@ namespace UIconEdit
                 return items;
             }
 
+#if DRAWING
+            internal void Dispose()
+            {
+                var items = ToArray();
+                Clear();
+
+                foreach (AnimatedCursorFrame frame in items)
+                    frame.File.Dispose();
+
+                CollectionChanged = null;
+                PropertyChanged = null;
+            }
+#endif
 
             /// <summary>
             /// Returns an enumerator which iterates through the list.
@@ -1127,7 +1446,6 @@ namespace UIconEdit
             {
                 return GetEnumerator();
             }
-
 
             bool ICollection<AnimatedCursorFrame>.IsReadOnly
             {
@@ -1253,6 +1571,9 @@ namespace UIconEdit
         {
             if (file == null) throw new ArgumentNullException("file");
             _file = file;
+#if DRAWING
+            _file.Disposed += _file_Disposed;
+#endif
         }
 
         internal AnimatedCursorFile CFile;
@@ -1274,6 +1595,7 @@ namespace UIconEdit
             if (jiffies < 0) throw new ArgumentOutOfRangeException("jiffies");
             _file = file;
 #if DRAWING
+            _file.Disposed += _file_Disposed;
             _jiffies = jiffies;
 #else
             SetValue(LengthJiffiesProperty, jiffies);
@@ -1300,12 +1622,19 @@ namespace UIconEdit
             _file = file;
 #if DRAWING
             _jiffies = jiffies;
+            _file.Disposed += _file_Disposed;
 #else
             SetValue(LengthJiffiesProperty, jiffies);
 #endif
         }
 
 #if DRAWING
+        private void _file_Disposed(object sender, EventArgs e)
+        {
+            if (CFile != null)
+                CFile.Entries.Remove(this);
+        }
+
         /// <summary>
         /// Raised when a property on the current instance changes.
         /// </summary>

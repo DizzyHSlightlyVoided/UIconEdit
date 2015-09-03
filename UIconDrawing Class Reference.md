@@ -2799,6 +2799,84 @@ An error occurred when processing the cursor file's format.
 An I/O error occurred.
 
 --------------------------------------------------
+## Method: `public void Save(System.IO.Stream output)`
+
+Saves the current instance to the specified stream.
+* `output`: The stream to which the current instance is written.
+
+### Exceptions
+
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+
+The current instance is disposed.
+
+-OR-
+
+`output` is closed.
+
+
+##### [`InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx)
+
+[`AnimatedCursorFile.Entries`](#property-public-uicondrawinganimatedcursorfileentrylist-entries--get-) is `null`.
+
+-OR-
+
+The elements in [`AnimatedCursorFile.Entries`](#property-public-uicondrawinganimatedcursorfileentrylist-entries--get-) do not all have the same number of [`IconEntry`](#type-public-class-uicondrawingiconentry) objects with the same combination of [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-).
+
+-OR-
+
+[`AnimatedCursorFile.FrameIndices`](#property-public-systemcollectionsobjectmodelobservablecollectiont-frameindices--get-) contains elements which are less than 0, or are greater than or equal to the number of elements in [`AnimatedCursorFile.Entries`](#property-public-uicondrawinganimatedcursorfileentrylist-entries--get-).
+
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`output` is `null`.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`output` does not support writing.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
+## Method: `public void Save(System.String path)`
+
+Saves the current instance to the specified path.
+* `path`: The path to the file to which the current instance will be saved.
+
+### Exceptions
+
+##### [`ObjectDisposedException`](https://msdn.microsoft.com/en-us/library/system.objectdisposedexception.aspx)
+The current instance is disposed.
+
+##### [`InvalidOperationException`](https://msdn.microsoft.com/en-us/library/system.invalidoperationexception.aspx)
+
+[`AnimatedCursorFile.Entries`](#property-public-uicondrawinganimatedcursorfileentrylist-entries--get-) is `null`.
+
+-OR-
+
+The elements in [`AnimatedCursorFile.Entries`](#property-public-uicondrawinganimatedcursorfileentrylist-entries--get-) do not all have the same number of [`IconEntry`](#type-public-class-uicondrawingiconentry) objects with the same combination of [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-).
+
+-OR-
+
+[`AnimatedCursorFile.FrameIndices`](#property-public-systemcollectionsobjectmodelobservablecollectiont-frameindices--get-) contains elements which are less than 0, or are greater than or equal to the number of elements in [`AnimatedCursorFile.Entries`](#property-public-uicondrawinganimatedcursorfileentrylist-entries--get-).
+
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`path` is `null`.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+`path` is empty, contains only whitespace, or contains one or more invalid path characters as defined in [`Path.GetInvalidPathChars()`](https://msdn.microsoft.com/en-us/library/system.io.path.getinvalidpathchars.aspx).
+
+##### [`PathTooLongException`](https://msdn.microsoft.com/en-us/library/system.io.pathtoolongexception.aspx)
+The specified path, filename, or both contain the system-defined maximum length.
+
+##### [`DirectoryNotFoundException`](https://msdn.microsoft.com/en-us/library/system.io.directorynotfoundexception.aspx)
+The specified path is invalid.
+
+##### [`IOException`](https://msdn.microsoft.com/en-us/library/system.io.ioexception.aspx)
+An I/O error occurred.
+
+--------------------------------------------------
 ## Property: `public UIconDrawing.AnimatedCursorFile.EntryList Entries { get; }`
 
 Gets a list of [`IconFileBase`](#type-public-abstract-class-uicondrawingiconfilebase) objects containing all entries in the animated cursor file.
@@ -2859,12 +2937,12 @@ In a set operation, the specified value translates to a number of jiffies less t
 --------------------------------------------------
 ## Property: `public System.String CursorName { get; set; }`
 
-Gets the name of the animated cursor file.
+Gets and sets the name of the animated cursor file. This value is null-terminated when written to the file.
 
 --------------------------------------------------
 ## Property: `public System.String CursorAuthor { get; set; }`
 
-Gets the author of the animated cursor file.
+Gets and sets the author of the animated cursor file. This value is null-terminated when written to the file.
 
 --------------------------------------------------
 ## PropertyChanged`

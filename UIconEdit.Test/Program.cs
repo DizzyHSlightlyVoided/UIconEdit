@@ -75,6 +75,11 @@ namespace UIconEdit.Test
 
                 for (int i = 0; i < aniFile.Entries.Count; i++)
                     Console.WriteLine(aniFile.Entries[i]);
+
+                Console.WriteLine("Writing to WobbleArrow.out.ani ...");
+                aniFile.Save("WobbleArrow.out.ani");
+                Console.WriteLine("Success!");
+
                 Wait();
             }
 

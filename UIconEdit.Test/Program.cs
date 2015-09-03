@@ -76,6 +76,11 @@ namespace UIconEdit.Test
                 for (int i = 0; i < aniFile.Entries.Count; i++)
                     Console.WriteLine(aniFile.Entries[i]);
 
+                if (aniFile.FrameIndices.Count == 0)
+                    Console.WriteLine("Default frame order.");
+                else
+                    Console.WriteLine(aniFile.FrameIndices.Count + " frames: " + string.Join(", ", aniFile.FrameIndices));
+
                 Console.WriteLine("Writing to WobbleArrow.out.ani ...");
                 aniFile.Save("WobbleArrow.out.ani");
                 Console.WriteLine("Success!");

@@ -110,7 +110,7 @@ namespace UIconEdit
             using (MemoryStream ms = new MemoryStream())
             using (BinaryReader reader = new BinaryReader(ms))
             {
-                using (BinaryReader br = new BinaryReader(input, new System.Text.UTF8Encoding(), true))
+                using (BinaryReader br = new BinaryReader(input, new UTF8Encoding(), true))
                 {
                     if (br.ReadUInt32() != _idBaseRiff) throw new FileFormatException();
                     _copyBuffer(br, null, ms);
@@ -300,16 +300,13 @@ namespace UIconEdit
                                     }
                                     frames[i] = new AnimatedCursorFrame(cursorFile);
                                 }
-                                //catch (IconLoadException e)
-                                //{
-                                //    throw new IconExtractException(e, i);
-                                //}
-                                //catch (Exception e)
-                                //{
-                                //    throw new IconExtractException(e, IconTypeCode.Unknown, i);
-                                //}
-                                finally
+                                catch (IconLoadException e)
                                 {
+                                    throw new IconExtractException(e, i);
+                                }
+                                catch (Exception e)
+                                {
+                                    throw new IconExtractException(e, IconTypeCode.Unknown, i);
                                 }
                             }
                         }
@@ -1100,6 +1097,17 @@ namespace UIconEdit
                 ((ICollection)_items).CopyTo(array, index);
             }
 
+            /// <summary>
+            /// Returns an array containing all elements in the current list.
+            /// </summary>
+            /// <returns>An array containing elements copied from the current list.</returns>
+            public AnimatedCursorFrame[] ToArray()
+            {
+                AnimatedCursorFrame[] items = new AnimatedCursorFrame[_items.Count];
+                _items.CopyTo(items, 0);
+                return items;
+            }
+
 
             /// <summary>
             /// Returns an enumerator which iterates through the list.
@@ -1218,7 +1226,7 @@ namespace UIconEdit
                 [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
                 public AnimatedCursorFrame[] Items
                 {
-                    get { return _list._items.ToArray(); }
+                    get { return _list.ToArray(); }
                 }
             }
         }
@@ -1310,6 +1318,39 @@ namespace UIconEdit
         }
 #endif
 
+        /// <summary>
+        /// Determines if the elements in <see cref="File"/> in the current instance are all similar to that of specified other
+        /// <see cref="AnimatedCursorFrame"/>.
+        /// </summary>
+        /// <param name="other">The other <see cref="AnimatedCursorFrame"/> to compare.</param>
+        /// <returns><c>true</c> if the current instance contains the same number of elements with the same <see cref="IconEntry.Width"/>,
+        /// <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> values as the specified other <see cref="AnimatedCursorFrame"/>;
+        /// <c>false</c> otherwise.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="other"/> is <c>null</c>.
+        /// </exception>
+        public bool SimilarListEquals(AnimatedCursorFrame other)
+        {
+            if (other == null) throw new ArgumentNullException("other");
+
+            if (_file.Entries.Count != other._file.Entries.Count)
+                return false;
+
+            var entries1 = _file.Entries.OrderBy(i => i.EntryKey);
+            var entries2 = other._file.Entries.OrderBy(i => i.EntryKey);
+
+            using (IEnumerator<IconEntry> enum1 = entries1.GetEnumerator(), enum2 = entries2.GetEnumerator())
+            {
+                while (enum1.MoveNext() && enum2.MoveNext())
+                {
+                    if (enum1.Current.EntryKey != enum2.Current.EntryKey)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
         #region File
         private readonly CursorFile _file;
         /// <summary>
@@ -1327,7 +1368,7 @@ namespace UIconEdit
         }
         #endregion
 
-        #region Jiffies
+        #region LengthJiffies
 #if DRAWING
         private int? _jiffies;
 #else
@@ -1382,7 +1423,7 @@ namespace UIconEdit
         }
         #endregion
 
-        #region Length
+        #region LengthTime
 #if !DRAWING
         /// <summary>
         /// Dependency property for the <see cref="LengthTime"/> property.
@@ -1438,5 +1479,26 @@ namespace UIconEdit
 #endif
         }
         #endregion
+
+        /// <summary>
+        /// Returns a string representation of the current instance.
+        /// </summary>
+        /// <returns>A string representation of the current instance.</returns>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder("Length: ");
+#if !DRAWING
+            int? _jiffies = LengthJiffies;
+#endif
+            if (_jiffies.HasValue)
+                sb.Append(string.Format("{0} jiffies ({1})", _jiffies.Value, LengthTime.Value));
+            else
+            {
+                sb.Append("default");
+                if (CFile != null)
+                    sb.Append(string.Format(" {0} jiffies ({1})", CFile.DisplayRateJiffies, CFile.DisplayRateTime));
+            }
+            return sb.ToString();
+        }
     }
 }

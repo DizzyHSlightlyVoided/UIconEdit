@@ -1964,7 +1964,9 @@ namespace UIconEdit
             /// <returns>An array containing elements copied from the current list.</returns>
             public IconEntry[] ToArray()
             {
-                return _items.ToArray();
+                IconEntry[] items = new IconEntry[_items.Count];
+                _items.CopyTo(items, 0);
+                return items;
             }
 
             /// <summary>
@@ -2144,7 +2146,7 @@ namespace UIconEdit
                 [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
                 public IconEntry[] Items
                 {
-                    get { return _list._items.ToArray(); }
+                    get { return _list.ToArray(); }
                 }
             }
         }

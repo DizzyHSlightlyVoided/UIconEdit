@@ -74,13 +74,7 @@ namespace UIconEdit.Test
                 Console.WriteLine("Number of frames: " + aniFile.Entries.Count);
 
                 for (int i = 0; i < aniFile.Entries.Count; i++)
-                {
-                    var curEntry = aniFile.Entries[i];
-                    if (curEntry.LengthJiffies.HasValue)
-                        Console.WriteLine(" {0}: {1} jiffies ({2})", i, curEntry.LengthJiffies, curEntry.LengthTime);
-                    else
-                        Console.WriteLine(" {0}: default display rate", i);
-                }
+                    Console.WriteLine(aniFile.Entries[i]);
                 Wait();
             }
 

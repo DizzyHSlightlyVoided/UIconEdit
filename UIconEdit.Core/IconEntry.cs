@@ -2475,7 +2475,10 @@ namespace UIconEdit
             if (ReferenceEquals(x, null)) return -1;
             else if (ReferenceEquals(y, null)) return 1;
 
-            return x.EntryKey.CompareTo(y.EntryKey);
+            int count = x.EntryKey.CompareTo(y.EntryKey);
+            if (count != 0) return count;
+
+            return x.GetHashCode().CompareTo(y.GetHashCode());
         }
 
         public bool Equals(IconEntry x, IconEntry y)

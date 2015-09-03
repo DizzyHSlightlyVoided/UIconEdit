@@ -461,11 +461,11 @@ Gets the index of an element similar to the specified values.
 
 
 --------------------------------------------------
-## Method: `public void CopyTo(UIconDrawing.IconEntry[] array, System.Int32 arrayIndex)`
+## Method: `public void CopyTo(UIconDrawing.IconEntry[] array, System.Int32 index)`
 
 Copies all elements in the list to the specified array, starting at the specified index.
 * `array`: The array to which all elements in the list will be copied.
-* `arrayIndex`: The index in `array` at which copying begins.
+* `index`: The index in `array` at which copying begins.
 
 ### Exceptions
 
@@ -473,10 +473,10 @@ Copies all elements in the list to the specified array, starting at the specifie
 `array` is `null`.
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`arrayIndex` is less than 0.
+`index` is less than 0.
 
 ##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The length of `array` minus `arrayIndex` is less than [`EntryList.Count`](#property-public-virtual-systemint32-count--get-).
+The length of `array` minus `index` is less than [`EntryList.Count`](#property-public-virtual-systemint32-count--get-).
 
 --------------------------------------------------
 ## Method: `public System.Int32 BinarySearch(UIconDrawing.IconEntry entry)`
@@ -2207,199 +2207,6 @@ Removes an icon entry similar to the specified values from the list.
 The collection is read-only.
 
 --------------------------------------------------
-# Type: `public class UIconDrawing.FixedIconEntryList`
-
-Represents a read-only sorted list of [`IconEntry`](#type-public-class-uicondrawingiconentry) objects.
-
---------------------------------------------------
-## Constructor: `public FixedIconEntryList(System.Collections.Generic.IEnumerable<UIconDrawing.IconEntry> collection)`
-
-Creates a new list with the specified collection of icon entries.
-* `collection`: The collection whose elements will be copied to the new instance.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`collection` is `null`.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-
-`collection` is empty.
-
--OR-
-
-`collection` contains one or more `null` elements.
-
--OR-
-
-`collection` contains multiple elements with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-).
-
-
---------------------------------------------------
-## Property: `FixedIconEntryList.Item(System.Int32 index)`
-
-Gets the element at the specified index.
-* `index`: The index of the element to get.
-
-### Exceptions
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`index` is less than 0 or is greater than or equal to [`FixedIconEntryList.Count`](#property-public-virtual-systemint32-count--get--1).
-
---------------------------------------------------
-## Property: `public virtual System.Int32 Count { get; }`
-
-Gets the number of elements contained in the list.
-
---------------------------------------------------
-## Method: `public System.Boolean Contains(UIconDrawing.IconEntry item)`
-
-Determines if the specified value exists in the list.
-* `item`: The value to search for in the list.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `item` was found; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `public System.Boolean ContainsSimilar(UIconDrawing.IconEntry item)`
-
-Determines if an element similar to the specified icon entry exists in the list.
-* `item`: The icon entry to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) as `item` exists in the list; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `public System.Boolean ContainsSimilar(UIconDrawing.IconEntryKey key)`
-
-Determines if an element similar to the specified icon entry exists in the list.
-* `key`: The icon entry to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) as `key` exists in the list; `false` otherwise.
-
-
---------------------------------------------------
-## Method: `public System.Boolean ContainsSimilar(System.Int32 width, System.Int32 height, UIconDrawing.IconBitDepth bitDepth)`
-
-Determines if an element similar to the specified values exists in the list.
-* `width`: The width of the icon entry to search for.
-* `height`: The height of the icon entry to search for.
-* `bitDepth`: The bit depth of the icon entry to search for.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint32-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) as `bitDepth` was found;`false` if no such icon entry was found in the list.
-
-
---------------------------------------------------
-## Method: `public System.Int32 IndexOf(UIconDrawing.IconEntry value)`
-
-Gets the index of the specified value.
-* `value`: The value to search for in the list.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of `value`, or -1 if `value` was not found in the list.
-
-
---------------------------------------------------
-## Method: `public System.Int32 IndexOfSimilar(UIconDrawing.IconEntry item)`
-
-Gets the index of an element similar to the specified item.
-* `item`: The icon entry to compare.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) as `item`, if found; otherwise, -1.
-
-
---------------------------------------------------
-## Method: `public System.Int32 IndexOfSimilar(UIconDrawing.IconEntryKey key)`
-
-Gets the index of an element similar to the specified item.
-* `key`: The icon entry to compare.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) as `key`, if found; otherwise, -1.
-
-
---------------------------------------------------
-## Method: `public System.Int32 IndexOfSimilar(System.Int32 width, System.Int32 height, UIconDrawing.IconBitDepth bitDepth)`
-
-Gets the index of an element similar to the specified values.
-* `width`: The width of the icon entry to search for.
-* `height`: The height of the icon entry to search for.
-* `bitDepth`: The bit depth of the icon entry to search for.
-
-**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of an icon entry with the same [`IconEntry.Width`](#property-public-systemint32-width--get-) as `width`, the same [`IconEntry.Height`](#property-public-systemint32-height--get-) as `height`, and the same [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) as `bitDepth`, if found; otherwise, -1.
-
-
---------------------------------------------------
-## Method: `public void CopyTo(UIconDrawing.IconEntry[] array, System.Int32 arrayIndex)`
-
-Copies all elements in the list to the specified array, starting at the specified index.
-* `array`: The array to which all elements in the list will be copied.
-* `arrayIndex`: The index in `array` at which copying begins.
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`array` is `null`.
-
-##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
-`arrayIndex` is less than 0.
-
-##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
-The length of `array` minus `arrayIndex` is less than [`FixedIconEntryList.Count`](#property-public-virtual-systemint32-count--get--1).
-
---------------------------------------------------
-## Method: `public System.Boolean SimilarListEquals(UIconDrawing.FixedIconEntryList other)`
-
-Determines if the elements of the current instance are all similar to the specified other [`FixedIconEntryList`](#type-public-class-uicondrawingfixediconentrylist).
-* `other`: The other [`FixedIconEntryList`](#type-public-class-uicondrawingfixediconentrylist) to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the current instance contains the same number of elements with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) values as the specified other [`FixedIconEntryList`](#type-public-class-uicondrawingfixediconentrylist);`false` otherwise.
-
-
-### Exceptions
-
-##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
-`other` is `null`.
-
---------------------------------------------------
-## Method: `public System.Boolean Overlaps(UIconDrawing.FixedIconEntryList other)`
-
-Determines if the current instance and the specified other [`FixedIconEntryList`](#type-public-class-uicondrawingfixediconentrylist) have values in common.
-* `other`: The other [`FixedIconEntryList`](#type-public-class-uicondrawingfixediconentrylist) to compare.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `other` contains at least one [`IconEntry`](#type-public-class-uicondrawingiconentry) which exists in the current instance;`false` otherwise.
-
-
---------------------------------------------------
-## Method: `public UIconDrawing.FixedIconEntryList.Enumerator GetEnumerator()`
-
-Returns an enumerator which iterates through the list.
-
-**Returns:** Type [`Enumerator`](#type-struct-uicondrawingfixediconentrylistenumerator): An enumerator which iterates through the list.
-
-
---------------------------------------------------
-# Type: `struct UIconDrawing.FixedIconEntryList.Enumerator`
-
-An enumerator which iterates through the list.
-
---------------------------------------------------
-## Property: `public UIconDrawing.IconEntry Current { get; }`
-
-Gets the element at the current position in the enumerator.
-
---------------------------------------------------
-## Method: `public void Dispose()`
-
-Disposes of the current instance.
-
---------------------------------------------------
-## Method: `public System.Boolean MoveNext()`
-
-Advances the enumerator to the next position in the list.
-
-**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the enumerator successfully advanced; `false` if the enumerator has passed the end of the list.
-
-
---------------------------------------------------
 # Type: `public abstract class UIconDrawing.IconExtraction`
 
 Provides methods for extracting icons from EXE and DLL files.
@@ -2992,14 +2799,14 @@ An error occurred when processing the cursor file's format.
 An I/O error occurred.
 
 --------------------------------------------------
-## Property: `public System.Collections.ObjectModel.ObservableCollection<T> Entries { get; }`
+## Property: `public UIconDrawing.AnimatedCursorFile.EntryList Entries { get; }`
 
 Gets a list of [`IconFileBase`](#type-public-abstract-class-uicondrawingiconfilebase) objects containing all entries in the animated cursor file.
 
 --------------------------------------------------
 ## Property: `public System.Collections.ObjectModel.ObservableCollection<T> FrameIndices { get; }`
 
-Gets the ordering of the frames, as indices within [`AnimatedCursorFile.Entries`](#property-public-systemcollectionsobjectmodelobservablecollectiont-entries--get-).
+Gets the ordering of the frames, as indices within [`AnimatedCursorFile.Entries`](#property-public-uicondrawinganimatedcursorfileentrylist-entries--get-).
 
 --------------------------------------------------
 ## Method: `public static System.TimeSpan JiffiesToTime(System.Int32 jiffies)`
@@ -3086,6 +2893,159 @@ Gets a value indicating whether the current instance has been disposed.
 Immediately releases all resources used by the current instance.
 
 --------------------------------------------------
+# Type: `class UIconDrawing.AnimatedCursorFile.EntryList`
+
+Represents a list of [`CursorFile`](#type-public-class-uicondrawingcursorfile) objects for use in an animated cursor file.
+
+--------------------------------------------------
+## CollectionChanged`
+
+Raised when the collection changes.
+
+--------------------------------------------------
+## Property: `AnimatedCursorFile.EntryList.Item(System.Int32 index)`
+
+Gets and sets the element at the specified index.
+* `index`: The index of the element to get or set.
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than or equal to [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+In a set operation, the specified value is `null`.
+
+--------------------------------------------------
+## Property: `public virtual System.Int32 Count { get; }`
+
+Gets the number of elements contained in the list.
+
+--------------------------------------------------
+## Method: `public System.Boolean Insert(System.Int32 index, UIconDrawing.AnimatedCursorFrame frame)`
+
+Adds the specified [`AnimatedCursorFrame`](#type-public-class-uicondrawinganimatedcursorframe) to the list at the specified index.
+* `index`: The index at which the frame will be inserted.
+* `frame`: The [`AnimatedCursorFrame`](#type-public-class-uicondrawinganimatedcursorframe) to add.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `frame` was successfully added; `false` if `frame` is `null`, already exists in the list, or is already associated with a different [`AnimatedCursorFile`](#type-public-class-uicondrawinganimatedcursorfile).
+
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
+
+--------------------------------------------------
+## Method: `public System.Boolean Add(UIconDrawing.AnimatedCursorFrame frame)`
+
+Adds the specified [`AnimatedCursorFrame`](#type-public-class-uicondrawinganimatedcursorframe) to the list.
+* `frame`: The [`AnimatedCursorFrame`](#type-public-class-uicondrawinganimatedcursorframe) to add.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `frame` was successfully added; `false` if `frame` is `null`, already exists in the list, or is already associated with a different [`AnimatedCursorFile`](#type-public-class-uicondrawinganimatedcursorfile).
+
+
+--------------------------------------------------
+## Method: `public void RemoveAt(System.Int32 index)`
+
+Removes the element at the specified index.
+* `index`: The index of the element to remove.
+
+### Exceptions
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0 or is greater than or equal to [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
+
+--------------------------------------------------
+## Method: `public System.Boolean Remove(UIconDrawing.AnimatedCursorFrame frame)`
+
+Removes the specified frame from the list.
+* `frame`: The frame to remove.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `frame` was found and successfully removed; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public System.Int32 IndexOf(UIconDrawing.AnimatedCursorFrame frame)`
+
+Returns the index of the specified frame.
+* `frame`: The frame to search for in the list.
+
+**Returns:** Type [`Int32`](https://msdn.microsoft.com/en-us/library/system.int32.aspx): The index of `frame`, if found; otherwise, -1.
+
+
+--------------------------------------------------
+## Method: `public System.Boolean Contains(UIconDrawing.AnimatedCursorFrame frame)`
+
+Determines whether the specified frame exists in the list.
+* `frame`: The frame to search for in the list.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if `frame` was found; `false` otherwise.
+
+
+--------------------------------------------------
+## Method: `public void Clear()`
+
+Removes all elements from the list.
+
+--------------------------------------------------
+## Method: `public void CopyTo(UIconDrawing.AnimatedCursorFrame[] array, System.Int32 index)`
+
+Copies all elements in the list to the specified array, starting at the specified index.
+* `array`: The array to which all elements in the list will be copied.
+* `index`: The index in `array` at which copying begins.
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`array` is `null`.
+
+##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
+`index` is less than 0.
+
+##### [`ArgumentException`](https://msdn.microsoft.com/en-us/library/system.argumentexception.aspx)
+The length of `array` minus `index` is less than [`EntryList.Count`](#property-public-virtual-systemint32-count--get--1).
+
+--------------------------------------------------
+## Method: `public UIconDrawing.AnimatedCursorFrame[] ToArray()`
+
+Returns an array containing all elements in the current list.
+
+**Returns:** Type [`Array`](https://msdn.microsoft.com/en-us/library/system.array.aspx) of type [`AnimatedCursorFrame`](#type-public-class-uicondrawinganimatedcursorframe): An array containing elements copied from the current list.
+
+
+--------------------------------------------------
+## Method: `public UIconDrawing.AnimatedCursorFile.EntryList.Enumerator GetEnumerator()`
+
+Returns an enumerator which iterates through the list.
+
+**Returns:** Type [`Enumerator`](#type-struct-uicondrawinganimatedcursorfileentrylistenumerator): An enumerator which iterates through the list.
+
+
+--------------------------------------------------
+# Type: `struct UIconDrawing.AnimatedCursorFile.EntryList.Enumerator`
+
+An enumerator which iterates through the list.
+
+--------------------------------------------------
+## Property: `public UIconDrawing.AnimatedCursorFrame Current { get; }`
+
+Gets the element at the current position in the enumerator.
+
+--------------------------------------------------
+## Method: `public void Dispose()`
+
+Disposes of the current instance.
+
+--------------------------------------------------
+## Method: `public System.Boolean MoveNext()`
+
+Advances the enumerator to the next position in the list.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the enumerator successfully advanced; `false` if the enumerator has passed the end of the list.
+
+
+--------------------------------------------------
 # Type: `public class UIconDrawing.AnimatedCursorFrame`
 
 Represents rate information for a single frame of an animated cursor.
@@ -3104,7 +3064,7 @@ Creates a new instance with the specified cursor file.
 --------------------------------------------------
 ## Constructor: `public AnimatedCursorFrame(UIconDrawing.CursorFile file, System.Int32 jiffies)`
 
-Creates a new instance with the specified values.
+Creates a new instance with the specified cursor file and delay.
 * `file`: The cursor file associated with the current instance.
 * `jiffies`: The delay before displaying the next frame in the animated cursor, in "jiffies" (1/60 of a second).
 
@@ -3119,7 +3079,7 @@ Creates a new instance with the specified values.
 --------------------------------------------------
 ## Constructor: `public AnimatedCursorFrame(UIconDrawing.CursorFile file, System.TimeSpan length)`
 
-Creates a new instance with the specified values.
+Creates a new instance with the specified cursor file and delay.
 * `file`: The cursor file associated with the current instance.
 * `length`: The delay before displaying the next frame in the animated cursor. Fitted to the nearest "jiffy" (1/60 of a second).
 
@@ -3135,6 +3095,20 @@ Creates a new instance with the specified values.
 ## PropertyChanged`
 
 Raised when a property on the current instance changes.
+
+--------------------------------------------------
+## Method: `public System.Boolean SimilarListEquals(UIconDrawing.AnimatedCursorFrame other)`
+
+Determines if the elements in [`AnimatedCursorFrame.File`](#property-public-uicondrawingcursorfile-file--get-) in the current instance are all similar to that of specified other [`AnimatedCursorFrame`](#type-public-class-uicondrawinganimatedcursorframe).
+* `other`: The other [`AnimatedCursorFrame`](#type-public-class-uicondrawinganimatedcursorframe) to compare.
+
+**Returns:** Type [`Boolean`](https://msdn.microsoft.com/en-us/library/system.boolean.aspx): `true` if the current instance contains the same number of elements with the same [`IconEntry.Width`](#property-public-systemint32-width--get-), [`IconEntry.Height`](#property-public-systemint32-height--get-), and [`IconEntry.BitDepth`](#property-public-uicondrawingiconbitdepth-bitdepth--get-) values as the specified other [`AnimatedCursorFrame`](#type-public-class-uicondrawinganimatedcursorframe);`false` otherwise.
+
+
+### Exceptions
+
+##### [`ArgumentNullException`](https://msdn.microsoft.com/en-us/library/system.argumentnullexception.aspx)
+`other` is `null`.
 
 --------------------------------------------------
 ## Property: `public UIconDrawing.CursorFile File { get; }`
@@ -3165,3 +3139,10 @@ Gets and sets the delay before displaying the next frame in the animated cursor,
 
 ##### [`ArgumentOutOfRangeException`](https://msdn.microsoft.com/en-us/library/system.argumentoutofrangeexception.aspx)
 In a set operation, the specified value is not `null`, and is less than [`TimeSpan.Zero`](https://msdn.microsoft.com/en-us/library/system.timespan.zero.aspx) or represents a number of [`AnimatedCursorFrame.LengthJiffies`](#property-public-systemnullablet-lengthjiffies--get-set-) greater than [`Int32.MaxValue`](https://msdn.microsoft.com/en-us/library/system.int32.maxvalue.aspx).
+
+--------------------------------------------------
+## Method: `public override System.String ToString()`
+
+Returns a string representation of the current instance.
+
+**Returns:** Type [`String`](https://msdn.microsoft.com/en-us/library/system.string.aspx): A string representation of the current instance.

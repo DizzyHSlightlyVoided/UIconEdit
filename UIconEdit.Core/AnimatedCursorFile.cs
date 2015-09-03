@@ -603,7 +603,7 @@ namespace UIconEdit
         internal static TimeSpan JiffiesToTime(int jiffies, string paramName)
         {
             if (jiffies < 1) throw new ArgumentOutOfRangeException(paramName);
-            return TimeSpan.FromSeconds(jiffies / 60.0);
+            return new TimeSpan(TimeSpan.TicksPerSecond * jiffies / 60);
         }
 
         /// <summary>
@@ -698,7 +698,7 @@ namespace UIconEdit
         /// The dependency property for the <see cref="DisplayRateTime"/> property.
         /// </summary>
         public static readonly DependencyProperty DisplayRateTimeProperty = DependencyProperty.Register("DisplayRateTime", typeof(TimeSpan), typeof(AnimatedCursorFile),
-            new PropertyMetadata(TimeSpan.FromSeconds(10 / 60.0), DisplayRateTimeChanged, TimeCoerce));
+            new PropertyMetadata(new TimeSpan(TimeSpan.TicksPerSecond * 10 / 60), DisplayRateTimeChanged, TimeCoerce));
 
         private static void DisplayRateTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -709,14 +709,15 @@ namespace UIconEdit
         {
             TimeSpan value = (TimeSpan)baseValue;
 
-            if (value < TimeSpan.Zero)
-                return TimeSpan.Zero;
-            var seconds = value.TotalSeconds * 60;
+            var seconds = (long)(value.TotalSeconds * 60);
+
+            if (seconds < 1)
+                return new TimeSpan(TimeSpan.TicksPerSecond / 60);
 
             if (seconds > int.MaxValue)
-                return TimeSpan.FromSeconds(int.MaxValue / 60.0);
+                return new TimeSpan(TimeSpan.TicksPerSecond * int.MaxValue / 60);
 
-            return TimeSpan.FromSeconds((int)(seconds / 60));
+            return new TimeSpan(TimeSpan.TicksPerSecond * seconds / 60);
         }
 #endif
         /// <summary>
@@ -1020,7 +1021,7 @@ namespace UIconEdit
         /// Dependency property for the <see cref="LengthTime"/> property.
         /// </summary>
         public static readonly DependencyProperty LengthProperty = DependencyProperty.Register("LengthTime", typeof(TimeSpan?), typeof(AnimatedCursorFrame),
-            new PropertyMetadata(default(TimeSpan), LengthTimeChanged, LengthTimeCoerce));
+            new PropertyMetadata(default(TimeSpan?), LengthTimeChanged, LengthTimeCoerce));
 
         private static void LengthTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -1055,7 +1056,7 @@ namespace UIconEdit
             get
             {
                 if (_jiffies.HasValue)
-                    return TimeSpan.FromSeconds(_jiffies.Value / 60.0);
+                    return new TimeSpan(TimeSpan.TicksPerSecond * _jiffies.Value / 60);
                 return null;
             }
             set { LengthJiffies = value.HasValue ? AnimatedCursorFile.TimeToJiffies(value.Value, null) : default(int?); }

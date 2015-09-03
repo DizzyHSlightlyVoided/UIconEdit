@@ -796,7 +796,6 @@ namespace UIconEdit
 
                             iconListWriter.Write(_idItemIcon);
                             iconListWriter.Write((int)cStream.Length);
-                            Debug.WriteLine(cStream.Length);
 
                             cStream.Seek(0, SeekOrigin.Begin);
                             cStream.CopyTo(iconListStream);

@@ -18,13 +18,16 @@ UIconEdit app's functionality
 * Extracting icons from .DLL and .EXE files.
 * Adding a "UIconEdit" option to file context menus in Windows.
 
+UIconEdit.Core and UIconEdit.Drawing
+------------------------------------
+All of the above (except for the context-menu thing), plus:
+
+* The creation of animated cursors (.ANI files). This may or may not make it into UIconEdit itself.
+
 Planned functionality
 ---------------------
 ### UIconEdit App
-* The ability to select an individual frame when importing a multi-frame image.
-
-### UIconEdit.Core and UIconDrawing
-* The creation of animated cursors (.ANI files). This probably won't make it into UIconEdit itself.
+* The ability to select individual frames when importing a multi-frame image.
 
 UIconDrawing examples
 ---------------------

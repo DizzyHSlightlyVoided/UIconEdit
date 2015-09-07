@@ -33,7 +33,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Image Source="{x:Static local:UacShieldFuncs.UACIcon}" MaxWidth="16" VerticalAlignment="Center"/>
+                    <Image Source="{x:Static local:ShellIconFuncs.UACIcon}" MaxWidth="16" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding SettingsFile.LanguageFile.SettingsRegister, ElementName=window, FallbackValue='Add to Windows Explorer context menu'}"
                                Grid.Column="1" VerticalAlignment="Center"/>
                 </Grid>

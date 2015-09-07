@@ -44,8 +44,6 @@ namespace UIconEdit.Maker
         public ErrorWindow(MainWindow mainWindow, string message)
         {
             _mainWindow = mainWindow;
-            _errorIcon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(System.Drawing.SystemIcons.Error.Handle,
-               Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
             _message = message;
             InitializeComponent();
         }
@@ -53,10 +51,6 @@ namespace UIconEdit.Maker
         private MainWindow _mainWindow;
         [Bindable(true)]
         public MainWindow MainWindow { get { return _mainWindow; } }
-
-        private BitmapSource _errorIcon;
-        [Bindable(true)]
-        public BitmapSource ErrorIcon { get { return _errorIcon; } }
 
         private string _message;
         [Bindable(true)]

@@ -86,7 +86,7 @@
     <Compile Include="SizeRadioButton.xaml.cs">
       <DependentUpon>SizeRadioButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UacShieldFuncs.cs" />
+    <Compile Include="ShellIconFuncs.cs" />
     <Page Include="AddWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

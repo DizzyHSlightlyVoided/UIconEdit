@@ -38,7 +38,7 @@ using System.Windows.Media.Imaging;
 
 namespace UIconEdit.Maker
 {
-    internal static class UacShieldFuncs
+    internal static class ShellIconFuncs
     {
         internal const int MAX_PATH = 260;
 
@@ -48,6 +48,23 @@ namespace UIconEdit.Maker
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool DestroyIcon(IntPtr hwnd);
 
+        private static void _loadIcon(SHSTOCKICONID id, SHGSI uFlags, ref BitmapSource icon)
+        {
+            SHSTOCKICONINFO sii = new SHSTOCKICONINFO();
+            sii.cbSize = (uint)Marshal.SizeOf(typeof(SHSTOCKICONINFO));
+            try
+            {
+                if (SHGetStockIconInfo(id, uFlags, ref sii) != 0)
+                    throw new Win32Exception();
+
+                icon = Imaging.CreateBitmapSourceFromHIcon(sii.hIcon, new Int32Rect(), BitmapSizeOptions.FromEmptyOptions());
+                DestroyIcon(sii.hIcon);
+            }
+            catch
+            {
+            }
+        }
+
         private static BitmapSource _uacIcon;
         public static ImageSource UACIcon
         {
@@ -56,24 +73,26 @@ namespace UIconEdit.Maker
                 if (Environment.OSVersion.Version.Major < 6) return null;
 
                 if (_uacIcon == null)
-                {
-                    SHSTOCKICONINFO sii = new SHSTOCKICONINFO();
-                    sii.cbSize = (uint)Marshal.SizeOf(typeof(SHSTOCKICONINFO));
-                    try
-                    {
-                        if (SHGetStockIconInfo(SHSTOCKICONID.SIID_SHIELD, SHGSI.SHGSI_ICON | SHGSI.SHGSI_SMALLICON, ref sii) != 0)
-                            throw new Win32Exception();
-
-                        _uacIcon = Imaging.CreateBitmapSourceFromHIcon(sii.hIcon, new Int32Rect(), BitmapSizeOptions.FromEmptyOptions());
-                        DestroyIcon(sii.hIcon);
-                    }
-                    catch
-                    {
-                    }
-
-                }
+                    _loadIcon(SHSTOCKICONID.SIID_SHIELD, SHGSI.SHGSI_ICON | SHGSI.SHGSI_SMALLICON, ref _uacIcon);
 
                 return _uacIcon;
+            }
+        }
+
+        private static BitmapSource _errorIcon;
+        public static ImageSource ErrorIcon
+        {
+            get
+            {
+                if (_errorIcon == null)
+                {
+                    if (Environment.OSVersion.Version.Major < 6)
+                        _errorIcon = Imaging.CreateBitmapSourceFromHIcon(System.Drawing.SystemIcons.Error.Handle, Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight(32, 32));
+                    else
+                        _loadIcon(SHSTOCKICONID.SIID_ERROR, SHGSI.SHGSI_ICON, ref _errorIcon);
+                }
+
+                return _errorIcon;
             }
         }
     }
@@ -197,7 +216,7 @@ namespace UIconEdit.Maker
         public IntPtr hIcon;
         public int iSysIconIndex;
         public int iIcon;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = UacShieldFuncs.MAX_PATH)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = ShellIconFuncs.MAX_PATH)]
         public string szPath;
     }
 }

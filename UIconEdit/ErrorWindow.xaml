@@ -13,7 +13,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Image Source="{Binding ErrorIcon, ElementName=window, Mode=OneTime}" HorizontalAlignment="Center" VerticalAlignment="Top"
+            <Image Source="{x:Static local:ShellIconFuncs.ErrorIcon}" HorizontalAlignment="Center" VerticalAlignment="Top"
                    Width="32" Height="32" Margin="10"/>
             <Label Grid.Column="1" Margin="2,8,10,42" HorizontalAlignment="Left" VerticalAlignment="Top"
                    Content="{Binding Message, ElementName=window, Mode=OneTime}"/>

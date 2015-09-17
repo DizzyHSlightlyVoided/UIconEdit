@@ -1405,7 +1405,7 @@ namespace UIconEdit
             int IList.Add(object value)
             {
                 if (Add(_checkAdd(value, "value"))) return _items.Count - 1;
-                throw new NotSupportedException("Could not add the specified value!");
+                return -1;
             }
 
 #if DRAWING

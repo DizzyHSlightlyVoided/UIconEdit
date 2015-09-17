@@ -1300,8 +1300,9 @@ namespace UIconEdit
 
             int IList.Add(object value)
             {
-                ((IList)this).Insert(_items.Count, value);
-                return _items.Count;
+                int count = _items.Count;
+                ((IList)this).Insert(count, value);
+                return count;
             }
 
             /// <summary>

@@ -63,9 +63,6 @@ namespace UIconEdit
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="input"/> is closed.
         /// </exception>
-        /// <exception cref="FileFormatException">
-        /// An error occurred when processing the cursor file's format.
-        /// </exception>
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
@@ -91,9 +88,6 @@ namespace UIconEdit
         /// <paramref name="input"/> is closed.
         /// </exception>
         /// <exception cref="IconLoadException">
-        /// An error occurred when processing the cursor file's format.
-        /// </exception>
-        /// <exception cref="FileFormatException">
         /// An error occurred when processing the cursor file's format.
         /// </exception>
         /// <exception cref="IOException">
@@ -138,9 +132,6 @@ namespace UIconEdit
         /// <exception cref="IconLoadException">
         /// An error occurred when processing the cursor file's format.
         /// </exception>
-        /// <exception cref="FileFormatException">
-        /// An error occurred when processing the cursor file's format.
-        /// </exception>
         /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
@@ -180,9 +171,6 @@ namespace UIconEdit
         /// <paramref name="path"/> is in an invalid format.
         /// </exception>
         /// <exception cref="IconLoadException">
-        /// An error occurred when processing the cursor file's format.
-        /// </exception>
-        /// <exception cref="FileFormatException">
         /// An error occurred when processing the cursor file's format.
         /// </exception>
         /// <exception cref="IOException">

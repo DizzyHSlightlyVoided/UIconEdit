@@ -40,6 +40,8 @@ using System.Linq;
 using System.Text;
 
 #if DRAWING
+using FileFormatException = System.IO.InvalidDataException;
+
 namespace UIconDrawing
 #else
 using System.Windows;

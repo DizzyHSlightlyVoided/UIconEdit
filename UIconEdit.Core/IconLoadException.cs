@@ -33,6 +33,8 @@ using System.Collections.Generic;
 using System.IO;
 
 #if DRAWING
+using FileFormatException = System.IO.IOException;
+
 namespace UIconDrawing
 #else
 namespace UIconEdit

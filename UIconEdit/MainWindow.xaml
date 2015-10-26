@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UIconEdit.Maker"
-        mc:Ignorable="d" x:Name="window" Icon="GradientEdit.ico" SnapsToDevicePixels="True"
+        mc:Ignorable="d" x:Name="window" Icon="GradientEdit.ico" SnapsToDevicePixels="True" UseLayoutRounding="True"
         Title="{Binding SettingsFile.LanguageFile.Title, ElementName=window, FallbackValue=UIconEdit}"
         MinHeight="660" MinWidth="800" Height="660" Width="800" ContentRendered="window_ContentRendered" Closing="window_Closing" Closed="window_Closed">
     <Window.CommandBindings>

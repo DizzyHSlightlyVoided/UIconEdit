@@ -8,12 +8,13 @@ A C# application for opening and editing [Windows .CUR and .ICO files](http://en
 
 UIconEdit app's functionality
 -----------------------------
+To load an existing icon file (or image file) from the command line, just enter `UIconEdit.exe [path-to-icon-file]`.
+
 * Opening and saving icons and cursors.
 * Importing images from external files.
 * Exporting icon images as .PNG files.
 * Duplicating an image with a different size and/or bit depth. You could just take a single 256x256 PNG image, and set 256x256, 48x48, 32x32, and 16x16 images, with 32-bit, 24-bit, and 8-bit color depths.
 * Icon sizes up to 768x768 (the maximum as of Windows 10).
-* Opening .ICO, .CUR, and image files as a command-line parameter.
 * Getting and setting a cursor's hotspot.
 * Extracting icons from .DLL and .EXE files.
 * Adding a "UIconEdit" option to file context menus in Windows.
@@ -23,11 +24,6 @@ UIconEdit.Core and UIconEdit.Drawing
 All of the above (except for the context-menu thing), plus:
 
 * The creation of animated cursors (.ANI files). This may or may not make it into UIconEdit itself.
-
-Planned functionality
----------------------
-### UIconEdit App
-* The ability to select individual frames when importing a multi-frame image.
 
 UIconDrawing examples
 ---------------------

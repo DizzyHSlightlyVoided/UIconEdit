@@ -129,7 +129,9 @@ namespace UIconEdit.Maker
 
             try
             {
-                BitmapImage bmpSource = LoadImage(path);
+                BitmapSource bmpSource = LoadImage(path);
+                if (bmpSource == null)
+                    return;
 
                 AddWindow addWindow = new AddWindow(this, false, true, bmpSource, IconEntry.GetBitDepth(bmpSource.Format));
                 bool? result = addWindow.ShowDialog();
@@ -186,18 +188,22 @@ namespace UIconEdit.Maker
             }
         }
 
-        private static BitmapImage LoadImage(string path)
+        private BitmapSource LoadImage(string path)
         {
+            BitmapDecoder decoder;
+
             using (FileStream fs = File.OpenRead(path))
-            {
-                BitmapImage bmpSource = new BitmapImage();
-                bmpSource.BeginInit();
-                bmpSource.CacheOption = BitmapCacheOption.OnLoad;
-                bmpSource.CreateOptions = BitmapCreateOptions.PreservePixelFormat | BitmapCreateOptions.IgnoreColorProfile;
-                bmpSource.StreamSource = fs;
-                bmpSource.EndInit();
-                return bmpSource;
-            }
+                decoder = BitmapDecoder.Create(fs, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+
+            if (decoder.Frames.Count == 1)
+                return decoder.Frames[0];
+
+            ExtractWindow extractWindow = new ExtractWindow(this, path, decoder);
+            bool? result = extractWindow.ShowDialog();
+            if (result.HasValue && result.Value)
+                return decoder.Frames[extractWindow.IconIndex];
+
+            return null;
         }
 
         private void _errorHandler(IconLoadException e)
@@ -544,7 +550,10 @@ namespace UIconEdit.Maker
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
-                BitmapImage bmpSource = LoadImage(dialog.FileName);
+                BitmapSource bmpSource = LoadImage(dialog.FileName);
+                if (bmpSource == null)
+                    return;
+
                 _add(new AddWindow(this, false, false, bmpSource, IconEntry.GetBitDepth(bmpSource.Format)));
             }
             catch

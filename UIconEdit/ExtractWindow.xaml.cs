@@ -44,17 +44,28 @@ namespace UIconEdit.Maker
     /// </summary>
     partial class ExtractWindow
     {
-        public ExtractWindow(MainWindow owner, string path, int iconCount)
+        private ExtractWindow(MainWindow owner)
         {
             Mouse.OverrideCursor = null;
             Owner = owner;
-            {
-                _task = new ThreadTask(this, iconCount);
-                Binding taskBinding = new Binding("Task.IsFinished");
-                taskBinding.ElementName = "window";
-                SetBinding(IsFullyLoadedProperty, taskBinding);
-            }
+            Binding taskBinding = new Binding("Task.IsFinished");
+            taskBinding.ElementName = "window";
+            SetBinding(IsFullyLoadedProperty, taskBinding);
+        }
+
+        public ExtractWindow(MainWindow owner, string path, int iconCount)
+            : this(owner)
+        {
             _path = path;
+            _task = new ThreadTask(this, iconCount);
+            InitializeComponent();
+        }
+
+        public ExtractWindow(MainWindow owner, string path, BitmapDecoder decoder)
+            : this(owner)
+        {
+            _path = path;
+            _task = new ThreadTask(this, decoder);
             InitializeComponent();
         }
 
@@ -66,14 +77,30 @@ namespace UIconEdit.Maker
         {
             private ExtractWindow _owner;
 
-            internal ThreadTask(ExtractWindow owner, int iconCount)
+            private ThreadTask(ExtractWindow owner)
             {
                 _owner = owner;
-                _iconCount = iconCount;
                 _backgroundWorker = new BackgroundWorker();
                 _backgroundWorker.WorkerSupportsCancellation = true;
                 _backgroundWorker.DoWork += _backgroundWorker_DoWork;
             }
+
+            internal ThreadTask(ExtractWindow owner, int iconCount)
+                : this(owner)
+            {
+                _iconCount = iconCount;
+            }
+
+            internal ThreadTask(ExtractWindow owner, BitmapDecoder decoder)
+                : this(owner)
+            {
+                _iconCount = decoder.Frames.Count;
+                _decoderFrames = decoder.Frames.ToArray();
+                for (int i = 0; i < _decoderFrames.Length; i++)
+                    _decoderFrames[i].Freeze();
+            }
+
+            private BitmapSource[] _decoderFrames;
 
             private double _transformX, _transformY;
 
@@ -81,6 +108,17 @@ namespace UIconEdit.Maker
             {
                 try
                 {
+                    if (_decoderFrames != null)
+                    {
+                        for (int i = 0; i < _decoderFrames.Length; i++)
+                        {
+                            _icons.Add(new FileToken(_decoderFrames[0], i, _decoderFrames.Length, _transformX, _transformY));
+                            curIndex = i;
+                            OnPropertyChanged("Value");
+                        }
+                        return;
+                    }
+
                     IconExtraction.ExtractIconsForEach(_owner._path, delegate (int dex, IconFile iconFile, CancelEventArgs cE)
                     {
                         if (_owner._cancelled)
@@ -184,7 +222,11 @@ namespace UIconEdit.Maker
             }
         }
 
-        public bool IsFullyLoaded { get { return (bool)GetValue(IsFullyLoadedProperty); } }
+        public bool IsFullyLoaded
+        {
+            get { return (bool)GetValue(IsFullyLoadedProperty); }
+            set { SetValue(IsFullyLoadedProperty, value); }
+        }
         #endregion
 
         public int IconIndex { get { return listIcons.SelectedIndex; } }
@@ -221,6 +263,15 @@ namespace UIconEdit.Maker
 
                 _transformX = transformX;
                 _transformY = transformY;
+            }
+
+            public FileToken(BitmapSource image, int index, int count, double transformX, double transformY)
+            {
+                _image = image;
+                _transformX = transformX;
+                _transformY = transformY;
+                _index = index;
+                _count = count;
             }
 
             private double _transformX, _transformY;

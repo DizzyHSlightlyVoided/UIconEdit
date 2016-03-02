@@ -47,7 +47,7 @@ namespace UIconEdit.Maker
         private ExtractWindow(MainWindow owner)
         {
             Mouse.OverrideCursor = null;
-            Owner = owner;
+            Owner = _owner = owner;
             Binding taskBinding = new Binding("Task.IsFinished");
             taskBinding.ElementName = "window";
             SetBinding(IsFullyLoadedProperty, taskBinding);
@@ -67,6 +67,7 @@ namespace UIconEdit.Maker
             _path = path;
             _task = new ThreadTask(this, decoder);
             InitializeComponent();
+            SizeVisibility = Visibility.Visible;
         }
 
         private ThreadTask _task;
@@ -194,8 +195,9 @@ namespace UIconEdit.Maker
 
         private string _path;
 
+        private MainWindow _owner;
         [Bindable(true)]
-        public SettingsFile SettingsFile { get { return ((MainWindow)Owner).SettingsFile; } }
+        public SettingsFile SettingsFile { get { return _owner.SettingsFile; } }
 
         private static void _handler(IconExtractException e) { }
 
@@ -226,6 +228,17 @@ namespace UIconEdit.Maker
         {
             get { return (bool)GetValue(IsFullyLoadedProperty); }
             set { SetValue(IsFullyLoadedProperty, value); }
+        }
+        #endregion
+
+        #region SizeVisibility
+        public static readonly DependencyProperty SizeVisibilityProperty = DependencyProperty.Register(nameof(SizeVisibility), typeof(Visibility), typeof(ExtractWindow),
+            new PropertyMetadata(Visibility.Collapsed));
+
+        public Visibility SizeVisibility
+        {
+            get { return (Visibility)GetValue(SizeVisibilityProperty); }
+            set { SetValue(SizeVisibilityProperty, value); }
         }
         #endregion
 
@@ -289,7 +302,6 @@ namespace UIconEdit.Maker
             public int Count { get { return _count; } }
 
             public double Width { get { return _image.PixelWidth / _transformX; } }
-
             [Bindable(true)]
             public double Height { get { return _image.PixelHeight / _transformY; } }
         }

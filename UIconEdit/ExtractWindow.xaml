@@ -34,6 +34,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Border BorderThickness="1" Background="{StaticResource TransparentTiles}" HorizontalAlignment="Center" 
                                 BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" MinWidth="56" MinHeight="56">
@@ -46,6 +47,15 @@
                                     <Binding Path="SettingsFile.LanguageFile.ExtractFrameCount" ElementName="window" FallbackValue="#{0} ({1})"/>
                                     <Binding Path="Index"/>
                                     <Binding Path="Count"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock HorizontalAlignment="Center" Grid.Row="2" Visibility="{Binding SizeVisibility, ElementName=window}">
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{StaticResource StringFormatConverter}">
+                                    <Binding Path="SettingsFile.LanguageFile.FormatSize" ElementName="window" FallbackValue="{}{0}x{1}" />
+                                    <Binding Path="Image.PixelWidth"/>
+                                    <Binding Path="Image.PixelHeight"/>
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>

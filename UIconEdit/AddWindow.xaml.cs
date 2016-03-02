@@ -351,7 +351,7 @@ namespace UIconEdit.Maker
         private static void CustomSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             AddWindow a = (AddWindow)d;
-            if (a.chkExtended.IsChecked.HasValue && a.chkExtended.IsChecked.Value)
+            if (a.szCust.IsChecked.HasValue && a.szCust.IsChecked.Value)
             {
                 a.EntryWidth = a.CustomWidth;
                 a.EntryHeight = a.CustomHeight;
@@ -360,7 +360,7 @@ namespace UIconEdit.Maker
 
         #region CustomWidth
         public static readonly DependencyProperty CustomWidthProperty = DependencyProperty.Register("CustomWidth", typeof(short), typeof(AddWindow),
-            new PropertyMetadata((short)32), SizeValidate);
+            new PropertyMetadata((short)32, CustomSizeChanged), SizeValidate);
 
         public short CustomWidth
         {

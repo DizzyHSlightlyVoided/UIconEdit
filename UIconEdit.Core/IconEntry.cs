@@ -1729,7 +1729,18 @@ namespace UIconEdit
                 pixels[i] = curPixel;
             }
 
-            var quantized = GetBitmap(pixels, isPng && _depth != IconBitDepth.Depth24BitsPerPixel ?
+            if (isPng && _depth == IconBitDepth.Depth24BitsPerPixel)
+#if DRAWING
+                return GetBitmap(pixels);
+#else
+            {
+                var bmpResult = GetBitmap(pixels);
+                bmpResult.Freeze();
+                return bmpResult;
+            }
+#endif
+
+            var quantized = GetBitmap(pixels, isPng ?
 #if DRAWING
                 PixelFormat.Format8bppIndexed
 #else

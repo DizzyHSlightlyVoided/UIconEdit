@@ -986,6 +986,20 @@ namespace UIconEdit
             }
         }
 
+#if DRAWING
+        /// <summary>
+        /// Gets and sets the scaling mode used to resize <see cref="BaseImage"/> and <see cref="AlphaImage"/> when quantizing.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException">
+        /// In a set operation, the current instance is disposed.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// In a set operation, the specified value is not a valid <see cref="IconScalingFilter"/> value.
+        /// </exception>
+        public IconScalingFilter ScalingFilter
+        {
+            get { return _scalingFilter; }
+#else
         /// <summary>
         /// Gets and sets the scaling mode used to resize <see cref="BaseImage"/> and <see cref="AlphaImage"/> when quantizing.
         /// </summary>
@@ -994,10 +1008,7 @@ namespace UIconEdit
         /// </exception>
         public IconScalingFilter ScalingFilter
         {
-#if DRAWING
-            get { return _scalingFilter; }
-#else
-            get { return (IconScalingFilter)GetValue(IconScalingFilterProperty); }
+            get { return (IconScalingFilter)GetValue(ScalingFilterProperty); }
 #endif
             set
             {
@@ -1009,8 +1020,73 @@ namespace UIconEdit
 #if DRAWING
                 _scalingFilter = value;
 #else
-                SetValue(IconScalingFilterProperty, value);
+                SetValue(ScalingFilterProperty, value);
 #endif
+            }
+        }
+        #endregion
+
+        #region AlphaConvertMode
+#if DRAWING
+        private IconAlphaConvertMode _alphaConvertMode;
+        /// <summary>
+        /// Gets and sets a value indicating how <see cref="AlphaImage"/> is converted into the alpha value.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException">
+        /// In a set operation, the current instance is disposed.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// In a set operation, the specified value is not a valid <see cref="IconAlphaConvertMode"/> value.
+        /// </exception>
+        public IconAlphaConvertMode AlphaConvertMode
+        {
+            get { return _alphaConvertMode; }
+            set
+            {
+                if (_isDisposed) throw new ObjectDisposedException(null);
+                if (!AlphaConvertModeValidate(value))
+                    throw new InvalidEnumArgumentException("value", (int)value, typeof(IconAlphaConvertMode));
+                _alphaConvertMode = value;
+            }
+        }
+
+        private static bool AlphaConvertModeValidate(IconAlphaConvertMode value)
+        {
+            switch (value)
+#else
+        /// <summary>
+        /// The dependency property for the <see cref="AlphaConvertMode"/> property.
+        /// </summary>
+        public static readonly DependencyProperty AlphaConvertModeProperty = DependencyProperty.Register("AlphaConvertMode", typeof(IconAlphaConvertMode), typeof(IconEntry));
+
+        /// <summary>
+        /// Gets and sets a value indicating how <see cref="AlphaImage"/> is converted into the alpha value.
+        /// </summary>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// In a set operation, the specified value is not a valid <see cref="IconAlphaConvertMode"/> value.
+        /// </exception>
+        public IconAlphaConvertMode AlphaConvertMode
+        {
+            get { return (IconAlphaConvertMode)GetValue(AlphaConvertModeProperty); }
+            set
+            {
+                if (!AlphaConvertModeValidate(value))
+                    throw new InvalidEnumArgumentException("value", (int)value, typeof(IconAlphaConvertMode));
+                SetValue(AlphaConvertModeProperty, value);
+            }
+        }
+
+        private static bool AlphaConvertModeValidate(object value)
+        {
+            switch ((IconAlphaConvertMode)value)
+#endif
+            {
+                case IconAlphaConvertMode.AlphaOnly:
+                case IconAlphaConvertMode.LumAndAlpha:
+                case IconAlphaConvertMode.LumOnly:
+                    return true;
+                default:
+                    return false;
             }
         }
         #endregion
@@ -1018,7 +1094,9 @@ namespace UIconEdit
         /// <summary>
         /// Gets the number of bits per pixel specified by <see cref="BitDepth"/>.
         /// </summary>
+#if !DRAWING
         [Bindable(true, BindingDirection.OneWay)]
+#endif
         public int BitsPerPixel
         {
             get { return GetBitsPerPixel(_depth); }
@@ -1056,7 +1134,9 @@ namespace UIconEdit
         /// <summary>
         /// Gets the maximum color count specified by <see cref="BitDepth"/>.
         /// </summary>
+#if !DRAWING
         [Bindable(true, BindingDirection.OneWay)]
+#endif
         public long ColorCount
         {
             get { return GetColorCount(_depth); }
@@ -1280,6 +1360,12 @@ namespace UIconEdit
 #else
                 this = new ColorValue() { A = value.A, R = value.R, G = value.G, B = value.B };
 #endif
+            }
+
+            public ColorValue(byte a, ColorValue value)
+            {
+                this = value;
+                A = a;
             }
 
             [FieldOffset(0)]
@@ -1550,20 +1636,23 @@ namespace UIconEdit
 #endif
             }
 
-            ColorValue[] pixels =
 #if DRAWING
-                _getPixels(_baseImage);
+            ColorValue[] pixels = _getPixels(_baseImage);
 #else
-                _getPixels(BaseImage);
+            ColorValue[] pixels = _getPixels(BaseImage);
+
             byte _alphaThreshold = AlphaThreshold;
+            IconAlphaConvertMode _alphaConvertMode = AlphaConvertMode;
 #endif
 
             if (isPng)
             {
                 alphaMask = null;
+
                 if (_alphaImage != null && _depth == IconBitDepth.Depth32BitsPerPixel && this._depth != IconBitDepth.Depth32BitsPerPixel)
                 {
                     ColorValue[] alphaPixels = _getPixels(_alphaImage);
+                    _alphanize(alphaPixels);
 
                     for (int i = 0; i < alphaPixels.Length; i++)
                     {
@@ -1593,12 +1682,13 @@ namespace UIconEdit
                 else
                 {
                     alphaPixels = _getPixels(_alphaImage);
+                    _alphanize(alphaPixels);
 
                     for (int i = 0; i < alphaPixels.Length; i++)
                     {
                         ColorValue curAlpha = alphaPixels[i];
                         double whiteDistance = curAlpha.GetDistance(ColorValue.White);
-                        if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance || curAlpha.GetDistance(default(ColorValue)) < whiteDistance)
+                        if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance)
                             alphaPixels[i] = ColorValue.Black;
                         else
                             alphaPixels[i] = ColorValue.White;
@@ -1678,6 +1768,43 @@ namespace UIconEdit
             quantized.Freeze();
             return quantized;
 #endif
+        }
+
+        private void _alphanize(ColorValue[] value)
+        {
+#if DRAWING
+            switch (_alphaConvertMode)
+#else
+            switch (AlphaConvertMode)
+#endif
+            {
+                case IconAlphaConvertMode.AlphaOnly:
+                    for (int i = 0; i < value.Length; i++)
+                    {
+                        byte a = value[i].A;
+
+                        value[i] = new ColorValue(a, a, a);
+                    }
+                    return;
+                case IconAlphaConvertMode.LumOnly:
+                    for (int i = 0; i < value.Length; i++)
+                        value[i] = new ColorValue(byte.MaxValue, value[i]);
+                    break;
+                default:
+                    for (int i = 0; i < value.Length; i++)
+                    {
+                        double maxByte = byte.MaxValue;
+
+                        var curVal = value[i];
+                        var curAlpha = curVal.A / maxByte;
+
+                        curVal.A = byte.MaxValue;
+                        curVal.R = (byte)((curVal.R * curAlpha) * maxByte);
+                        curVal.G = (byte)((curVal.G * curAlpha) * maxByte);
+                        curVal.B = (byte)((curVal.B * curAlpha) * maxByte);
+                    }
+                    break;
+            }
         }
 
         private ColorValue[] _getPixels(BitmapSource image)
@@ -2569,5 +2696,24 @@ namespace UIconEdit
         /// Specifies high-quality bicubic interpolation. Prefiltering is performed to ensure high-quality transformation.
         /// </summary>
         HighQualityBicubic
+    }
+
+    /// <summary>
+    /// Indicates options for how <see cref="IconEntry.AlphaImage"/> is converted to the alpha channel.
+    /// </summary>
+    public enum IconAlphaConvertMode
+    {
+        /// <summary>
+        /// Both the alpha value and the luminance of each pixel are taken into consideration.
+        /// </summary>
+        LumAndAlpha,
+        /// <summary>
+        /// Only the luminance of each pixel is taken into consideration.
+        /// </summary>
+        LumOnly,
+        /// <summary>
+        /// Only the alpha value of each pixel is taken into consideration.
+        /// </summary>
+        AlphaOnly,
     }
 }

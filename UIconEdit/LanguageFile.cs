@@ -199,6 +199,7 @@ namespace UIconEdit.Maker
         public string CursorExtractError { get { return _text["CursorExtractError"]; } }
         public string IconExtractNone { get { return _text["IconExtractNone"]; } }
         public string RegistryError { get { return _text["RegistryError"]; } }
+        public string TooBigNonPng { get { return _text["TooBigNonPng"]; } }
 
         public string FilenameSuffix { get { return _text["FilenameSuffix"]; } }
         public string FilenameSuffixEx { get { return _text["FilenameSuffixEx"]; } }

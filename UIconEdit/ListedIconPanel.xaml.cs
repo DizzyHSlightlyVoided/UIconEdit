@@ -28,6 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #endregion
 
+using System;
 using System.Windows;
 using System.Windows.Media;
 
@@ -64,7 +65,7 @@ namespace UIconEdit.Maker
 
             PresentationSource source = PresentationSource.FromVisual((ListedIconPanel)d);
             double width = source.CompositionTarget.TransformToDevice.M11 * 64;
-            
+
             d.SetValue(ScalingModePropertyKey, entry.Width > width ? BitmapScalingMode.HighQuality : BitmapScalingMode.NearestNeighbor);
         }
 
@@ -83,13 +84,38 @@ namespace UIconEdit.Maker
         public BitmapScalingMode ScalingMode { get { return (BitmapScalingMode)GetValue(ScalingModeProperty); } }
         #endregion
 
+        #region CanCheckPng
+        private static readonly DependencyPropertyKey CanCheckPngPropertyKey = DependencyProperty.RegisterReadOnly(nameof(CanCheckPng), typeof(bool),
+            typeof(ListedIconPanel), new PropertyMetadata(true, null, CanCheckPngCoerce));
+        public static readonly DependencyProperty CanCheckPngProperty = CanCheckPngPropertyKey.DependencyProperty;
+
+        private static object CanCheckPngCoerce(DependencyObject d, object baseValue)
+        {
+            ListedIconPanel p = (ListedIconPanel)d;
+            bool value = (bool)baseValue;
+
+            var entry = p.Entry;
+            if (entry.Width > byte.MaxValue || entry.Height > byte.MaxValue)
+                return !entry.IsPng;
+
+            if (entry.BitDepth != IconBitDepth.Depth32BitsPerPixel)
+                return entry.IsPng;
+
+            return true;
+        }
+
+        public bool CanCheckPng { get { return (bool)GetValue(CanCheckPngProperty); } }
+        #endregion
+
         private void chkPng_Checked(object sender, RoutedEventArgs e)
         {
             MainWindow.IsModified = true;
+            CoerceValue(CanCheckPngProperty);
         }
 
         private void control_Loaded(object sender, RoutedEventArgs e)
         {
+            CoerceValue(CanCheckPngProperty);
             chkPng.Checked += chkPng_Checked;
             chkPng.Unchecked += chkPng_Checked;
         }

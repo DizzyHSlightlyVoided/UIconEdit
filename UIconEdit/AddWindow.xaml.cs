@@ -430,10 +430,21 @@ namespace UIconEdit.Maker
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
             var file = _mainWindow.LoadedFile;
-            if (!NewFile && file != null && file.Entries.ContainsSimilar(EntryWidth, EntryHeight, BitDepth))
+
+            var width = EntryWidth;
+            var height = EntryHeight;
+            var depth = BitDepth;
+
+            if (depth != IconBitDepth.Depth32BitsPerPixel && (width > byte.MaxValue || height > byte.MaxValue))
+            {
+                ErrorWindow.Show(_mainWindow, this, _mainWindow.SettingsFile.LanguageFile.TooBigNonPng);
+                return;
+            }
+
+            if (!NewFile && file != null && file.Entries.ContainsSimilar(width, height, depth))
             {
                 ErrorWindow.Show(_mainWindow, this, string.Format(_mainWindow.SettingsFile.LanguageFile.ImageAddError,
-                    IconEntry.GetBitsPerPixel(BitDepth), EntryWidth, EntryHeight));
+                    IconEntry.GetBitsPerPixel(BitDepth), width, height));
                 return;
             }
 

@@ -20,6 +20,7 @@
   <!-- {0} = file path to EXE or DLL file. -->
   <IconExtractNone>No valid icons or cursors were loaded from "{0}".</IconExtractNone>
   <RegistryError>Could not save registry values.</RegistryError>
+  <TooBigNonPng>Only 32-bit images are permitted when the width or height is greater than or equal to 256.</TooBigNonPng>
 
   <!-- {0} = number of bits per pixel, {1} = width, {2} = height. -->
   <FilenameSuffix>{0}bpp{1}x{2}</FilenameSuffix>

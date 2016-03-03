@@ -25,7 +25,7 @@
         <TextBlock Grid.Row="1" HorizontalAlignment="Center">
             <TextBlock.Text>
                 <MultiBinding Converter="{StaticResource StringFormatConverter}">
-                    <Binding ElementName="control" Path="MainWindow.SettingsFile.LanguageFile.FormatBitsPerPixel" FallbackValue="{}{0}bps"/>
+                    <Binding ElementName="control" Path="MainWindow.SettingsFile.LanguageFile.FormatBitsPerPixel" FallbackValue="{}{0}-bit"/>
                     <Binding ElementName="control" Path="Entry.BitsPerPixel"/>
                 </MultiBinding>
             </TextBlock.Text>
@@ -40,6 +40,7 @@
             </TextBlock.Text>
         </TextBlock>
         <CheckBox Grid.Row="3" HorizontalAlignment="Center" IsChecked="{Binding Entry.IsPng, ElementName=control}" x:Name="chkPng"
-                  Content="{Binding MainWindow.SettingsFile.LanguageFile.FormatPng, ElementName=control, FallbackValue=PNG}"/>
+                  Content="{Binding MainWindow.SettingsFile.LanguageFile.FormatPng, ElementName=control, FallbackValue=PNG}"
+                  IsEnabled="{Binding CanCheckPng, ElementName=control}" />
     </Grid>
 </UserControl>

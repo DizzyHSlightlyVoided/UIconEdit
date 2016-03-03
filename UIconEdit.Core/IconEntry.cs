@@ -1649,7 +1649,7 @@ namespace UIconEdit
             {
                 alphaMask = null;
 
-                if (_alphaImage != null && _depth == IconBitDepth.Depth32BitsPerPixel && this._depth != IconBitDepth.Depth32BitsPerPixel)
+                if (_alphaImage != null)
                 {
                     ColorValue[] alphaPixels = _getPixels(_alphaImage);
                     _alphanize(alphaPixels);

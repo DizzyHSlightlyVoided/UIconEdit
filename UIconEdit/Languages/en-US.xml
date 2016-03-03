@@ -71,6 +71,11 @@
   <PreviewCombined>Image + Alpha</PreviewCombined>
   <PreviewBase>Base Image</PreviewBase>
   <PreviewAlpha>Alpha Mask</PreviewAlpha>
+  <PreviewAlphaMode>Alpha Mode:</PreviewAlphaMode>
+
+  <AmodeBoth>RGB and Alpha</AmodeBoth>
+  <AmodeRGB>RGB only</AmodeRGB>
+  <AmodeAlpha>Alpha only</AmodeAlpha>
 
   <Settings>Settings</Settings>
   <SettingsLanguage>Language</SettingsLanguage>
@@ -86,6 +91,7 @@
   <ButtonPreview>_Preview</ButtonPreview>
   <ButtonApply>_Apply</ButtonApply>
   <ButtonRetry>_Retry</ButtonRetry>
+  <ButtonSetAlpha>Set Alpha Image</ButtonSetAlpha>
 
   <!-- {0} = number of bits per pixel -->
   <FormatBitsPerPixel>{0}-bit</FormatBitsPerPixel>

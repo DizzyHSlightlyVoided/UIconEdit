@@ -27,19 +27,20 @@
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:AddWindow.PreviewCommand}" CanExecute="Preview_CanExecute" Executed="Preview_Executed"/>
+        <CommandBinding Command="{x:Static local:AddWindow.SetAlphaCommand}" CanExecute="Preview_CanExecute" Executed="SetAlpha_Executed"/>
     </Window.CommandBindings>
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Horizontal">
             <GroupBox x:Name="groupImage" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="110" Width="96"
-                      Header="{Binding Owner.SettingsFile.LanguageFile.GroupImage, FallbackValue=Image}">
+                      Header="{Binding Owner.SettingsFile.LanguageFile.GroupImage, ElementName=window, FallbackValue=Image}">
                 <Border Background="{StaticResource TransparentTiles}" HorizontalAlignment="Center" VerticalAlignment="Center"
                         BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="1">
                     <Image MaxWidth="80" MaxHeight="80" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding LoadedImage, ElementName=window}"
-                       Margin="1" Width="{Binding LoadedImage.PixelWidth, ElementName=window}" RenderOptions.BitmapScalingMode="HighQuality"/>
+                           Margin="1" Width="{Binding LoadedImage.PixelWidth, ElementName=window}" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Border>
             </GroupBox>
             <GroupBox x:Name="groupBitDepth" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Height="110" Width="473"
-                  Header="{Binding Owner.SettingsFile.LanguageFile.GroupBitsPerPixel, FallbackValue='Bits Per Pixel'}">
+                  Header="{Binding Owner.SettingsFile.LanguageFile.GroupBitsPerPixel, ElementName=window, FallbackValue='Bits Per Pixel'}">
                 <WrapPanel>
                     <RadioButton x:Name="rad32bit" HorizontalAlignment="Left" Margin="10,10,20,0" VerticalAlignment="Top" MaxWidth="212" Checked="bit_Checked"
                              Content="{Binding Owner.SettingsFile.LanguageFile.Bits32, ElementName=window, FallbackValue='Full Color + Alpha (32-bit)'}"/>
@@ -57,7 +58,7 @@
         <GroupBox x:Name="groupSize" Header="GroupBox" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="151" Width="574">
             <WrapPanel>
                 <CheckBox x:Name="chkExtended" Margin="10,10,20,0" IsChecked="{Binding ExtendedSizes, ElementName=window}"
-                          Content="{Binding Owner.SettingsFile.LanguageFile.ExtendedSize, FallbackValue='Extended Windows 10 Sizes'}"/>
+                          Content="{Binding Owner.SettingsFile.LanguageFile.ExtendedSize, ElementName=window, FallbackValue='Extended Windows 10 Sizes'}"/>
                 <local:SizeRadioButton x:Name="sz16" Margin="10,10,20,0" EntryWidth="{StaticResource W16}" EntryHeight="{StaticResource W16}"
                                        LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"/>
                 <local:SizeRadioButton x:Name="sz20" Margin="10,10,20,0" EntryWidth="{StaticResource T20}" EntryHeight="{StaticResource T20}"
@@ -114,7 +115,7 @@
                 <TextBox Width="65" Text="{Binding AlphaThreshold, ElementName=window}" Margin="5,0,0,0" VerticalAlignment="Center"
                          IsEnabled="{Binding UseAlphaThreshold, ElementName=window}"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
                 <Label Content="{Binding Owner.SettingsFile.LanguageFile.ScalingFilter, ElementName=window, FallbackValue='Scaling filter:'}" Padding="0"
                        VerticalAlignment="Center" IsEnabled="{Binding DifferentSize, ElementName=window}"/>
                 <ComboBox x:Name="cmbFilter" MinWidth="120" Margin="5,0,0,0" VerticalAlignment="Center" ItemsSource="{x:Static local:AddWindow.Filters}"
@@ -133,10 +134,12 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>
+            <Button Command="{x:Static local:AddWindow.SetAlphaCommand}" MinWidth="100"
+                    Content="{Binding Owner.SettingsFile.LanguageFile.ButtonSetAlpha, ElementName=window, FallbackValue='Set Alpha Image'}"/>
         </WrapPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5">
             <Button x:Name="btnPrev" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinWidth="75"
-                    Content="{Binding Owner.SettingsFile.LanguageFile.ButtonPreview, FallbackValue=_Preview}"
+                    Content="{Binding Owner.SettingsFile.LanguageFile.ButtonPreview, ElementName=window, FallbackValue=_Preview}"
                     Command="{x:Static local:AddWindow.PreviewCommand}"/>
             <Button x:Name="btnOK" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinWidth="75" IsDefault="True"
                     Content="{Binding Owner.SettingsFile.LanguageFile.ButtonOK, ElementName=window, FallbackValue=_OK}" Click="btnOK_Click"/>

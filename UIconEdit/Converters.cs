@@ -214,4 +214,36 @@ namespace UIconEdit.Maker
             throw new NotSupportedException();
         }
     }
+
+    internal class NotConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool)
+                return !(bool)value;
+            return false;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool)
+                return !(bool)value;
+            return false;
+        }
+    }
+
+    internal class IndexToAlphaModeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            IconAlphaConvertMode mode = (IconAlphaConvertMode)value;
+            return (int)mode;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int index = (int)value;
+            return (IconAlphaConvertMode)index;
+        }
+    }
 }

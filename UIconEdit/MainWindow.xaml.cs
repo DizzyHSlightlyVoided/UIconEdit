@@ -141,7 +141,7 @@ namespace UIconEdit.Maker
                     Mouse.OverrideCursor = Cursors.Wait;
                     FilePath = null;
                     LoadedFile = new CursorFile();
-                    LoadedFile.Entries.Add(addWindow.GetIconEntry());
+                    LoadedFile.Entries.Add(addWindow.GetIconEntry(true));
                     listbox.SelectedIndex = 0;
                     IsModified = true;
                     scrollEntries.ScrollToTop();
@@ -190,6 +190,11 @@ namespace UIconEdit.Maker
 
         private BitmapSource LoadImage(string path)
         {
+            return LoadImage(path, this, this);
+        }
+
+        internal static BitmapSource LoadImage(string path, MainWindow mainWindow, Window owner)
+        {
             BitmapDecoder decoder;
 
             using (FileStream fs = File.OpenRead(path))
@@ -198,7 +203,8 @@ namespace UIconEdit.Maker
             if (decoder.Frames.Count == 1)
                 return decoder.Frames[0];
 
-            ExtractWindow extractWindow = new ExtractWindow(this, path, decoder);
+            ExtractWindow extractWindow = new ExtractWindow(mainWindow, path, decoder);
+            extractWindow.Owner = owner;
             bool? result = extractWindow.ShowDialog();
             if (result.HasValue && result.Value)
                 return decoder.Frames[extractWindow.IconIndex];
@@ -530,7 +536,7 @@ namespace UIconEdit.Maker
 
             if (!result.HasValue || !result.Value) return;
             Mouse.OverrideCursor = Cursors.Wait;
-            var newEntry = addWindow.GetIconEntry();
+            var newEntry = addWindow.GetIconEntry(true);
             int dex = ~LoadedFile.Entries.BinarySearchSimilar(newEntry);
             LoadedFile.Entries.Insert(dex, newEntry);
             listbox.SelectedIndex = dex;
@@ -538,11 +544,12 @@ namespace UIconEdit.Maker
             Mouse.OverrideCursor = null;
         }
 
+        internal const string OpenImageFilter = "{0}|*.gif;*.png;*.bmp;*.dib;*.tif;*.tiff;*.jpg;*.jpeg|{1} (*.*)|*";
+
         private void Add_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = string.Format("{0}|*.gif;*.png;*.bmp;*.dib;*.tif;*.tiff;*.jpg;*.jpeg|{1} (*.*)|*",
-                _settings.LanguageFile.TypeImage, _settings.LanguageFile.TypeAll);
+            dialog.Filter = string.Format(OpenImageFilter, _settings.LanguageFile.TypeImage, _settings.LanguageFile.TypeAll);
 
             bool? result = dialog.ShowDialog(this);
             if (!result.HasValue || !result.Value) return;

@@ -249,6 +249,11 @@ namespace UIconEdit.Maker
         public string PreviewCombined { get { return _text["PreviewCombined"]; } }
         public string PreviewBase { get { return _text["PreviewBase"]; } }
         public string PreviewAlpha { get { return _text["PreviewAlpha"]; } }
+        public string PreviewAlphaMode { get { return _text["PreviewAlphaMode"]; } }
+
+        public string AmodeBoth { get { return _text["AmodeBoth"]; } }
+        public string AmodeRGB { get { return _text["AmodeRGB"]; } }
+        public string AmodeAlpha { get { return _text["AmodeAlpha"]; } }
 
         public string Settings { get { return _text["Settings"]; } }
         public string SettingsLanguage { get { return _text["SettingsLanguage"]; } }
@@ -264,6 +269,7 @@ namespace UIconEdit.Maker
         public string ButtonPreview { get { return _text["ButtonPreview"]; } }
         public string ButtonApply { get { return _text["ButtonApply"]; } }
         public string ButtonRetry { get { return _text["ButtonRetry"]; } }
+        public string ButtonSetAlpha { get { return _text["ButtonSetAlpha"]; } }
 
         public string FormatBitsPerPixel { get { return _text["FormatBitsPerPixel"]; } }
         public string FormatSize { get { return _text["FormatSize"]; } }

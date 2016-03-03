@@ -8,20 +8,37 @@
         Title="{Binding Owner.Owner.SettingsFile.LanguageFile.Preview, ElementName=window, FallbackValue=Preview}" Closing="window_Closing"
         MinHeight="660" MinWidth="700" Height="660" Width="700">
     <Window.Resources>
-        <local:ScaleFilterConverter x:Key="ScaleFilterConverter"/>
+        <local:ScaleFilterConverter x:Key="ScaleFilterConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:BooleanToInvisibilityConverter x:Key="BooleanToInvisibilityConverter" />
+        <local:NotConverter x:Key="NotConverter" />
+        <local:IndexToAlphaModeConverter x:Key="IndexToAlphaModeConverter"/>
     </Window.Resources>
     <DockPanel>
         <ToolBar DockPanel.Dock="Top" Height="Auto" ToolBarTray.IsLocked="true">
             <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.AlphaThreshold, ElementName=window,FallbackValue='Alpha Threshold:'}"
-                       VerticalAlignment="Center"/>
-            <Border VerticalAlignment="Center" Margin="5,0,0,0">
+                       VerticalAlignment="Center" Visibility="{Binding SettingAlpha, ElementName=window, Converter={StaticResource BooleanToInvisibilityConverter}}"/>
+            <Border Visibility="{Binding SettingAlpha, ElementName=window, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                    VerticalAlignment="Center" Margin="5,0,0,0">
                 <TextBox Width="65" Text="{Binding AlphaThreshold, ElementName=window}" VerticalAlignment="Center" x:Name="txtAlpha"
                          IsEnabled="{Binding Owner.UseAlphaThreshold, ElementName=window}" PreviewKeyUp="txtAlpha_PreviewKeyUp"/>
             </Border>
-            <Separator/>
+            <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.PreviewAlphaMode, ElementName=window, FallbackValue='Alpha mode:'}"
+                       VerticalAlignment="Center" Visibility="{Binding SettingAlpha, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <Border Visibility="{Binding SettingAlpha, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="5,0,0,0">
+                <ComboBox MinWidth="120" SelectedIndex="{Binding SourceEntry.AlphaConvertMode, ElementName=window, Converter={StaticResource IndexToAlphaModeConverter}}"
+                          SelectionChanged="cmbWhich_SelectionChanged">
+                    <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.AmodeBoth, ElementName=window, FallbackValue='Both RGB and Alpha'}"/>
+                    <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.AmodeRGB ,ElementName=window, FallbackValue='RGB only'}"/>
+                    <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.AmodeAlpha, ElementName=window, FallbackValue='Alpha only'}"/>
+                </ComboBox>
+            </Border>
+            <Separator Visibility="{Binding SettingAlpha, ElementName=window, Converter={StaticResource BooleanToInvisibilityConverter}}"/>
             <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.ScalingFilter, ElementName=window, FallbackValue='Scaling filter:'}"
-                       VerticalAlignment="Center" IsEnabled="{Binding Owner.DifferentSize, ElementName=window}"/>
-            <Border Margin="5,0,0,0" VerticalAlignment="Center">
+                       VerticalAlignment="Center" IsEnabled="{Binding Owner.DifferentSize, ElementName=window}"
+                       Visibility="{Binding SettingAlpha, ElementName=window, Converter={StaticResource BooleanToInvisibilityConverter}}"/>
+            <Border Visibility="{Binding SettingAlpha, ElementName=window, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                    Margin="5,0,0,0" VerticalAlignment="Center">
                 <ComboBox x:Name="cmbFilter" MinWidth="120" ItemsSource="{x:Static local:AddWindow.Filters}" IsEnabled="{Binding Owner.DifferentSize, ElementName=window}"
                           SelectedIndex="{Binding Owner.MatrixSelectedIndex, ElementName=window}" SelectionChanged="cmbFilter_SelectionChanged">
                     <ComboBox.ItemTemplate>
@@ -52,12 +69,16 @@
                     <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.PreviewCombined, FallbackValue='Image + Alpha'}" />
                     <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.PreviewBase, FallbackValue='Base Image'}" />
                     <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.PreviewAlpha, FallbackValue='Alpha Mask'}" />
+                    <TextBlock Text="{Binding Owner.Owner.SettingsFile.LanguageFile.PreviewAlphaOrig, FallbackValue='Original Alpha Mask'}" 
+                               Visibility="{Binding SettingAlpha, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </ComboBox>
             </Border>
         </ToolBar>
         <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" DockPanel.Dock="Bottom">
-            <Button Content="{Binding Owner.Owner.SettingsFile.LanguageFile.ButtonOK, FallbackValue=_OK}" MinWidth="75" IsDefault="True" IsCancel="True"
-                    Margin="5"/>
+            <Button Content="{Binding Owner.Owner.SettingsFile.LanguageFile.ButtonCancel, FallbackValue=_Cancel}" MinWidth="75" IsCancel="True" Margin="5"
+                    Visibility="{Binding SettingAlpha, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <Button Content="{Binding Owner.Owner.SettingsFile.LanguageFile.ButtonOK, FallbackValue=_OK}" MinWidth="75" IsDefault="True" Margin="5"
+                    IsCancel="{Binding SettingAlpha, ElementName=window, Converter={StaticResource NotConverter}}" Click="Button_Click"/>
         </StackPanel>
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="scrollImage">

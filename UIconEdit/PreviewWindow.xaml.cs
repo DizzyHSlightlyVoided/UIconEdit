@@ -42,12 +42,24 @@ namespace UIconEdit.Maker
     /// </summary>
     partial class PreviewWindow
     {
-        public PreviewWindow(AddWindow owner)
+        private PreviewWindow(AddWindow owner, bool quantize)
         {
             Owner = owner;
             AlphaThreshold = owner.AlphaThreshold;
-            SetValue(SourceEntryPropertyKey, owner.GetIconEntry());
+            SetValue(SourceEntryPropertyKey, owner.GetIconEntry(quantize));
             InitializeComponent();
+        }
+
+        public PreviewWindow(AddWindow owner)
+            : this(owner, true)
+        {
+        }
+
+        public PreviewWindow(AddWindow owner, BitmapSource alphaImage)
+            : this(owner, false)
+        {
+            SetValue(SettingAlphaPropertyKey, true);
+            SourceEntry.AlphaImage = alphaImage;
         }
 
         private void window_Loaded(object sender, RoutedEventArgs e)
@@ -157,7 +169,7 @@ namespace UIconEdit.Maker
             PreviewWindow p = (PreviewWindow)d;
             var owner = (AddWindow)p.Owner;
             owner.AlphaThreshold = (byte)e.NewValue;
-            p.SetValue(SourceEntryPropertyKey, owner.GetIconEntry());
+            p.SetValue(SourceEntryPropertyKey, owner.GetIconEntry(!p.SettingAlpha));
         }
 
         public byte AlphaThreshold
@@ -165,6 +177,14 @@ namespace UIconEdit.Maker
             get { return (byte)GetValue(AlphaThresholdProperty); }
             set { SetValue(AlphaThresholdProperty, value); }
         }
+        #endregion
+
+        #region SettingAlpha
+        private static readonly DependencyPropertyKey SettingAlphaPropertyKey = DependencyProperty.RegisterReadOnly(nameof(SettingAlpha), typeof(bool),
+            typeof(PreviewWindow), new PropertyMetadata(false));
+        public static readonly DependencyProperty SettingAlphaProperty = SettingAlphaPropertyKey.DependencyProperty;
+
+        public bool SettingAlpha { get { return (bool)GetValue(SettingAlphaProperty); } }
         #endregion
 
         private void _setChanged()
@@ -177,6 +197,11 @@ namespace UIconEdit.Maker
                     SourceImage = entry.BaseImage;
                     break;
                 case 2:
+                    BitmapSource alphaImage;
+                    entry.GetQuantized(out alphaImage);
+                    SourceImage = alphaImage;
+                    break;
+                case 3:
                     SourceImage = entry.AlphaImage;
                     break;
                 default:
@@ -188,7 +213,7 @@ namespace UIconEdit.Maker
         private void cmbFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            SetValue(SourceEntryPropertyKey, ((AddWindow)Owner).GetIconEntry());
+            SetValue(SourceEntryPropertyKey, ((AddWindow)Owner).GetIconEntry(!SettingAlpha));
             Mouse.OverrideCursor = null;
         }
 
@@ -205,6 +230,15 @@ namespace UIconEdit.Maker
         private void txtAlpha_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             txtAlpha.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (SettingAlpha)
+            {
+                DialogResult = true;
+                Close();
+            }
         }
     }
 }

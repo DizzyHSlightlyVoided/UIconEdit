@@ -31,8 +31,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using Microsoft.Win32;
 
 namespace UIconEdit.Maker
 {
@@ -165,15 +166,30 @@ namespace UIconEdit.Maker
 
         private MainWindow _mainWindow;
 
-        public IconEntry GetIconEntry()
+        public SettingsFile Settings { get { return _mainWindow.SettingsFile; } }
+
+        public IconEntry GetIconEntry(bool quantize)
         {
-            var entry = new IconEntry(LoadedImage, EntryWidth, EntryHeight, BitDepth, AlphaThreshold);
+            IconEntry entry;
+            if (_savedEntry == null)
+                entry = new IconEntry(LoadedImage, EntryWidth, EntryHeight, BitDepth);
+            else if (_savedEntry.Width != EntryWidth || _savedEntry.Height != EntryHeight || _savedEntry.BitDepth != BitDepth)
+            {
+                entry = new IconEntry(_savedEntry.BaseImage, EntryWidth, EntryHeight, BitDepth);
+                entry.AlphaImage = _savedEntry.AlphaImage;
+            }
+            else if (quantize)
+                entry = _savedEntry.Clone();
+            else
+                entry = _savedEntry;
+
+            entry.AlphaThreshold = AlphaThreshold;
+
             entry.ScalingFilter = (IconScalingFilter)cmbFilter.SelectedValue;
-            entry.SetQuantized();
+            if (quantize)
+                entry.SetQuantized();
             return entry;
         }
-
-        public static readonly RoutedCommand PreviewCommand = new RoutedCommand("Preview", typeof(AddWindow));
 
         #region NewFile
         private static readonly DependencyPropertyKey NewFilePropertyKey = DependencyProperty.RegisterReadOnly(nameof(NewFile), typeof(bool), typeof(AddWindow),
@@ -425,6 +441,9 @@ namespace UIconEdit.Maker
             Close();
         }
 
+        #region Preview
+        public static readonly RoutedCommand PreviewCommand = new RoutedCommand("Preview", typeof(AddWindow));
+
         private void Preview_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -436,6 +455,33 @@ namespace UIconEdit.Maker
             Mouse.OverrideCursor = Cursors.Wait;
             PreviewWindow pWindow = new PreviewWindow(this);
             pWindow.ShowDialog();
+        }
+        #endregion
+
+        public static readonly RoutedCommand SetAlphaCommand = new RoutedCommand("SetAlpha", typeof(AddWindow));
+
+        private IconEntry _savedEntry;
+
+        private void SetAlpha_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = string.Format(MainWindow.OpenImageFilter, _mainWindow.SettingsFile.LanguageFile.TypeImage,
+                _mainWindow.SettingsFile.LanguageFile.TypeAll);
+
+            bool? result = dialog.ShowDialog(this);
+            if (!result.HasValue || !result.Value) return;
+
+            BitmapSource alphaImage = MainWindow.LoadImage(dialog.FileName, _mainWindow, this);
+            if (alphaImage == null)
+                return;
+
+            PreviewWindow prevWindow = new PreviewWindow(this, alphaImage);
+            result = prevWindow.ShowDialog();
+            if (!result.HasValue || !result.Value)
+                return;
+
+            _savedEntry = prevWindow.SourceEntry;
+            LoadedImage = _savedEntry.GetCombinedAlpha();
         }
     }
 }

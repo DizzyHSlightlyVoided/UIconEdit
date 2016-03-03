@@ -47,7 +47,7 @@ namespace UIconEdit.Maker
         private ExtractWindow(MainWindow owner)
         {
             Mouse.OverrideCursor = null;
-            Owner = _owner = owner;
+            _owner = owner;
             Binding taskBinding = new Binding("Task.IsFinished");
             taskBinding.ElementName = "window";
             SetBinding(IsFullyLoadedProperty, taskBinding);
@@ -213,7 +213,7 @@ namespace UIconEdit.Maker
 
             if (w._task.Icons.Length == 0)
             {
-                ErrorWindow.Show((MainWindow)w.Owner, w, string.Format(w.SettingsFile.LanguageFile.IconExtractNone, w._path));
+                ErrorWindow.Show(w._owner, w, string.Format(w.SettingsFile.LanguageFile.IconExtractNone, w._path));
                 w.DialogResult = false;
                 w.Close();
                 return;

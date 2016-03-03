@@ -458,6 +458,7 @@ namespace UIconEdit.Maker
         }
         #endregion
 
+        #region SetAlpha
         public static readonly RoutedCommand SetAlphaCommand = new RoutedCommand("SetAlpha", typeof(AddWindow));
 
         private IconEntry _savedEntry;
@@ -483,5 +484,6 @@ namespace UIconEdit.Maker
             _savedEntry = prevWindow.SourceEntry;
             LoadedImage = _savedEntry.GetCombinedAlpha();
         }
+        #endregion
     }
 }

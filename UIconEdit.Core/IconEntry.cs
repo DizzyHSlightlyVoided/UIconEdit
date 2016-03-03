@@ -78,6 +78,7 @@ namespace UIconEdit
         /// </summary>
         public const byte DefaultAlphaThreshold32 = 1;
 
+        #region Constructors
         private void _initValues(int width, int height, IconBitDepth bitDepth)
         {
             if (width < MinDimension || width > MaxDimension)
@@ -359,6 +360,7 @@ namespace UIconEdit
             : this(baseImage, alphaImage, bitDepth, 0, 0, isPng)
         {
         }
+        #endregion
 
 #if DRAWING
         /// <summary>

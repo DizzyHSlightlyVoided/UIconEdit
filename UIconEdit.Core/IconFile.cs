@@ -47,6 +47,7 @@ namespace UIconEdit
     /// </summary>
     public class IconFile : IconFileBase
     {
+        #region Constructors
         /// <summary>
         /// Creates a new <see cref="IconFile"/> instance.
         /// </summary>
@@ -125,6 +126,9 @@ namespace UIconEdit
             Entries.AddBulk(_genEntries(decoder.Frames).OrderBy(i => i, new IconEntryComparer()));
         }
 #endif
+        #endregion
+
+        #region Load(...)
         /// <summary>
         /// Loads a <see cref="IconFile"/> from the specified stream.
         /// </summary>
@@ -259,6 +263,7 @@ namespace UIconEdit
         {
             return Load(path, null);
         }
+        #endregion
 
         /// <summary>
         /// Gets the 16-bit type code for the current instance.

@@ -42,6 +42,7 @@ namespace UIconEdit.Maker
     /// </summary>
     partial class PreviewWindow
     {
+        #region Constructors
         private PreviewWindow(AddWindow owner, bool quantize)
         {
             Owner = owner;
@@ -61,6 +62,7 @@ namespace UIconEdit.Maker
             SetValue(SettingAlphaPropertyKey, true);
             SourceEntry.AlphaImage = alphaImage;
         }
+        #endregion
 
         private void window_Loaded(object sender, RoutedEventArgs e)
         {

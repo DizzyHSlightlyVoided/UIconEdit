@@ -44,6 +44,7 @@ namespace UIconEdit.Maker
     /// </summary>
     partial class ExtractWindow
     {
+        #region Constructors
         private ExtractWindow(MainWindow owner)
         {
             Mouse.OverrideCursor = null;
@@ -69,6 +70,7 @@ namespace UIconEdit.Maker
             InitializeComponent();
             SizeVisibility = Visibility.Visible;
         }
+        #endregion
 
         private ThreadTask _task;
         [Bindable(true, BindingDirection.OneWay)]

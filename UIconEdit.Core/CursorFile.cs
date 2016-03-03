@@ -49,6 +49,7 @@ namespace UIconEdit
         {
         }
 
+        #region Load
         /// <summary>
         /// Loads a <see cref="CursorFile"/> from the specified stream.
         /// </summary>
@@ -180,6 +181,7 @@ namespace UIconEdit
         {
             return Load(path, null);
         }
+        #endregion
 
         /// <summary>
         /// Gets the 16-bit type code for the current instance.

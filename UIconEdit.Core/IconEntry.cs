@@ -1435,6 +1435,21 @@ namespace UIconEdit
             {
                 return Value == other.Value;
             }
+
+            public override bool Equals(object obj)
+            {
+                return obj is ColorValue && Equals((ColorValue)obj);
+            }
+
+            public static bool operator ==(ColorValue c1, ColorValue c2)
+            {
+                return c1.Equals(c2);
+            }
+
+            public static bool operator !=(ColorValue c1, ColorValue c2)
+            {
+                return !c1.Equals(c2);
+            }
         }
         #endregion
 
@@ -1694,6 +1709,15 @@ namespace UIconEdit
                             alphaPixels[i] = ColorValue.Black;
                         else
                             alphaPixels[i] = ColorValue.White;
+                    }
+
+                    if (_depth == IconBitDepth.Depth32BitsPerPixel)
+                    {
+                        for (int i = 0; i < alphaPixels.Length; i++)
+                        {
+                            if (alphaPixels[i] == ColorValue.Black)
+                                pixels[i].A = 0;
+                        }
                     }
                 }
 

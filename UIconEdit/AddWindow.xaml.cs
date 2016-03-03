@@ -176,7 +176,7 @@ namespace UIconEdit.Maker
         public static readonly RoutedCommand PreviewCommand = new RoutedCommand("Preview", typeof(AddWindow));
 
         #region NewFile
-        private static readonly DependencyPropertyKey NewFilePropertyKey = DependencyProperty.RegisterReadOnly("NewFile", typeof(bool), typeof(AddWindow),
+        private static readonly DependencyPropertyKey NewFilePropertyKey = DependencyProperty.RegisterReadOnly(nameof(NewFile), typeof(bool), typeof(AddWindow),
             new PropertyMetadata());
         public static readonly DependencyProperty NewFileProperty = NewFilePropertyKey.DependencyProperty;
 
@@ -184,7 +184,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region UseAlphaThreshold
-        private static readonly DependencyPropertyKey UseAlphaThresholdPropertyKey = DependencyProperty.RegisterReadOnly("UseAlphaThreshold", typeof(bool),
+        private static readonly DependencyPropertyKey UseAlphaThresholdPropertyKey = DependencyProperty.RegisterReadOnly(nameof(UseAlphaThreshold), typeof(bool),
             typeof(AddWindow), new PropertyMetadata(true, UseAlphaThresholdChanged));
 
         private static void UseAlphaThresholdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -206,7 +206,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region AlphaThreshold
-        public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register("AlphaThreshold", typeof(byte), typeof(AddWindow),
+        public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register(nameof(AlphaThreshold), typeof(byte), typeof(AddWindow),
             new PropertyMetadata(IconEntry.DefaultAlphaThreshold, AlphaThresholdChanged));
 
         private static void AlphaThresholdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -227,7 +227,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region LoadedImage
-        public static readonly DependencyProperty ImageProperty = DependencyProperty.Register("LoadedImage", typeof(BitmapSource), typeof(AddWindow));
+        public static readonly DependencyProperty ImageProperty = DependencyProperty.Register(nameof(LoadedImage), typeof(BitmapSource), typeof(AddWindow));
 
         public BitmapSource LoadedImage
         {
@@ -237,7 +237,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region BitDepth
-        private static readonly DependencyPropertyKey BitDepthPropertyKey = DependencyProperty.RegisterReadOnly("BitDepth", typeof(IconBitDepth), typeof(AddWindow),
+        private static readonly DependencyPropertyKey BitDepthPropertyKey = DependencyProperty.RegisterReadOnly(nameof(BitDepth), typeof(IconBitDepth), typeof(AddWindow),
             new PropertyMetadata(IconBitDepth.Depth32BitsPerPixel, BitDepthChanged));
 
         private static void BitDepthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -279,7 +279,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ExtendedSizes
-        public static readonly DependencyProperty ExtendedSizesProperty = DependencyProperty.Register("ExtendedSizes", typeof(bool), typeof(AddWindow),
+        public static readonly DependencyProperty ExtendedSizesProperty = DependencyProperty.Register(nameof(ExtendedSizes), typeof(bool), typeof(AddWindow),
             new PropertyMetadata(false));
 
         public bool ExtendedSizes
@@ -290,7 +290,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region MatrixSelectedIndex
-        public static readonly DependencyProperty MatrixSelectedIndexProperty = DependencyProperty.Register("MatrixSelectedIndex", typeof(int), typeof(AddWindow),
+        public static readonly DependencyProperty MatrixSelectedIndexProperty = DependencyProperty.Register(nameof(MatrixSelectedIndex), typeof(int), typeof(AddWindow),
             new PropertyMetadata(0));
 
         public int MatrixSelectedIndex
@@ -301,7 +301,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region DifferentSize
-        private static readonly DependencyPropertyKey DifferentSizePropertyKey = DependencyProperty.RegisterReadOnly("DifferentSize", typeof(bool), typeof(AddWindow),
+        private static readonly DependencyPropertyKey DifferentSizePropertyKey = DependencyProperty.RegisterReadOnly(nameof(DifferentSize), typeof(bool), typeof(AddWindow),
             new PropertyMetadata(true, null, DifferentSizeCoerce));
         public static readonly DependencyProperty DifferentSizeProperty = DifferentSizePropertyKey.DependencyProperty;
 
@@ -327,7 +327,7 @@ namespace UIconEdit.Maker
         }
 
         #region EntryWidth
-        public static readonly DependencyProperty EntryWidthProperty = DependencyProperty.Register("EntryWidth", typeof(short), typeof(AddWindow),
+        public static readonly DependencyProperty EntryWidthProperty = DependencyProperty.Register(nameof(EntryWidth), typeof(short), typeof(AddWindow),
             new PropertyMetadata((short)32), SizeValidate);
 
         public short EntryWidth
@@ -338,7 +338,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region EntryHeight
-        public static readonly DependencyProperty EntryHeightProperty = DependencyProperty.Register("EntryHeight", typeof(short), typeof(AddWindow),
+        public static readonly DependencyProperty EntryHeightProperty = DependencyProperty.Register(nameof(EntryHeight), typeof(short), typeof(AddWindow),
             new PropertyMetadata((short)32, EntrySizeChanged), SizeValidate);
 
         public short EntryHeight
@@ -359,7 +359,7 @@ namespace UIconEdit.Maker
         }
 
         #region CustomWidth
-        public static readonly DependencyProperty CustomWidthProperty = DependencyProperty.Register("CustomWidth", typeof(short), typeof(AddWindow),
+        public static readonly DependencyProperty CustomWidthProperty = DependencyProperty.Register(nameof(CustomWidth), typeof(short), typeof(AddWindow),
             new PropertyMetadata((short)32, CustomSizeChanged), SizeValidate);
 
         public short CustomWidth
@@ -370,7 +370,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region CustomHeight
-        public static readonly DependencyProperty CustomHeightProperty = DependencyProperty.Register("CustomHeight", typeof(short), typeof(AddWindow),
+        public static readonly DependencyProperty CustomHeightProperty = DependencyProperty.Register(nameof(CustomHeight), typeof(short), typeof(AddWindow),
             new PropertyMetadata((short)32, CustomSizeChanged), SizeValidate);
 
         public short CustomHeight

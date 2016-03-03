@@ -51,7 +51,7 @@ namespace UIconEdit
     {
         private static int _extractCount(string path, int lpszType)
         {
-            if (path == null) throw new ArgumentNullException("path");
+            if (path == null) throw new ArgumentNullException(nameof(path));
 
             IntPtr hModule = IntPtr.Zero;
             int iconCount = 0;
@@ -202,8 +202,8 @@ namespace UIconEdit
 
         private static void _extractSingle(string path, int index, int lpszType, Action<IntPtr, int, IntPtr> action)
         {
-            if (path == null) throw new ArgumentNullException("path");
-            if (index < 0) throw new ArgumentOutOfRangeException("index");
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (index < 0) throw new ArgumentOutOfRangeException(nameof(index));
             int iconCount = 0;
             IntPtr hModule = IntPtr.Zero;
             try
@@ -238,7 +238,7 @@ namespace UIconEdit
                 };
 
                 if (Win32Funcs.EnumResourceNames(hModule, lpszType, lpEnumFunc, 0))
-                    throw new ArgumentOutOfRangeException("index");
+                    throw new ArgumentOutOfRangeException(nameof(index));
 
                 if (result) return;
                 if (x == null) throw new Win32Exception();
@@ -720,8 +720,8 @@ namespace UIconEdit
         public static void ExtractIconsForEach(string path, IconExtractCallback<IconFile> callback,
             IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
         {
-            if (path == null) throw new ArgumentNullException("path");
-            if (callback == null) throw new ArgumentNullException("callback");
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (callback == null) throw new ArgumentNullException(nameof(callback));
 
             _forEachIcon(path, Win32Funcs.RT_GROUP_ICON, IconTypeCode.Icon, callback, singleHandler, allHandler);
         }
@@ -772,8 +772,8 @@ namespace UIconEdit
         public static void ExtractCursorsForEach(string path, IconExtractCallback<CursorFile> callback,
             IconExtractExceptionHandler singleHandler, IconExtractExceptionHandler allHandler)
         {
-            if (path == null) throw new ArgumentNullException("path");
-            if (callback == null) throw new ArgumentNullException("callback");
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (callback == null) throw new ArgumentNullException(nameof(callback));
 
             _forEachIcon(path, Win32Funcs.RT_GROUP_CURSOR, IconTypeCode.Cursor, callback, singleHandler, allHandler);
         }

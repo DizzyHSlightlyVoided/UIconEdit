@@ -43,7 +43,7 @@ namespace UIconEdit.Maker
         }
 
         #region LanguageFile
-        public static readonly DependencyProperty LanguageFileProperty = DependencyProperty.Register("LanguageFile", typeof(LanguageFile), typeof(SizeRadioButton));
+        public static readonly DependencyProperty LanguageFileProperty = DependencyProperty.Register(nameof(LanguageFile), typeof(LanguageFile), typeof(SizeRadioButton));
 
         public LanguageFile LanguageFile
         {
@@ -53,7 +53,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region EntryWidth
-        public static readonly DependencyProperty EntryWidthProperty = DependencyProperty.Register("EntryWidth", typeof(short), typeof(SizeRadioButton),
+        public static readonly DependencyProperty EntryWidthProperty = DependencyProperty.Register(nameof(EntryWidth), typeof(short), typeof(SizeRadioButton),
             new PropertyMetadata((short)32));
 
         public short EntryWidth
@@ -64,7 +64,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region EntryHeight
-        public static readonly DependencyProperty EntryHeightProperty = DependencyProperty.Register("EntryHeight", typeof(short), typeof(SizeRadioButton),
+        public static readonly DependencyProperty EntryHeightProperty = DependencyProperty.Register(nameof(EntryHeight), typeof(short), typeof(SizeRadioButton),
             new PropertyMetadata((short)32));
 
         public short EntryHeight

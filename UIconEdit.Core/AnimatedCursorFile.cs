@@ -927,7 +927,7 @@ namespace UIconEdit
         /// </exception>
         public static TimeSpan JiffiesToTime(int jiffies)
         {
-            return JiffiesToTime(jiffies, "jiffies");
+            return JiffiesToTime(jiffies, nameof(jiffies));
         }
 
         internal static int TimeToJiffies(TimeSpan value, string paramName)
@@ -951,7 +951,7 @@ namespace UIconEdit
         /// </exception>
         public static int TimeToJiffies(TimeSpan value)
         {
-            return TimeToJiffies(value, "value");
+            return TimeToJiffies(value, nameof(value));
         }
 
         #region DisplayRateJiffies
@@ -961,7 +961,7 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="DisplayRateJiffies"/> property.
         /// </summary>
-        public static readonly DependencyProperty DisplayRateJiffiesProperty = DependencyProperty.Register("DisplayRateJiffies", typeof(int), typeof(AnimatedCursorFile),
+        public static readonly DependencyProperty DisplayRateJiffiesProperty = DependencyProperty.Register(nameof(DisplayRateJiffies), typeof(int), typeof(AnimatedCursorFile),
             new PropertyMetadata(10, DisplayRateJiffiesChanged, JiffiesCoerce));
 
         private static void DisplayRateJiffiesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -991,12 +991,12 @@ namespace UIconEdit
 #endif
             set
             {
-                if (value <= 0) throw new ArgumentOutOfRangeException();
+                if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
 #if DRAWING
                 _rate = value;
 
-                OnPropertyChanged("DisplayRateJiffies");
-                OnPropertyChanged("DisplayRateTime");
+                OnPropertyChanged(nameof(DisplayRateJiffies));
+                OnPropertyChanged(nameof(DisplayRateTime));
 #else
                 SetValue(DisplayRateJiffiesProperty, value);
 #endif
@@ -1009,8 +1009,8 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="DisplayRateTime"/> property.
         /// </summary>
-        public static readonly DependencyProperty DisplayRateTimeProperty = DependencyProperty.Register("DisplayRateTime", typeof(TimeSpan), typeof(AnimatedCursorFile),
-            new PropertyMetadata(new TimeSpan(TimeSpan.TicksPerSecond * 10 / 60), DisplayRateTimeChanged, TimeCoerce));
+        public static readonly DependencyProperty DisplayRateTimeProperty = DependencyProperty.Register(nameof(DisplayRateTime), typeof(TimeSpan), typeof(AnimatedCursorFile),
+            new PropertyMetadata(new TimeSpan((TimeSpan.TicksPerSecond * 10) / 60), DisplayRateTimeChanged, TimeCoerce));
 
         private static void DisplayRateTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -1061,7 +1061,7 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="CursorName"/> property.
         /// </summary>
-        public static readonly DependencyProperty CursorNameProperty = DependencyProperty.Register("CursorName", typeof(string), typeof(AnimatedCursorFile));
+        public static readonly DependencyProperty CursorNameProperty = DependencyProperty.Register(nameof(CursorName), typeof(string), typeof(AnimatedCursorFile));
 #endif
         /// <summary>
         /// Gets and sets the name of the animated cursor file.
@@ -1074,7 +1074,7 @@ namespace UIconEdit
             set
             {
                 _name = value;
-                OnPropertyChanged("CursorName");
+                OnPropertyChanged(nameof(CursorName));
             }
 #else
             get { return (string)GetValue(CursorNameProperty); }
@@ -1090,7 +1090,7 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="CursorAuthor"/> property.
         /// </summary>
-        public static readonly DependencyProperty CursorAuthorProperty = DependencyProperty.Register("CursorAuthor", typeof(string), typeof(AnimatedCursorFile));
+        public static readonly DependencyProperty CursorAuthorProperty = DependencyProperty.Register(nameof(CursorAuthor), typeof(string), typeof(AnimatedCursorFile));
 #endif
         /// <summary>
         /// Gets and sets the author of the animated cursor file.
@@ -1103,7 +1103,7 @@ namespace UIconEdit
             set
             {
                 _author = value;
-                OnPropertyChanged("CursorAuthor");
+                OnPropertyChanged(nameof(CursorAuthor));
             }
 #else
             get { return (string)GetValue(CursorAuthorProperty); }
@@ -1122,7 +1122,7 @@ namespace UIconEdit
         /// Raises the <see cref="PropertyChanged"/> event.
         /// </summary>
         /// <param name="propertyName">The name of the property which was changed.</param>
-        protected void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
@@ -1227,7 +1227,7 @@ namespace UIconEdit
                 get { return _items[index]; }
                 set
                 {
-                    if (value == null) throw new ArgumentNullException();
+                    if (value == null) throw new ArgumentNullException(nameof(value));
                     _items[index] = value;
                 }
             }
@@ -1237,9 +1237,9 @@ namespace UIconEdit
                 get { return _items[index]; }
                 set
                 {
-                    if (value == null) throw new ArgumentNullException();
+                    if (value == null) throw new ArgumentNullException(nameof(value));
                     AnimatedCursorFrame frame = value as AnimatedCursorFrame;
-                    if (frame == null) throw new ArgumentException("Invalid object type.");
+                    if (frame == null) throw new ArgumentException("Invalid object type.", nameof(value));
                     _items[index] = frame;
                 }
             }
@@ -1261,7 +1261,7 @@ namespace UIconEdit
             /// </exception>
             public bool Insert(int index, AnimatedCursorFrame frame)
             {
-                if (index < 0 || index > Count) throw new ArgumentOutOfRangeException("index");
+                if (index < 0 || index > Count) throw new ArgumentOutOfRangeException(nameof(index));
                 if (frame == null || frame.CFile != null)
                     return false;
                 frame.CFile = _file;
@@ -1281,7 +1281,7 @@ namespace UIconEdit
                     if (!Insert(index, (AnimatedCursorFrame)value))
                         throw new NotSupportedException("Invalid value.");
                 }
-                throw new ArgumentException("Invalid value type.", "value");
+                throw new ArgumentException("Invalid value type.", nameof(value));
             }
 
             /// <summary>
@@ -1586,7 +1586,7 @@ namespace UIconEdit
         /// </exception>
         public AnimatedCursorFrame(CursorFile file)
         {
-            if (file == null) throw new ArgumentNullException("file");
+            if (file == null) throw new ArgumentNullException(nameof(file));
             _file = file;
 #if DRAWING
             _file.Disposed += _file_Disposed;
@@ -1608,8 +1608,8 @@ namespace UIconEdit
         /// </exception>
         public AnimatedCursorFrame(CursorFile file, int jiffies)
         {
-            if (file == null) throw new ArgumentNullException("file");
-            if (jiffies < 0) throw new ArgumentOutOfRangeException("jiffies");
+            if (file == null) throw new ArgumentNullException(nameof(file));
+            if (jiffies < 0) throw new ArgumentOutOfRangeException(nameof(jiffies));
             _file = file;
 #if DRAWING
             _file.Disposed += _file_Disposed;
@@ -1634,8 +1634,8 @@ namespace UIconEdit
         /// </exception>
         public AnimatedCursorFrame(CursorFile file, TimeSpan length)
         {
-            if (file == null) throw new ArgumentNullException("file");
-            int jiffies = AnimatedCursorFile.TimeToJiffies(length, "length");
+            if (file == null) throw new ArgumentNullException(nameof(file));
+            int jiffies = AnimatedCursorFile.TimeToJiffies(length, nameof(length));
             _file = file;
 #if DRAWING
             _jiffies = jiffies;
@@ -1677,7 +1677,7 @@ namespace UIconEdit
         /// </exception>
         public bool SimilarListEquals(AnimatedCursorFrame other)
         {
-            if (other == null) throw new ArgumentNullException("other");
+            if (other == null) throw new ArgumentNullException(nameof(other));
 
             if (_file.Entries.Count != other._file.Entries.Count)
                 return false;
@@ -1721,7 +1721,7 @@ namespace UIconEdit
         /// <summary>
         /// Dependency property for the <see cref="LengthJiffies"/> property.
         /// </summary>
-        public static readonly DependencyProperty LengthJiffiesProperty = DependencyProperty.Register("LengthJiffies", typeof(int?), typeof(AnimatedCursorFrame),
+        public static readonly DependencyProperty LengthJiffiesProperty = DependencyProperty.Register(nameof(LengthJiffies), typeof(int?), typeof(AnimatedCursorFrame),
             new PropertyMetadata(default(int?), LengthJiffiesChanged, LengthJiffiesCoerce));
 
         private static void LengthJiffiesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -1757,11 +1757,11 @@ namespace UIconEdit
 #endif
             set
             {
-                if (value.HasValue && value.Value < 0) throw new ArgumentOutOfRangeException();
+                if (value.HasValue && value.Value < 0) throw new ArgumentOutOfRangeException(nameof(value));
 #if DRAWING
                 _jiffies = value;
-                OnPropertyChanged("Jiffies");
-                OnPropertyChanged("Length");
+                OnPropertyChanged(nameof(LengthJiffies));
+                OnPropertyChanged(nameof(LengthTime));
 #else
                 SetValue(LengthJiffiesProperty, value);
 #endif
@@ -1774,7 +1774,7 @@ namespace UIconEdit
         /// <summary>
         /// Dependency property for the <see cref="LengthTime"/> property.
         /// </summary>
-        public static readonly DependencyProperty LengthProperty = DependencyProperty.Register("LengthTime", typeof(TimeSpan?), typeof(AnimatedCursorFrame),
+        public static readonly DependencyProperty LengthProperty = DependencyProperty.Register(nameof(LengthTime), typeof(TimeSpan?), typeof(AnimatedCursorFrame),
             new PropertyMetadata(default(TimeSpan?), LengthTimeChanged, LengthTimeCoerce));
 
         private static void LengthTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

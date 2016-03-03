@@ -93,12 +93,12 @@ namespace UIconEdit.Maker
                 if (root == null || root.Name.LocalName != SettingsName)
                     return;
 
-                var jLang = root.Element(LanguageNameName);
+                var jLang = root.Element(nameof(LanguageName));
 
                 if (jLang != null && !jLang.HasElements)
                     LanguageName = jLang.Value.ToString();
 
-                var jKeep = root.Element(KeepHotspotCheckedName);
+                var jKeep = root.Element(nameof(KeepHotspotChecked));
                 if (jKeep != null && !jKeep.HasElements)
                 {
                     bool jVal;
@@ -142,8 +142,8 @@ namespace UIconEdit.Maker
                         writer.WriteStartDocument();
                         writer.WriteStartElement(SettingsName);
 
-                        writer.WriteElementString(LanguageNameName, LanguageName);
-                        writer.WriteElementString(KeepHotspotCheckedName, KeepHotspotChecked.ToString());
+                        writer.WriteElementString(nameof(LanguageName), LanguageName);
+                        writer.WriteElementString(nameof(KeepHotspotChecked), KeepHotspotChecked.ToString());
                         writer.WriteEndElement();
                         writer.WriteEndDocument();
                     }
@@ -183,8 +183,7 @@ namespace UIconEdit.Maker
         const string SettingsName = "Settings";
 
         #region LanguageName
-        const string LanguageNameName = "LanguageName";
-        public static readonly DependencyProperty LanguageNameProperty = DependencyProperty.Register(LanguageNameName, typeof(string), typeof(SettingsFile),
+        public static readonly DependencyProperty LanguageNameProperty = DependencyProperty.Register(nameof(LanguageName), typeof(string), typeof(SettingsFile),
             new PropertyMetadata("", LanguageNameChanged), LanguageNameValidate);
 
         private static bool LanguageNameValidate(object value)
@@ -222,8 +221,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region LanguageFile
-        const string LanguageFileName = "LanguageFile";
-        public static readonly DependencyProperty LanguageFileProperty = DependencyProperty.Register(LanguageFileName, typeof(LanguageFile),
+        public static readonly DependencyProperty LanguageFileProperty = DependencyProperty.Register(nameof(LanguageFile), typeof(LanguageFile),
             typeof(SettingsFile), new PropertyMetadata(LanguageFile.Default, LanguageFileChanged));
 
         private static void LanguageFileChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -244,8 +242,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region KeepHotspotChecked
-        const string KeepHotspotCheckedName = "KeepHotspotChecked";
-        public static readonly DependencyProperty KeepHotspotCheckedProperty = DependencyProperty.Register(KeepHotspotCheckedName, typeof(bool), typeof(SettingsFile),
+        public static readonly DependencyProperty KeepHotspotCheckedProperty = DependencyProperty.Register(nameof(KeepHotspotChecked), typeof(bool), typeof(SettingsFile),
             new PropertyMetadata(false, SaveableChanged));
 
         public bool KeepHotspotChecked
@@ -256,7 +253,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region IsModified 
-        private static readonly DependencyPropertyKey IsModifiedPropertyKey = DependencyProperty.RegisterReadOnly("IsModified", typeof(bool), typeof(SettingsFile),
+        private static readonly DependencyPropertyKey IsModifiedPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsModified), typeof(bool), typeof(SettingsFile),
             new PropertyMetadata(false));
         public static readonly DependencyProperty IsModifiedProperty = IsModifiedPropertyKey.DependencyProperty;
 

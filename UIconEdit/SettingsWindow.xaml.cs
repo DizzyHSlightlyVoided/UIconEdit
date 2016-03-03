@@ -118,7 +118,7 @@ namespace UIconEdit.Maker
         public SettingsFile SettingsFile { get { return ((MainWindow)Owner).SettingsFile; } }
 
         #region IsInRegistry
-        public static readonly DependencyProperty IsInRegistryProperty = DependencyProperty.Register("IsInRegistry", typeof(bool), typeof(SettingsWindow),
+        public static readonly DependencyProperty IsInRegistryProperty = DependencyProperty.Register(nameof(IsInRegistry), typeof(bool), typeof(SettingsWindow),
             new PropertyMetadata(false, IsInRegistryChanged));
 
         private static void IsInRegistryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -134,7 +134,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region CanSave
-        private static readonly DependencyPropertyKey CanSavePropertyKey = DependencyProperty.RegisterReadOnly("CanSave", typeof(bool), typeof(SettingsWindow),
+        private static readonly DependencyPropertyKey CanSavePropertyKey = DependencyProperty.RegisterReadOnly(nameof(CanSave), typeof(bool), typeof(SettingsWindow),
             new PropertyMetadata(false));
         public static readonly DependencyProperty CanSaveProperty = CanSavePropertyKey.DependencyProperty;
 

@@ -59,7 +59,7 @@ namespace UIconEdit.Maker
         }
 
         #region SourceImage
-        public static readonly DependencyProperty SourceImageProperty = DependencyProperty.Register("SourceImage", typeof(BitmapSource), typeof(PreviewWindow));
+        public static readonly DependencyProperty SourceImageProperty = DependencyProperty.Register(nameof(SourceImage), typeof(BitmapSource), typeof(PreviewWindow));
 
         public BitmapSource SourceImage
         {
@@ -74,7 +74,7 @@ namespace UIconEdit.Maker
         }
 
         #region Zoom
-        public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(int), typeof(PreviewWindow),
+        public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register(nameof(Zoom), typeof(int), typeof(PreviewWindow),
             new PropertyMetadata(100, ZoomChanged), MainWindow.ZoomValidate);
 
         private static void ZoomChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -91,7 +91,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ZoomedWidth
-        private static readonly DependencyPropertyKey ZoomedWidthPropertyKey = DependencyProperty.RegisterReadOnly("ZoomedWidth", typeof(double),
+        private static readonly DependencyPropertyKey ZoomedWidthPropertyKey = DependencyProperty.RegisterReadOnly(nameof(ZoomedWidth), typeof(double),
             typeof(PreviewWindow), new PropertyMetadata());
         public static readonly DependencyProperty ZoomedWidthProperty = ZoomedWidthPropertyKey.DependencyProperty;
 
@@ -99,7 +99,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ZoomedHeight
-        private static readonly DependencyPropertyKey ZoomedHeightPropertyKey = DependencyProperty.RegisterReadOnly("ZoomedHeight", typeof(double),
+        private static readonly DependencyPropertyKey ZoomedHeightPropertyKey = DependencyProperty.RegisterReadOnly(nameof(ZoomedHeight), typeof(double),
             typeof(PreviewWindow), new PropertyMetadata());
         public static readonly DependencyProperty ZoomedHeightProperty = ZoomedHeightPropertyKey.DependencyProperty;
 
@@ -107,7 +107,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ZoomScaleMode
-        private static readonly DependencyPropertyKey ZoomScaleModePropertyKey = DependencyProperty.RegisterReadOnly("ZoomScaleMode",
+        private static readonly DependencyPropertyKey ZoomScaleModePropertyKey = DependencyProperty.RegisterReadOnly(nameof(ZoomScaleMode),
             typeof(BitmapScalingMode), typeof(PreviewWindow), new PropertyMetadata());
         public static readonly DependencyProperty ZoomScaleModeProperty = ZoomScaleModePropertyKey.DependencyProperty;
 
@@ -115,7 +115,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region SourceEntry
-        private static readonly DependencyPropertyKey SourceEntryPropertyKey = DependencyProperty.RegisterReadOnly("SourceEntry", typeof(IconEntry),
+        private static readonly DependencyPropertyKey SourceEntryPropertyKey = DependencyProperty.RegisterReadOnly(nameof(SourceEntry), typeof(IconEntry),
             typeof(PreviewWindow), new PropertyMetadata(null, SourceEntryChanged));
         public static readonly DependencyProperty SourceEntryProperty = SourceEntryPropertyKey.DependencyProperty;
 
@@ -130,7 +130,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region SourceIndex
-        public static readonly DependencyProperty SourceIndexProperty = DependencyProperty.Register("SourceIndex", typeof(int), typeof(PreviewWindow),
+        public static readonly DependencyProperty SourceIndexProperty = DependencyProperty.Register(nameof(SourceIndex), typeof(int), typeof(PreviewWindow),
             new PropertyMetadata(0));
 
         public int SourceIndex
@@ -141,7 +141,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region HasMultiImage
-        private static readonly DependencyPropertyKey HasMultiImagePropertyKey = DependencyProperty.RegisterReadOnly("HasMultiImage", typeof(bool),
+        private static readonly DependencyPropertyKey HasMultiImagePropertyKey = DependencyProperty.RegisterReadOnly(nameof(HasMultiImage), typeof(bool),
             typeof(PreviewWindow), new PropertyMetadata(true));
         public static readonly DependencyProperty HasMultiImageProperty = HasMultiImagePropertyKey.DependencyProperty;
 
@@ -149,7 +149,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region AlphaThreshold
-        public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register("AlphaThreshold", typeof(byte), typeof(PreviewWindow),
+        public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register(nameof(AlphaThreshold), typeof(byte), typeof(PreviewWindow),
             new PropertyMetadata(IconEntry.DefaultAlphaThreshold, AlphaThresholdChanged));
 
         private static void AlphaThresholdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

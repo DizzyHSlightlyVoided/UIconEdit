@@ -52,7 +52,7 @@ namespace UIconEdit.Maker
         }
 
         #region Result
-        private static readonly DependencyPropertyKey ResultPropertyKey = DependencyProperty.RegisterReadOnly("Result", typeof(MessageBoxResult), typeof(QuestionWindow),
+        private static readonly DependencyPropertyKey ResultPropertyKey = DependencyProperty.RegisterReadOnly(nameof(Result), typeof(MessageBoxResult), typeof(QuestionWindow),
             new PropertyMetadata(MessageBoxResult.Cancel));
         public static readonly DependencyProperty ResultProperty = ResultPropertyKey.DependencyProperty;
 
@@ -64,7 +64,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region TextMessage
-        public static readonly DependencyProperty TextMessageProperty = DependencyProperty.Register("TextMessage", typeof(string), typeof(QuestionWindow));
+        public static readonly DependencyProperty TextMessageProperty = DependencyProperty.Register(nameof(TextMessage), typeof(string), typeof(QuestionWindow));
 
         public string TextMessage
         {
@@ -74,7 +74,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ButtonOKEnabled
-        public static readonly DependencyProperty ButtonOKEnabledProperty = DependencyProperty.Register("ButtonOKEnabled", typeof(bool), typeof(QuestionWindow),
+        public static readonly DependencyProperty ButtonOKEnabledProperty = DependencyProperty.Register(nameof(ButtonOKEnabled), typeof(bool), typeof(QuestionWindow),
             new PropertyMetadata(true));
 
         public bool ButtonOKEnabled
@@ -85,7 +85,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ButtonOKMessage
-        public static readonly DependencyProperty ButtonOKMessageProperty = DependencyProperty.Register("ButtonOKMessage", typeof(string), typeof(QuestionWindow),
+        public static readonly DependencyProperty ButtonOKMessageProperty = DependencyProperty.Register(nameof(ButtonOKMessage), typeof(string), typeof(QuestionWindow),
             new PropertyMetadata("_OK"), ButtonOKMessageValidate);
 
         private static bool ButtonOKMessageValidate(object value)
@@ -101,7 +101,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ButtonCancelEnabled
-        public static readonly DependencyProperty ButtonCancelEnabledProperty = DependencyProperty.Register("ButtonCancelEnabled", typeof(bool), typeof(QuestionWindow),
+        public static readonly DependencyProperty ButtonCancelEnabledProperty = DependencyProperty.Register(nameof(ButtonCancelEnabled), typeof(bool), typeof(QuestionWindow),
             new PropertyMetadata(true));
 
         public bool ButtonCancelEnabled
@@ -112,7 +112,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ButtonCancelMessage
-        public static readonly DependencyProperty ButtonCancelMessageProperty = DependencyProperty.Register("ButtonCancelMessage", typeof(string), typeof(QuestionWindow),
+        public static readonly DependencyProperty ButtonCancelMessageProperty = DependencyProperty.Register(nameof(ButtonCancelMessage), typeof(string), typeof(QuestionWindow),
             new PropertyMetadata("_Cancel"), ButtonCancelMessageValidate);
 
         private static bool ButtonCancelMessageValidate(object value)
@@ -128,7 +128,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ButtonYesEnabled
-        public static readonly DependencyProperty ButtonYesEnabledProperty = DependencyProperty.Register("ButtonYesEnabled", typeof(bool), typeof(QuestionWindow),
+        public static readonly DependencyProperty ButtonYesEnabledProperty = DependencyProperty.Register(nameof(ButtonYesEnabled), typeof(bool), typeof(QuestionWindow),
             new PropertyMetadata(false));
 
         public bool ButtonYesEnabled
@@ -139,7 +139,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ButtonYesMessage
-        public static readonly DependencyProperty ButtonYesMessageProperty = DependencyProperty.Register("ButtonYesMessage", typeof(string), typeof(QuestionWindow),
+        public static readonly DependencyProperty ButtonYesMessageProperty = DependencyProperty.Register(nameof(ButtonYesMessage), typeof(string), typeof(QuestionWindow),
             new PropertyMetadata("_Yes"), ButtonYesMessageValidate);
 
         private static bool ButtonYesMessageValidate(object value)
@@ -155,7 +155,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ButtonNoEnabled
-        public static readonly DependencyProperty ButtonNoEnabledProperty = DependencyProperty.Register("ButtonNoEnabled", typeof(bool), typeof(QuestionWindow),
+        public static readonly DependencyProperty ButtonNoEnabledProperty = DependencyProperty.Register(nameof(ButtonNoEnabled), typeof(bool), typeof(QuestionWindow),
             new PropertyMetadata(false));
 
         public bool ButtonNoEnabled
@@ -166,7 +166,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ButtonNoMessage
-        public static readonly DependencyProperty ButtonNoMessageProperty = DependencyProperty.Register("ButtonNoMessage", typeof(string), typeof(QuestionWindow),
+        public static readonly DependencyProperty ButtonNoMessageProperty = DependencyProperty.Register(nameof(ButtonNoMessage), typeof(string), typeof(QuestionWindow),
             new PropertyMetadata("_No"), ButtonNoMessageValidate);
 
         private static bool ButtonNoMessageValidate(object value)

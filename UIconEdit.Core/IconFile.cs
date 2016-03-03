@@ -120,7 +120,7 @@ namespace UIconEdit
         public IconFile(IconBitmapDecoder decoder)
         {
             if (decoder == null)
-                throw new ArgumentNullException("decoder");
+                throw new ArgumentNullException(nameof(decoder));
 
             Entries.AddBulk(_genEntries(decoder.Frames).OrderBy(i => i, new IconEntryComparer()));
         }

@@ -44,7 +44,7 @@ namespace UIconEdit.Maker
         }
 
         #region MainWindow
-        public static DependencyProperty MainWindowProperty = DependencyProperty.Register("MainWindow", typeof(MainWindow), typeof(ListedIconPanel));
+        public static DependencyProperty MainWindowProperty = DependencyProperty.Register(nameof(MainWindow), typeof(MainWindow), typeof(ListedIconPanel));
 
         public MainWindow MainWindow
         {
@@ -54,7 +54,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region Entry
-        public static DependencyProperty EntryProperty = DependencyProperty.Register("Entry", typeof(IconEntry), typeof(ListedIconPanel),
+        public static DependencyProperty EntryProperty = DependencyProperty.Register(nameof(Entry), typeof(IconEntry), typeof(ListedIconPanel),
             new PropertyMetadata(null, EntryChanged));
 
         private static void EntryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -76,7 +76,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ScalingMode
-        private static readonly DependencyPropertyKey ScalingModePropertyKey = DependencyProperty.RegisterReadOnly("ScalingMode", typeof(BitmapScalingMode),
+        private static readonly DependencyPropertyKey ScalingModePropertyKey = DependencyProperty.RegisterReadOnly(nameof(ScalingMode), typeof(BitmapScalingMode),
             typeof(ListedIconPanel), new PropertyMetadata(BitmapScalingMode.NearestNeighbor));
         public static readonly DependencyProperty ScalingModeProperty = ScalingModePropertyKey.DependencyProperty;
 

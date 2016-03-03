@@ -215,7 +215,7 @@ namespace UIconEdit.Maker
         }
 
         #region LoadedFile
-        public static readonly DependencyProperty LoadedFileProperty = DependencyProperty.Register("LoadedFile", typeof(IconFileBase), typeof(MainWindow),
+        public static readonly DependencyProperty LoadedFileProperty = DependencyProperty.Register(nameof(LoadedFile), typeof(IconFileBase), typeof(MainWindow),
             new PropertyMetadata(null, LoadedFileChanged));
 
         private static void LoadedFileChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -248,7 +248,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region IsFileLoaded
-        private static readonly DependencyPropertyKey IsFileLoadedPropertyKey = DependencyProperty.RegisterReadOnly("IsFileLoaded", typeof(bool), typeof(MainWindow),
+        private static readonly DependencyPropertyKey IsFileLoadedPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsFileLoaded), typeof(bool), typeof(MainWindow),
             new PropertyMetadata());
         public static readonly DependencyProperty IsFileLoadedProperty = IsFileLoadedPropertyKey.DependencyProperty;
 
@@ -256,7 +256,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region IsModified
-        public static readonly DependencyProperty IsModifiedProperty = DependencyProperty.Register("IsModified", typeof(bool), typeof(MainWindow),
+        public static readonly DependencyProperty IsModifiedProperty = DependencyProperty.Register(nameof(IsModified), typeof(bool), typeof(MainWindow),
             new PropertyMetadata());
 
         public bool IsModified
@@ -267,7 +267,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region FilePath
-        public static readonly DependencyProperty FilePathProperty = DependencyProperty.Register("FilePath", typeof(string), typeof(MainWindow),
+        public static readonly DependencyProperty FilePathProperty = DependencyProperty.Register(nameof(FilePath), typeof(string), typeof(MainWindow),
             new PropertyMetadata(null, FilePathChanged));
 
         private static void FilePathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -284,7 +284,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region FilePathStatus
-        private static readonly DependencyPropertyKey FilePathStatusPropertyKey = DependencyProperty.RegisterReadOnly("FilePathStatus", typeof(string), typeof(MainWindow),
+        private static readonly DependencyPropertyKey FilePathStatusPropertyKey = DependencyProperty.RegisterReadOnly(nameof(FilePathStatus), typeof(string), typeof(MainWindow),
             new PropertyMetadata());
         public static DependencyProperty FilePathStatusProperty = FilePathStatusPropertyKey.DependencyProperty;
 
@@ -292,7 +292,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region IsLoadedAndSelected
-        private static readonly DependencyPropertyKey IsLoadedAndSelectedPropertyKey = DependencyProperty.RegisterReadOnly("IsLoadedAndSelected",
+        private static readonly DependencyPropertyKey IsLoadedAndSelectedPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsLoadedAndSelected),
             typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
         public static readonly DependencyProperty IsLoadedAndSelectedProperty = IsLoadedAndSelectedPropertyKey.DependencyProperty;
 
@@ -300,7 +300,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ShowMouseCoords
-        private static readonly DependencyPropertyKey ShowMouseCoordsPropertyKey = DependencyProperty.RegisterReadOnly("ShowMouseCoords",
+        private static readonly DependencyPropertyKey ShowMouseCoordsPropertyKey = DependencyProperty.RegisterReadOnly(nameof(ShowMouseCoords),
             typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
         public static readonly DependencyProperty ShowMouseCoordsProperty = ShowMouseCoordsPropertyKey.DependencyProperty;
 
@@ -308,7 +308,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region MousePosX
-        private static readonly DependencyPropertyKey MousePosXPropertyKey = DependencyProperty.RegisterReadOnly("MousePosX", typeof(int),
+        private static readonly DependencyPropertyKey MousePosXPropertyKey = DependencyProperty.RegisterReadOnly(nameof(MousePosX), typeof(int),
             typeof(MainWindow), new PropertyMetadata());
         public static readonly DependencyProperty MousePosXProperty = MousePosXPropertyKey.DependencyProperty;
 
@@ -316,7 +316,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region MousePosY
-        private static readonly DependencyPropertyKey MousePosYPropertyKey = DependencyProperty.RegisterReadOnly("MousePosY", typeof(int),
+        private static readonly DependencyPropertyKey MousePosYPropertyKey = DependencyProperty.RegisterReadOnly(nameof(MousePosY), typeof(int),
             typeof(MainWindow), new PropertyMetadata());
         public static readonly DependencyProperty MousePosYProperty = MousePosYPropertyKey.DependencyProperty;
 
@@ -324,7 +324,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region SelectedIndex
-        private static readonly DependencyPropertyKey SelectedIndexPropertyKey = DependencyProperty.RegisterReadOnly("SelectedIndex", typeof(int), typeof(MainWindow),
+        private static readonly DependencyPropertyKey SelectedIndexPropertyKey = DependencyProperty.RegisterReadOnly(nameof(SelectedIndex), typeof(int), typeof(MainWindow),
             new PropertyMetadata());
         public static DependencyProperty SelectedIndexProperty = SelectedIndexPropertyKey.DependencyProperty;
 
@@ -348,7 +348,7 @@ namespace UIconEdit.Maker
         }
 
         #region Zoom
-        public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(int), typeof(MainWindow),
+        public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register(nameof(Zoom), typeof(int), typeof(MainWindow),
             new PropertyMetadata(100, ZoomChanged), ZoomValidate);
 
         private static void ZoomChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -370,7 +370,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ZoomedWidth
-        private static readonly DependencyPropertyKey ZoomedWidthPropertyKey = DependencyProperty.RegisterReadOnly("ZoomedWidth", typeof(double),
+        private static readonly DependencyPropertyKey ZoomedWidthPropertyKey = DependencyProperty.RegisterReadOnly(nameof(ZoomedWidth), typeof(double),
             typeof(MainWindow), new PropertyMetadata());
         public static readonly DependencyProperty ZoomedWidthProperty = ZoomedWidthPropertyKey.DependencyProperty;
 
@@ -378,7 +378,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ZoomedHeight
-        private static readonly DependencyPropertyKey ZoomedHeightPropertyKey = DependencyProperty.RegisterReadOnly("ZoomedHeight", typeof(double),
+        private static readonly DependencyPropertyKey ZoomedHeightPropertyKey = DependencyProperty.RegisterReadOnly(nameof(ZoomedHeight), typeof(double),
             typeof(MainWindow), new PropertyMetadata());
         public static readonly DependencyProperty ZoomedHeightProperty = ZoomedHeightPropertyKey.DependencyProperty;
 
@@ -386,7 +386,7 @@ namespace UIconEdit.Maker
         #endregion
 
         #region ZoomScaleMode
-        private static readonly DependencyPropertyKey ZoomScaleModePropertyKey = DependencyProperty.RegisterReadOnly("ZoomScaleMode",
+        private static readonly DependencyPropertyKey ZoomScaleModePropertyKey = DependencyProperty.RegisterReadOnly(nameof(ZoomScaleMode),
             typeof(BitmapScalingMode), typeof(MainWindow), new PropertyMetadata());
         public static readonly DependencyProperty ZoomScaleModeProperty = ZoomScaleModePropertyKey.DependencyProperty;
 

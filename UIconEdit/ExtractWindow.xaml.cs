@@ -115,7 +115,7 @@ namespace UIconEdit.Maker
                         {
                             _icons.Add(new FileToken(_decoderFrames[0], i, _decoderFrames.Length, _transformX, _transformY));
                             curIndex = i;
-                            OnPropertyChanged("Value");
+                            OnPropertyChanged(nameof(Value));
                         }
                         return;
                     }
@@ -134,7 +134,7 @@ namespace UIconEdit.Maker
                         finally
                         {
                             curIndex = dex;
-                            OnPropertyChanged("Value");
+                            OnPropertyChanged(nameof(Value));
                         }
                     }, _handler, _handler);
                 }
@@ -142,9 +142,9 @@ namespace UIconEdit.Maker
                 finally
                 {
                     _finished = true;
-                    OnPropertyChanged("IsFinished");
+                    OnPropertyChanged(nameof(IsFinished));
                     _iconArray = _icons.ToArray();
-                    OnPropertyChanged("Icons");
+                    OnPropertyChanged(nameof(Icons));
                 }
             }
 
@@ -202,7 +202,7 @@ namespace UIconEdit.Maker
         private static void _handler(IconExtractException e) { }
 
         #region IsFullyLoaded
-        public static DependencyProperty IsFullyLoadedProperty = DependencyProperty.Register("IsFullyLoaded", typeof(bool), typeof(ExtractWindow),
+        public static DependencyProperty IsFullyLoadedProperty = DependencyProperty.Register(nameof(IsFullyLoaded), typeof(bool), typeof(ExtractWindow),
             new PropertyMetadata(false, IsFullyLoadedChanged));
 
         private static void IsFullyLoadedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

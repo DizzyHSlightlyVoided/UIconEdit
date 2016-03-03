@@ -1292,11 +1292,11 @@ namespace UIconEdit
                 remove { PropertyChanged -= value; }
             }
 
-            private IconEntry _checkAdd(object value, string paramName)
+            private IconEntry _checkAdd(object value)
             {
-                if (value == null) throw new ArgumentNullException(paramName);
+                if (value == null) throw new ArgumentNullException(nameof(value));
                 IconEntry entry = value as IconEntry;
-                if (entry == null) throw new ArgumentException("The specified value is the wrong type.", paramName);
+                if (entry == null) throw new ArgumentException("The specified value is the wrong type.", nameof(value));
                 return entry;
             }
 
@@ -1345,7 +1345,7 @@ namespace UIconEdit
             object IList.this[int index]
             {
                 get { return _items[index]; }
-                set { this[index] = _checkAdd(value, null); }
+                set { this[index] = _checkAdd(value); }
             }
 
             /// <summary>
@@ -1404,7 +1404,7 @@ namespace UIconEdit
 
             int IList.Add(object value)
             {
-                if (Add(_checkAdd(value, "value"))) return _items.Count - 1;
+                if (Add(_checkAdd(value))) return _items.Count - 1;
                 return -1;
             }
 
@@ -1437,7 +1437,7 @@ namespace UIconEdit
             public bool Insert(int index, IconEntry item)
 #endif
             {
-                if (index < 0 || index > _items.Count) throw new ArgumentOutOfRangeException("index");
+                if (index < 0 || index > _items.Count) throw new ArgumentOutOfRangeException(nameof(index));
                 if (_items.Count == ushort.MaxValue || item == null || item.File != null || !_file.IsValid(item) || !_set.Add(item.EntryKey))
                     return false;
                 item.File = _file;
@@ -1452,7 +1452,7 @@ namespace UIconEdit
 
             void IList.Insert(int index, object value)
             {
-                Insert(index, _checkAdd(value, "value"));
+                Insert(index, _checkAdd(value));
             }
 
             private bool _setValue(int index, IconEntry value, bool setter)
@@ -1717,9 +1717,10 @@ namespace UIconEdit
 
             private void _binarySearchCheck(int index, int count)
             {
-                if (index < 0) throw new ArgumentOutOfRangeException("index");
-                if (count < 0) throw new ArgumentOutOfRangeException("count");
-                if (index + count > _items.Count) throw new ArgumentException();
+                if (index < 0) throw new ArgumentOutOfRangeException(nameof(index));
+                if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
+                if (index + count > _items.Count)
+                    throw new ArgumentException("The specified index plus the spacified count is greater than the number of elements in the collection.");
             }
 
             private int _binarySearch(int index, int count, IconEntryKey key)
@@ -1982,7 +1983,7 @@ namespace UIconEdit
             /// </exception>
             public IconEntry Find(Predicate<IconEntry> match)
             {
-                if (match == null) throw new ArgumentNullException("match");
+                if (match == null) throw new ArgumentNullException(nameof(match));
                 foreach (IconEntry entry in _items)
                     if (match(entry)) return entry;
                 return null;
@@ -1998,7 +1999,7 @@ namespace UIconEdit
             /// </exception>
             public int FindIndex(Predicate<IconEntry> match)
             {
-                if (match == null) throw new ArgumentNullException("match");
+                if (match == null) throw new ArgumentNullException(nameof(match));
                 for (int i = 0; i < _items.Count; i++)
                     if (match(_items[i])) return i;
                 return -1;
@@ -2027,7 +2028,7 @@ namespace UIconEdit
             /// </exception>
             public bool TrueForAll(Predicate<IconEntry> match)
             {
-                if (match == null) throw new ArgumentNullException("match");
+                if (match == null) throw new ArgumentNullException(nameof(match));
                 for (int i = 0; i < _items.Count; i++)
                     if (!match(_items[i])) return false;
                 return true;
@@ -2040,7 +2041,7 @@ namespace UIconEdit
             /// <returns>A list containing all elements matching <paramref name="match"/>.</returns>
             public List<IconEntry> FindAll(Predicate<IconEntry> match)
             {
-                if (match == null) throw new ArgumentNullException("match");
+                if (match == null) throw new ArgumentNullException(nameof(match));
                 List<IconEntry> found = new List<IconEntry>();
                 foreach (IconEntry curEntry in _items)
                     if (match(curEntry)) found.Add(curEntry);

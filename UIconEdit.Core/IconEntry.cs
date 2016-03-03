@@ -81,13 +81,13 @@ namespace UIconEdit
         private void _initValues(int width, int height, IconBitDepth bitDepth)
         {
             if (width < MinDimension || width > MaxDimension)
-                throw new ArgumentOutOfRangeException("width");
+                throw new ArgumentOutOfRangeException(nameof(width));
 
             if (height < MinDimension || height > MaxDimension)
-                throw new ArgumentOutOfRangeException("height");
+                throw new ArgumentOutOfRangeException(nameof(height));
 
             if (!_validateBitDepth(bitDepth))
-                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
+                throw new InvalidEnumArgumentException(nameof(bitDepth), (int)bitDepth, typeof(IconBitDepth));
         }
 
         private static bool _validateBitDepth(IconBitDepth value)
@@ -134,7 +134,7 @@ namespace UIconEdit
         /// </exception>
         public IconEntry(BitmapSource baseImage, int width, int height, IconBitDepth bitDepth, int hotspotX, int hotspotY, byte alphaThreshold)
         {
-            if (baseImage == null) throw new ArgumentNullException("baseImage");
+            if (baseImage == null) throw new ArgumentNullException(nameof(baseImage));
             _initValues(width, height, bitDepth);
             _width = width;
             _height = height;
@@ -243,15 +243,15 @@ namespace UIconEdit
         /// </exception>
         public IconEntry(BitmapSource baseImage, IconBitDepth bitDepth, int hotspotX, int hotspotY, byte alphaThreshold)
         {
-            if (baseImage == null) throw new ArgumentNullException("baseImage");
+            if (baseImage == null) throw new ArgumentNullException(nameof(baseImage));
 #if DRAWING
             if (baseImage.Width < MinDimension || baseImage.Width > MaxDimension || baseImage.Height < MinDimension || baseImage.Height > MaxDimension)
 #else
             if (baseImage.PixelWidth < MinDimension || baseImage.PixelWidth > MaxDimension || baseImage.PixelHeight < MinDimension || baseImage.PixelHeight > MaxDimension)
 #endif
-                throw new ArgumentException("The image size is out of the supported range.", "baseImage");
+                throw new ArgumentException("The image size is out of the supported range.", nameof(baseImage));
             if (!_validateBitDepth(bitDepth))
-                throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
+                throw new InvalidEnumArgumentException(nameof(bitDepth), (int)bitDepth, typeof(IconBitDepth));
             BaseImage = baseImage;
 
             _depth = bitDepth;
@@ -568,7 +568,7 @@ namespace UIconEdit
 #if DRAWING
         private bool _isQuantizedImage, _isQuantizedAlpha;
 #else
-        private static readonly DependencyPropertyKey IsQuantizedPropertyKey = DependencyProperty.RegisterReadOnly("IsQuantized", typeof(bool), typeof(IconEntry),
+        private static readonly DependencyPropertyKey IsQuantizedPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsQuantized), typeof(bool), typeof(IconEntry),
             new PropertyMetadata(false));
         /// <summary>
         /// The dependency property for the read-only <see cref="IsQuantized"/> property.
@@ -611,7 +611,7 @@ namespace UIconEdit
             set
             {
                 if (_isDisposed) throw new ObjectDisposedException(null);
-                if (value == null) throw new ArgumentNullException();
+                if (value == null) throw new ArgumentNullException(nameof(value));
                 if (_isQuantizedImage && !ReferenceEquals(value, _baseImage))
                 {
                     _baseImage.Dispose();
@@ -624,7 +624,7 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="BaseImage"/> property.
         /// </summary>
-        public static readonly DependencyProperty BaseImageProperty = DependencyProperty.Register("BaseImage", typeof(BitmapSource), typeof(IconEntry),
+        public static readonly DependencyProperty BaseImageProperty = DependencyProperty.Register(nameof(BaseImage), typeof(BitmapSource), typeof(IconEntry),
             new PropertyMetadata(new WriteableBitmap(1, 1, 0, 0, PixelFormats.Indexed1, AlphaPalette), BaseImageChanged), BaseImageValidate);
 
         private static void BaseImageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -648,7 +648,7 @@ namespace UIconEdit
             get { return (BitmapSource)GetValue(BaseImageProperty); }
             set
             {
-                if (value == null) throw new ArgumentNullException();
+                if (value == null) throw new ArgumentNullException(nameof(value));
                 SetValue(BaseImageProperty, value);
             }
         }
@@ -688,7 +688,7 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="AlphaImage"/> property.
         /// </summary>
-        public static readonly DependencyProperty AlphaImageProperty = DependencyProperty.Register("AlphaImage", typeof(BitmapSource), typeof(IconEntry),
+        public static readonly DependencyProperty AlphaImageProperty = DependencyProperty.Register(nameof(AlphaImage), typeof(BitmapSource), typeof(IconEntry),
             new PropertyMetadata(null, BaseImageChanged));
 
         /// <summary>
@@ -742,7 +742,7 @@ namespace UIconEdit
         /// <summary>
         /// Dependency property for the <see cref="IsPng"/> property.
         /// </summary>
-        public static readonly DependencyProperty IsPngProperty = DependencyProperty.Register("IsPng", typeof(bool), typeof(IconEntry),
+        public static readonly DependencyProperty IsPngProperty = DependencyProperty.Register(nameof(IsPng), typeof(bool), typeof(IconEntry),
             new PropertyMetadata(false, null));
 
         /// <summary>
@@ -838,7 +838,7 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="AlphaThreshold"/> property.
         /// </summary>
-        public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register("AlphaThreshold", typeof(byte), typeof(BitmapImage));
+        public static readonly DependencyProperty AlphaThresholdProperty = DependencyProperty.Register(nameof(AlphaThreshold), typeof(byte), typeof(BitmapImage));
 
         /// <summary>
         /// Gets and sets a value indicating the threshold of alpha values at <see cref="BitDepth"/>s below <see cref="IconBitDepth.Depth32BitsPerPixel"/>.
@@ -878,7 +878,7 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="HotspotX"/> property.
         /// </summary>
-        public static readonly DependencyProperty HotspotXProperty = DependencyProperty.Register("HotspotX", typeof(int), typeof(IconEntry),
+        public static readonly DependencyProperty HotspotXProperty = DependencyProperty.Register(nameof(HotspotX), typeof(int), typeof(IconEntry),
             new PropertyMetadata(0, null, HotspotXCoerce));
 
         private static object HotspotXCoerce(DependencyObject d, object baseValue)
@@ -930,7 +930,7 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="HotspotY"/> property.
         /// </summary>
-        public static readonly DependencyProperty HotspotYProperty = DependencyProperty.Register("HotspotY", typeof(int), typeof(IconEntry),
+        public static readonly DependencyProperty HotspotYProperty = DependencyProperty.Register(nameof(HotspotY), typeof(int), typeof(IconEntry),
             new PropertyMetadata(0, null, HotspotYCoerce));
 
         private static object HotspotYCoerce(DependencyObject d, object baseValue)
@@ -965,9 +965,9 @@ namespace UIconEdit
             {
 #else
         /// <summary>
-        /// The dependency property for the <see cref="IconScalingFilter"/> property.
+        /// The dependency property for the <see cref="ScalingFilter"/> property.
         /// </summary>
-        public static readonly DependencyProperty IconScalingFilterProperty = DependencyProperty.Register("ScalingFilter", typeof(IconScalingFilter), typeof(IconEntry),
+        public static readonly DependencyProperty ScalingFilterProperty = DependencyProperty.Register(nameof(ScalingFilter), typeof(IconScalingFilter), typeof(IconEntry),
             new PropertyMetadata(IconScalingFilter.Matrix), ScalingFilterValidate);
         private static bool ScalingFilterValidate(object value)
         {
@@ -1045,7 +1045,7 @@ namespace UIconEdit
             {
                 if (_isDisposed) throw new ObjectDisposedException(null);
                 if (!AlphaConvertModeValidate(value))
-                    throw new InvalidEnumArgumentException("value", (int)value, typeof(IconAlphaConvertMode));
+                    throw new InvalidEnumArgumentException(nameof(value), (int)value, typeof(IconAlphaConvertMode));
                 _alphaConvertMode = value;
             }
         }
@@ -1057,7 +1057,7 @@ namespace UIconEdit
         /// <summary>
         /// The dependency property for the <see cref="AlphaConvertMode"/> property.
         /// </summary>
-        public static readonly DependencyProperty AlphaConvertModeProperty = DependencyProperty.Register("AlphaConvertMode", typeof(IconAlphaConvertMode), typeof(IconEntry));
+        public static readonly DependencyProperty AlphaConvertModeProperty = DependencyProperty.Register(nameof(AlphaConvertMode), typeof(IconAlphaConvertMode), typeof(IconEntry));
 
         /// <summary>
         /// Gets and sets a value indicating how <see cref="AlphaImage"/> is converted into the alpha value.
@@ -1071,7 +1071,7 @@ namespace UIconEdit
             set
             {
                 if (!AlphaConvertModeValidate(value))
-                    throw new InvalidEnumArgumentException("value", (int)value, typeof(IconAlphaConvertMode));
+                    throw new InvalidEnumArgumentException(nameof(value), (int)value, typeof(IconAlphaConvertMode));
                 SetValue(AlphaConvertModeProperty, value);
             }
         }
@@ -1127,7 +1127,7 @@ namespace UIconEdit
                 case IconBitDepth.Depth32BitsPerPixel:
                     return 32;
                 default:
-                    throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
+                    throw new InvalidEnumArgumentException(nameof(bitDepth), (int)bitDepth, typeof(IconBitDepth));
             }
         }
 
@@ -1167,7 +1167,7 @@ namespace UIconEdit
                 case IconBitDepth.Depth32BitsPerPixel:
                     return uint.MaxValue + 1L;
                 default:
-                    throw new InvalidEnumArgumentException("bitDepth", (int)bitDepth, typeof(IconBitDepth));
+                    throw new InvalidEnumArgumentException(nameof(bitDepth), (int)bitDepth, typeof(IconBitDepth));
             }
         }
 
@@ -1203,7 +1203,7 @@ namespace UIconEdit
                 case uint.MaxValue + 1L:
                     return IconBitDepth.Depth32BitsPerPixel;
                 default:
-                    throw new ArgumentException("Not a valid color count or bits-per-pixel value.", "value");
+                    throw new ArgumentException("Not a valid color count or bits-per-pixel value.", nameof(value));
             }
         }
 
@@ -1300,7 +1300,7 @@ namespace UIconEdit
                     return PixelFormats.Bgra32;
 #endif
                 default:
-                    throw new InvalidEnumArgumentException("depth", (int)depth, typeof(IconBitDepth));
+                    throw new InvalidEnumArgumentException(nameof(depth), (int)depth, typeof(IconBitDepth));
             }
         }
 
@@ -2234,7 +2234,7 @@ namespace UIconEdit
         /// </example>
         public static IconBitDepth ParseBitDepth(string value)
         {
-            if (value == null) throw new ArgumentNullException("value");
+            if (value == null) throw new ArgumentNullException(nameof(value));
             IconBitDepth result;
             TryParseBitDepth(value, true, out result);
             return result;
@@ -2347,7 +2347,7 @@ namespace UIconEdit
                             }
                             catch (ArgumentException e)
                             {
-                                throw new ArgumentException(e.Message.Replace(stripValue, value), "value");
+                                throw new ArgumentException(e.Message.Replace(stripValue, value), nameof(value));
                             }
                             return false;
                         }
@@ -2392,7 +2392,7 @@ namespace UIconEdit
                 }
                 catch (ArgumentException e)
                 {
-                    throw new ArgumentException(e.Message.Replace(stripValue, value), "value");
+                    throw new ArgumentException(e.Message.Replace(stripValue, value), nameof(value));
                 }
             }
 

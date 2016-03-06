@@ -165,7 +165,6 @@ namespace UIconEdit.Maker
         }
 
         private MainWindow _mainWindow;
-
         public SettingsFile Settings { get { return _mainWindow.SettingsFile; } }
 
         public IconEntry GetIconEntry(bool quantize)
@@ -174,10 +173,7 @@ namespace UIconEdit.Maker
             if (_savedEntry == null)
                 entry = new IconEntry(LoadedImage, EntryWidth, EntryHeight, BitDepth);
             else if (_savedEntry.Width != EntryWidth || _savedEntry.Height != EntryHeight || _savedEntry.BitDepth != BitDepth)
-            {
-                entry = new IconEntry(_savedEntry.BaseImage, EntryWidth, EntryHeight, BitDepth);
-                entry.AlphaImage = _savedEntry.AlphaImage;
-            }
+                entry = _savedEntry.Clone(EntryWidth, EntryHeight, BitDepth);
             else if (quantize)
                 entry = _savedEntry.Clone();
             else

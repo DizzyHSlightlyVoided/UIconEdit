@@ -79,7 +79,7 @@ namespace UIconEdit
         public const byte DefaultAlphaThreshold32 = 1;
 
         #region Constructors
-        private void _initValues(int width, int height, IconBitDepth bitDepth)
+        private static void _initValues(int width, int height, IconBitDepth bitDepth)
         {
             if (width < MinDimension || width > MaxDimension)
                 throw new ArgumentOutOfRangeException(nameof(width));
@@ -362,6 +362,7 @@ namespace UIconEdit
         }
         #endregion
 
+        #region Clone
 #if DRAWING
         /// <summary>
         /// Returns a duplicate of the current instance.
@@ -494,7 +495,7 @@ namespace UIconEdit
         }
 
         /// <summary>
-        /// Returns a modifiable copy of the current instance.
+        /// Returns a modifiable copy of the current instance, using base (non-animated) property values.
         /// When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
         /// </summary>
         /// <returns>A modifiable copy of the current instance.</returns>
@@ -518,6 +519,7 @@ namespace UIconEdit
 
         /// <summary>
         /// Creates a frozen copy of the current instance, using base (non-animated) property values.
+        /// When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
         /// </summary>
         /// <returns>A frozen copy of the current instance.</returns>
         /// <seealso cref="Freezable"/>
@@ -539,6 +541,282 @@ namespace UIconEdit
         }
         #endregion
 #endif
+
+#if DRAWING
+        /// <summary>
+        /// Creates a duplicate of the current instance, with a new width, height, and bit depth.
+        /// </summary>
+        /// <param name="width">The width of the copy.</param>
+        /// <param name="height">The height of the copy.</param>
+        /// <param name="bitDepth">The bit depth of the copy.</param>
+        /// <returns>A duplicate of the current instance with a modified width, height, and bit depth.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
+        /// </exception>
+        public IconEntry Clone(int width, int height, IconBitDepth bitDepth)
+        {
+            _initValues(width, height, bitDepth);
+            IconEntry clone = Clone();
+            clone._isQuantizedAlpha = clone._isQuantizedImage = false;
+#else
+        /// <summary>
+        /// Creates a modifiable copy of the current instance using base (non-animated) property values, with a new specified width, height, and bit depth.
+        /// When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
+        /// </summary>
+        /// <param name="width">The width of the copy.</param>
+        /// <param name="height">The height of the copy.</param>
+        /// <param name="bitDepth">The bit depth of the copy.</param>
+        /// <returns>A duplicate of the current instance with a modified width, height, and bit depth.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
+        /// </exception>
+        /// <seealso cref="Clone()"/>
+        /// <seealso cref="Freezable.Clone()"/>
+        public IconEntry Clone(int width, int height, IconBitDepth bitDepth)
+        {
+            return _cloneNewSize(Clone, width, height, bitDepth);
+        }
+
+        private IconEntry _cloneNewSize(Func<IconEntry> CloneMaker, int width, int height, IconBitDepth bitDepth)
+        {
+            _initValues(width, height, bitDepth);
+            IconEntry clone = CloneMaker();
+
+            clone.SetValue(IsQuantizedPropertyKey, false);
+#endif
+            clone._width = width;
+            clone._height = height;
+            clone._depth = bitDepth;
+            return clone;
+        }
+
+#if DRAWING
+        /// <summary>
+        /// Creates a duplicate of the current instance, with a new specified width and height.
+        /// </summary>
+        /// <param name="width">The width of the copy.</param>
+        /// <param name="height">The height of the copy.</param>
+        /// <returns>A duplicate of the current instance with a modified width and height.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        public IconEntry Clone(int width, int height)
+#else
+        /// <summary>
+        /// Creates a modifiable copy of the current instance using base (non-animated) property values, with a new specified width and height.
+        /// When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
+        /// </summary>
+        /// <param name="width">The width of the copy.</param>
+        /// <param name="height">The height of the copy.</param>
+        /// <returns>A duplicate of the current instance with a modified width and height.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <seealso cref="Clone()"/>
+        /// <seealso cref="Freezable.Clone()"/>
+        public IconEntry Clone(int width, int height)
+#endif
+        {
+            return Clone(width, height, _depth);
+        }
+
+#if DRAWING
+        /// <summary>
+        /// Creates a duplicate of the current instance, with a new specified bit depth.
+        /// </summary>
+        /// <param name="bitDepth">The bit depth of the copy.</param>
+        /// <returns>A new <see cref="IconEntry"/> instance.</returns>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
+        /// </exception>
+        public IconEntry Clone(IconBitDepth bitDepth)
+#else
+        /// <summary>
+        /// Creates a modifiable copy of the current instance using base (non-animated) property values, with a new specified bit depth.
+        /// When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
+        /// </summary>
+        /// <param name="bitDepth">The bit depth of the copy.</param>
+        /// <returns>A duplicate of the current instance with a modified width and height.</returns>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
+        /// </exception>
+        /// <seealso cref="Clone()"/>
+        /// <seealso cref="Freezable.Clone()"/>
+        public IconEntry Clone(IconBitDepth bitDepth)
+#endif
+        {
+            return Clone(_width, _height, bitDepth);
+        }
+
+#if !DRAWING
+        /// <summary>
+        /// Creates a modifiable copy of the current instance using its current values, with a new specified width, height, and bit depth.
+        /// </summary>
+        /// <param name="width">The width of the copy.</param>
+        /// <param name="height">The height of the copy.</param>
+        /// <param name="bitDepth">The bit depth of the copy.</param>
+        /// <returns>A new <see cref="IconEntry"/> instance.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
+        /// </exception>
+        /// <seealso cref="CloneCurrentValue()"/>
+        /// <seealso cref="Freezable.CloneCurrentValue()"/>
+        public IconEntry CloneCurrentValue(int width, int height, IconBitDepth bitDepth)
+        {
+            return _cloneNewSize(CloneCurrentValue, width, height, bitDepth);
+        }
+
+        /// <summary>
+        /// Creates a modifiable copy of the current instance using its current values, with a new specified width and height.
+        /// </summary>
+        /// <param name="width">The width of the copy.</param>
+        /// <param name="height">The height of the copy.</param>
+        /// <returns>A new <see cref="IconEntry"/> instance.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <seealso cref="CloneCurrentValue()"/>
+        /// <seealso cref="Freezable.CloneCurrentValue()"/>
+        public IconEntry CloneCurrentValue(int width, int height)
+        {
+            return CloneCurrentValue(width, height, _depth);
+        }
+
+        /// <summary>
+        /// Creates a modifiable copy of the current instance using its current values, with a new specified bit depth.
+        /// </summary>
+        /// <param name="bitDepth">The bit depth of the copy.</param>
+        /// <returns>A new <see cref="IconEntry"/> instance.</returns>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
+        /// </exception>
+        /// <seealso cref="CloneCurrentValue()"/>
+        /// <seealso cref="Freezable.CloneCurrentValue()"/>
+        public IconEntry CloneCurrentValue(IconBitDepth bitDepth)
+        {
+            return CloneCurrentValue(_width, _height, bitDepth);
+        }
+
+        /// <summary>
+        /// Creates a frozen copy of the current instance using base (non-animated) property values, with a new specified width, height, and bit depth.
+        /// When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
+        /// </summary>
+        /// <param name="width">The width of the copy.</param>
+        /// <param name="height">The height of the copy.</param>
+        /// <param name="bitDepth">The bit depth of the copy.</param>
+        /// <returns>A duplicate of the current instance with a modified width, height, and bit depth.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
+        /// </exception>
+        /// <seealso cref="GetAsFrozen()"/>
+        /// <seealso cref="Freezable.GetAsFrozen()"/>
+        public IconEntry GetAsFrozen(int width, int height, IconBitDepth bitDepth)
+        {
+            IconEntry clone = Clone(width, height, bitDepth);
+            clone.Freeze();
+            return clone;
+        }
+
+        /// <summary>
+        /// Creates a frozen copy of the current instance using base (non-animated) property values, with a new specified width and height.
+        /// When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
+        /// </summary>
+        /// <param name="width">The width of the copy.</param>
+        /// <param name="height">The height of the copy.</param>
+        /// <returns>A duplicate of the current instance with a modified width, height, and bit depth.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <seealso cref="GetAsFrozen()"/>
+        /// <seealso cref="Freezable.GetAsFrozen()"/>
+        public IconEntry GetAsFrozen(int width, int height)
+        {
+            return GetAsFrozen(width, height, _depth);
+        }
+
+        /// <summary>
+        /// Creates a frozen copy of the current instance using base (non-animated) property values, with a new specified bit depth.
+        /// When copying this object's dependency properties, this method copies expressions (which might no longer resolve), but not animations or their current values.
+        /// </summary>
+        /// <param name="bitDepth">The bit depth of the copy.</param>
+        /// <returns>A duplicate of the current instance with a modified width, height, and bit depth.</returns>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
+        /// </exception>
+        /// <seealso cref="GetAsFrozen()"/>
+        /// <seealso cref="Freezable.GetAsFrozen()"/>
+        public IconEntry GetAsFrozen(IconBitDepth bitDepth)
+        {
+            return GetAsFrozen(_width, _height, bitDepth);
+        }
+
+        /// <summary>
+        /// Creates a frozen copy of the current instance using its current values, with a new specified width, height, and bit depth.
+        /// </summary>
+        /// <param name="width">The width of the copy.</param>
+        /// <param name="height">The height of the copy.</param>
+        /// <param name="bitDepth">The bit depth of the copy.</param>
+        /// <returns>A duplicate of the current instance with a modified width, height, and bit depth.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
+        /// </exception>
+        /// <seealso cref="GetCurrentValueAsFrozen()"/>
+        /// <seealso cref="Freezable.GetCurrentValueAsFrozen()"/>
+        public IconEntry GetCurrentValueAsFrozen(int width, int height, IconBitDepth bitDepth)
+        {
+            IconEntry clone = CloneCurrentValue(width, height, bitDepth);
+            clone.Freeze();
+            return clone;
+        }
+
+        /// <summary>
+        /// Creates a frozen copy of the current instance using its current values, with a new specified width and height.
+        /// </summary>
+        /// <param name="width">The width of the copy.</param>
+        /// <param name="height">The height of the copy.</param>
+        /// <returns>A duplicate of the current instance with a modified width, height, and bit depth.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="width"/> or <paramref name="height"/> is less than <see cref="MinDimension"/> or is greater than <see cref="MaxDimension"/>.
+        /// </exception>
+        /// <seealso cref="GetCurrentValueAsFrozen()"/>
+        /// <seealso cref="Freezable.GetCurrentValueAsFrozen()"/>
+        public IconEntry GetCurrentValueAsFrozen(int width, int height)
+        {
+            return GetCurrentValueAsFrozen(width, height, _depth);
+        }
+
+        /// <summary>
+        /// Creates a frozen copy of the current instance using its current values, with a new specified bit depth.
+        /// </summary>
+        /// <param name="bitDepth">The bit depth of the copy.</param>
+        /// <returns>A duplicate of the current instance with a modified width, height, and bit depth.</returns>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
+        /// </exception>
+        /// <seealso cref="GetCurrentValueAsFrozen()"/>
+        /// <seealso cref="Freezable.GetCurrentValueAsFrozen()"/>
+        public IconEntry GetCurrentValueAsFrozen(IconBitDepth bitDepth)
+        {
+            return GetCurrentValueAsFrozen(_width, _height, bitDepth);
+        }
+#endif
+        #endregion
+
         /// <summary>
         /// The minimum dimensions of an icon. 1 pixels.
         /// </summary>

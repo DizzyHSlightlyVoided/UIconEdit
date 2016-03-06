@@ -27,6 +27,11 @@
   <!-- {0} = index (appended to FilenameSuffix in case of duplicate names). -->
   <FilenameSuffixEx>-{0}</FilenameSuffixEx>
 
+  <About>About</About>
+  <!-- {0} = version number -->
+  <AboutVersion>UIconEdit version {0}</AboutVersion>
+  <AboutCopyright>© 2015-2016 by KimikoMuffin. All rights reserved.</AboutCopyright>
+
   <MenuFile>_File</MenuFile>
   <MenuFileOpen>_Open</MenuFileOpen>
   <MenuFileNew>_New</MenuFileNew>
@@ -42,6 +47,9 @@
   <MenuEditExp>E_xport current image</MenuEditExp>
   <MenuEditExpAll>Export _all</MenuEditExpAll>
   <MenuEditSettings>_Settings</MenuEditSettings>
+
+  <MenuHelp>_Help</MenuHelp>
+  <MenuHelpAbout>_About</MenuHelpAbout>
 
   <ButtonTipOpen>Open</ButtonTipOpen>
   <ButtonTipNew>New</ButtonTipNew>

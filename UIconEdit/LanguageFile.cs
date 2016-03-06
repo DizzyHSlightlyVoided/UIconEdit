@@ -204,6 +204,10 @@ namespace UIconEdit.Maker
         public string FilenameSuffix { get { return _text["FilenameSuffix"]; } }
         public string FilenameSuffixEx { get { return _text["FilenameSuffixEx"]; } }
 
+        public string About { get { return _text["About"]; } }
+        public string AboutTop { get { return _text["AboutTop"]; } }
+        public string AboutCopyright { get { return _text["AboutCopyright"]; } }
+
         public string MenuFile { get { return _text["MenuFile"]; } }
         public string MenuFileNew { get { return _text["MenuFileNew"]; } }
         public string MenuFileOpen { get { return _text["MenuFileOpen"]; } }
@@ -219,6 +223,9 @@ namespace UIconEdit.Maker
         public string MenuEditExp { get { return _text["MenuEditExp"]; } }
         public string MenuEditExpAll { get { return _text["MenuEditExpAll"]; } }
         public string MenuEditSettings { get { return _text["MenuEditSettings"]; } }
+
+        public string MenuHelp { get { return _text["MenuHelp"]; } }
+        public string MenuHelpAbout { get { return _text["MenuHelpAbout"]; } }
 
         public string ButtonTipNew { get { return _text["ButtonTipNew"]; } }
         public string ButtonTipOpen { get { return _text["ButtonTipOpen"]; } }

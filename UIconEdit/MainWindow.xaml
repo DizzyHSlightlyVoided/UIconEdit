@@ -24,6 +24,7 @@
         <CommandBinding Command="NavigationCommands.PreviousPage" CanExecute="NavBack_CanExecute" Executed="PreviousPage_Executed"/>
         <CommandBinding Command="NavigationCommands.NextPage" CanExecute="NavForward_CanExecute" Executed="NextPage_Executed"/>
         <CommandBinding Command="NavigationCommands.LastPage" CanExecute="NavForward_CanExecute" Executed="LastPage_Executed"/>
+        <CommandBinding Command="{x:Static local:MainWindow.AboutCommand}" CanExecute="CommandBinding_CanExecute" Executed="About_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="S" Modifiers="Shift+Ctrl" Command="ApplicationCommands.SaveAs"/>
@@ -100,6 +101,13 @@
                           Command="{x:Static local:MainWindow.SettingsCommand}">
                     <MenuItem.Icon>
                         <Image Source="Resources\Settings_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="{Binding SettingsFile.LanguageFile.MenuHelp, ElementName=window, FallbackValue=_Help}">
+                <MenuItem Command="{x:Static local:MainWindow.AboutCommand}" Header="{Binding SettingsFile.LanguageFile.MenuHelpAbout, ElementName=window, FallbackValue=_About}">
+                    <MenuItem.Icon>
+                        <Image Source="Resources\Information_24x24.png" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Style="{StaticResource imgEnabled}"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>

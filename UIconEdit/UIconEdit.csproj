@@ -54,6 +54,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AddWindow.xaml.cs">
       <DependentUpon>AddWindow.xaml</DependentUpon>
     </Compile>
@@ -87,6 +90,10 @@
       <DependentUpon>SizeRadioButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="ShellIconFuncs.cs" />
+    <Page Include="AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AddWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -160,13 +167,14 @@
     <Resource Include="Resources\ArrowForward.png" />
     <Resource Include="Resources\DArrowBackward.png" />
     <Resource Include="Resources\DArrowForward.png" />
+    <Resource Include="Resources\Information_24x24.png" />
+    <Resource Include="Resources\Settings_24x24.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Languages\en-US.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Resource Include="Resources\Settings_24x24.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

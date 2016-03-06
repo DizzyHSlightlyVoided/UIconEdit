@@ -441,6 +441,7 @@ namespace UIconEdit.Maker
             LoadedFile = null;
         }
 
+        #region Save
         private bool _save(bool saveAs)
         {
             IconFileBase loadedFile = LoadedFile;
@@ -515,6 +516,7 @@ namespace UIconEdit.Maker
         {
             _save(true);
         }
+        #endregion
 
         private void New_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -522,6 +524,7 @@ namespace UIconEdit.Maker
             LoadedFile = new CursorFile();
         }
 
+        #region Add
         public static readonly RoutedCommand AddCommand = new RoutedCommand("Add", typeof(MainWindow));
 
         private void Add_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -572,7 +575,9 @@ namespace UIconEdit.Maker
                 Mouse.OverrideCursor = null;
             }
         }
+        #endregion
 
+        #region Duplicate
         public static readonly RoutedCommand DuplicateCommand = new RoutedCommand("Duplicate", typeof(MainWindow));
 
         private void Duplicate_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -589,7 +594,9 @@ namespace UIconEdit.Maker
 
             _add(new AddWindow(this, true, false, bmpSource, entry.BitDepth));
         }
+        #endregion
 
+        #region Remove
         public static readonly RoutedCommand RemoveCommand = new RoutedCommand("Remove", typeof(MainWindow));
 
         private void Remove_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -613,7 +620,9 @@ namespace UIconEdit.Maker
                 listbox.SelectedIndex = dex - 1;
             IsModified = true;
         }
+        #endregion
 
+        #region Export
         public static readonly RoutedCommand ExportCommand = new RoutedCommand("Export", typeof(MainWindow));
 
         private void Export_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -650,7 +659,9 @@ namespace UIconEdit.Maker
                 Mouse.OverrideCursor = null;
             }
         }
+        #endregion
 
+        #region ExportAll
         public static readonly RoutedCommand ExportAllCommand = new RoutedCommand("ExportAll", typeof(MainWindow));
 
         private void ExportAll_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -757,7 +768,9 @@ namespace UIconEdit.Maker
                 Mouse.OverrideCursor = null;
             }
         }
+        #endregion
 
+        #region Settings
         public static readonly RoutedCommand SettingsCommand = new RoutedCommand("Settings", typeof(MainWindow));
 
         public void Settings_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -770,7 +783,9 @@ namespace UIconEdit.Maker
 
             _settings.Save();
         }
+        #endregion
 
+        #region Reload
         private void Reload_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = LoadedFile != null && FilePath != null;
@@ -800,6 +815,17 @@ namespace UIconEdit.Maker
             }
             _load(FilePath);
         }
+        #endregion
+
+        #region About
+        public static readonly RoutedCommand AboutCommand = new RoutedCommand("About", typeof(MainWindow));
+
+        private void About_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            AboutWindow window = new AboutWindow(this);
+            window.ShowDialog();
+        }
+        #endregion
 
         private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -924,7 +950,6 @@ namespace UIconEdit.Maker
 
             SetValue(MousePosXPropertyKey, (int)(position.X * curEntry.Width / ZoomedWidth));
             SetValue(MousePosYPropertyKey, (int)(position.Y * curEntry.Height / ZoomedHeight));
-
         }
 
         private void imgIcon_MouseMove(object sender, MouseEventArgs e)

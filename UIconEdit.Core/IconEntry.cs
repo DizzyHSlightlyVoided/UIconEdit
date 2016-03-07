@@ -2020,20 +2020,11 @@ namespace UIconEdit
                 alphaMask = GetBitmap(alphaPixels, PixelFormat.Format1bppIndexed, AlphaPalette, 2);
 #else
                 alphaMask = GetBitmap(alphaPixels, PixelFormats.Indexed1, AlphaPalette, 2);
-                alphaMask.Freeze();
 #endif
             }
 
             if (_depth == IconBitDepth.Depth32BitsPerPixel)
-#if DRAWING
                 return GetBitmap(pixels);
-#else
-            {
-                var bmpResult = GetBitmap(pixels);
-                bmpResult.Freeze();
-                return bmpResult;
-            }
-#endif
 
             for (int i = 0; i < pixels.Length; i++)
             {
@@ -2062,12 +2053,7 @@ namespace UIconEdit
                 : GetPixelFormat(_depth), null, (ushort)GetColorCount(_depth));
 
             if (!isPng)
-            {
-#if !DRAWING
-                quantized.Freeze();
-#endif
                 return quantized;
-            }
 
             ColorValue[] otherPixels = _getPixels(quantized);
 
@@ -2363,23 +2349,37 @@ namespace UIconEdit
 
             wBmp.WritePixels(new Int32Rect(0, 0, _width, _height), pixels, _width * 4, 0);
             if (pFormat.BitsPerPixel == 32)
+            {
+                wBmp.Freeze();
                 return wBmp;
+            }
             else if (pFormat.BitsPerPixel == 24)
-                return new WriteableBitmap(new FormatConvertedBitmap(wBmp, pFormat, null, 0));
+            {
+                wBmp = new WriteableBitmap(new FormatConvertedBitmap(wBmp, pFormat, null, 0));
+                wBmp.Freeze();
+                return wBmp;
+            }
 
             if (palette != null)
-                return new WriteableBitmap(new FormatConvertedBitmap(wBmp, pFormat, palette, 0));
+            {
+                wBmp = new WriteableBitmap(new FormatConvertedBitmap(wBmp, pFormat, palette, 0));
+                wBmp.Freeze();
+                return wBmp;
+            }
 
-            WriteableBitmap quantized = Quantize(wBmp, pixels, maxColors);
+            wBmp = Quantize(wBmp, pixels, maxColors);
 
-            if (pFormat.BitsPerPixel == quantized.Format.BitsPerPixel)
-                return quantized;
+            if (pFormat.BitsPerPixel == wBmp.Format.BitsPerPixel)
+            {
+                wBmp.Freeze();
+                return wBmp;
+            }
 
             byte[] indices = new byte[pixels.Length];
 
-            quantized.CopyPixels(indices, _width, 0);
+            wBmp.CopyPixels(indices, _width, 0);
 
-            var baseColors = quantized.Palette.Colors;
+            var baseColors = wBmp.Palette.Colors;
             List<Color> colors = new List<Color>();
             HashSet<byte> indexSet = new HashSet<byte>();
 
@@ -2394,12 +2394,9 @@ namespace UIconEdit
                     break;
             }
 
-            return new WriteableBitmap(new FormatConvertedBitmap(quantized, pFormat, new BitmapPalette(colors), 1));
-        }
-
-        private WriteableBitmap GetBitmap(ColorValue[] pixels, PixelFormat format)
-        {
-            return GetBitmap(pixels, format, null, ushort.MaxValue);
+            wBmp = new WriteableBitmap(new FormatConvertedBitmap(wBmp, pFormat, new BitmapPalette(colors), 1));
+            wBmp.Freeze();
+            return wBmp;
         }
 
         private WriteableBitmap GetBitmap(ColorValue[] pixels)

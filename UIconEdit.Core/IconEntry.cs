@@ -1629,8 +1629,8 @@ namespace UIconEdit
             }
 
             public ColorValue(byte r, byte g, byte b)
-                : this(byte.MaxValue, r, g, b)
             {
+                this = new ColorValue() { A = byte.MaxValue, R = r, G = r, B = b };
             }
 
             public ColorValue(Color value)
@@ -1702,6 +1702,26 @@ namespace UIconEdit
             public override int GetHashCode()
             {
                 return Value;
+            }
+
+            public byte GrayscaleValue { get { return (byte)((R + G + B) / 3); } }
+            public ColorValue GrayscaleAlpha
+            {
+                get
+                {
+                    byte value = GrayscaleValue;
+                    return new ColorValue(value, 0, 0, 0);
+                }
+            }
+
+            public byte AverageValue { get { return (byte)Math.Round(GrayscaleValue * (A / (double)byte.MaxValue)); } }
+            public ColorValue AverageAlpha
+            {
+                get
+                {
+                    byte value = AverageValue;
+                    return new ColorValue(value, 0, 0, 0);
+                }
             }
 
             public Color GetColor()
@@ -1952,8 +1972,7 @@ namespace UIconEdit
                     for (int i = 0; i < alphaPixels.Length; i++)
                     {
                         ColorValue curAlpha = alphaPixels[i];
-                        double whiteDistance = curAlpha.GetDistance(ColorValue.White);
-                        if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance || curAlpha.GetDistance(default(ColorValue)) < whiteDistance)
+                        if (curAlpha.A < _alphaThreshold)
                             pixels[i].A = 0;
                     }
                 }
@@ -1967,8 +1986,7 @@ namespace UIconEdit
 
                     for (int i = 0; i < pixels.Length; i++)
                     {
-                        ColorValue curVal = pixels[i];
-                        if (curVal.A < _alphaThreshold)
+                        if (pixels[i].A < _alphaThreshold)
                             alphaPixels[i] = ColorValue.Black;
                         else
                             alphaPixels[i] = ColorValue.White;
@@ -1982,8 +2000,7 @@ namespace UIconEdit
                     for (int i = 0; i < alphaPixels.Length; i++)
                     {
                         ColorValue curAlpha = alphaPixels[i];
-                        double whiteDistance = curAlpha.GetDistance(ColorValue.White);
-                        if (curAlpha.GetDistance(ColorValue.Black) < whiteDistance)
+                        if (alphaPixels[i].A < _alphaThreshold)
                             alphaPixels[i] = ColorValue.Black;
                         else
                             alphaPixels[i] = ColorValue.White;
@@ -2034,15 +2051,7 @@ namespace UIconEdit
             }
 
             if (isPng && _depth == IconBitDepth.Depth24BitsPerPixel)
-#if DRAWING
                 return GetBitmap(pixels);
-#else
-            {
-                var bmpResult = GetBitmap(pixels);
-                bmpResult.Freeze();
-                return bmpResult;
-            }
-#endif
 
             var quantized = GetBitmap(pixels, isPng ?
 #if DRAWING
@@ -2076,13 +2085,7 @@ namespace UIconEdit
                 pixels[i] = curPixel;
             }
 
-#if DRAWING
             return GetBitmap(pixels);
-#else
-            quantized = GetBitmap(pixels);
-            quantized.Freeze();
-            return quantized;
-#endif
         }
 
         private void _alphanize(ColorValue[] value)
@@ -2093,31 +2096,13 @@ namespace UIconEdit
             switch (AlphaConvertMode)
 #endif
             {
-                case IconAlphaConvertMode.AlphaOnly:
-                    for (int i = 0; i < value.Length; i++)
-                    {
-                        byte a = value[i].A;
-
-                        value[i] = new ColorValue(a, a, a);
-                    }
-                    return;
                 case IconAlphaConvertMode.LumOnly:
                     for (int i = 0; i < value.Length; i++)
-                        value[i] = new ColorValue(byte.MaxValue, value[i]);
+                        value[i] = value[i].GrayscaleAlpha;
                     break;
-                default:
+                case IconAlphaConvertMode.LumAndAlpha:
                     for (int i = 0; i < value.Length; i++)
-                    {
-                        double maxByte = byte.MaxValue;
-
-                        var curVal = value[i];
-                        var curAlpha = curVal.A / maxByte;
-
-                        curVal.A = byte.MaxValue;
-                        curVal.R = (byte)((curVal.R * curAlpha) * maxByte);
-                        curVal.G = (byte)((curVal.G * curAlpha) * maxByte);
-                        curVal.B = (byte)((curVal.B * curAlpha) * maxByte);
-                    }
+                        value[i] = value[i].AverageAlpha;
                     break;
             }
         }

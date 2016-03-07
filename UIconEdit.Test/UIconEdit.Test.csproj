@@ -18,8 +18,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Net 4.5\Debug\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.5\Debug\</IntermediateOutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
+    <IntermediateOutputPath>obj\Debug\</IntermediateOutputPath>
     <DefineConstants>TRACE;DEBUG;NET_4_5;IREADONLY;LEAVEOPEN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,8 +28,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Net 4.5\Release\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.5\Release\</IntermediateOutputPath>
+    <OutputPath>bin\Release\</OutputPath>
+    <IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
     <DefineConstants>TRACE;NET_4_5;IREADONLY;LEAVEOPEN</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

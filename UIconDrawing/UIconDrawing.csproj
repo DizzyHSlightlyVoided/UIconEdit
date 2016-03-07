@@ -16,24 +16,24 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Net 4.5\Debug\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.5\Debug\</IntermediateOutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
+    <IntermediateOutputPath>obj\Debug\</IntermediateOutputPath>
     <DefineConstants>TRACE;DEBUG;DRAWING</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Net 4.5\Debug\UIconDrawing.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\UIconDrawing.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Net 4.5\Release\</OutputPath>
-    <IntermediateOutputPath>obj\Net 4.5\Release\</IntermediateOutputPath>
+    <OutputPath>bin\Release\</OutputPath>
+    <IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
     <DefineConstants>TRACE;DRAWING</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Net 4.5\Release\UIconDrawing.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\UIconDrawing.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />

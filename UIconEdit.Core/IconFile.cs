@@ -81,7 +81,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="icon">An <see cref="Icon"/> to decode.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="icon"/> is <c>null</c>.
+        /// <paramref name="icon"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="IconLoadException">
         /// <paramref name="icon"/> contains invalid values.
@@ -116,7 +116,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="decoder">An <see cref="IconBitmapDecoder"/> containing decoded icon images.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="decoder"/> is <c>null</c>.
+        /// <paramref name="decoder"/> is <see langword="null"/>.
         /// </exception>
         public IconFile(IconBitmapDecoder decoder)
         {
@@ -135,7 +135,7 @@ namespace UIconEdit
         /// <param name="input">A stream containing an icon file.</param>
         /// <returns>A <see cref="IconFile"/> loaded from <paramref name="input"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="input"/> is <c>null</c>.
+        /// <paramref name="input"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="input"/> is closed or does not support reading.
@@ -159,10 +159,10 @@ namespace UIconEdit
         /// </summary>
         /// <param name="input">A stream containing an icon file.</param>
         /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon entries,
-        /// or <c>null</c> to throw an exception in those cases.</param>
+        /// or <see langword="null"/> to throw an exception in those cases.</param>
         /// <returns>A <see cref="IconFile"/> loaded from <paramref name="input"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="input"/> is <c>null</c>.
+        /// <paramref name="input"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="input"/> is closed or does not support reading.
@@ -186,10 +186,10 @@ namespace UIconEdit
         /// </summary>
         /// <param name="path">The path to a icon file.</param>
         /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon entries,
-        /// or <c>null</c> to throw an exception in those cases.</param>
+        /// or <see langword="null"/> to throw an exception in those cases.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in
@@ -230,7 +230,7 @@ namespace UIconEdit
         /// <param name="path">The path to a icon file.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in

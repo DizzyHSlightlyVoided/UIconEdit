@@ -56,7 +56,7 @@ namespace UIconEdit
         /// <param name="input">A stream containing an cursor file.</param>
         /// <returns>A <see cref="CursorFile"/> loaded from <paramref name="input"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="input"/> is <c>null</c>.
+        /// <paramref name="input"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="input"/> is closed or does not support reading.
@@ -77,10 +77,10 @@ namespace UIconEdit
         /// </summary>
         /// <param name="input">A stream containing an cursor file.</param>
         /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual cursor entries,
-        /// or <c>null</c> to throw an exception in those cases.</param>
+        /// or <see langword="null"/> to throw an exception in those cases.</param>
         /// <returns>A <see cref="CursorFile"/> loaded from <paramref name="input"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="input"/> is <c>null</c>.
+        /// <paramref name="input"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="input"/> is closed or does not support reading.
@@ -104,10 +104,10 @@ namespace UIconEdit
         /// </summary>
         /// <param name="path">The path to a cursor file.</param>
         /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual cursor entries,
-        /// or <c>null</c> to throw an exception in those cases.</param>
+        /// or <see langword="null"/> to throw an exception in those cases.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in
@@ -148,7 +148,7 @@ namespace UIconEdit
         /// <param name="path">The path to a cursor file.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in

@@ -64,7 +64,7 @@ namespace UIconEdit.Maker
         /// Creates a new instance with the specified language name.
         /// </summary>
         /// <param name="langName">The short language name to load.</param>
-        /// <param name="useCache"><c>true</c> to use the cache; <c>false</c> to load from the file no matter what.</param>
+        /// <param name="useCache"><see langword="true"/> to use the cache; <see langword="false"/> to load from the file no matter what.</param>
         public LanguageFile(string langName, bool useCache)
         {
             langName = langName.Trim();

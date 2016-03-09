@@ -158,7 +158,7 @@ namespace UIconEdit
         /// <param name="entryIndex">The index in the icon file of the entry in the icon directory which caused the exception,
         /// or a value less than 0 if the error was not caused by an icon entry.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException"/> parameter
-        /// is not <c>null</c>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
+        /// is not <see langword="null"/>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
         public IconLoadException(string message, IconErrorCode code, IconTypeCode typeCode, int entryIndex, Exception innerException)
             : base(message, innerException)
         {
@@ -173,7 +173,7 @@ namespace UIconEdit
         /// <param name="message">A message describing the error.</param>
         /// <param name="code">The error code used to identify the cause of the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException"/> parameter
-        /// is not <c>null</c>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
+        /// is not <see langword="null"/>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
         /// <param name="typeCode">The type code of the file which caused the error.</param>
         public IconLoadException(string message, IconErrorCode code, IconTypeCode typeCode, Exception innerException)
             : this(message, code, typeCode, DefaultIndex, innerException)
@@ -185,7 +185,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="message">A message describing the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException"/> parameter
-        /// is not <c>null</c>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
+        /// is not <see langword="null"/>, the current exception should be raised in a <c>catch</c> block which handles the inner exception.</param>
         public IconLoadException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -258,7 +258,7 @@ namespace UIconEdit
 
         private object _value;
         /// <summary>
-        /// Gets an object whose value caused the error, or <c>null</c> if there was no such value.
+        /// Gets an object whose value caused the error, or <see langword="null"/> if there was no such value.
         /// </summary>
         public object Value { get { return _value; } }
 

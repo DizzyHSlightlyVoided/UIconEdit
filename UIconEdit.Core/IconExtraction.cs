@@ -90,7 +90,7 @@ namespace UIconEdit
         /// <param name="path">The path to the file to load.</param>
         /// <returns>The number of icons in the specified file.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -106,7 +106,7 @@ namespace UIconEdit
         /// <param name="path">The path to the file to load.</param>
         /// <returns>The number of cursors in the specified file.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -259,7 +259,7 @@ namespace UIconEdit
         /// <param name="index">The zero-based index of the icon in <paramref name="path"/>.</param>
         /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
@@ -289,7 +289,7 @@ namespace UIconEdit
         /// <param name="size">The indended width of the icon.</param>
         /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
@@ -320,7 +320,7 @@ namespace UIconEdit
         /// <param name="height">The intended height of the icon.</param>
         /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
@@ -346,7 +346,7 @@ namespace UIconEdit
         /// <param name="index">The zero-based index of the icon in <paramref name="path"/>.</param>
         /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
@@ -434,10 +434,10 @@ namespace UIconEdit
         /// <param name="path">The path to the file to load.</param>
         /// <param name="index">The zero-based index of the icon in <paramref name="path"/>.</param>
         /// <param name="handler">A delegate used to handle non-fatal <see cref="IconLoadException"/> errors, 
-        /// or <c>null</c> to always throw an exception.</param>
+        /// or <see langword="null"/> to always throw an exception.</param>
         /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
@@ -460,7 +460,7 @@ namespace UIconEdit
         /// <param name="index">The index of the icon in <paramref name="path"/>.</param>
         /// <returns>The icon with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or is greater than the number of icons in <paramref name="path"/>.
@@ -482,10 +482,10 @@ namespace UIconEdit
         /// <param name="path">The path to the file to load.</param>
         /// <param name="index">The index of the cursor in <paramref name="path"/>.</param>
         /// <param name="handler">A delegate used to handle non-fatal <see cref="IconLoadException"/> errors, 
-        /// or <c>null</c> to always throw an exception.</param>
+        /// or <see langword="null"/> to always throw an exception.</param>
         /// <returns>The cursor with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or is greater than the number of cursors in <paramref name="path"/>.
@@ -508,7 +508,7 @@ namespace UIconEdit
         /// <param name="index">The <see cref="IntPtr"/> key of the cursor in <paramref name="path"/>.</param>
         /// <returns>The cursor with the specified key in <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or is greater than the number of cursors in <paramref name="path"/>.
@@ -605,12 +605,12 @@ namespace UIconEdit
         /// </summary>
         /// <param name="path">The path to the file from which to load all icons.</param>
         /// <param name="singleHandler">A delegate used to handle <see cref="IconLoadException"/>s thrown by a single icon entry in a single icon file,
-        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// or <see langword="null"/> to always throw an exception regardless.</param>
         /// <param name="allHandler">A delegate used to handle all other excpetions thrown by a single icon entry in an icon file,
-        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// or <see langword="null"/> to always throw an exception regardless.</param>
         /// <returns>An array containing all icon files that could be loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -632,7 +632,7 @@ namespace UIconEdit
         /// <param name="path">The path to the file from which to load all icons.</param>
         /// <returns>An array containing all icon files that could be loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -653,12 +653,12 @@ namespace UIconEdit
         /// </summary>
         /// <param name="path">The path to the file from which to load all cursors.</param>
         /// <param name="singleHandler">A delegate used to handle <see cref="IconLoadException"/>s thrown by a single cursor entry in a single cursor file,
-        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// or <see langword="null"/> to always throw an exception regardless.</param>
         /// <param name="allHandler">A delegate used to handle all other excpetions thrown by a single cursor entry in a cursor file,
-        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// or <see langword="null"/> to always throw an exception regardless.</param>
         /// <returns>An array containing all cursor files that could be loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -680,7 +680,7 @@ namespace UIconEdit
         /// <param name="path">The path to the file from which to load all cursors.</param>
         /// <returns>An array containing all cursor files that could be loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -702,11 +702,11 @@ namespace UIconEdit
         /// <param name="path">The path to the file from which to load all icons.</param>
         /// <param name="callback">An action to perform on each icon.</param>
         /// <param name="singleHandler">A delegate used to handle <see cref="IconLoadException"/>s thrown by a single icon entry in a single cursor file,
-        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// or <see langword="null"/> to always throw an exception regardless.</param>
         /// <param name="allHandler">A delegate used to handle all other excpetions thrown by a single icon entry in an icon file,
-        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// or <see langword="null"/> to always throw an exception regardless.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> or <paramref name="callback"/> is <c>null</c>.
+        /// <paramref name="path"/> or <paramref name="callback"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -732,7 +732,7 @@ namespace UIconEdit
         /// <param name="path">The path to the file from which to load all icons.</param>
         /// <param name="callback">An action to perform on each icon.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> or <paramref name="callback"/> is <c>null</c>.
+        /// <paramref name="path"/> or <paramref name="callback"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -754,11 +754,11 @@ namespace UIconEdit
         /// <param name="path">The path to the file from which to load all cursors.</param>
         /// <param name="callback">An action to perform on each cursor.</param>
         /// <param name="singleHandler">A delegate used to handle <see cref="IconLoadException"/>s thrown by a single icon entry in a single cursor file,
-        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// or <see langword="null"/> to always throw an exception regardless.</param>
         /// <param name="allHandler">A delegate used to handle all other excpetions thrown by a single icon entry in a cursor file,
-        /// or <c>null</c> to always throw an exception regardless.</param>
+        /// or <see langword="null"/> to always throw an exception regardless.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> or <paramref name="callback"/> is <c>null</c>.
+        /// <paramref name="path"/> or <paramref name="callback"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.
@@ -784,7 +784,7 @@ namespace UIconEdit
         /// <param name="path">The path to the file from which to load all cursors.</param>
         /// <param name="callback">An action to perform on each cursor.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> or <paramref name="callback"/> is <c>null</c>.
+        /// <paramref name="path"/> or <paramref name="callback"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="Win32Exception">
         /// An error occurred when attempting to load resources from <paramref name="path"/>.

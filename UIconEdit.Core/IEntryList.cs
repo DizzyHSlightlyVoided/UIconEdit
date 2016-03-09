@@ -46,16 +46,16 @@ namespace UIconEdit
         /// Determines if an element similar to the specified icon entry exists in the list.
         /// </summary>
         /// <param name="item">The icon entry to compare.</param>
-        /// <returns><c>true</c> if an icon entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-        /// as <paramref name="item"/> exists in the list; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if an icon entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+        /// as <paramref name="item"/> exists in the list; <see langword="false"/> otherwise.</returns>
         bool ContainsSimilar(IconEntry item);
 
         /// <summary>
         /// Determines if an element similar to the specified icon entry exists in the list.
         /// </summary>
         /// <param name="key">The icon entry to compare.</param>
-        /// <returns><c>true</c> if an icon entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-        /// as <paramref name="key"/> exists in the list; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if an icon entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+        /// as <paramref name="key"/> exists in the list; <see langword="false"/> otherwise.</returns>
         bool ContainsSimilar(IconEntryKey key);
 
         /// <summary>
@@ -64,9 +64,9 @@ namespace UIconEdit
         /// <param name="width">The width of the icon entry to search for.</param>
         /// <param name="height">The height of the icon entry to search for.</param>
         /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
-        /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+        /// <returns><see langword="true"/> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
         /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was found;
-        /// <c>false</c> if no such icon entry was found in the list.</returns>
+        /// <see langword="false"/> if no such icon entry was found in the list.</returns>
         bool ContainsSimilar(int width, int height, IconBitDepth bitDepth);
 
 
@@ -100,8 +100,8 @@ namespace UIconEdit
         /// Removes an icon entry similar to the specified value from the list.
         /// </summary>
         /// <param name="item">The icon entry to compare.</param>
-        /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-        /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
+        /// <returns><see langword="true"/> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+        /// as <paramref name="item"/> was successfully found and removed; <see langword="false"/> if no such icon entry was found in the list.</returns>
         /// <exception cref="NotSupportedException">
         /// The collection is read-only.
         /// </exception>
@@ -111,8 +111,8 @@ namespace UIconEdit
         /// Removes an icon entry similar to the specified value from the list.
         /// </summary>
         /// <param name="key">The icon entry to compare.</param>
-        /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-        /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
+        /// <returns><see langword="true"/> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+        /// as <paramref name="key"/> was successfully found and removed; <see langword="false"/> if no such icon entry was found in the list.</returns>
         /// <exception cref="NotSupportedException">
         /// The collection is read-only.
         /// </exception>
@@ -124,9 +124,9 @@ namespace UIconEdit
         /// <param name="width">The width of the icon entry to search for.</param>
         /// <param name="height">The height of the icon entry to search for.</param>
         /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
-        /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+        /// <returns><see langword="true"/> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
         /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
-        /// <c>false</c> if no such icon entry was found in the list.</returns>
+        /// <see langword="false"/> if no such icon entry was found in the list.</returns>
         /// <exception cref="NotSupportedException">
         /// The collection is read-only.
         /// </exception>

@@ -86,10 +86,10 @@ namespace UIconEdit
         /// Loads an animated cursor file from the specified stream.
         /// </summary>
         /// <param name="input">The stream containing the animated cursor file to load.</param>
-        /// <param name="handler">An error handler for loading the individual cursor files, or <c>null</c> to always throw an exception.</param>
+        /// <param name="handler">An error handler for loading the individual cursor files, or <see langword="null"/> to always throw an exception.</param>
         /// <returns>A loaded <see cref="AnimatedCursorFile"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="input"/> is <c>null</c>.
+        /// <paramref name="input"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="input"/> is closed.
@@ -392,7 +392,7 @@ namespace UIconEdit
         /// <param name="input">The stream containing the animated cursor file to load.</param>
         /// <returns>A loaded <see cref="AnimatedCursorFile"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="input"/> is <c>null</c>.
+        /// <paramref name="input"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="input"/> is closed.
@@ -415,10 +415,10 @@ namespace UIconEdit
         /// Loads an <see cref="AnimatedCursorFile"/> from the specified path.
         /// </summary>
         /// <param name="path">The path to a cursor file.</param>
-        /// <param name="handler">An error handler for loading the individual cursor files, or <c>null</c> to always throw an exception.</param>
+        /// <param name="handler">An error handler for loading the individual cursor files, or <see langword="null"/> to always throw an exception.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in
@@ -462,7 +462,7 @@ namespace UIconEdit
         /// <param name="path">The path to a cursor file.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in
@@ -554,7 +554,7 @@ namespace UIconEdit
         /// <para><paramref name="output"/> is closed.</para>
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// <para><see cref="Entries"/> is <c>null</c>.</para>
+        /// <para><see cref="Entries"/> is <see langword="null"/>.</para>
         /// <para>-OR-</para>
         /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
         /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
@@ -563,7 +563,7 @@ namespace UIconEdit
         /// in <see cref="Entries"/>.</para>
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="output"/> is <c>null</c>.
+        /// <paramref name="output"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="output"/> does not support writing.
@@ -578,7 +578,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="output">The stream to which the current instance is written.</param>
         /// <exception cref="InvalidOperationException">
-        /// <para><see cref="Entries"/> is <c>null</c>.</para>
+        /// <para><see cref="Entries"/> is <see langword="null"/>.</para>
         /// <para>-OR-</para>
         /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
         /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
@@ -587,7 +587,7 @@ namespace UIconEdit
         /// in <see cref="Entries"/>.</para>
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="output"/> is <c>null</c>.
+        /// <paramref name="output"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// <paramref name="output"/> is closed.
@@ -615,7 +615,7 @@ namespace UIconEdit
         /// The current instance is disposed.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// <para><see cref="Entries"/> is <c>null</c>.</para>
+        /// <para><see cref="Entries"/> is <see langword="null"/>.</para>
         /// <para>-OR-</para>
         /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
         /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
@@ -624,7 +624,7 @@ namespace UIconEdit
         /// in <see cref="Entries"/>.</para>
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in
@@ -646,7 +646,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="path">The path to the file to which the current instance will be saved.</param>
         /// <exception cref="InvalidOperationException">
-        /// <para><see cref="Entries"/> is <c>null</c>.</para>
+        /// <para><see cref="Entries"/> is <see langword="null"/>.</para>
         /// <para>-OR-</para>
         /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
         /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
@@ -655,7 +655,7 @@ namespace UIconEdit
         /// in <see cref="Entries"/>.</para>
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in
@@ -1042,12 +1042,12 @@ namespace UIconEdit
         {
 #if DRAWING
             get { return JiffiesToTime(_rate); }
-            set { DisplayRateJiffies = TimeToJiffies(value, null); }
+            set { DisplayRateJiffies = TimeToJiffies(value, nameof(value)); }
 #else
             get { return (TimeSpan)GetValue(DisplayRateTimeProperty); }
             set
             {
-                TimeToJiffies(value, null);
+                TimeToJiffies(value, nameof(value));
                 SetValue(DisplayRateTimeProperty, value);
             }
 #endif
@@ -1220,7 +1220,7 @@ namespace UIconEdit
             /// <paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.
             /// </exception>
             /// <exception cref="ArgumentNullException">
-            /// In a set operation, the specified value is <c>null</c>.
+            /// In a set operation, the specified value is <see langword="null"/>.
             /// </exception>
             public AnimatedCursorFrame this[int index]
             {
@@ -1254,7 +1254,7 @@ namespace UIconEdit
             /// </summary>
             /// <param name="index">The index at which the frame will be inserted.</param>
             /// <param name="frame">The <see cref="AnimatedCursorFrame"/> to add.</param>
-            /// <returns><c>true</c> if <paramref name="frame"/> was successfully added; <c>false</c> if <paramref name="frame"/> is <c>null</c>,
+            /// <returns><see langword="true"/> if <paramref name="frame"/> was successfully added; <see langword="false"/> if <paramref name="frame"/> is <see langword="null"/>,
             /// already exists in the list, or is already associated with a different <see cref="AnimatedCursorFile"/>.</returns>
             /// <exception cref="ArgumentOutOfRangeException">
             /// <paramref name="index"/> is less than 0 or is greater than <see cref="Count"/>.
@@ -1288,7 +1288,7 @@ namespace UIconEdit
             /// Adds the specified <see cref="AnimatedCursorFrame"/> to the list.
             /// </summary>
             /// <param name="frame">The <see cref="AnimatedCursorFrame"/> to add.</param>
-            /// <returns><c>true</c> if <paramref name="frame"/> was successfully added; <c>false</c> if <paramref name="frame"/> is <c>null</c>,
+            /// <returns><see langword="true"/> if <paramref name="frame"/> was successfully added; <see langword="false"/> if <paramref name="frame"/> is <see langword="null"/>,
             /// already exists in the list, or is already associated with a different <see cref="AnimatedCursorFile"/>.</returns>
             public bool Add(AnimatedCursorFrame frame)
             {
@@ -1325,7 +1325,7 @@ namespace UIconEdit
             /// Removes the specified frame from the list.
             /// </summary>
             /// <param name="frame">The frame to remove.</param>
-            /// <returns><c>true</c> if <paramref name="frame"/> was found and successfully removed; <c>false</c> otherwise.</returns>
+            /// <returns><see langword="true"/> if <paramref name="frame"/> was found and successfully removed; <see langword="false"/> otherwise.</returns>
             public bool Remove(AnimatedCursorFrame frame)
             {
                 int dex = IndexOf(frame);
@@ -1362,7 +1362,7 @@ namespace UIconEdit
             /// Determines whether the specified frame exists in the list.
             /// </summary>
             /// <param name="frame">The frame to search for in the list.</param>
-            /// <returns><c>true</c> if <paramref name="frame"/> was found; <c>false</c> otherwise.</returns>
+            /// <returns><see langword="true"/> if <paramref name="frame"/> was found; <see langword="false"/> otherwise.</returns>
             public bool Contains(AnimatedCursorFrame frame)
             {
                 return frame != null && frame.CFile == _file;
@@ -1389,7 +1389,7 @@ namespace UIconEdit
             /// <param name="array">The array to which all elements in the list will be copied.</param>
             /// <param name="index">The index in <paramref name="array"/> at which copying begins.</param>
             /// <exception cref="ArgumentNullException">
-            /// <paramref name="array"/> is <c>null</c>.
+            /// <paramref name="array"/> is <see langword="null"/>.
             /// </exception>
             /// <exception cref="ArgumentOutOfRangeException">
             /// <paramref name="index"/> is less than 0.
@@ -1530,7 +1530,7 @@ namespace UIconEdit
                 /// <summary>
                 /// Advances the enumerator to the next position in the list.
                 /// </summary>
-                /// <returns><c>true</c> if the enumerator successfully advanced; <c>false</c> if the enumerator has passed the end of the list.</returns>
+                /// <returns><see langword="true"/> if the enumerator successfully advanced; <see langword="false"/> if the enumerator has passed the end of the list.</returns>
                 public bool MoveNext()
                 {
                     if (_enum == null) return false;
@@ -1582,7 +1582,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="file">The cursor file associated with the current instance.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="file"/> is <c>null</c>.
+        /// <paramref name="file"/> is <see langword="null"/>.
         /// </exception>
         public AnimatedCursorFrame(CursorFile file)
         {
@@ -1601,7 +1601,7 @@ namespace UIconEdit
         /// <param name="file">The cursor file associated with the current instance.</param>
         /// <param name="jiffies">The delay before displaying the next frame in the animated cursor, in "jiffies" (1/60 of a second).</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="file"/> is <c>null</c>.
+        /// <paramref name="file"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="jiffies"/> is less than 0.
@@ -1626,7 +1626,7 @@ namespace UIconEdit
         /// <param name="length">The delay before displaying the next frame in the animated cursor.
         /// Fitted to the nearest "jiffy" (1/60 of a second).</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="file"/> is <c>null</c>.
+        /// <paramref name="file"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="length"/> is less than <see cref="TimeSpan.Zero"/>, or represents a number of "jiffies" (1/60 of a second)
@@ -1669,11 +1669,11 @@ namespace UIconEdit
         /// <see cref="AnimatedCursorFrame"/>.
         /// </summary>
         /// <param name="other">The other <see cref="AnimatedCursorFrame"/> to compare.</param>
-        /// <returns><c>true</c> if the current instance contains the same number of elements with the same <see cref="IconEntry.Width"/>,
+        /// <returns><see langword="true"/> if the current instance contains the same number of elements with the same <see cref="IconEntry.Width"/>,
         /// <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> values as the specified other <see cref="AnimatedCursorFrame"/>;
-        /// <c>false</c> otherwise.</returns>
+        /// <see langword="false"/> otherwise.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="other"/> is <c>null</c>.
+        /// <paramref name="other"/> is <see langword="null"/>.
         /// </exception>
         public bool SimilarListEquals(AnimatedCursorFrame other)
         {
@@ -1703,7 +1703,7 @@ namespace UIconEdit
         /// Gets and sets the cursor file associated with the current instance.
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// In a set operation, the specified value is <c>null</c>.
+        /// In a set operation, the specified value is <see langword="null"/>.
         /// </exception>
 #if !DRAWING
         [Bindable(true)]
@@ -1743,10 +1743,10 @@ namespace UIconEdit
 #endif
         /// <summary>
         /// Gets and sets the delay before displaying the next frame in the animated cursor, in "jiffies" (1/60 of a second),
-        /// or <c>null</c> to use the animated cursor file's <see cref="AnimatedCursorFile.DisplayRateJiffies"/> value.
+        /// or <see langword="null"/> to use the animated cursor file's <see cref="AnimatedCursorFile.DisplayRateJiffies"/> value.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is not <c>null</c> and is less than 0.
+        /// In a set operation, the specified value is not <see langword="null"/> and is less than 0.
         /// </exception>
         public int? LengthJiffies
         {
@@ -1796,12 +1796,12 @@ namespace UIconEdit
         }
 #endif
         /// <summary>
-        /// Gets and sets the delay before displaying the next frame in the animated cursor, or <c>null</c> to use the
+        /// Gets and sets the delay before displaying the next frame in the animated cursor, or <see langword="null"/> to use the
         /// animated cursor file's <see cref="AnimatedCursorFile.DisplayRateTime"/> property.
         /// Fitted to the nearest "jiffy" (1/60 of a second).
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// In a set operation, the specified value is not <c>null</c>, and is less than <see cref="TimeSpan.Zero"/>
+        /// In a set operation, the specified value is not <see langword="null"/>, and is less than <see cref="TimeSpan.Zero"/>
         /// or represents a number of <see cref="LengthJiffies"/> greater than <see cref="int.MaxValue"/>.
         /// </exception>
         public TimeSpan? LengthTime
@@ -1813,13 +1813,13 @@ namespace UIconEdit
                     return new TimeSpan(TimeSpan.TicksPerSecond * _jiffies.Value / 60);
                 return null;
             }
-            set { LengthJiffies = value.HasValue ? AnimatedCursorFile.TimeToJiffies(value.Value, null) : default(int?); }
+            set { LengthJiffies = value.HasValue ? AnimatedCursorFile.TimeToJiffies(value.Value, nameof(value)) : default(int?); }
 #else
             get { return (TimeSpan?)GetValue(LengthJiffiesProperty); }
             set
             {
                 if (value.HasValue)
-                    AnimatedCursorFile.TimeToJiffies(value.Value, null);
+                    AnimatedCursorFile.TimeToJiffies(value.Value, nameof(value));
                 SetValue(LengthJiffiesProperty, value);
             }
 #endif

@@ -125,7 +125,7 @@ namespace UIconEdit
         /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
         /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// <paramref name="baseImage"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
@@ -163,7 +163,7 @@ namespace UIconEdit
         /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
         /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// <paramref name="baseImage"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
@@ -188,7 +188,7 @@ namespace UIconEdit
         /// <param name="hotspotY">In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the top.
         /// Constrained to be less than <paramref name="height"/>.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// <paramref name="baseImage"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
@@ -209,7 +209,7 @@ namespace UIconEdit
         /// <param name="height">The height of the new image.</param>
         /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// <paramref name="baseImage"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
@@ -234,7 +234,7 @@ namespace UIconEdit
         /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
         /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// <paramref name="baseImage"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
@@ -282,7 +282,7 @@ namespace UIconEdit
         /// <param name="hotspotY">In a cursor file, the horizontal offset in pixels of the cursor's hotspot from the top.
         /// Constrained to be less than the height of <paramref name="baseImage"/>.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// <paramref name="baseImage"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
@@ -304,7 +304,7 @@ namespace UIconEdit
         /// <param name="alphaThreshold">If the alpha value of a given pixel is below this value, that pixel will be fully transparent.
         /// If the alpha value is greater than or equal to this value, the pixel will be fully opaque.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// <paramref name="baseImage"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
@@ -323,7 +323,7 @@ namespace UIconEdit
         /// <param name="baseImage">The image associated with the current instance.</param>
         /// <param name="bitDepth">Indicates the bit depth of the resulting image.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="baseImage"/> is <c>null</c>.
+        /// <paramref name="baseImage"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidEnumArgumentException">
         /// <paramref name="bitDepth"/> is not a valid <see cref="IconBitDepth"/> value.
@@ -876,7 +876,7 @@ namespace UIconEdit
         /// Gets and sets the image associated with the current instance.
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// In a set operation, the specified value is <c>null</c>.
+        /// In a set operation, the specified value is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// The current instance is disposed.
@@ -921,7 +921,7 @@ namespace UIconEdit
         /// Gets and sets the image associated with the current instance.
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// In a set operation, the specified value is <c>null</c>.
+        /// In a set operation, the specified value is <see langword="null"/>.
         /// </exception>
         public BitmapSource BaseImage
         {
@@ -940,11 +940,11 @@ namespace UIconEdit
         private BitmapSource _alphaImage;
 
         /// <summary>
-        /// Gets and sets an image to be used as the alpha mask, or <c>null</c> to derive the alpha mask from <see cref="BaseImage"/>.
+        /// Gets and sets an image to be used as the alpha mask, or <see langword="null"/> to derive the alpha mask from <see cref="BaseImage"/>.
         /// Black pixels are transparent; white pixels are opaque.
         /// </summary>
         /// <exception cref="ObjectDisposedException">
-        /// The current image is disposed.
+        /// In a set operation, the current image is disposed.
         /// </exception>
         public BitmapSource AlphaImage
         {
@@ -972,7 +972,7 @@ namespace UIconEdit
             new PropertyMetadata(null, BaseImageChanged));
 
         /// <summary>
-        /// Gets and sets an image to be used as the alpha mask, or <c>null</c> to derive the alpha mask from <see cref="BaseImage"/>.
+        /// Gets and sets an image to be used as the alpha mask, or <see langword="null"/> to derive the alpha mask from <see cref="BaseImage"/>.
         /// Black pixels are transparent; white pixels are opaque.
         /// </summary>
         public BitmapSource AlphaImage
@@ -1003,7 +1003,7 @@ namespace UIconEdit
         private bool _isPng;
         /// <summary>
         /// Gets and sets a value indicating whether the current instance will be saved as a PNG image.
-        /// <c>true</c> is not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/>, and <c>false</c>
+        /// <see langword="true"/> is not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/>, and <see langword="false"/>
         /// is not recommended for <see cref="Width"/> and <see cref="Height"/> greater than or equal to 256.
         /// </summary>
         /// <exception cref="ObjectDisposedException">
@@ -1027,7 +1027,7 @@ namespace UIconEdit
 
         /// <summary>
         /// Gets and sets a value indicating whether the current instance will be saved as a PNG image.
-        /// A value of <c>true</c> is not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/>, and <c>false</c>
+        /// A value of <see langword="true"/> is not recommended for <see cref="BitDepth"/> values other than <see cref="IconBitDepth.Depth32BitsPerPixel"/>, and <see langword="false"/>
         /// is not recommended for <see cref="Width"/> and <see cref="Height"/> greater than or equal to 256.
         /// </summary>
         public bool IsPng
@@ -1296,7 +1296,7 @@ namespace UIconEdit
                 if (_isDisposed) throw new ObjectDisposedException(null);
 #endif
                 if (!ScalingFilterValidate(value))
-                    throw new InvalidEnumArgumentException(null, (int)value, typeof(IconScalingFilter));
+                    throw new InvalidEnumArgumentException(nameof(value), (int)value, typeof(IconScalingFilter));
 #if DRAWING
                 _scalingFilter = value;
 #else
@@ -1789,8 +1789,8 @@ namespace UIconEdit
         /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
         /// in a form indicated by the specified value.
         /// </summary>
-        /// <param name="isPng">If <c>true</c>, <see cref="AlphaImage"/> will be set <c>null</c> and <see cref="BaseImage"/> will be quantized
-        /// as if it was a PNG icon entry. If <c>false</c>, <see cref="BaseImage"/> and <see cref="AlphaImage"/> will be quantized
+        /// <param name="isPng">If <see langword="true"/>, <see cref="AlphaImage"/> will be set <see langword="null"/> and <see cref="BaseImage"/> will be quantized
+        /// as if it was a PNG icon entry. If <see langword="false"/>, <see cref="BaseImage"/> and <see cref="AlphaImage"/> will be quantized
         /// as if for a BMP entry.</param>
         /// <exception cref="ObjectDisposedException">
         /// The current instance is disposed.
@@ -1808,8 +1808,8 @@ namespace UIconEdit
         /// Sets <see cref="BaseImage"/> and <see cref="AlphaImage"/> equal to their quantized equivalent,
         /// in a form indicated by the specified value.
         /// </summary>
-        /// <param name="isPng">If <c>true</c>, <see cref="AlphaImage"/> will be set <c>null</c> and <see cref="BaseImage"/> will be quantized
-        /// as if it was a PNG icon entry. If <c>false</c>, <see cref="BaseImage"/> and <see cref="AlphaImage"/> will be quantized
+        /// <param name="isPng">If <see langword="true"/>, <see cref="AlphaImage"/> will be set <see langword="null"/> and <see cref="BaseImage"/> will be quantized
+        /// as if it was a PNG icon entry. If <see langword="false"/>, <see cref="BaseImage"/> and <see cref="AlphaImage"/> will be quantized
         /// as if for a BMP entry.</param>
         /// <exception cref="InvalidOperationException">
         /// The current instance is frozen.
@@ -1862,7 +1862,7 @@ namespace UIconEdit
         /// The current instance is disposed.
         /// </exception>
         /// <remarks>
-        /// If <see cref="BaseImage"/> is already quantized and <see cref="AlphaImage"/> is <c>null</c>, this method returns a clone of
+        /// If <see cref="BaseImage"/> is already quantized and <see cref="AlphaImage"/> is <see langword="null"/>, this method returns a clone of
         /// <see cref="BaseImage"/> which must be disposed when you're done with it.
         /// </remarks>
         public Bitmap GetQuantizedPng()
@@ -2493,7 +2493,7 @@ namespace UIconEdit
         /// <param name="value">The value to parse.</param>
         /// <returns>The parsed <see cref="IconBitDepth"/> value.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="value"/> is <c>null</c>.
+        /// <paramref name="value"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <para><paramref name="value"/> is an empty string or contains only whitespace.</para>
@@ -2544,7 +2544,7 @@ namespace UIconEdit
         /// <param name="result">When this method returns, contains the parsed <see cref="IconBitDepth"/> result, or
         /// the default value for type <see cref="IconBitDepth"/> if <paramref name="value"/> could not be parsed.
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if <paramref name="value"/> was successfully parsed; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; <see langword="false"/> otherwise.</returns>
         /// <remarks>
         /// <para><paramref name="value"/> is parsed in a case-insensitive manner which works differently from <see cref="Enum.TryParse{TEnum}(string, bool, out TEnum)"/>.</para>
         /// <para>First of all, all non-alphanumeric characters are stripped. If <paramref name="value"/> is entirely numeric, or begins with "Depth"
@@ -2797,7 +2797,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
         /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
-        /// <returns><c>true</c> if <paramref name="f1"/> is less than <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="f1"/> is less than <paramref name="f2"/>; <see langword="false"/> otherwise.</returns>
         public static bool operator <(IconEntryKey f1, IconEntryKey f2)
         {
             return f1.CompareTo(f2) < 0;
@@ -2808,7 +2808,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
         /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
-        /// <returns><c>true</c> if <paramref name="f1"/> is greater than <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="f1"/> is greater than <paramref name="f2"/>; <see langword="false"/> otherwise.</returns>
         public static bool operator >(IconEntryKey f1, IconEntryKey f2)
         {
             return f1.CompareTo(f2) > 0;
@@ -2819,7 +2819,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
         /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
-        /// <returns><c>true</c> if <paramref name="f1"/> is less than or equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="f1"/> is less than or equal to <paramref name="f2"/>; <see langword="false"/> otherwise.</returns>
         public static bool operator <=(IconEntryKey f1, IconEntryKey f2)
         {
             return f1.CompareTo(f2) <= 0;
@@ -2830,7 +2830,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
         /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
-        /// <returns><c>true</c> if <paramref name="f1"/> is less than or equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="f1"/> is less than or equal to <paramref name="f2"/>; <see langword="false"/> otherwise.</returns>
         public static bool operator >=(IconEntryKey f1, IconEntryKey f2)
         {
             return f1.CompareTo(f2) >= 0;
@@ -2841,7 +2841,7 @@ namespace UIconEdit
         /// Determines if the current instance is equal to the specified other <see cref="IconEntryKey"/> value.
         /// </summary>
         /// <param name="other">The other <see cref="IconEntryKey"/> to compare.</param>
-        /// <returns><c>true</c> if the current instance is equal to <paramref name="other"/>; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the current instance is equal to <paramref name="other"/>; <see langword="false"/> otherwise.</returns>
         public bool Equals(IconEntryKey other)
         {
             return Width == other.Width && Height == other.Height && BitDepth == other.BitDepth;
@@ -2851,7 +2851,7 @@ namespace UIconEdit
         /// Determines if the current instance is equal to the specified other object.
         /// </summary>
         /// <param name="obj">The other object to compare.</param>
-        /// <returns><c>true</c> if the current instance is equal to <paramref name="obj"/>; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the current instance is equal to <paramref name="obj"/>; <see langword="false"/> otherwise.</returns>
         public override bool Equals(object obj)
         {
             return obj is IconEntryKey && Equals((IconEntryKey)obj);
@@ -2871,7 +2871,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
         /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
-        /// <returns><c>true</c> if <paramref name="f1"/> is equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="f1"/> is equal to <paramref name="f2"/>; <see langword="false"/> otherwise.</returns>
         public static bool operator ==(IconEntryKey f1, IconEntryKey f2)
         {
             return f1.Equals(f2);
@@ -2882,7 +2882,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="f1">An <see cref="IconEntryKey"/> to compare.</param>
         /// <param name="f2">An <see cref="IconEntryKey"/> to compare.</param>
-        /// <returns><c>true</c> if <paramref name="f1"/> is not equal to <paramref name="f2"/>; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="f1"/> is not equal to <paramref name="f2"/>; <see langword="false"/> otherwise.</returns>
         public static bool operator !=(IconEntryKey f1, IconEntryKey f2)
         {
             return !f1.Equals(f2);

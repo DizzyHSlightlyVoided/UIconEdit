@@ -80,7 +80,7 @@ namespace UIconEdit
         /// <param name="input">A stream containing an icon or cursor file.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="input"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="input"/> is <c>null</c>.
+        /// <paramref name="input"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="input"/> is closed or does not support reading.
@@ -104,10 +104,10 @@ namespace UIconEdit
         /// </summary>
         /// <param name="input">A stream containing an icon or cursor file.</param>
         /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon entries,
-        /// or <c>null</c> to throw an exception in those cases.</param>
+        /// or <see langword="null"/> to throw an exception in those cases.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="input"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="input"/> is <c>null</c>.
+        /// <paramref name="input"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="input"/> is closed or does not support reading.
@@ -131,10 +131,10 @@ namespace UIconEdit
         /// </summary>
         /// <param name="path">The path to a cursor or icon file.</param>
         /// <param name="handler">A delegate used to process <see cref="IconLoadException"/>s thrown when processing individual icon entries,
-        /// or <c>null</c> to throw an exception in those cases.</param>
+        /// or <see langword="null"/> to throw an exception in those cases.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in <see cref="Path.GetInvalidPathChars()"/>.
@@ -174,7 +174,7 @@ namespace UIconEdit
         /// <param name="path">The path to a cursor or icon file.</param>
         /// <returns>An <see cref="IconFileBase"/> implementation loaded from <paramref name="path"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in <see cref="Path.GetInvalidPathChars()"/>.
@@ -808,7 +808,7 @@ namespace UIconEdit
         /// <see cref="Entries"/> contains zero elements.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="output"/> is <c>null</c>.
+        /// <paramref name="output"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="output"/> is closed or does not support writing.
@@ -831,7 +831,7 @@ namespace UIconEdit
         /// <see cref="Entries"/> contains zero elements.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="output"/> is <c>null</c>.
+        /// <paramref name="output"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="output"/> is closed or does not support writing.
@@ -860,7 +860,7 @@ namespace UIconEdit
         /// The current instance is disposed.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in <see cref="Path.GetInvalidPathChars()"/>.
@@ -884,7 +884,7 @@ namespace UIconEdit
         /// <see cref="Entries"/> contains zero elements.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="path"/> is <c>null</c>.
+        /// <paramref name="path"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path"/> is empty, contains only whitespace, or contains one or more invalid path characters as defined in <see cref="Path.GetInvalidPathChars()"/>.
@@ -1306,9 +1306,10 @@ namespace UIconEdit
             /// </summary>
             /// <param name="index">The index of the element to get or set.</param>
             /// <exception cref="ArgumentOutOfRangeException">
-            /// <para><paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.</para>
-            /// <para>-OR-</para>
-            /// <para>In a set operation, the specified value is <c>null</c>.</para>
+            /// <paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.
+            /// </exception>
+            /// <exception cref="ArgumentNullException">
+            /// In a set operation, the specified value is <see langword="null"/>.
             /// </exception>
             /// <exception cref="NotSupportedException">
             /// In a set operation, an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
@@ -1322,9 +1323,10 @@ namespace UIconEdit
             /// </summary>
             /// <param name="index">The index of the element to get or set.</param>
             /// <exception cref="ArgumentOutOfRangeException">
-            /// <para><paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.</para>
-            /// <para>-OR-</para>
-            /// <para>In a set operation, the specified value is <c>null</c>.</para>
+            /// <paramref name="index"/> is less than 0 or is greater than or equal to <see cref="Count"/>.
+            /// </exception>
+            /// <exception cref="ArgumentNullException">
+            /// In a set operation, the specified value is <see langword="null"/>.
             /// </exception>
             /// <exception cref="NotSupportedException">
             /// In a set operation, an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
@@ -1336,7 +1338,7 @@ namespace UIconEdit
                 get { return _items[index]; }
                 set
                 {
-                    if (value == null) throw new ArgumentOutOfRangeException(null, new ArgumentNullException().Message);
+                    if (value == null) throw new ArgumentNullException(nameof(value));
                     if (!_setValue(index, value, true))
                         throw new NotSupportedException("Could not set the specified value in the list.");
                 }
@@ -1378,7 +1380,7 @@ namespace UIconEdit
             /// Adds the specified icon entry to the list.
             /// </summary>
             /// <param name="item">The icon entry to add to the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>, is disposed,
+            /// <returns><see langword="true"/> if <paramref name="item"/> was successfully added; <see langword="false"/> if <paramref name="item"/> is <see langword="null"/>, is disposed,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, the current instance is disposed,
             /// or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> 
             /// already exists in the list.</returns>
@@ -1388,7 +1390,7 @@ namespace UIconEdit
             /// Adds the specified icon entry to the list.
             /// </summary>
             /// <param name="item">The icon entry to add to the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+            /// <returns><see langword="true"/> if <paramref name="item"/> was successfully added; <see langword="false"/> if <paramref name="item"/> is <see langword="null"/>,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
             /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
             public bool Add(IconEntry item)
@@ -1414,7 +1416,7 @@ namespace UIconEdit
             /// </summary>
             /// <param name="index">The index at which to insert the icon entry.</param>
             /// <param name="item">The icon entry to add to the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>, is disposed,
+            /// <returns><see langword="true"/> if <paramref name="item"/> was successfully added; <see langword="false"/> if <paramref name="item"/> is <see langword="null"/>, is disposed,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, the current instance is disposed,
             /// or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists
             /// in the list.</returns>
@@ -1428,7 +1430,7 @@ namespace UIconEdit
             /// </summary>
             /// <param name="index">The index at which to insert the icon entry.</param>
             /// <param name="item">The icon entry to add to the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully added; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+            /// <returns><see langword="true"/> if <paramref name="item"/> was successfully added; <see langword="false"/> if <paramref name="item"/> is <see langword="null"/>,
             /// is already associated with a different icon file, <see cref="Count"/> is equal to <see cref="ushort.MaxValue"/>, or if an element with the same
             /// <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/> already exists in the list.</returns>
             /// <exception cref="ArgumentOutOfRangeException">
@@ -1474,7 +1476,7 @@ namespace UIconEdit
             /// </summary>
             /// <param name="index">The index of the value to set.</param>
             /// <param name="item">The item to set at the specified index.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c>, is disposed,
+            /// <returns><see langword="true"/> if <paramref name="item"/> was successfully set; <see langword="false"/> if <paramref name="item"/> is <see langword="null"/>, is disposed,
             /// is already associated with a different icon file, an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
             /// and <see cref="IconEntry.BitDepth"/> already exists at a different index, or if the current is disposed.</returns>
             public bool SetValue(int index, IconEntry item)
@@ -1484,7 +1486,7 @@ namespace UIconEdit
             /// </summary>
             /// <param name="index">The index of the value to set.</param>
             /// <param name="item">The item to set at the specified index.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was successfully set; <c>false</c> if <paramref name="item"/> is <c>null</c>,
+            /// <returns><see langword="true"/> if <paramref name="item"/> was successfully set; <see langword="false"/> if <paramref name="item"/> is <see langword="null"/>,
             /// is already associated with a different icon file, or if an element with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>,
             /// and <see cref="IconEntry.BitDepth"/> already exists at a different index.</returns>
             public bool SetValue(int index, IconEntry item)
@@ -1518,7 +1520,7 @@ namespace UIconEdit
             /// Removes the specified icon entry from the list.
             /// </summary>
             /// <param name="item">The icon entry to remove from the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was found and successfully removed; <c>false</c> otherwise.</returns>
+            /// <returns><see langword="true"/> if <paramref name="item"/> was found and successfully removed; <see langword="false"/> otherwise.</returns>
             public bool Remove(IconEntry item)
             {
                 int index = _items.IndexOf(item);
@@ -1536,8 +1538,8 @@ namespace UIconEdit
             /// Removes an icon entry similar to the specified value from the list.
             /// </summary>
             /// <param name="item">The icon entry to compare.</param>
-            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-            /// as <paramref name="item"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
+            /// <returns><see langword="true"/> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="item"/> was successfully found and removed; <see langword="false"/> if no such icon entry was found in the list.</returns>
             public bool RemoveSimilar(IconEntry item)
             {
                 if (item == null) return false;
@@ -1548,8 +1550,8 @@ namespace UIconEdit
             /// Removes an icon entry similar to the specified value from the list.
             /// </summary>
             /// <param name="key">The entry key to compare.</param>
-            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-            /// as <paramref name="key"/> was successfully found and removed; <c>false</c> if no such icon entry was found in the list.</returns>
+            /// <returns><see langword="true"/> if an icon entry with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="key"/> was successfully found and removed; <see langword="false"/> if no such icon entry was found in the list.</returns>
             public bool RemoveSimilar(IconEntryKey key)
             {
                 if (!_set.Contains(key)) return false;
@@ -1570,9 +1572,9 @@ namespace UIconEdit
             /// <param name="width">The width of the icon entry to search for.</param>
             /// <param name="height">The height of the icon entry to search for.</param>
             /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
-            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+            /// <returns><see langword="true"/> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
             /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was successfully found and removed;
-            /// <c>false</c> if no such icon entry was found in the list.</returns>
+            /// <see langword="false"/> if no such icon entry was found in the list.</returns>
             public bool RemoveSimilar(int width, int height, IconBitDepth bitDepth)
             {
                 return RemoveSimilar(new IconEntryKey(width, height, bitDepth));
@@ -1594,7 +1596,7 @@ namespace UIconEdit
             /// Determines if the specified element exists in the list.
             /// </summary>
             /// <param name="item">The icon entry to search for in the list.</param>
-            /// <returns><c>true</c> if <paramref name="item"/> was found; <c>false</c> otherwise.</returns>
+            /// <returns><see langword="true"/> if <paramref name="item"/> was found; <see langword="false"/> otherwise.</returns>
             public bool Contains(IconEntry item)
             {
                 return _file.IsValid(item) && _items.Contains(item);
@@ -1609,8 +1611,8 @@ namespace UIconEdit
             /// Determines if an element similar to the specified icon entry exists in the list.
             /// </summary>
             /// <param name="item">The icon entry to compare.</param>
-            /// <returns><c>true</c> if an icon entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-            /// as <paramref name="item"/> exists in the list; <c>false</c> otherwise.</returns>
+            /// <returns><see langword="true"/> if an icon entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="item"/> exists in the list; <see langword="false"/> otherwise.</returns>
             public bool ContainsSimilar(IconEntry item)
             {
                 return item != null && _set.Contains(item.EntryKey);
@@ -1620,8 +1622,8 @@ namespace UIconEdit
             /// Determines if an element similar to the specified value exists in the list.
             /// </summary>
             /// <param name="key">The entry key to compare.</param>
-            /// <returns><c>true</c> if an icon entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
-            /// as <paramref name="key"/> exists in the list; <c>false</c> otherwise.</returns>
+            /// <returns><see langword="true"/> if an icon entry with the same with the same <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>
+            /// as <paramref name="key"/> exists in the list; <see langword="false"/> otherwise.</returns>
             public bool ContainsSimilar(IconEntryKey key)
             {
                 return _set.Contains(key);
@@ -1633,9 +1635,9 @@ namespace UIconEdit
             /// <param name="width">The width of the icon entry to search for.</param>
             /// <param name="height">The height of the icon entry to search for.</param>
             /// <param name="bitDepth">The bit depth of the icon entry to search for.</param>
-            /// <returns><c>true</c> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
+            /// <returns><see langword="true"/> if an icon entry with the same <see cref="IconEntry.Width"/> as <paramref name="width"/>, the same <see cref="IconEntry.Height"/>
             /// as <paramref name="height"/>, and the same <see cref="IconEntry.BitDepth"/> as <paramref name="bitDepth"/>  was found;
-            /// <c>false</c> if no such icon entry was found in the list.</returns>
+            /// <see langword="false"/> if no such icon entry was found in the list.</returns>
             public bool ContainsSimilar(int width, int height, IconBitDepth bitDepth)
             {
                 return _set.Contains(new IconEntryKey(width, height, bitDepth));
@@ -1702,7 +1704,7 @@ namespace UIconEdit
             /// <param name="array">The array to which all elements in the list will be copied.</param>
             /// <param name="index">The index in <paramref name="array"/> at which copying begins.</param>
             /// <exception cref="ArgumentNullException">
-            /// <paramref name="array"/> is <c>null</c>.
+            /// <paramref name="array"/> is <see langword="null"/>.
             /// </exception>
             /// <exception cref="ArgumentOutOfRangeException">
             /// <paramref name="index"/> is less than 0.
@@ -1977,9 +1979,9 @@ namespace UIconEdit
             /// Searches for an element which matches the specified predicate, and returns the first matching icon entry in the list.
             /// </summary>
             /// <param name="match">A predicate used to define the element to search for.</param>
-            /// <returns>An icon entry matching the specified predicate, or <c>null</c> if no such icon entry was found.</returns>
+            /// <returns>An icon entry matching the specified predicate, or <see langword="null"/> if no such icon entry was found.</returns>
             /// <exception cref="ArgumentNullException">
-            /// <paramref name="match"/> is <c>null</c>.
+            /// <paramref name="match"/> is <see langword="null"/>.
             /// </exception>
             public IconEntry Find(Predicate<IconEntry> match)
             {
@@ -1995,7 +1997,7 @@ namespace UIconEdit
             /// <param name="match">A predicate used to define the element to search for.</param>
             /// <returns>The index of the icon entry matching the specified predicate, or -1 if no such icon entry was found.</returns>
             /// <exception cref="ArgumentNullException">
-            /// <paramref name="match"/> is <c>null</c>.
+            /// <paramref name="match"/> is <see langword="null"/>.
             /// </exception>
             public int FindIndex(Predicate<IconEntry> match)
             {
@@ -2009,9 +2011,9 @@ namespace UIconEdit
             /// Determines whether any element matching the specified predicate exists in the list.
             /// </summary>
             /// <param name="match">A predicate used to define the elements to search for.</param>
-            /// <returns><c>true</c> if at least one element matches the specified predicate; <c>false</c> otherwise.</returns>
+            /// <returns><see langword="true"/> if at least one element matches the specified predicate; <see langword="false"/> otherwise.</returns>
             /// <exception cref="ArgumentNullException">
-            /// <paramref name="match"/> is <c>null</c>.
+            /// <paramref name="match"/> is <see langword="null"/>.
             /// </exception>
             public bool Exists(Predicate<IconEntry> match)
             {
@@ -2022,9 +2024,9 @@ namespace UIconEdit
             /// Determines whether every element in the list matches the specified predicate.
             /// </summary>
             /// <param name="match">A predicate used to define the elements to search for.</param>
-            /// <returns><c>true</c> if every element in the list matches the specified predicate; <c>false</c> otherwise.</returns>
+            /// <returns><see langword="true"/> if every element in the list matches the specified predicate; <see langword="false"/> otherwise.</returns>
             /// <exception cref="ArgumentNullException">
-            /// <paramref name="match"/> is <c>null</c>.
+            /// <paramref name="match"/> is <see langword="null"/>.
             /// </exception>
             public bool TrueForAll(Predicate<IconEntry> match)
             {
@@ -2119,7 +2121,7 @@ namespace UIconEdit
                 /// <summary>
                 /// Advances the enumerator to the next position in the list.
                 /// </summary>
-                /// <returns><c>true</c> if the enumerator successfully advanced; <c>false</c> if the enumerator has passed the end of the list.</returns>
+                /// <returns><see langword="true"/> if the enumerator successfully advanced; <see langword="false"/> if the enumerator has passed the end of the list.</returns>
                 public bool MoveNext()
                 {
                     if (_enum == null) return false;

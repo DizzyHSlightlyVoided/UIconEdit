@@ -18,8 +18,7 @@
             <Label Grid.Column="1" Margin="2,8,10,42" HorizontalAlignment="Left" VerticalAlignment="Top"
                    Content="{Binding Message, ElementName=window, Mode=OneTime}"/>
         </Grid>
-        <Border VerticalAlignment="Bottom" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" DockPanel.Dock="Bottom"
-                Grid.Column="0" Grid.ColumnSpan="2">
+        <Border VerticalAlignment="Bottom" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" DockPanel.Dock="Bottom">
             <Button x:Name="button" HorizontalAlignment="Center" Margin="0,5,0,5" VerticalAlignment="Bottom" MinWidth="75" IsDefault="True"
                     IsCancel="true" Content="{Binding MainWindow.SettingsFile.LanguageFile.ButtonOK, ElementName=window, Mode=OneTime, FallbackValue=_OK}"/>
         </Border>

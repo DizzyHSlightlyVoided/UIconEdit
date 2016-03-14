@@ -554,7 +554,7 @@ namespace UIconEdit
         /// <para><paramref name="output"/> is closed.</para>
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// <para><see cref="Entries"/> is <see langword="null"/>.</para>
+        /// <para><see cref="Entries"/> is empty.</para>
         /// <para>-OR-</para>
         /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
         /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
@@ -578,7 +578,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="output">The stream to which the current instance is written.</param>
         /// <exception cref="InvalidOperationException">
-        /// <para><see cref="Entries"/> is <see langword="null"/>.</para>
+        /// <para><see cref="Entries"/> is empty.</para>
         /// <para>-OR-</para>
         /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
         /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
@@ -615,7 +615,7 @@ namespace UIconEdit
         /// The current instance is disposed.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// <para><see cref="Entries"/> is <see langword="null"/>.</para>
+        /// <para><see cref="Entries"/> is empty.</para>
         /// <para>-OR-</para>
         /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
         /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
@@ -646,7 +646,7 @@ namespace UIconEdit
         /// </summary>
         /// <param name="path">The path to the file to which the current instance will be saved.</param>
         /// <exception cref="InvalidOperationException">
-        /// <para><see cref="Entries"/> is <see langword="null"/>.</para>
+        /// <para><see cref="Entries"/> is empty.</para>
         /// <para>-OR-</para>
         /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
         /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
@@ -686,16 +686,7 @@ namespace UIconEdit
 #if DRAWING
             if (_isDisposed) throw new ObjectDisposedException(null);
 #endif
-            if (_entries.Count == 0)
-                throw new InvalidOperationException("No entries present.");
-            var entry0 = _entries[0];
-
-            for (int i = 1; i < _entries.Count; i++)
-            {
-                if (!entry0.SimilarListEquals(_entries[i]))
-                    throw new InvalidOperationException("All AnimatedCursorFrame objects must have a File with the same number of IconEntry objects, " +
-                        "with the same combination of Width, Height, and BitDepth.");
-            }
+            CheckSizes();
 
             foreach (int i in _indices)
             {
@@ -826,6 +817,20 @@ namespace UIconEdit
             }
         }
 
+        private void CheckSizes()
+        {
+            if (_entries.Count == 0)
+                throw new InvalidOperationException("No entries present.");
+            var entry0 = _entries[0];
+
+            for (int i = 1; i < _entries.Count; i++)
+            {
+                if (!entry0.SimilarListEquals(_entries[i]))
+                    throw new InvalidOperationException("All AnimatedCursorFrame objects must have a File with the same number of IconEntry objects, " +
+                        "with the same combination of Width, Height, and BitDepth.");
+            }
+        }
+
         private void Save(MemoryStream ms, Stream output, BinaryWriter outputWriter)
         {
             outputWriter.Write(_idBaseRiff);
@@ -887,6 +892,46 @@ namespace UIconEdit
             if (keys == null) return EntryKeyResult.NoEntries;
 
             return EntryKeyResult.AllSame;
+        }
+
+        /// <summary>
+        /// Gets a collection containing all <see cref="IconEntry"/> objects in <see cref="Entries"/>, organized by size and bit depth.
+        /// </summary>
+        /// <returns>A read-only dictionary</returns>
+        /// <exception cref="InvalidOperationException">
+        /// <para><see cref="Entries"/> is empty.</para>
+        /// <para>-OR-</para>
+        /// <para>The elements in <see cref="Entries"/> do not all have the same number of <see cref="IconEntry"/> objects with the same
+        /// combination of <see cref="IconEntry.Width"/>, <see cref="IconEntry.Height"/>, and <see cref="IconEntry.BitDepth"/>.</para>
+        /// </exception>
+        public ReadOnlyDictionary<IconEntryKey, ReadOnlyCollection<AnimatedCursorSingleSizeFrame>> GetFramesBySize()
+        {
+            CheckSizes();
+
+            Dictionary<IconEntryKey, List<AnimatedCursorSingleSizeFrame>> baseDict =
+                _entries[0].File.Entries.OrderBy(i => i.EntryKey).ToDictionary(i => i.EntryKey, i => new List<AnimatedCursorSingleSizeFrame>());
+
+            for (int i = 0; i < _entries.Count; i++)
+            {
+                var curFrame = _entries[i];
+                var curFile = curFrame.File;
+
+                int jiffies;
+                if (curFrame.LengthJiffies.HasValue)
+                    jiffies = curFrame.LengthJiffies.Value;
+                else
+                    jiffies = DisplayRateJiffies;
+
+                for (int j = 0; j < curFile.Entries.Count; j++)
+                {
+                    var curEntry = curFile.Entries[j];
+
+                    baseDict[curEntry.EntryKey].Add(new AnimatedCursorSingleSizeFrame(curEntry, jiffies));
+                }
+            }
+
+            return new ReadOnlyDictionary<IconEntryKey, ReadOnlyCollection<AnimatedCursorSingleSizeFrame>>(baseDict.
+                ToDictionary(i => i.Key, i => i.Value.AsReadOnly()));
         }
 
         #region Entries
@@ -1845,6 +1890,44 @@ namespace UIconEdit
                     sb.Append(string.Format(" {0} jiffies ({1})", CFile.DisplayRateJiffies, CFile.DisplayRateTime));
             }
             return sb.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Gets an equivalent of an animated cursor frame with a single entry.
+    /// </summary>
+    public class AnimatedCursorSingleSizeFrame
+    {
+        internal AnimatedCursorSingleSizeFrame(IconEntry entry, int jiffies)
+        {
+            _entry = entry;
+            _jiffies = jiffies;
+        }
+
+        private IconEntry _entry;
+        /// <summary>
+        /// Gets the <see cref="IconEntry"/> for the current value.
+        /// </summary>
+        public IconEntry Entry { get { return _entry; } }
+
+        private int _jiffies;
+        /// <summary>
+        /// Gets the delay before displaying the next frame, in "jiffies" (1/60 of a second).
+        /// </summary>
+        public int LengthJiffies { get { return _jiffies; } }
+
+        /// <summary>
+        /// Gets the delay before displaying the next frame.
+        /// </summary>
+        public TimeSpan LengthTime { get { return new TimeSpan(TimeSpan.TicksPerSecond * _jiffies / 60); } }
+
+        /// <summary>
+        /// Returns a string representation of the current instance.
+        /// </summary>
+        /// <returns>A string representation of the current instance.</returns>
+        public override string ToString()
+        {
+            return string.Concat("Length: ", _jiffies, " jiffies (", LengthTime, ")");
         }
     }
 }

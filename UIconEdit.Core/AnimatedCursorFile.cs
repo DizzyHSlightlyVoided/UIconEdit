@@ -1700,7 +1700,7 @@ namespace UIconEdit
         #region File
         private readonly CursorFile _file;
         /// <summary>
-        /// Gets and sets the cursor file associated with the current instance.
+        /// Gets the cursor file associated with the current instance.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// In a set operation, the specified value is <see langword="null"/>.

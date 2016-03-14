@@ -826,13 +826,13 @@ namespace UIconEdit
         /// </summary>
         public const short MaxDimension = 768;
         /// <summary>
-        /// Gets and sets the maximum width or height at which an icon entry will be saved as a BMP file when <see cref="BitDepth"/> is
+        /// The maximum width or height at which an icon entry will be saved as a BMP file when <see cref="BitDepth"/> is
         /// <see cref="IconBitDepth.Depth32BitsPerPixel"/>; all entries with a width or height greater than this will be saved as PNG.
         /// 96 pixels.
         /// </summary>
         public const short MaxBmp32 = 96;
         /// <summary>
-        /// Gets and sets the maximum width or height at which an icon entry will be saved as a BMP file when <see cref="BitDepth"/> is any value except
+        /// The maximum width or height at which an icon entry will be saved as a BMP file when <see cref="BitDepth"/> is any value except
         /// <see cref="IconBitDepth.Depth32BitsPerPixel"/>; all entries with a width or height greater than this will be saved as PNG.
         /// 255 pixels.
         /// </summary>

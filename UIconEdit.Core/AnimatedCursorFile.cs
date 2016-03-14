@@ -892,7 +892,7 @@ namespace UIconEdit
         #region Entries
         private EntryList _entries;
         /// <summary>
-        /// Gets a list of <see cref="IconFileBase"/> objects containing all entries in the animated cursor file.
+        /// Gets a list of <see cref="AnimatedCursorFrame"/> objects containing all entries in the animated cursor file.
         /// </summary>
 #if !DRAWING
         [Bindable(true)]

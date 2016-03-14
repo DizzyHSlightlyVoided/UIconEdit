@@ -978,7 +978,7 @@ namespace UIconEdit
         internal static int TimeToJiffies(TimeSpan value, string paramName)
         {
             if (value <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(paramName);
-            double jiffies = Math.Floor(value.TotalSeconds * 60);
+            long jiffies = 60 * value.Ticks / TimeSpan.TicksPerSecond;
 
             if (jiffies <= 0 || jiffies > int.MaxValue)
                 throw new ArgumentOutOfRangeException(paramName);
@@ -1066,15 +1066,15 @@ namespace UIconEdit
         {
             TimeSpan value = (TimeSpan)baseValue;
 
-            var seconds = (long)(value.TotalSeconds * 60);
+            var jiffies = 60 * value.Ticks / TimeSpan.TicksPerSecond;
 
-            if (seconds < 1)
+            if (jiffies < 1)
                 return new TimeSpan(TimeSpan.TicksPerSecond / 60);
 
-            if (seconds > int.MaxValue)
+            if (jiffies > int.MaxValue)
                 return new TimeSpan(TimeSpan.TicksPerSecond * int.MaxValue / 60);
 
-            return new TimeSpan(TimeSpan.TicksPerSecond * seconds / 60);
+            return new TimeSpan(TimeSpan.TicksPerSecond * jiffies / 60);
         }
 #endif
         /// <summary>

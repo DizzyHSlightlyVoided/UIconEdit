@@ -1171,7 +1171,7 @@ namespace UIconEdit
 #endif
 
         /// <summary>
-        /// Represents a list of <see cref="CursorFile"/> objects for use in an animated cursor file.
+        /// Represents a list of <see cref="AnimatedCursorFrame"/> objects for use in an animated cursor file.
         /// </summary>
         [DebuggerDisplay("Count = {Count}")]
         [DebuggerTypeProxy(typeof(DebugView))]

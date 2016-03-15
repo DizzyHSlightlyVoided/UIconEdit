@@ -45,19 +45,7 @@ namespace UIconEdit.Maker
             if (entry == null) return null;
             if (entry.AlphaImage == null || entry.BitDepth == IconBitDepth.Depth32BitsPerPixel) return entry.BaseImage;
 
-            uint[] bmpPixels = new uint[entry.Width * entry.Height];
-            uint[] alphaPixels = new uint[bmpPixels.Length];
-
-            new FormatConvertedBitmap(entry.BaseImage, PixelFormats.Bgra32, null, 0).CopyPixels(bmpPixels, entry.Width * 4, 0);
-            new FormatConvertedBitmap(entry.AlphaImage, PixelFormats.Bgra32, null, 0).CopyPixels(alphaPixels, entry.Width * 4, 0);
-
-            for (int i = 0; i < bmpPixels.Length; i++)
-            {
-                if (alphaPixels[i] != uint.MaxValue)
-                    bmpPixels[i] = 0;
-            }
-
-            return BitmapSource.Create(entry.Width, entry.Height, 0, 0, PixelFormats.Bgra32, null, bmpPixels, entry.Width * 4);
+            return entry.GetQuantizedPng();
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

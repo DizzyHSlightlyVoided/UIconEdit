@@ -354,6 +354,7 @@ namespace UIconEdit
             _depth = bitDepth;
             HotspotX = hotspotX;
             HotspotY = hotspotY;
+            AlphaThreshold = _defaultAlphaThreshold(bitDepth);
         }
 
         internal IconEntry(BitmapSource baseImage, BitmapSource alphaImage, IconBitDepth bitDepth, bool isPng)

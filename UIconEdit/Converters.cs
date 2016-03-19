@@ -33,7 +33,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace UIconEdit.Maker
@@ -43,9 +42,9 @@ namespace UIconEdit.Maker
         public static BitmapSource Convert(IconEntry entry)
         {
             if (entry == null) return null;
-            if (entry.AlphaImage == null || entry.BitDepth == IconBitDepth.Depth32BitsPerPixel) return entry.BaseImage;
+            if (entry.AlphaImage == null) return entry.BaseImage;
 
-            return entry.GetQuantizedPng();
+            return entry.GetCombinedAlpha();
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

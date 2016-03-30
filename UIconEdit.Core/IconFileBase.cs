@@ -39,12 +39,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Media.Imaging;
 #if DRAWING
 using System.Drawing;
 using System.Drawing.Imaging;
 #else
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 #endif
 
@@ -1015,14 +1015,7 @@ namespace UIconEdit
             if (isPng)
             {
 #if DRAWING
-                try
-                {
-                    _savePngWPF(writeStream, quantized);
-                }
-                catch (FileNotFoundException)
-                {
-                    quantized.Save(writeStream, ImageFormat.Png);
-                }
+                quantized.Save(writeStream, ImageFormat.Png);
 #else
                 PngBitmapEncoder encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(quantized.Clone()));
@@ -1139,25 +1132,6 @@ namespace UIconEdit
         }
 
 #if DRAWING
-        private static void _savePngWPF(MemoryStream writeStream, Bitmap quantized)
-        {
-            PngBitmapEncoder encoder = new PngBitmapEncoder();
-            using (Bitmap fullQuant = new Bitmap(quantized.Width, quantized.Height, PixelFormat.Format32bppArgb))
-            {
-                using (Graphics g = Graphics.FromImage(fullQuant))
-                    g.DrawImage(quantized, 0, 0, quantized.Width, quantized.Height);
-
-                BitmapData bmpData = fullQuant.LockBits(new Rectangle(0, 0, fullQuant.Width, fullQuant.Height), ImageLockMode.ReadOnly, fullQuant.PixelFormat);
-
-                BitmapSource bmpSource = BitmapSource.Create(fullQuant.Width, fullQuant.Height, 0, 0, System.Windows.Media.PixelFormats.Bgra32, null,
-                    bmpData.Scan0, bmpData.Stride * bmpData.Height, bmpData.Stride);
-
-                fullQuant.UnlockBits(bmpData);
-                encoder.Frames.Add(BitmapFrame.Create(bmpSource));
-            }
-            encoder.Save(writeStream);
-        }
-
         private static void _writeBmpData(Bitmap bmp, BinaryWriter msWriter)
         {
             BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);

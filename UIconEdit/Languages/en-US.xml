@@ -54,10 +54,12 @@
   <ButtonTipOpen>Open</ButtonTipOpen>
   <ButtonTipNew>New</ButtonTipNew>
   <ButtonTipSave>Save</ButtonTipSave>
+
   <ButtonTipFirst>First image</ButtonTipFirst>
   <ButtonTipPrev>Previous image</ButtonTipPrev>
   <ButtonTipNext>Next image</ButtonTipNext>
   <ButtonTipLast>Last image</ButtonTipLast>
+
   <ButtonTipAdd>Add new image</ButtonTipAdd>
   <ButtonTipDup>Duplicate current image</ButtonTipDup>
   <ButtonTipRem>Remove current image</ButtonTipRem>
@@ -112,6 +114,7 @@
   <ExtendedSize>Extended Windows 10 Sizes</ExtendedSize>
   <SizeWidth>Width:</SizeWidth>
   <SizeHeight>Height:</SizeHeight>
+
   <AlphaThreshold>Alpha threshold:</AlphaThreshold>
 
   <Bits32>Full Color + Alpha (32-bit)</Bits32>
@@ -128,7 +131,6 @@
   <DuplicateTitle>Duplicate Image</DuplicateTitle>
 
   <Percent>%</Percent>
-  <Hotspot>Hotspot</Hotspot>
   <HotspotX>X:</HotspotX>
   <HotspotY>Y:</HotspotY>
 

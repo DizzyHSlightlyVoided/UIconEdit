@@ -192,152 +192,488 @@ namespace UIconEdit.Maker
         /// </summary>
         public ReadOnlyDictionary<string, string> Text { get { return _textRO; } }
 
+        #region Localized Properties
         private string _shortName;
+        /// <summary>
+        /// Gets the short name of the language file.
+        /// </summary>
         public string ShortName { get { return _shortName; } }
 
         public const string DefaultShortName = "en-US";
 
         private string _langName;
+        /// <summary>
+        /// Gets the long name of the language file.
+        /// </summary>
         public string LangName { get { return _langName; } }
 
+
+        /// <summary>
+        /// Gets a localized string similar to: UIconEdit
+        /// </summary>
         public string Title { get { return _text["Title"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Error
+        /// </summary>
+        /// <remarks>Error</remarks>
         public string Error { get { return _text["Error"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Could not load the language &quot;{0}&quot;.
+        /// </summary>
+        /// <remarks>{0} = short language name (i.e. "en-US").</remarks>
         public string LanguageLoadError { get { return _text["LanguageLoadError"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Could not save the settings file.
+        /// </summary>
+        /// <remarks>{0} = short language name (i.e. "en-US").</remarks>
         public string SettingsSaveError { get { return _text["SettingsSaveError"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Could not load &quot;{0}&quot;.
+        /// </summary>
+        /// <remarks>{0} = file path.</remarks>
         public string ImageLoadError { get { return _text["ImageLoadError"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Could not save &quot;{0}&quot;.
+        /// </summary>
+        /// <remarks>{0} = file path.</remarks>
         public string ImageSaveError { get { return _text["ImageSaveError"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: A {0}-bit {1}×{2} image already exists in the icon file.
+        /// </summary>
+        /// <remarks>{0} = number of bits per pixel, {1} = width, {2} = height.</remarks>
         public string ImageAddError { get { return _text["ImageAddError"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Could not load icon #{0} in &quot;{1}&quot;.
+        /// </summary>
+        /// <remarks>{0} = index of icon in EXE or DLL file, {1} = file path to EXE or DLL file.</remarks>
         public string IconExtractError { get { return _text["IconExtractError"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Could not load cursor #{0} in &quot;{1}&quot;.
+        /// </summary>
+        /// <remarks>{0} = index of cursor in EXE or DLL file, {1} = file path to EXE or DLL file.</remarks>
         public string CursorExtractError { get { return _text["CursorExtractError"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: No valid icons or cursors were loaded from &quot;{0}&quot;.
+        /// </summary>
+        /// <remarks>{0} = file path to EXE or DLL file.</remarks>
         public string IconExtractNone { get { return _text["IconExtractNone"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Could not save registry values.
+        /// </summary>
+        /// <remarks>{0} = file path to EXE or DLL file.</remarks>
         public string RegistryError { get { return _text["RegistryError"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Only 32-bit images are permitted when the width or height is greater than or equal to 256.
+        /// </summary>
+        /// <remarks>{0} = file path to EXE or DLL file.</remarks>
         public string TooBigNonPng { get { return _text["TooBigNonPng"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: {0}bpp{1}x{2}
+        /// </summary>
+        /// <remarks>{0} = number of bits per pixel, {1} = width, {2} = height.</remarks>
         public string FilenameSuffix { get { return _text["FilenameSuffix"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: -{0}
+        /// </summary>
+        /// <remarks>{0} = index (appended to FilenameSuffix in case of duplicate names).</remarks>
         public string FilenameSuffixEx { get { return _text["FilenameSuffixEx"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: About
+        /// </summary>
         public string About { get { return _text["About"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: UIconEdit version {0}
+        /// </summary>
+        /// <remarks>{0} = version number</remarks>
         public string AboutVersion { get { return _text["AboutVersion"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: © 2015-2016 by KimikoMuffin. All rights reserved.
+        /// </summary>
+        /// <remarks>{0} = version number</remarks>
         public string AboutCopyright { get { return _text["AboutCopyright"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: _File
+        /// </summary>
         public string MenuFile { get { return _text["MenuFile"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _Open
+        /// </summary>
         public string MenuFileOpen { get { return _text["MenuFileOpen"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _New
+        /// </summary>
         public string MenuFileNew { get { return _text["MenuFileNew"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _Save
+        /// </summary>
         public string MenuFileSave { get { return _text["MenuFileSave"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Save _As
+        /// </summary>
         public string MenuFileSaveAs { get { return _text["MenuFileSaveAs"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _Reload
+        /// </summary>
         public string MenuFileReload { get { return _text["MenuFileReload"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: E_xit
+        /// </summary>
         public string MenuFileQuit { get { return _text["MenuFileQuit"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: _Edit
+        /// </summary>
         public string MenuEdit { get { return _text["MenuEdit"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Add _new image
+        /// </summary>
         public string MenuEditAdd { get { return _text["MenuEditAdd"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _Duplicate current image
+        /// </summary>
         public string MenuEditDup { get { return _text["MenuEditDup"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _Remove current image
+        /// </summary>
         public string MenuEditRem { get { return _text["MenuEditRem"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: E_xport current image
+        /// </summary>
         public string MenuEditExp { get { return _text["MenuEditExp"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Export _all
+        /// </summary>
         public string MenuEditExpAll { get { return _text["MenuEditExpAll"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _Settings
+        /// </summary>
         public string MenuEditSettings { get { return _text["MenuEditSettings"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: _Help
+        /// </summary>
         public string MenuHelp { get { return _text["MenuHelp"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _About
+        /// </summary>
         public string MenuHelpAbout { get { return _text["MenuHelpAbout"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Open
+        /// </summary>
         public string ButtonTipOpen { get { return _text["ButtonTipOpen"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: New
+        /// </summary>
         public string ButtonTipNew { get { return _text["ButtonTipNew"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Save
+        /// </summary>
         public string ButtonTipSave { get { return _text["ButtonTipSave"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: First image
+        /// </summary>
         public string ButtonTipFirst { get { return _text["ButtonTipFirst"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Previous image
+        /// </summary>
         public string ButtonTipPrev { get { return _text["ButtonTipPrev"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Next image
+        /// </summary>
         public string ButtonTipNext { get { return _text["ButtonTipNext"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Last image
+        /// </summary>
         public string ButtonTipLast { get { return _text["ButtonTipLast"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Add new image
+        /// </summary>
         public string ButtonTipAdd { get { return _text["ButtonTipAdd"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Duplicate current image
+        /// </summary>
         public string ButtonTipDup { get { return _text["ButtonTipDup"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Remove current image
+        /// </summary>
         public string ButtonTipRem { get { return _text["ButtonTipRem"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Export current image
+        /// </summary>
         public string ButtonTipExp { get { return _text["ButtonTipExp"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Save
+        /// </summary>
         public string ModifiedCaption { get { return _text["ModifiedCaption"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: File was modified. Save?
+        /// </summary>
         public string ModifiedMessage { get { return _text["ModifiedMessage"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Reload
+        /// </summary>
         public string ReloadCaption { get { return _text["ReloadCaption"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: All unsaved changes will be lost! Continue?
+        /// </summary>
         public string ReloadMessage { get { return _text["ReloadMessage"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Delete Image
+        /// </summary>
         public string RemoveCaption { get { return _text["RemoveCaption"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Delete current image? This cannot be undone!
+        /// </summary>
         public string RemoveMessage { get { return _text["RemoveMessage"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Overwrite File
+        /// </summary>
         public string OverwriteCaption { get { return _text["OverwriteCaption"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: The file &quot;{0}&quot; already exists. Overwrite it?
+        /// </summary>
+        /// <remarks>{0} = file path</remarks>
         public string OverwriteMessage { get { return _text["OverwriteMessage"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Preview
+        /// </summary>
         public string Preview { get { return _text["Preview"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Image + Alpha
+        /// </summary>
         public string PreviewCombined { get { return _text["PreviewCombined"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Base Image
+        /// </summary>
         public string PreviewBase { get { return _text["PreviewBase"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Alpha Mask
+        /// </summary>
         public string PreviewAlpha { get { return _text["PreviewAlpha"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Alpha Mode:
+        /// </summary>
         public string PreviewAlphaMode { get { return _text["PreviewAlphaMode"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: RGB and Alpha
+        /// </summary>
         public string AmodeBoth { get { return _text["AmodeBoth"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: RGB only
+        /// </summary>
         public string AmodeRGB { get { return _text["AmodeRGB"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Alpha only
+        /// </summary>
         public string AmodeAlpha { get { return _text["AmodeAlpha"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Settings
+        /// </summary>
         public string Settings { get { return _text["Settings"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Language
+        /// </summary>
         public string SettingsLanguage { get { return _text["SettingsLanguage"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Keep cursor hotspot checked after switching to a different image
+        /// </summary>
         public string SettingsKeepChecked { get { return _text["SettingsKeepChecked"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Add to Windows Explorer context menu
+        /// </summary>
         public string SettingsRegister { get { return _text["SettingsRegister"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: _OK
+        /// </summary>
         public string ButtonOK { get { return _text["ButtonOK"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _Cancel
+        /// </summary>
         public string ButtonCancel { get { return _text["ButtonCancel"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _Yes
+        /// </summary>
         public string ButtonYes { get { return _text["ButtonYes"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _No
+        /// </summary>
         public string ButtonNo { get { return _text["ButtonNo"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Do_n&apos;t Save
+        /// </summary>
         public string ButtonNoSave { get { return _text["ButtonNoSave"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Overwrite _All
+        /// </summary>
         public string ButtonOverwrite { get { return _text["ButtonOverwrite"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _Preview
+        /// </summary>
         public string ButtonPreview { get { return _text["ButtonPreview"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _Apply
+        /// </summary>
         public string ButtonApply { get { return _text["ButtonApply"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: _Retry
+        /// </summary>
         public string ButtonRetry { get { return _text["ButtonRetry"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Set Alpha Image
+        /// </summary>
         public string ButtonSetAlpha { get { return _text["ButtonSetAlpha"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: {0}-bit
+        /// </summary>
+        /// <remarks>{0} = number of bits per pixel</remarks>
         public string FormatBitsPerPixel { get { return _text["FormatBitsPerPixel"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: {0}×{1}
+        /// </summary>
+        /// <remarks>{0} = width, {1} = height</remarks>
         public string FormatSize { get { return _text["FormatSize"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: PNG
+        /// </summary>
+        /// <remarks>{0} = width, {1} = height</remarks>
         public string FormatPng { get { return _text["FormatPng"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Custom:
+        /// </summary>
         public string CustomSize { get { return _text["CustomSize"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Extended Windows 10 Sizes
+        /// </summary>
         public string ExtendedSize { get { return _text["ExtendedSize"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Width:
+        /// </summary>
         public string SizeWidth { get { return _text["SizeWidth"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Height:
+        /// </summary>
         public string SizeHeight { get { return _text["SizeHeight"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Alpha threshold:
+        /// </summary>
         public string AlphaThreshold { get { return _text["AlphaThreshold"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Full Color + Alpha (32-bit)
+        /// </summary>
         public string Bits32 { get { return _text["Bits32"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Full Color (24-bit)
+        /// </summary>
         public string Bits24 { get { return _text["Bits24"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: 256-color (8-bit)
+        /// </summary>
         public string Bits8 { get { return _text["Bits8"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: 16-color (4-bit)
+        /// </summary>
         public string Bits4 { get { return _text["Bits4"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: 2-color (1-bit)
+        /// </summary>
         public string Bits1 { get { return _text["Bits1"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Image
+        /// </summary>
         public string GroupImage { get { return _text["GroupImage"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Size
+        /// </summary>
         public string GroupSize { get { return _text["GroupSize"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Bits Per Pixel
+        /// </summary>
         public string GroupBitsPerPixel { get { return _text["GroupBitsPerPixel"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Add Image
+        /// </summary>
         public string AddTitle { get { return _text["AddTitle"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Duplicate Image
+        /// </summary>
         public string DuplicateTitle { get { return _text["DuplicateTitle"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: %
+        /// </summary>
         public string Percent { get { return _text["Percent"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: X:
+        /// </summary>
         public string HotspotX { get { return _text["HotspotX"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Y:
+        /// </summary>
         public string HotspotY { get { return _text["HotspotY"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: {0},{1}
+        /// </summary>
+        /// <remarks>{0} = horizontal position, {1} = vertical position</remarks>
         public string Position { get { return _text["Position"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: {0}/{1}
+        /// </summary>
+        /// <remarks>{0} = the 1-based index of the current value in the list of items. {1} = the number of images.</remarks>
         public string ImgPos { get { return _text["ImgPos"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: New File
+        /// </summary>
+        /// <remarks>{0} = the 1-based index of the current value in the list of items. {1} = the number of images.</remarks>
         public string FilePathNew { get { return _text["FilePathNew"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Extract
+        /// </summary>
         public string Extract { get { return _text["Extract"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: #{0} ({1})
+        /// </summary>
+        /// <remarks>{0} = index of an icon or cursor in an icon file, {1} = number of images in icon/cursor.</remarks>
         public string ExtractFrameCount { get { return _text["ExtractFrameCount"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Icons
+        /// </summary>
+        /// <remarks>{0} = index of an icon or cursor in an icon file, {1} = number of images in icon/cursor.</remarks>
         public string ExtractIco { get { return _text["ExtractIco"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Cursors
+        /// </summary>
+        /// <remarks>{0} = index of an icon or cursor in an icon file, {1} = number of images in icon/cursor.</remarks>
         public string ExtractCur { get { return _text["ExtractCur"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Scaling filter:
+        /// </summary>
         public string ScalingFilter { get { return _text["ScalingFilter"]; } }
-
+        /// <summary>
+        /// Gets a localized string similar to: Icon files
+        /// </summary>
         public string TypeIco { get { return _text["TypeIco"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Cursor files
+        /// </summary>
         public string TypeCur { get { return _text["TypeCur"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Icon or cursor files
+        /// </summary>
         public string TypeIcoCur { get { return _text["TypeIcoCur"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: All files
+        /// </summary>
         public string TypeAll { get { return _text["TypeAll"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: PNG files
+        /// </summary>
         public string TypePng { get { return _text["TypePng"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: PNG files with size and bit-depth suffix
+        /// </summary>
         public string TypePngSuffix { get { return _text["TypePngSuffix"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: Image files
+        /// </summary>
         public string TypeImage { get { return _text["TypeImage"]; } }
+        #endregion
 
         public string GetErrorMessage(IconLoadException e)
         {

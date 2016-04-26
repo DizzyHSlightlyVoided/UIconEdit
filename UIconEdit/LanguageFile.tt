@@ -4,6 +4,7 @@
 <#@ assembly name="System.Xml.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.IO" #>
+<#@ import namespace="System.Security" #>
 <#@ import namespace="System.Xml" #>
 <#@ import namespace="System.Xml.Linq" #>
 <#@ output extension=".cs" #>
@@ -200,27 +201,41 @@ namespace UIconEdit.Maker
         /// </summary>
         public ReadOnlyDictionary<string, string> Text { get { return _textRO; } }
 
+        #region Localized Properties
         private string _shortName;
+        /// <summary>
+        /// Gets the short name of the language file.
+        /// </summary>
         public string ShortName { get { return _shortName; } }
 
         public const string DefaultShortName = "en-US";
 
         private string _langName;
+        /// <summary>
+        /// Gets the long name of the language file.
+        /// </summary>
         public string LangName { get { return _langName; } }
+
 <#
     XDocument xDoc;
 
     using(XmlReader reader = XmlReader.Create(Host.ResolvePath("Languages/en-US.xml")))
         xDoc = XDocument.Load(reader);
 
-    bool lastWhite = false;
+    string lastComment = null;
     foreach (XNode xNode in xDoc.Root.Nodes())
     {
         XText xText = xNode as XText;
-        if (xText != null && xText.Value.IndexOf("\n", 1) >= 0 && !lastWhite)
+        if (xText != null && xText.Value.IndexOf("\n", 1) >= 0)
         {
-            lastWhite = true;
-            Write("\r\n");
+            lastComment = null;
+            continue;
+        }
+
+        XComment xComment = xNode as XComment;
+        if (xComment != null)
+        {
+            lastComment = xComment.Value;
             continue;
         }
 
@@ -240,9 +255,31 @@ namespace UIconEdit.Maker
             }
         }
         if (found) continue;
-        lastWhite = false;
 
-        Write("\r\n        public string ");
+        #>
+
+        /// <summary>
+        /// Gets a localized string similar to: <#
+
+        string val = xElement.Value;
+
+        if (val.Length > 512)
+            val = val.Substring(0, 509) + "...";
+
+        Write(SecurityElement.Escape(val));
+ #>
+
+        /// </summary><#
+
+        if (lastComment != null)
+        {
+            #>
+
+        /// <remarks><#= SecurityElement.Escape(lastComment.Trim()).Replace("&quot;", "\"").Replace("&apos;", "'") #></remarks><#
+        }
+#>
+
+        public string <#
         Write(name);
         Write(" { get { return _text[\"");
         Write(name);
@@ -250,6 +287,7 @@ namespace UIconEdit.Maker
     }
     Write("\r\n");
 #>
+        #endregion
 
         public string GetErrorMessage(IconLoadException e)
         {

@@ -102,7 +102,7 @@ namespace UIconEdit.Maker
                         break;
                     case 768:
                         initSize = true;
-                        sz768.IsChecked = true;
+                        sz768.IsChecked = chkExtended.IsChecked = true;
                         break;
                     case 20:
                         initSize = true;

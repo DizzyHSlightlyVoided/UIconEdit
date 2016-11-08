@@ -91,7 +91,8 @@
                                        LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"
                                        Visibility="{Binding ExtendedSizes, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <local:SizeRadioButton x:Name="sz768" Margin="10,10,20,0" EntryWidth="{StaticResource W768}" EntryHeight="{StaticResource W768}"
-                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"/>
+                                       LanguageFile="{Binding Owner.SettingsFile.LanguageFile, ElementName=window}" Checked="size_Checked"
+                                       Visibility="{Binding ExtendedSizes, ElementName=window, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <RadioButton x:Name="szCust" Margin="10,8,0,0" Checked="szCust_Checked">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.CustomSize, ElementName=window, FallbackValue='Custom Size:'}" Margin="0,0,10,0"

@@ -564,7 +564,7 @@ namespace UIconEdit.Maker
                 if (bmpSource == null)
                     return;
 
-                _add(new AddWindow(this, false, false, bmpSource, IconEntry.GetBitDepth(bmpSource.Format)));
+                _add(new AddWindow(this, false, false, bmpSource, IconEntry.GetBitDepth(bmpSource.Format, bmpSource.Palette?.Colors)));
             }
             catch
             {

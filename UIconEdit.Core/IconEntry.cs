@@ -1539,6 +1539,23 @@ namespace UIconEdit
         }
 
         /// <summary>
+        /// Returns the icon bit depth for the specified format and color array.
+        /// </summary>
+        /// <param name="pFormat">A <see cref="PixelFormat"/> from which to derive the <see cref="IconBitDepth"/> value.</param>
+        /// <param name="palette">A collection of <see cref="Color"/> objects from which to derive the <see cref="IconBitDepth"/> value.</param>
+        /// <returns>The <see cref="IconBitDepth"/> associated with <paramref name="pFormat"/> and <paramref name="palette"/>.
+        /// If <paramref name="palette"/> is not <see langword="null"/>, is not empty, and has at least one element with an alpha value
+        /// (<see cref="Color.A"/>) which is not equal to either 0 or 255, returns <see cref="IconBitDepth.Depth32BitsPerPixel"/>.
+        /// Otherwise, returns the same value as <see cref="GetBitDepth(PixelFormat)"/>.</returns>
+        public static IconBitDepth GetBitDepth(PixelFormat pFormat, IEnumerable<Color> palette)
+        {
+            if (palette != null && palette.Any(i => i.A != byte.MaxValue && i.A != 0))
+                return IconBitDepth.Depth32BitsPerPixel;
+
+            return GetBitDepth(pFormat);
+        }
+
+        /// <summary>
         /// Returns the <see cref="PixelFormat"/> associated with the specified <see cref="IconBitDepth"/>.
         /// </summary>
         /// <param name="depth">The bit depth from which to get the pixel format.</param>

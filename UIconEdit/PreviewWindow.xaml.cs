@@ -170,9 +170,11 @@ namespace UIconEdit.Maker
         {
             PreviewWindow p = (PreviewWindow)d;
             var owner = (AddWindow)p.Owner;
+            Mouse.OverrideCursor = Cursors.Wait;
             owner.AlphaThreshold = p.AlphaThreshold;
             owner.AlphaThresholdMode = p.AlphaThresholdMode;
             p.SetValue(SourceEntryPropertyKey, owner.GetIconEntry(!p.SettingAlpha));
+            Mouse.OverrideCursor = null;
         }
 
         public byte AlphaThreshold
@@ -233,7 +235,9 @@ namespace UIconEdit.Maker
 
         private void cmbWhich_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Mouse.OverrideCursor = Cursors.Wait;
             _setChanged();
+            Mouse.OverrideCursor = null;
         }
 
         private void window_Closing(object sender, CancelEventArgs e)

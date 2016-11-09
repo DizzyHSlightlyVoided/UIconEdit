@@ -556,6 +556,22 @@ namespace UIconEdit.Maker
         /// </summary>
         public string AlphaThreshold { get { return _text["AlphaThreshold"]; } }
         /// <summary>
+        /// Gets a localized string similar to: Threshold mode:
+        /// </summary>
+        public string AlphaThresholdMode { get { return _text["AlphaThresholdMode"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: RGB become darker according to alpha
+        /// </summary>
+        public string AlphaThresholdModeDarker { get { return _text["AlphaThresholdModeDarker"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: RGB values become lighter according to alpha
+        /// </summary>
+        public string AlphaThresholdModeLighter { get { return _text["AlphaThresholdModeLighter"]; } }
+        /// <summary>
+        /// Gets a localized string similar to: No change, just set alpha to fully opaque
+        /// </summary>
+        public string AlphaThresholdModeNoChange { get { return _text["AlphaThresholdModeNoChange"]; } }
+        /// <summary>
         /// Gets a localized string similar to: Full Color + Alpha (32-bit)
         /// </summary>
         public string Bits32 { get { return _text["Bits32"]; } }

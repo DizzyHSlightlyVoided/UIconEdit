@@ -170,7 +170,8 @@ namespace UIconEdit.Maker
         {
             PreviewWindow p = (PreviewWindow)d;
             var owner = (AddWindow)p.Owner;
-            owner.AlphaThreshold = (byte)e.NewValue;
+            owner.AlphaThreshold = p.AlphaThreshold;
+            owner.AlphaThresholdMode = p.AlphaThresholdMode;
             p.SetValue(SourceEntryPropertyKey, owner.GetIconEntry(!p.SettingAlpha));
         }
 
@@ -178,6 +179,17 @@ namespace UIconEdit.Maker
         {
             get { return (byte)GetValue(AlphaThresholdProperty); }
             set { SetValue(AlphaThresholdProperty, value); }
+        }
+        #endregion
+
+        #region AlphaThresholdMode
+        public static readonly DependencyProperty AlphaThresholdModePoperty = DependencyProperty.Register(nameof(AlphaThresholdMode), typeof(IconAlphaThresholdMode),
+            typeof(PreviewWindow), new PropertyMetadata(IconAlphaThresholdMode.Darken, AlphaThresholdChanged));
+
+        public IconAlphaThresholdMode AlphaThresholdMode
+        {
+            get { return (IconAlphaThresholdMode)GetValue(AlphaThresholdModePoperty); }
+            set { SetValue(AlphaThresholdModePoperty, value); }
         }
         #endregion
 

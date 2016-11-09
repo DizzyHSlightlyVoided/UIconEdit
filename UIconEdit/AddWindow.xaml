@@ -11,6 +11,7 @@
         <local:StringFormatConverter x:Key="StringFormatConverter"/>
         <local:ScaleFilterConverter x:Key="ScaleFilterConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:IndexToThresholdModeConverter x:Key="IndexToThresholdModeConverter"/>
         <system:Int16 x:Key="W16">16</system:Int16>
         <system:Int16 x:Key="W24">24</system:Int16>
         <system:Int16 x:Key="W32">32</system:Int16>
@@ -110,16 +111,24 @@
             </WrapPanel>
         </GroupBox>
         <WrapPanel Orientation="Horizontal" Margin="10,10,10,0"  VerticalAlignment="Bottom">
-            <StackPanel Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Margin="0,0,12,5" VerticalAlignment="Center">
                 <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.AlphaThreshold, ElementName=window, FallbackValue='Alpha Threshold:'}"
                            VerticalAlignment="Center"/>
-                <TextBox Width="65" Text="{Binding AlphaThreshold, ElementName=window}" Margin="5,0,0,0" VerticalAlignment="Center"
+                <TextBox Width="65" Text="{Binding AlphaThreshold, ElementName=window}" Margin="5,0,12,0" VerticalAlignment="Center"
                          IsEnabled="{Binding UseAlphaThreshold, ElementName=window}"/>
+                <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.AlphaThresholdMode, ElementName=window, FallbackValue='Threshold Mode:'}"
+                           VerticalAlignment="Center"/>
+                <ComboBox SelectedIndex="{Binding AlphaThresholdMode, ElementName=window, Converter={StaticResource IndexToThresholdModeConverter}}"
+                          IsEnabled="{Binding UseAlphaThreshold, ElementName=window}" Width="120" Margin="5,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.AlphaThresholdModeDarker, ElementName=window, FallbackValue='Darker'}"/>
+                    <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.AlphaThresholdModeLighter, ElementName=window, FallbackValue='Lighter'}"/>
+                    <TextBlock Text="{Binding Owner.SettingsFile.LanguageFile.AlphaThresholdModeNoChange, ElementName=window, FallbackValue='No change'}"/>
+                </ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,5">
                 <Label Content="{Binding Owner.SettingsFile.LanguageFile.ScalingFilter, ElementName=window, FallbackValue='Scaling filter:'}" Padding="0"
                        VerticalAlignment="Center" IsEnabled="{Binding DifferentSize, ElementName=window}"/>
-                <ComboBox x:Name="cmbFilter" MinWidth="120" Margin="5,0,0,0" VerticalAlignment="Center" ItemsSource="{x:Static local:AddWindow.Filters}"
+                <ComboBox x:Name="cmbFilter" Width="120" Margin="5,0,0,0" VerticalAlignment="Center" ItemsSource="{x:Static local:AddWindow.Filters}"
                           SelectedIndex="{Binding MatrixSelectedIndex, ElementName=window}" IsEnabled="{Binding DifferentSize, ElementName=window}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -135,7 +144,7 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>
-            <Button Command="{x:Static local:AddWindow.SetAlphaCommand}" MinWidth="100"
+            <Button Command="{x:Static local:AddWindow.SetAlphaCommand}" MinWidth="100" VerticalAlignment="Top" Margin="0,0,0,5"
                     Content="{Binding Owner.SettingsFile.LanguageFile.ButtonSetAlpha, ElementName=window, FallbackValue='Set Alpha Image'}"/>
         </WrapPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5">

@@ -116,6 +116,11 @@
   <SizeHeight>Height:</SizeHeight>
 
   <AlphaThreshold>Alpha threshold:</AlphaThreshold>
+  
+  <AlphaThresholdMode>Threshold mode:</AlphaThresholdMode>
+  <AlphaThresholdModeDarker>Darker</AlphaThresholdModeDarker>
+  <AlphaThresholdModeLighter>Lighter</AlphaThresholdModeLighter>
+  <AlphaThresholdModeNoChange>No change</AlphaThresholdModeNoChange>
 
   <Bits32>Full Color + Alpha (32-bit)</Bits32>
   <Bits24>Full Color (24-bit)</Bits24>

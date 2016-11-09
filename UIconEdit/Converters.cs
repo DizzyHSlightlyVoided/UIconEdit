@@ -233,4 +233,19 @@ namespace UIconEdit.Maker
             return (IconAlphaConvertMode)index;
         }
     }
+
+    internal class IndexToThresholdModeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            IconAlphaThresholdMode mode = (IconAlphaThresholdMode)value;
+            return (int)mode;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int index = (int)value;
+            return (IconAlphaThresholdMode)index;
+        }
+    }
 }

@@ -180,6 +180,7 @@ namespace UIconEdit.Maker
                 entry = _savedEntry;
 
             entry.AlphaThreshold = AlphaThreshold;
+            entry.AlphaThresholdMode = AlphaThresholdMode;
 
             entry.ScalingFilter = (IconScalingFilter)cmbFilter.SelectedValue;
             if (quantize)
@@ -235,6 +236,17 @@ namespace UIconEdit.Maker
         {
             get { return (byte)GetValue(AlphaThresholdProperty); }
             set { SetValue(AlphaThresholdProperty, value); }
+        }
+        #endregion
+
+        #region AlphaThresholdMode
+        public static readonly DependencyProperty AlphaThresholdModePoperty = DependencyProperty.Register(nameof(AlphaThresholdMode), typeof(IconAlphaThresholdMode),
+            typeof(AddWindow), new PropertyMetadata(IconAlphaThresholdMode.Darken));
+
+        public IconAlphaThresholdMode AlphaThresholdMode
+        {
+            get { return (IconAlphaThresholdMode)GetValue(AlphaThresholdModePoperty); }
+            set { SetValue(AlphaThresholdModePoperty, value); }
         }
         #endregion
 

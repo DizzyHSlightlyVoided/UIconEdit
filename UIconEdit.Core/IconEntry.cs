@@ -984,6 +984,7 @@ namespace UIconEdit
 #endif
         #endregion
 
+        #region IsPng
         /// <summary>
         /// Gets a value indicating whether the current instance will be saved as a PNG image within the icon structure by default.
         /// </summary>
@@ -1037,6 +1038,7 @@ namespace UIconEdit
             set { SetValue(IsPngProperty, value); }
         }
 #endif
+        #endregion
 
         /// <summary>
         /// Gets a key for the icon entry.
@@ -2120,7 +2122,7 @@ namespace UIconEdit
                 SetScalingFilter(g);
                 g.DrawImage(image, 0, 0, _width, _height);
 
-                BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
                 ColorValue[] pixels = new ColorValue[bmp.Width * bmp.Height];
 

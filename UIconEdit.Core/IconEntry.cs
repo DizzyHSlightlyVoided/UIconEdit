@@ -1135,6 +1135,73 @@ namespace UIconEdit
 #endif
         #endregion
 
+        #region AlphaThresholdMode
+#if DRAWING
+        private static bool AlphaThresholdModeValidate(IconAlphaThresholdMode value)
+        {
+            switch (value)
+#else
+        /// <summary>
+        /// The dependency property for the <see cref="AlphaThresholdMode"/> property.
+        /// </summary>
+        public static readonly DependencyProperty AlphaThresholdModeProperty = DependencyProperty.Register(nameof(AlphaThresholdMode), typeof(IconAlphaThresholdMode),
+            typeof(IconEntry), new PropertyMetadata(IconAlphaThresholdMode.Darken), AlphaThresholdModeValidate);
+
+        private static bool AlphaThresholdModeValidate(object value)
+        {
+            switch ((IconAlphaThresholdMode)value)
+#endif
+            {
+                case IconAlphaThresholdMode.Darken:
+                case IconAlphaThresholdMode.Lighten:
+                case IconAlphaThresholdMode.NoChange:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+#if DRAWING
+        private IconAlphaThresholdMode _thresholdMode;
+        /// <summary>
+        /// Gets and sets a value indicating how transparent colors above <see cref="AlphaThreshold"/> should be treated.
+        /// </summary>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// In a set operation, the specified value is not a valid <see cref="IconAlphaThresholdMode"/> value.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">
+        /// In a set operation, the current instance is disposed.
+        /// </exception>
+        public IconAlphaThresholdMode AlphaThresholdMode
+        {
+            get { return _thresholdMode; }
+#else
+        /// <summary>
+        /// Gets and sets a value indicating how transparent colors above <see cref="AlphaThreshold"/> should be treated.
+        /// </summary>
+        /// <exception cref="InvalidEnumArgumentException">
+        /// In a set operation, the specified value is not a valid <see cref="IconAlphaThresholdMode"/> value.
+        /// </exception>
+        public IconAlphaThresholdMode AlphaThresholdMode
+        {
+            get { return (IconAlphaThresholdMode)GetValue(AlphaThresholdModeProperty); }
+#endif
+            set
+            {
+#if DRAWING
+                if (_isDisposed) throw new ObjectDisposedException(null);
+#endif
+                if (!AlphaThresholdModeValidate(value))
+                    throw new InvalidEnumArgumentException(nameof(value), (int)value, typeof(IconAlphaThresholdMode));
+#if DRAWING
+                _thresholdMode = value;
+#else
+                SetValue(AlphaThresholdModeProperty, value);
+#endif
+            }
+        }
+        #endregion
+
         #region HotspotX
 #if DRAWING
         private int _hotspotX;
@@ -1967,6 +2034,7 @@ namespace UIconEdit
             ColorValue[] pixels = _getPixels(BaseImage);
 
             byte _alphaThreshold = AlphaThreshold;
+            IconAlphaThresholdMode _thresholdMode = AlphaThresholdMode;
             IconAlphaConvertMode _alphaConvertMode = AlphaConvertMode;
 #endif
 
@@ -2046,7 +2114,37 @@ namespace UIconEdit
                     else
                         curPixel = ColorValue.Black;
                 }
-                else curPixel.A = byte.MaxValue;
+                else if (curPixel.A == byte.MaxValue) continue;
+                else if (_thresholdMode == IconAlphaThresholdMode.NoChange) curPixel.A = byte.MaxValue;
+                else
+                {
+                    double multiplier = curPixel.A / (double)byte.MaxValue;
+
+                    int r = curPixel.R, g = curPixel.G, b = curPixel.B;
+
+                    if (_thresholdMode == IconAlphaThresholdMode.Lighten)
+                    {
+                        r = byte.MaxValue - r;
+                        g = byte.MaxValue - g;
+                        b = byte.MaxValue - b;
+                    }
+
+                    r = (int)((multiplier * r) + 0.5);
+                    g = (int)((multiplier * g) + 0.5);
+                    b = (int)((multiplier * b) + 0.5);
+
+                    if (_thresholdMode == IconAlphaThresholdMode.Lighten)
+                    {
+                        r = byte.MaxValue - r;
+                        g = byte.MaxValue - g;
+                        b = byte.MaxValue - b;
+                    }
+
+                    curPixel.R = (byte)r;
+                    curPixel.G = (byte)g;
+                    curPixel.B = (byte)b;
+                    curPixel.A = byte.MaxValue;
+                }
 
                 pixels[i] = curPixel;
             }
@@ -3003,6 +3101,25 @@ namespace UIconEdit
         /// Specifies high-quality bicubic interpolation. Prefiltering is performed to ensure high-quality transformation.
         /// </summary>
         HighQualityBicubic
+    }
+
+    /// <summary>
+    /// Indicates options for how colors above <see cref="IconEntry.AlphaThreshold"/> are processed.
+    /// </summary>
+    public enum IconAlphaThresholdMode
+    {
+        /// <summary>
+        /// The colors are darkened according to the original alpha values.
+        /// </summary>
+        Darken,
+        /// <summary>
+        /// The colors are lightened according to the original alpha values.
+        /// </summary>
+        Lighten,
+        /// <summary>
+        /// The colors retain the same literal RGB values.
+        /// </summary>
+        NoChange,
     }
 
     /// <summary>

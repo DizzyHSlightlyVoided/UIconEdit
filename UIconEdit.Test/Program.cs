@@ -100,6 +100,21 @@ namespace UIconEdit.Test
                     Save(entry, string.Format("Gradient{0}bit{1}x{2}.png", entry.BitsPerPixel, entry.Width, entry.Height));
                 Console.WriteLine("Saving GradientOut.ico ...");
                 iconFile.Save("GradientOut.ico");
+
+                Console.WriteLine("Testing conversion to 24-bits ...");
+#if DRAWING
+                using (IconEntry entry24 = new IconEntry(iconFile.Entries[0].BaseImage, 128, 128, IconBitDepth.Depth24BitsPerPixel))
+                {
+#else
+                {
+                    IconEntry entry24 = new IconEntry(iconFile.Entries[0].BaseImage, 128, 128, IconBitDepth.Depth24BitsPerPixel);
+#endif
+                    foreach (IconAlphaThresholdMode curMode in Enum.GetValues(typeof(IconAlphaThresholdMode)))
+                    {
+                        entry24.AlphaThresholdMode = curMode;
+                        Save(entry24, string.Format("AlphaThresholdMode{0}.png", curMode));
+                    }
+                }
             }
             Console.WriteLine("Completed!");
 

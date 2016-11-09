@@ -1776,7 +1776,7 @@ namespace UIconEdit
         /// Applies <see cref="AlphaImage"/> to <see cref="BaseImage"/>.
         /// </summary>
         /// <returns>A new <see cref="Bitmap"/>, sized according to <see cref="Width"/> and <see cref="Height"/>, consisting of
-        /// <see cref="AlphaImage"/> applied to <see cref="BaseImage"/> and with a 32-bit pixel format.</returns>
+        /// <see cref="AlphaImage"/> applied to <see cref="BaseImage"/>.</returns>
         /// <exception cref="ObjectDisposedException">
         /// The current instance is disposed.
         /// </exception>
@@ -1784,7 +1784,7 @@ namespace UIconEdit
         {
             if (_isDisposed) throw new ObjectDisposedException(null);
 
-            Bitmap alphaMask, quantized = GetQuantized(true, IconBitDepth.Depth32BitsPerPixel, out alphaMask);
+            Bitmap alphaMask, quantized = GetQuantized(true, out alphaMask);
 
             if (alphaMask != null) alphaMask.Dispose();
 
@@ -1795,12 +1795,11 @@ namespace UIconEdit
         /// Applies <see cref="AlphaImage"/> to <see cref="BaseImage"/>.
         /// </summary>
         /// <returns>A new <see cref="BitmapSource"/>, sized according to <see cref="Width"/> and <see cref="Height"/>, consisting of
-        /// <see cref="AlphaImage"/> applied to <see cref="BaseImage"/> and with a 32-bit pixel format.</returns>
+        /// <see cref="AlphaImage"/> applied to <see cref="BaseImage"/>.</returns>
         public BitmapSource GetCombinedAlpha()
         {
             BitmapSource alphaMask;
-
-            return GetQuantized(true, IconBitDepth.Depth32BitsPerPixel, out alphaMask);
+            return GetQuantized(true, out alphaMask);
         }
 #endif
 
@@ -1934,20 +1933,11 @@ namespace UIconEdit
         }
 
 #if DRAWING
-        internal Bitmap GetQuantized(bool isPng, out Bitmap alphaMask)
-#else
-        internal WriteableBitmap GetQuantized(bool isPng, out BitmapSource alphaMask)
-#endif
-        {
-            return GetQuantized(isPng, _depth, out alphaMask);
-        }
-
-#if DRAWING
-        internal unsafe Bitmap GetQuantized(bool isPng, IconBitDepth _depth, out Bitmap alphaMask)
+        internal unsafe Bitmap GetQuantized(bool isPng, out Bitmap alphaMask)
         {
             if (_isDisposed) throw new ObjectDisposedException(null);
 #else
-        private WriteableBitmap GetQuantized(bool isPng, IconBitDepth _depth, out BitmapSource alphaMask)
+        internal WriteableBitmap GetQuantized(bool isPng, out BitmapSource alphaMask)
         {
             BitmapSource _alphaImage = AlphaImage;
 #endif
